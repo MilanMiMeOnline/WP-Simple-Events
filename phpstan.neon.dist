@@ -1,0 +1,14 @@
+parameters:
+  level: 8
+  scanFiles:
+    - stubs/elementor.php
+  paths:
+    - wp-simple-events.php
+    - uninstall.php
+    - src
+    - templates
+  excludePaths:
+    - vendor
+    - node_modules
+    - assets/dist (?)
+  tmpDir: .cache/phpstan

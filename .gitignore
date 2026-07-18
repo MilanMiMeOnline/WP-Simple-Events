@@ -1,0 +1,15 @@
+/.cache/
+/.idea/
+/.phpunit.cache/
+/.vscode/
+/.wp-env.override.json
+/coverage/
+/dist/
+/node_modules/
+/.release/
+/vendor/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example

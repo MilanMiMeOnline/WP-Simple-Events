@@ -1,0 +1,53 @@
+{
+  "name": "wp-simple-events",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Development tooling for WP Simple Events.",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "audit": "npm audit --audit-level=high",
+    "audit:production": "npm audit --omit=dev --audit-level=high",
+    "build": "npm run build:calendar",
+    "build:calendar": "esbuild assets/src/js/calendar.js --bundle --minify --target=es2020 --outfile=assets/dist/js/calendar.min.js --legal-comments=external",
+    "build:release": "node tools/build-release.mjs",
+    "env:destroy": "wp-env destroy --force",
+    "env:start": "wp-env start --runtime=playground",
+    "env:start:docker": "wp-env start",
+    "env:stop": "wp-env stop",
+    "i18n:check": "node tools/i18n.mjs --check",
+    "i18n:pot": "node tools/i18n.mjs",
+    "lint:css": "stylelint \"assets/src/css/**/*.css\" --max-warnings=0",
+    "lint:css:fix": "stylelint \"assets/src/css/**/*.css\" --fix",
+    "lint:js": "eslint assets/src/js tools --max-warnings=0",
+    "lint:js:fix": "eslint assets/src/js tools --fix",
+    "qa": "npm run build && npm run test:tools && npm run lint:js && npm run lint:css && npm run audit",
+    "test:release": "node tools/test-release.mjs",
+    "test:tools": "node --test tools/*.test.mjs",
+    "test:smoke": "node tools/smoke-playground.mjs",
+    "verify:release": "node tools/verify-release.mjs"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@fullcalendar/core": "6.1.21",
+    "@fullcalendar/daygrid": "6.1.21",
+    "@fullcalendar/list": "6.1.21",
+    "@wordpress/env": "11.10.0",
+    "@wordpress/eslint-plugin": "25.6.0",
+    "@wordpress/stylelint-config": "23.42.0",
+    "esbuild": "0.28.1",
+    "eslint": "9.39.5",
+    "prettier": "^3.0.0",
+    "stylelint": "^16.8.2",
+    "stylelint-scss": "^6.4.0",
+    "typescript": "^5.0.0"
+  },
+  "overrides": {
+    "@wordpress/theme": {
+      "esbuild": "0.28.1"
+    },
+    "adm-zip": "0.6.0"
+  }
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="WP Simple Events">
+  <description>Project coding standard for WP Simple Events.</description>
+
+  <file>wp-simple-events.php</file>
+  <file>uninstall.php</file>
+  <file>src</file>
+  <file>templates</file>
+  <file>tests</file>
+
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/node_modules/*</exclude-pattern>
+  <exclude-pattern>*/assets/dist/*</exclude-pattern>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg value="ps"/>
+  <arg name="parallel" value="8"/>
+
+  <config name="minimum_supported_wp_version" value="6.9"/>
+
+  <rule ref="WordPress-Extra"/>
+  <rule ref="WordPress-Docs"/>
+
+  <!-- PSR-4 requires class filenames to match their namespaced class names. -->
+  <rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+    <exclude-pattern>src/*</exclude-pattern>
+    <!-- WordPress template hierarchy requires the underscored CPT key. -->
+    <exclude-pattern>templates/*</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.Files.FileName.InvalidClassFileName">
+    <exclude-pattern>src/*</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+
+  <rule ref="WordPress.WP.I18n">
+    <properties>
+      <property name="text_domain" type="array">
+        <element value="wp-simple-events"/>
+      </property>
+    </properties>
+  </rule>
+
+  <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+    <properties>
+      <property name="prefixes" type="array">
+        <element value="wpse"/>
+        <element value="WPSE"/>
+        <element value="MiMe"/>
+      </property>
+    </properties>
+  </rule>
+</ruleset>

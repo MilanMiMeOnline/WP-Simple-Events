@@ -1,0 +1,337 @@
+/**
+ * Front-end styles stay minimal and inherit the active theme by default.
+ */
+
+.wpse-events,
+.wpse-single-event,
+.wpse-calendar,
+.wpse-template {
+	--wpse-color-border: currentcolor;
+	--wpse-color-muted: currentcolor;
+	--wpse-spacing: 1rem;
+	--wpse-radius: 0.25rem;
+	--wpse-image-ratio: 3 / 2;
+}
+
+.wpse-single-event,
+.wpse-event-archive {
+	box-sizing: border-box;
+	margin-inline: auto;
+	padding-block: calc(var(--wpse-spacing) * 2);
+}
+
+.wpse-single-event {
+	width: min(100% - 2rem, 52rem);
+}
+
+.wpse-event-archive {
+	width: min(100% - 2rem, 72rem);
+}
+
+.wpse-single-event-title,
+.wpse-event-archive-title {
+	margin-top: 0;
+}
+
+.wpse-single-event-image {
+	margin-block: 0 calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-single-event-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.wpse-event-summary {
+	display: grid;
+	gap: calc(var(--wpse-spacing) * 0.5);
+	margin-block: 0 calc(var(--wpse-spacing) * 1.5);
+	padding: var(--wpse-spacing);
+	border: 1px solid var(--wpse-color-border);
+	border-radius: var(--wpse-radius);
+}
+
+.wpse-event-summary p,
+.wpse-event-summary address,
+.wpse-event-taxonomies p {
+	margin: 0;
+}
+
+.wpse-event-label {
+	font-weight: 600;
+}
+
+.wpse-event-address {
+	font: inherit;
+}
+
+.wpse-single-event-content,
+.wpse-event-action,
+.wpse-event-taxonomies {
+	margin-block: calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-event-action-link {
+	display: inline-block;
+	padding: calc(var(--wpse-spacing) * 0.625) var(--wpse-spacing);
+	border: 1px solid currentcolor;
+	border-radius: var(--wpse-radius);
+}
+
+.wpse-events-results {
+	display: grid;
+	gap: calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-events-view-list {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.wpse-event-card {
+	overflow: hidden;
+	border: 1px solid var(--wpse-color-border);
+	border-radius: var(--wpse-radius);
+	background: transparent;
+	color: inherit;
+}
+
+.wpse-event-card-image-link {
+	display: block;
+}
+
+.wpse-event-card-image {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: var(--wpse-image-ratio);
+	object-fit: cover;
+}
+
+.wpse-event-card-body {
+	padding: var(--wpse-spacing);
+}
+
+.wpse-event-card-date,
+.wpse-event-card-location,
+.wpse-event-status {
+	margin: 0 0 calc(var(--wpse-spacing) * 0.5);
+}
+
+.wpse-event-card-date,
+.wpse-event-card-location {
+	color: var(--wpse-color-muted);
+}
+
+.wpse-event-status {
+	font-weight: 600;
+}
+
+.wpse-event-card-title {
+	margin: 0 0 calc(var(--wpse-spacing) * 0.75);
+	font: inherit;
+	font-size: 1.25em;
+	font-weight: 600;
+}
+
+.wpse-event-card-excerpt {
+	margin: 0;
+}
+
+.wpse-events-filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	gap: var(--wpse-spacing);
+	margin: 0 0 calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-events-filter-field,
+.wpse-events-filter-submit {
+	margin: 0;
+}
+
+.wpse-events-filter-field label {
+	display: block;
+	margin-bottom: 0.25rem;
+}
+
+.wpse-events-filter-help {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-size: 0.875em;
+}
+
+.wpse-events-filter-field select {
+	min-width: 10rem;
+	max-width: 100%;
+	font: inherit;
+}
+
+.wpse-events-filter-submit button,
+.wpse-calendar-empty-action button {
+	font: inherit;
+}
+
+.wpse-event-card a:focus-visible,
+.wpse-single-event a:focus-visible,
+.wpse-events-filters select:focus-visible,
+.wpse-events-filters button:focus-visible,
+.wpse-events-pagination a:focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+.wpse-events-empty {
+	padding: var(--wpse-spacing);
+	border: 1px solid var(--wpse-color-border);
+	border-radius: var(--wpse-radius);
+}
+
+.wpse-events-empty p {
+	margin: 0;
+}
+
+.wpse-elementor-placeholder {
+	padding: var(--wpse-spacing, 1rem);
+	border: 1px dashed currentcolor;
+	border-radius: var(--wpse-radius, 0.25rem);
+}
+
+.wpse-events-pagination {
+	margin-top: calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-events-pagination ul.page-numbers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	padding: 0;
+	list-style: none;
+}
+
+@media (min-width: 600px) {
+
+	.wpse-events-view-grid.wpse-events-columns-2,
+	.wpse-events-view-grid.wpse-events-columns-3,
+	.wpse-events-view-grid.wpse-events-columns-4 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 960px) {
+
+	.wpse-events-view-grid.wpse-events-columns-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.wpse-events-view-grid.wpse-events-columns-4 {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.wpse-calendar {
+	--wpse-calendar-accent: currentcolor;
+	--wpse-calendar-on-accent: Canvas;
+	--wpse-calendar-today: rgb(128 128 128 / 15%);
+	--wpse-calendar-hover: rgb(128 128 128 / 15%);
+
+	margin-block: calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-calendar-status {
+	min-height: 1.5em;
+}
+
+.wpse-calendar-canvas[hidden],
+.wpse-calendar-empty-action[hidden] {
+	display: none;
+}
+
+.wpse-calendar-empty-action {
+	padding: var(--wpse-spacing);
+	border: 1px solid var(--wpse-color-border);
+	border-radius: var(--wpse-radius);
+}
+
+.wpse-calendar-fallback {
+	margin-top: calc(var(--wpse-spacing) * 1.5);
+}
+
+.wpse-calendar.is-ready .wpse-calendar-fallback {
+	display: none;
+}
+
+.wpse-calendar .fc {
+	--fc-page-bg-color: transparent;
+	--fc-neutral-bg-color: transparent;
+	--fc-neutral-text-color: currentcolor;
+	--fc-border-color: currentcolor;
+	--fc-button-text-color: var(--wpse-calendar-on-accent);
+	--fc-button-bg-color: var(--wpse-calendar-accent);
+	--fc-button-border-color: var(--wpse-calendar-accent);
+	--fc-event-bg-color: var(--wpse-calendar-accent);
+	--fc-event-border-color: var(--wpse-calendar-accent);
+	--fc-event-text-color: var(--wpse-calendar-on-accent);
+	--fc-today-bg-color: var(--wpse-calendar-today);
+	--fc-list-event-hover-bg-color: var(--wpse-calendar-hover);
+
+	font: inherit;
+}
+
+.wpse-calendar .fc a {
+	color: inherit;
+}
+
+.wpse-calendar .fc .fc-button {
+	border-color: currentcolor;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.wpse-calendar .fc .fc-button:hover,
+.wpse-calendar .fc .fc-button:focus-visible,
+.wpse-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
+	border-color: currentcolor;
+	background: currentcolor;
+	color: var(--wpse-calendar-on-accent);
+}
+
+.wpse-calendar .fc .fc-button:focus-visible,
+.wpse-calendar .fc a:focus-visible,
+.wpse-calendar-filters select:focus-visible,
+.wpse-calendar-filters button:focus-visible,
+.wpse-calendar-empty-action button:focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+.wpse-calendar .fc .fc-daygrid-event,
+.wpse-calendar .fc .fc-list-event-title a {
+	white-space: normal;
+}
+
+.wpse-calendar-event-status {
+	display: block;
+	font-size: 0.875em;
+	font-weight: 600;
+}
+
+.wpse-calendar-event-cancelled {
+	text-decoration: line-through;
+}
+
+@media (max-width: 599px) {
+
+	.wpse-calendar .fc .fc-header-toolbar {
+		align-items: stretch;
+		gap: calc(var(--wpse-spacing) * 0.5);
+		flex-direction: column;
+	}
+
+	.wpse-calendar .fc .fc-toolbar-chunk {
+		display: flex;
+		justify-content: center;
+	}
+}

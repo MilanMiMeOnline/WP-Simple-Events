@@ -1,0 +1,294 @@
+# Backlog execution plan
+
+**Status:** Approved; WP0 started 2026-07-18\
+**Inventory closed:** 2026-07-18\
+**Source backlog:** `docs/BACKLOG-TESTING.md`
+
+## 1. Objective
+
+Resolve the eight findings from the first acceptance-testing round without mixing urgent calendar corrections with the larger template-building feature. Each work package must be independently reviewable, testable and releasable. No package may weaken the existing security, compatibility, accessibility or lightweight-product boundaries.
+
+The intended order is:
+
+1. establish a trustworthy baseline and browser regression capability;
+2. stabilize the calendar's first render and controls;
+3. correct the calendar's date/time contract;
+4. improve event editorial and time-zone presentation;
+5. introduce a shared atomic event-field layer;
+6. expose that layer through Elementor and Gutenberg;
+7. run the complete release qualification.
+
+## 2. Decisions fixed for this execution
+
+These choices resolve the open planning notes in the backlog. Any later change requires an entry in `docs/DECISIONS.md` before implementation.
+
+| Area | Decision |
+|---|---|
+| Calendar button states | Correct the existing accent/on-accent contract first. Do not add separate hover and active color controls in this cycle. Rename the duplicate Elementor typography labels. |
+| Calendar filters | Keep the existing enabled default for backward compatibility. Omit the entire form when it has no usable category or tag choices. Make the Elementor control and its distinction from initial taxonomy constraints clearer. |
+| Calendar time zone | Preserve each event's captured wall-clock date and time. The visitor browser must not silently move an event to another day. A single global FullCalendar zone is not an acceptable fix for mixed event zones. |
+| Time notation | Inherit WordPress `time_format` by default. Do not add a duplicate global 12/24-hour plugin setting. Presentation-level overrides may be added later to the atomic date/time component if they remain explicitly optional. |
+| Public time-zone label | Add a backward-compatible global display toggle, disabled by default. When enabled, timed events show an unambiguous IANA/fixed zone and the offset applicable to the event date. All-day events omit it. |
+| Event time-zone editing | Keep the native time zone server-owned and readonly in this cycle. A per-event selector is a separate future product decision because it changes the event-authoring contract. |
+| External action label | Add one optional plain-text label of at most 120 characters. Empty values retain the translated `More event information` fallback. Multiple resource links remain out of scope. |
+| Atomic components | Provide discoverable field-specific widgets/blocks backed by shared render services; do not expose a generic raw-meta component. |
+| Elementor context | Use the same widgets in Free and Pro. On a static page the user selects a public event; in a dynamic template the widget consumes the current event context. Template assignment/routing remains host-owned and outside plugin scope. |
+| Gutenberg context | Use the same dynamic field blocks on ordinary pages and in the Site Editor. A static page can select a public event; a template consumes block post context. Existing native fallback blocks remain compatible. |
+
+## 3. Dependency and delivery map
+
+| Work package | Backlog items | Depends on | Candidate delivery |
+|---|---|---|---|
+| WP0 — Baseline and browser guardrails | Test infrastructure | None | Development-only prerequisite |
+| WP1 — Calendar lifecycle and controls | BL-006, BL-001, BL-002 | WP0 | Calendar stabilization release |
+| WP2 — Calendar date/time correctness | BL-003, BL-004 | WP0; calendar lifecycle from WP1 | Calendar stabilization release |
+| WP3 — Event editorial/time-zone UX | BL-005, BL-007 | WP2's time contract | Event presentation release |
+| WP4 — Shared atomic presentation layer | Foundation for BL-008 | WP3, especially action label/time-zone output | Template-components release |
+| WP5 — Elementor atomic widgets | BL-008 Elementor | WP4 | Template-components release |
+| WP6 — Gutenberg dynamic blocks | BL-008 Gutenberg | WP4 | Template-components release |
+| WP7 — Release qualification | All completed items | WP1–WP6 | Installable release candidate |
+
+WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be developed independently only after WP4's field and context contracts are frozen, but they must receive parity review before release.
+
+## 4. WP0 — Baseline and browser guardrails
+
+### Development work
+
+1. Capture the current repository as an agreed source-control baseline before editing runtime code. At planning time the working tree consists entirely of untracked files, which prevents reliable diff review and rollback.
+2. Run and record the existing baseline gates:
+   - `composer validate --strict`;
+   - `composer qa`;
+   - `npm run qa`;
+   - `npm run test:smoke`.
+3. Add a deterministic browser-test harness for the frontend behaviours that PHP/unit tests cannot verify. Prefer a pinned Playwright-based development dependency against the existing local WordPress/Playground fixture. Document purpose, maintenance status, licence and removal cost before adding it.
+4. Create bounded reusable fixtures for:
+   - an empty calendar;
+   - categories only, tags only and both;
+   - same-day, overnight, multi-day and all-day events;
+   - IANA and fixed-offset time zones;
+   - cancelled and postponed events;
+   - multiple calendar instances.
+5. Establish screenshot/geometry assertions only for stable component boundaries. Do not rely on whole-page pixel snapshots that change with the active theme.
+6. Extend the real-WordPress Playground integration journey whenever a work package changes registration, REST, persistence or public-query behaviour. `composer test:integration` must invoke that journey rather than a WordPress-stubbed or empty PHPUnit suite.
+
+### Exit criteria
+
+- Existing quality gates are green before feature work. A pre-existing failure must be isolated and corrected as its own prerequisite; documenting it does not make it acceptable.
+- A browser test can load the calendar, wait for its accessible ready state and assert usable grid geometry and controls.
+- Test data setup and cleanup are isolated and reproducible.
+- The dependency decision is recorded in `docs/DECISIONS.md` if a new test dependency is introduced.
+
+## 5. WP1 — Calendar lifecycle and controls
+
+### WP1.1 First-render lifecycle — BL-006
+
+1. Add a failing browser regression that hard-reloads a month calendar and checks its seven-column geometry before any control is clicked.
+2. Correct the reveal/render order so FullCalendar is not measured while its canvas is hidden.
+3. Trigger one explicit size recalculation after reveal if FullCalendar still requires it.
+4. Test slow, immediate, empty and failed feed responses.
+5. Test viewport resize, mobile initial view, multiple calendars and containers that become visible after page load.
+6. Introduce `ResizeObserver` or an Elementor-specific visibility hook only if the simpler lifecycle correction cannot pass the hidden-container cases; disconnect observers on teardown.
+
+### WP1.2 Button states — BL-001
+
+1. Add regression coverage for normal, hover, focus-visible, active and disabled toolbar buttons.
+2. Replace the `currentcolor` state rule with explicit component variables for accent background and on-accent text.
+3. Preserve theme-inherited typography and provide a visible focus indicator independent of hover/active state.
+4. Verify light/dark defaults and custom Elementor colors in editor and frontend.
+5. Rename the two Elementor typography controls so their targets are unambiguous; keep stable saved control identifiers.
+6. Check default-state contrast and forced-colors/high-contrast behaviour in addition to ordinary visual states.
+
+### WP1.3 Filter empty state and clarity — BL-002
+
+1. Add renderer tests for no terms, category-only, tag-only and both-term states.
+2. Return no filter form when neither taxonomy has a usable public term.
+3. Retain the existing enabled default and saved widget behaviour.
+4. Rename/describe the Elementor visitor-filter control clearly and distinguish it from initial category/tag constraints.
+5. Verify filter selection, reset, URL state, no-JavaScript GET fallback, multiple instances and accessible status messages.
+
+### Exit criteria
+
+- BL-001, BL-002 and BL-006 pass their unit/browser matrices on shortcode and Elementor output.
+- The first visible calendar frame is usable without interaction.
+- Keyboard navigation, focus and disabled states pass manual QA.
+- No calendar assets load on pages without a calendar.
+
+## 6. WP2 — Calendar date/time correctness
+
+### WP2.1 Freeze the presentation contract — BL-003
+
+1. Add an ADR stating that calendars preserve the event's captured wall-clock values rather than converting to the browser zone.
+2. First reproduce the reported `+00:00` to `Europe/Brussels` date shift in a controlled browser test.
+3. Add pure tests for positive/negative offsets, IANA zones, fixed offsets, events near midnight, genuine overnight events, multi-day events, all-day exclusive ends and DST transitions.
+4. Adjust the FullCalendar feed adapter so timed display values are not reinterpreted into a visitor-local date. Preserve the captured zone/offset as explicit event presentation metadata.
+5. Review visible-window querying at the maximum supported offsets (`-14:00` through `+14:00`). If the feed uses floating wall times, ensure boundary events are not omitted by an absolute UTC query window. Keep all queries bounded and pagination truthful.
+6. Update the REST/feed schema and `docs/PUBLIC-QUERY-CONTRACT.md` to distinguish UI wall-time values from machine instants. Do not silently change a documented response contract.
+7. Compare calendar month/list output with the native single-event formatter for every fixture.
+
+### WP2.2 Consistent 12/24-hour notation — BL-004
+
+1. Add a small tested formatter that derives the required 12/24-hour presentation from WordPress `time_format` without changing storage.
+2. Pass the resulting presentation contract to FullCalendar for views that display event times.
+3. Keep server-rendered details/cards on WordPress formatting and verify noon, midnight, leading zeros and translated meridiems.
+4. Document that native browser time inputs may look platform-specific while saving the same canonical 24-hour value.
+5. Leave global/per-widget overrides out of this package; the future atomic date/time component may add an explicit override without changing the default.
+
+### Exit criteria
+
+- A same-day event remains on the same visible date in browsers with different zones.
+- Real overnight/multi-day and all-day events still span correctly.
+- Calendar and single-event output agree on 12/24-hour notation where a time is shown.
+- REST validation, bounded queries and public visibility rules remain intact.
+
+## 7. WP3 — Event editorial and time-zone UX
+
+### WP3.1 External action label — BL-005
+
+1. Add an allowlisted `_wpse_event_url_label` metadata field with a 120-character maximum, scalar shape validation and plain-text sanitization.
+2. Extend the input DTO, admin/REST mapper, central validator, validated DTO and persistence gateway together; no write path may bypass validation.
+3. Add the editor field next to the external URL and mirror it into Gutenberg's atomic REST save with the other editable event metadata.
+4. Render the custom escaped label when present and retain the translated fallback otherwise. Render nothing when the URL is empty.
+5. Update revisions, REST schemas, duplication policy, data contract, uninstall/maintenance allowlists where applicable and translation catalogue.
+6. Test malicious input, whitespace, maximum length, empty URL/label combinations, REST permissions and existing events without the new meta key.
+
+### WP3.2 Time-zone visibility — BL-007
+
+1. Show the authoritative WordPress site zone on Event Settings with an administrator-only link to General Settings.
+2. Explain that new events capture that zone, existing events retain theirs and fixed offsets do not provide DST behaviour.
+3. Add a validated boolean display option, defaulting to disabled for backward compatibility.
+4. Extend the shared date presentation with an optional zone label such as `Europe/Brussels (UTC+02:00)`. Calculate offsets at the event boundary; if a multi-day event crosses an offset transition, represent both offsets unambiguously.
+5. Omit the zone label for all-day events and when disabled.
+6. Apply the same output to native details and the composite Elementor widget; atomic component overrides wait for WP5/WP6.
+7. Test IANA/fixed zones, winter/summer events, DST transitions, translations, permissions and settings sanitization.
+
+### Exit criteria
+
+- Existing events render exactly as before when both new options/fields are empty or disabled.
+- Every write path validates and persists the label atomically.
+- Administrators can identify the active site zone without finding a duplicate plugin-owned time-zone setting.
+- Machine-readable feed and structured-data dates are unaffected by the visual time-zone toggle.
+
+## 8. WP4 — Shared atomic presentation layer
+
+This foundation must land before host-specific components. Refactor in small steps while preserving the existing composite renderer's HTML and behaviour.
+
+1. Introduce one access-aware event-context resolver for both current-event/template context and explicitly selected public events on static pages or in editor previews.
+2. Create field presentation/render services for:
+   - title;
+   - featured image;
+   - date/time/time zone;
+   - event status;
+   - venue;
+   - address;
+   - location action;
+   - content;
+   - excerpt;
+   - external event action;
+   - categories;
+   - tags.
+3. Keep metadata private to the presentation layer; adapters request named fields rather than arbitrary meta keys.
+4. Preserve password protection, public-status checks, contextual escaping, content recursion guards and empty-field omission.
+5. Add request-level reuse of resolved public presentation data so a template with many atomic fields does not repeat avoidable queries or formatting work. Do not cache across requests.
+6. Rebuild the existing Event Details renderer from these services and prove output/backward compatibility before adding new widgets or blocks.
+7. Document stable semantic classes and extension points.
+
+### Exit criteria
+
+- The composite native/shortcode/Elementor details output remains backward compatible.
+- Each field has isolated present/absent/corrupt/security tests.
+- Draft, private and password-protected data cannot leak through explicit preview IDs.
+- Repeated atomic field rendering remains bounded and does not introduce direct SQL.
+
+## 9. WP5 — Elementor atomic widgets
+
+1. Amend ADR-014 and `docs/ELEMENTOR-INTEGRATION.md` before expanding beyond the original three widgets.
+2. Register dedicated WP Simple Events widgets for the WP4 field set, using shared abstract behaviour only where responsibilities remain clear.
+3. Reuse the bounded public event selector and current-event resolution. The selected event is the real source on a static page and an editor preview source in a dynamic template; empty fields show editor-only placeholders and no frontend wrapper.
+4. Provide controls appropriate to the field rather than one generic control set:
+   - label visibility/text where meaningful;
+   - image size, alt behaviour and optional link for featured image;
+   - inherited or explicit date/time presentation where agreed;
+   - typography, color and spacing through scoped selectors.
+5. Keep Elementor optional and version-gated; loading/deactivating Elementor must not affect native functionality.
+6. Verify supported Elementor 3.x and current 4.x, editor/frontend parity, multiple widgets and optimized DOM.
+7. Verify that the same saved widget configuration behaves consistently when sourced from a selected event on a static page or the current event in a template.
+
+### Exit criteria
+
+- A complete event layout can be assembled from atomic widgets on an Elementor Free static page and in Elementor Pro Theme Builder.
+- Switching only the event source—from an explicit selection to current context—does not change field semantics or styling.
+- Widget controls cannot expose non-public events or raw metadata.
+- Existing three widgets and saved instances remain compatible.
+
+## 10. WP6 — Gutenberg dynamic blocks
+
+1. Register public dynamic blocks with `block.json` metadata and server-side callbacks for the same WP4 field set.
+2. Consume WordPress block context (`postId`/`postType`) in templates and offer a bounded explicit public-event selection for blocks placed on ordinary pages; do not rely only on mutable global loop state.
+3. Provide editor previews/placeholders and Inspector controls that map to the same allowlisted event-source and presentation options as Elementor.
+4. Use WordPress block supports for typography, colors, spacing and alignment where they preserve semantic output.
+5. Add a single-event block pattern demonstrating the atomic components; do not silently replace customized templates.
+6. Keep `wpse/native-single` and `wpse/native-archive` as backward-compatible internal fallback bridges.
+7. Guard the Event Content block against rendering itself recursively when placed inside event content or a containing template.
+8. Test serialization, server rendering, Site Editor context, query-loop context, classic themes, block themes and missing optional values.
+
+### Exit criteria
+
+- A block-theme single-event template and an ordinary page with a selected event can both be composed from the same dynamic blocks.
+- Blocks inserted in ordinary content resolve only a valid event context and fail closed otherwise.
+- Gutenberg and Elementor field output have parity for semantics, access control and empty states.
+- Editor assets load only where block registration/editor use requires them.
+
+## 11. WP7 — Senior review and release qualification
+
+Each work package receives two explicit reviews before handoff:
+
+### Senior developer review
+
+- architecture and responsibility boundaries;
+- backward compatibility and migration/default behaviour;
+- WordPress/Elementor APIs and optional-dependency isolation;
+- query bounds, performance and asset loading;
+- documentation, translations and extension contracts.
+
+### Senior QA/security review
+
+- regression tests fail meaningfully before the fix where feasible;
+- public/private/password/preview permissions;
+- nonce, capability, REST schema, validation, sanitization and contextual escaping;
+- keyboard, focus, semantics, empty/loading/error states and responsive layouts;
+- time zones, DST, all-day/timed/same-day/multi-day boundaries;
+- supported WordPress, PHP and Elementor matrix.
+
+### Required gates
+
+Run from the repository root after every applicable package:
+
+```sh
+composer validate --strict
+composer qa
+npm run qa
+composer test:integration
+npm run test:smoke
+```
+
+Run the new browser suite for calendar and component changes. For a release candidate also run translation generation/checks, deterministic release build/verification, supported WordPress smoke matrix, production dependency audits and official WordPress Plugin Check against the packaged staging directory.
+
+Once WP0 registers its stable browser command, add that command to the required per-package gates rather than treating browser QA as an informal manual step.
+
+No installable ZIP is handed off until the package, not only the working tree, passes the complete release qualification.
+
+## 12. Recommended execution cadence
+
+For each work package:
+
+1. mark only its backlog items **In progress**;
+2. restate intended behaviour and risks;
+3. add the regression tests;
+4. implement the smallest cohesive change;
+5. run focused tests, then normal quality gates;
+6. perform senior developer review;
+7. perform senior QA/security review;
+8. update contracts, decisions, changelog and backlog state;
+9. provide a locally installable candidate only at a milestone boundary.
+
+Do not start WP4–WP6 while calendar correctness is still unresolved. This prevents the atomic field components from freezing incorrect time-zone or time-format behaviour into two additional presentation hosts.

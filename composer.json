@@ -1,0 +1,49 @@
+{
+  "name": "mime/wp-simple-events",
+  "description": "A lightweight native events plugin for WordPress.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.3"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "phpstan/extension-installer": "^1.4",
+    "phpunit/phpunit": "^12.0",
+    "squizlabs/php_codesniffer": "^3.13",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "wp-coding-standards/wpcs": "^3.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "MiMe\\WPSimpleEvents\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MiMe\\WPSimpleEvents\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    },
+    "sort-packages": true
+  },
+  "scripts": {
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "lint": "phpcs",
+    "lint:fix": "phpcbf",
+    "qa": [
+      "@lint",
+      "@analyse",
+      "@test:unit",
+      "@security:audit"
+    ],
+    "security:audit": "composer audit --locked",
+    "test": "@test:unit",
+    "test:integration": "npm run test:smoke",
+    "test:unit": "phpunit --testsuite unit"
+  }
+}

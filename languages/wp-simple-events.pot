@@ -1,0 +1,1100 @@
+# Copyright (C) 2026 MiMe
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Simple Events 0.1.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-simple-events\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: wp-simple-events\n"
+
+#. Plugin Name of the plugin
+#: wp-simple-events.php
+#: src/Elementor/WidgetRegistrar.php:30
+msgid "WP Simple Events"
+msgstr ""
+
+#. Description of the plugin
+#: wp-simple-events.php
+msgid "A lightweight, native events plugin for WordPress."
+msgstr ""
+
+#. Author of the plugin
+#: wp-simple-events.php
+msgid "MiMe"
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:59
+msgid "Duplicate event"
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:74
+msgid "You are not allowed to duplicate this event."
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:75
+msgid "Event duplication denied"
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:86
+msgid "Event duplication failed"
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:95
+msgid "The event was copied, but its editor URL is unavailable."
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:96
+msgid "Event duplication incomplete"
+msgstr ""
+
+#: src/Admin/EventDuplicateController.php:124
+msgid "Event duplicated as a draft. Review the copied dates before publishing; the external event URL was not copied."
+msgstr ""
+
+#. translators: %s: Original event title.
+#: src/Admin/EventDuplicatePlan.php:40
+#, php-format
+msgid "%s — Copy"
+msgstr ""
+
+#: src/Admin/EventDuplicator.php:40
+msgid "The source event could not be found."
+msgstr ""
+
+#: src/Admin/EventDuplicator.php:95
+msgid "The event copy could not be completed safely."
+msgstr ""
+
+#: src/Admin/EventListTable.php:53
+msgid "Title"
+msgstr ""
+
+#: src/Admin/EventListTable.php:54
+msgid "Start"
+msgstr ""
+
+#: src/Admin/EventListTable.php:55
+msgid "End"
+msgstr ""
+
+#: src/Admin/EventListTable.php:56
+msgid "All day"
+msgstr ""
+
+#: src/Admin/EventListTable.php:57
+msgid "Location"
+msgstr ""
+
+#: src/Admin/EventListTable.php:59
+#: src/Content/EventTaxonomies.php:92
+#: src/Content/EventTaxonomies.php:106
+msgid "Event Categories"
+msgstr ""
+
+#: src/Admin/EventListTable.php:60
+#: src/Admin/EventMetaBox.php:227
+#: src/Content/EventMeta.php:138
+msgid "Event status"
+msgstr ""
+
+#: src/Admin/EventListTable.php:61
+msgid "Publication"
+msgstr ""
+
+#: src/Admin/EventListTable.php:79
+msgid "Yes"
+msgstr ""
+
+#: src/Admin/EventListTable.php:80
+msgid "No"
+msgstr ""
+
+#: src/Admin/EventListTable.php:103
+#: src/Admin/EventMetaBox.php:221
+msgid "Scheduled"
+msgstr ""
+
+#: src/Admin/EventListTable.php:104
+#: src/Admin/EventMetaBox.php:222
+#: src/Frontend/EventDetailsRenderer.php:130
+#: src/Frontend/EventRenderer.php:119
+#: src/Shortcode/CalendarShortcode.php:139
+msgid "Cancelled"
+msgstr ""
+
+#: src/Admin/EventListTable.php:105
+#: src/Admin/EventMetaBox.php:223
+#: src/Frontend/EventDetailsRenderer.php:131
+#: src/Frontend/EventRenderer.php:120
+#: src/Shortcode/CalendarShortcode.php:140
+msgid "Postponed"
+msgstr ""
+
+#: src/Admin/EventListTable.php:148
+msgid "Filter events by timing or status"
+msgstr ""
+
+#: src/Admin/EventListTable.php:150
+msgid "All events"
+msgstr ""
+
+#: src/Admin/EventListTable.php:151
+#: src/Frontend/EventArchiveControls.php:38
+#: src/Shortcode/EventListControls.php:46
+msgid "Upcoming and active"
+msgstr ""
+
+#: src/Admin/EventListTable.php:152
+msgid "Past events"
+msgstr ""
+
+#: src/Admin/EventListTable.php:153
+msgid "Cancelled events"
+msgstr ""
+
+#: src/Admin/EventListTable.php:154
+msgid "Postponed events"
+msgstr ""
+
+#: src/Admin/EventListTable.php:162
+msgid "All event categories"
+msgstr ""
+
+#: src/Admin/EventListTable.php:233
+msgid "Not set"
+msgstr ""
+
+#: src/Admin/EventMaintenanceController.php:85
+msgid "You are not allowed to run event maintenance."
+msgstr ""
+
+#: src/Admin/EventMaintenanceController.php:86
+msgid "Event maintenance denied"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:39
+#: src/Elementor/EventDetailsWidget.php:134
+msgid "Event details"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:62
+msgid "A start is required before an event can be published. Drafts may remain incomplete."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:67
+msgid "Review the copied start and end date before publishing this event."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:74
+#: src/Content/EventMeta.php:90
+msgid "All-day event"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:79
+msgid "Start date"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:81
+msgid "Start time"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:83
+msgid "End date"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:85
+msgid "End time"
+msgstr ""
+
+#. translators: %s: Event timezone identifier.
+#: src/Admin/EventMetaBox.php:93
+#, php-format
+msgid "Timezone: %s. Existing events keep their saved timezone."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:100
+#: src/Content/EventMeta.php:106
+msgid "Venue"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:104
+#: src/Content/EventMeta.php:114
+msgid "Address"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:107
+#: src/Content/EventMeta.php:122
+msgid "Location URL"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:107
+msgid "Optional route or location page using HTTP(S)."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:108
+#: src/Content/EventMeta.php:130
+msgid "External event URL"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:108
+msgid "Optional information or registration page using HTTP(S)."
+msgstr ""
+
+#: src/Admin/EventSaveController.php:189
+msgid "The event details were not saved because they need attention."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:68
+msgid "Event settings"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:69
+msgid "Settings"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:115
+msgid "Event archive"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:122
+msgid "Archive slug"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:131
+#: src/Elementor/EventListWidget.php:84
+msgid "Events per page"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:140
+msgid "Default period"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:160
+msgid "Display"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:167
+msgid "Event structured data"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:187
+msgid "Data ownership"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:194
+msgid "Delete plugin data"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:216
+msgid "You are not allowed to manage event settings."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:238
+msgid "Configure the native event archive. Visitors can still switch between upcoming, past and all events with the archive filter."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:249
+msgid "One URL segment without slashes. This also changes individual event URLs; existing links are not redirected. Saving a changed slug rebuilds WordPress permalink rules once."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:260
+msgid "Between 1 and 50 public events per archive page."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:272
+msgid "Upcoming and active events"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:273
+msgid "All events, including past events"
+msgstr ""
+
+#. translators: %s: configured event archive path.
+#: src/Admin/EventSettingsPage.php:300
+#, php-format
+msgid "The event archive and an existing WordPress page both use /%s/. Keep this slug to use the native event archive at that address, or change it below so the page can use the address."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:312
+msgid "Control plugin output that may overlap with your theme or SEO plugin."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:321
+msgid "Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:336
+msgid "Output JSON-LD on individual public event pages."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:339
+msgid "Disable this when another SEO plugin already outputs Event structured data."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:354
+msgid "Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:357
+msgid "This cannot be undone."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:358
+msgid " Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:372
+msgid "Maintenance"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:373
+msgid "Use these tools only to repair existing event data. They do not change event content or presentation settings."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:377
+msgid "Repair event capabilities"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:379
+msgid "Restores the documented event permissions for administrators and editors without changing other role permissions."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:392
+msgid "Continue rebuilding date indexes"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:393
+msgid "Rebuild event date indexes"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:400
+msgid "Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:457
+msgid "Event capabilities were restored for administrators and editors."
+msgstr ""
+
+#. translators: 1: processed events, 2: changed indexes, 3: invalid skipped events, 4: failed writes.
+#: src/Admin/EventSettingsPage.php:468
+#, php-format
+msgid "Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:23
+msgid "Enter a start date before publishing this event."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:24
+msgid "Enter a start time, or mark the event as all day."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:25
+msgid "The event start date or time is invalid."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:26
+msgid "The event end date or time is invalid."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:27
+msgid "Enter both an end date and end time, or leave both empty."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:28
+msgid "The event range is invalid. The end must not be before the start, and local times must exist unambiguously in the event timezone."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:29
+msgid "The event timezone is invalid. Check the WordPress site timezone."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:30
+msgid "Select a valid event status."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:31
+msgid "Enter a valid HTTP or HTTPS location URL."
+msgstr ""
+
+#: src/Application/EventValidationMessages.php:32
+msgid "Enter a valid HTTP or HTTPS event URL."
+msgstr ""
+
+#: src/Content/EventMeta.php:58
+msgid "Event start"
+msgstr ""
+
+#: src/Content/EventMeta.php:59
+msgid "Canonical local event start."
+msgstr ""
+
+#: src/Content/EventMeta.php:66
+msgid "Event end"
+msgstr ""
+
+#: src/Content/EventMeta.php:67
+msgid "Canonical local event end."
+msgstr ""
+
+#: src/Content/EventMeta.php:74
+msgid "Event start UTC index"
+msgstr ""
+
+#: src/Content/EventMeta.php:75
+msgid "Internal UTC start timestamp used for sorting."
+msgstr ""
+
+#: src/Content/EventMeta.php:82
+msgid "Event end UTC index"
+msgstr ""
+
+#: src/Content/EventMeta.php:83
+msgid "Internal inclusive UTC end timestamp used for overlap queries."
+msgstr ""
+
+#: src/Content/EventMeta.php:91
+msgid "Whether the event uses inclusive dates without visible times."
+msgstr ""
+
+#: src/Content/EventMeta.php:98
+msgid "Event timezone"
+msgstr ""
+
+#: src/Content/EventMeta.php:99
+msgid "IANA timezone or WordPress fixed UTC offset used when the event was saved."
+msgstr ""
+
+#: src/Content/EventMeta.php:107
+msgid "Event location or venue name."
+msgstr ""
+
+#: src/Content/EventMeta.php:115
+msgid "Readable event address."
+msgstr ""
+
+#: src/Content/EventMeta.php:123
+msgid "Optional external HTTP(S) route or location URL."
+msgstr ""
+
+#: src/Content/EventMeta.php:131
+msgid "Optional external HTTP(S) information or registration URL."
+msgstr ""
+
+#: src/Content/EventMeta.php:139
+msgid "Scheduled, cancelled or postponed; separate from publication status."
+msgstr ""
+
+#: src/Content/EventMeta.php:151
+msgid "Copied event dates need review"
+msgstr ""
+
+#: src/Content/EventMeta.php:152
+msgid "Internal editor flag set when event dates were duplicated."
+msgstr ""
+
+#: src/Content/EventPostType.php:45
+msgid "Events with a date, status and optional location."
+msgstr ""
+
+#: src/Content/EventPostType.php:92
+#: src/Content/EventPostType.php:94
+#: src/Elementor/EventListWidget.php:52
+#: src/Frontend/EventArchiveRenderer.php:53
+msgid "Events"
+msgstr ""
+
+#: src/Content/EventPostType.php:93
+#: src/Content/EventPostType.php:95
+#: src/Elementor/EventDetailsWidget.php:87
+msgid "Event"
+msgstr ""
+
+#: src/Content/EventPostType.php:96
+msgid "Add New"
+msgstr ""
+
+#: src/Content/EventPostType.php:97
+msgid "Add New Event"
+msgstr ""
+
+#: src/Content/EventPostType.php:98
+msgid "New Event"
+msgstr ""
+
+#: src/Content/EventPostType.php:99
+msgid "Edit Event"
+msgstr ""
+
+#: src/Content/EventPostType.php:100
+msgid "View Event"
+msgstr ""
+
+#: src/Content/EventPostType.php:101
+msgid "All Events"
+msgstr ""
+
+#: src/Content/EventPostType.php:102
+msgid "Search Events"
+msgstr ""
+
+#: src/Content/EventPostType.php:103
+msgid "Parent Events:"
+msgstr ""
+
+#: src/Content/EventPostType.php:104
+msgid "No events found."
+msgstr ""
+
+#: src/Content/EventPostType.php:105
+msgid "No events found in Trash."
+msgstr ""
+
+#: src/Content/EventPostType.php:106
+msgid "Event Archives"
+msgstr ""
+
+#: src/Content/EventPostType.php:107
+msgid "Event Attributes"
+msgstr ""
+
+#: src/Content/EventPostType.php:108
+msgid "Insert into event"
+msgstr ""
+
+#: src/Content/EventPostType.php:109
+msgid "Uploaded to this event"
+msgstr ""
+
+#: src/Content/EventPostType.php:110
+msgid "Event image"
+msgstr ""
+
+#: src/Content/EventPostType.php:111
+msgid "Set event image"
+msgstr ""
+
+#: src/Content/EventPostType.php:112
+msgid "Remove event image"
+msgstr ""
+
+#: src/Content/EventPostType.php:113
+msgid "Use as event image"
+msgstr ""
+
+#: src/Content/EventPostType.php:114
+msgid "Filter events list"
+msgstr ""
+
+#: src/Content/EventPostType.php:115
+msgid "Events list navigation"
+msgstr ""
+
+#: src/Content/EventPostType.php:116
+msgid "Events list"
+msgstr ""
+
+#: src/Content/EventPostType.php:117
+msgid "Event published."
+msgstr ""
+
+#: src/Content/EventPostType.php:118
+msgid "Event published privately."
+msgstr ""
+
+#: src/Content/EventPostType.php:119
+msgid "Event reverted to draft."
+msgstr ""
+
+#: src/Content/EventPostType.php:120
+msgid "Event scheduled."
+msgstr ""
+
+#: src/Content/EventPostType.php:121
+msgid "Event updated."
+msgstr ""
+
+#: src/Content/EventPostType.php:122
+msgid "Event Link"
+msgstr ""
+
+#: src/Content/EventPostType.php:123
+msgid "A link to an event."
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:40
+msgid "Hierarchical categories used only by events."
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:67
+msgid "Non-hierarchical tags used only by events."
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:93
+msgid "Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:94
+msgid "Search Event Categories"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:95
+msgid "All Event Categories"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:96
+msgid "Parent Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:97
+msgid "Parent Event Category:"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:98
+msgid "Edit Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:99
+msgid "View Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:100
+msgid "Update Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:101
+msgid "Add New Event Category"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:102
+msgid "New Event Category Name"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:103
+msgid "No event categories found."
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:104
+msgid "No event categories"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:105
+msgid "Back to event categories"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:117
+#: src/Content/EventTaxonomies.php:133
+msgid "Event Tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:118
+msgid "Event Tag"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:119
+msgid "Search Event Tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:120
+msgid "Popular Event Tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:121
+msgid "All Event Tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:122
+msgid "Edit Event Tag"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:123
+msgid "View Event Tag"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:124
+msgid "Update Event Tag"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:125
+msgid "Add New Event Tag"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:126
+msgid "New Event Tag Name"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:127
+msgid "Separate event tags with commas"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:128
+msgid "Add or remove event tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:129
+msgid "Choose from the most used event tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:130
+msgid "No event tags found."
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:131
+msgid "No event tags"
+msgstr ""
+
+#: src/Content/EventTaxonomies.php:132
+msgid "Back to event tags"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:30
+msgid "Event Calendar"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:61
+#: src/Elementor/EventCalendarWidget.php:146
+msgid "Calendar"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:68
+msgid "Desktop view"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:77
+msgid "Mobile view"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:86
+#: src/Elementor/EventListWidget.php:111
+#: src/Frontend/EventArchiveControls.php:45
+#: src/Shortcode/CalendarControls.php:47
+#: src/Shortcode/EventListControls.php:53
+msgid "Categories"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:96
+#: src/Elementor/EventListWidget.php:121
+#: src/Frontend/EventArchiveControls.php:49
+#: src/Shortcode/CalendarControls.php:51
+#: src/Shortcode/EventListControls.php:57
+msgid "Tags"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:106
+#: src/Elementor/EventListWidget.php:157
+msgid "Show filters"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:136
+#: src/Shortcode/CalendarShortcode.php:125
+msgid "Month"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:137
+#: src/Elementor/EventListWidget.php:64
+#: src/Shortcode/CalendarShortcode.php:126
+msgid "List"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:153
+#: src/Elementor/EventDetailsWidget.php:141
+#: src/Elementor/EventListWidget.php:193
+msgid "Text color"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:161
+msgid "Accent color"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:169
+msgid "Accent text color"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:177
+#: src/Elementor/EventDetailsWidget.php:157
+msgid "Border color"
+msgstr ""
+
+#: src/Elementor/EventDetailsWidget.php:65
+msgid "Event Details"
+msgstr ""
+
+#: src/Elementor/EventDetailsWidget.php:94
+msgid "Preview event"
+msgstr ""
+
+#: src/Elementor/EventDetailsWidget.php:95
+msgid "Optional. On an event template, leave empty to use the current event."
+msgstr ""
+
+#: src/Elementor/EventDetailsWidget.php:119
+msgid "Select a public event for this preview, or use the widget in an Event template."
+msgstr ""
+
+#: src/Elementor/EventDetailsWidget.php:149
+#: src/Elementor/EventListWidget.php:201
+msgid "Secondary text color"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:30
+msgid "Event List / Grid"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:59
+msgid "Layout"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:63
+msgid "Grid"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:71
+#: src/Frontend/EventArchiveControls.php:36
+#: src/Shortcode/EventListControls.php:44
+msgid "Period"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:75
+msgid "Upcoming"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:76
+#: src/Frontend/EventArchiveControls.php:39
+#: src/Shortcode/EventListControls.php:47
+msgid "Past"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:77
+#: src/Frontend/EventArchiveControls.php:40
+#: src/Shortcode/EventListControls.php:48
+msgid "All"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:95
+msgid "Columns"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:158
+msgid "Show pagination"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:159
+msgid "Show image"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:160
+msgid "Show excerpt"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:161
+msgid "Show location"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:186
+msgid "Event cards"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:209
+msgid "Spacing"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:236
+msgid "Border radius"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:259
+msgid "Button text color"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:269
+msgid "Button background color"
+msgstr ""
+
+#: src/Frontend/BlockTemplates.php:57
+msgid "Single Event"
+msgstr ""
+
+#: src/Frontend/BlockTemplates.php:58
+msgid "Native single-event fallback from WP Simple Events."
+msgstr ""
+
+#: src/Frontend/BlockTemplates.php:68
+msgid "Event Archive"
+msgstr ""
+
+#: src/Frontend/BlockTemplates.php:69
+msgid "Native event-archive fallback from WP Simple Events."
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:34
+#: src/Shortcode/EventListControls.php:40
+msgid "Filter events"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:53
+#: src/Shortcode/CalendarControls.php:55
+#: src/Shortcode/EventListControls.php:61
+msgid "Apply filters"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:82
+#: src/Shortcode/CalendarShortcode.php:122
+#: src/Shortcode/EventListControls.php:91
+msgid "Previous"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:83
+#: src/Shortcode/CalendarShortcode.php:123
+#: src/Shortcode/EventListControls.php:92
+msgid "Next"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:92
+#: src/Shortcode/EventListControls.php:101
+msgid "Events pagination"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:133
+#: src/Shortcode/CalendarControls.php:108
+#: src/Shortcode/EventListControls.php:142
+msgid "Select one or more."
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:83
+#: src/Frontend/EventRenderer.php:59
+msgid "Untitled event"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:147
+msgid "Date and time:"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:159
+#: src/Frontend/EventRenderer.php:92
+msgid "Location:"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:167
+msgid "View location"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:193
+msgid "More event information"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:214
+msgid "Categories:"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:220
+msgid "Tags:"
+msgstr ""
+
+#: src/Frontend/EventListRenderer.php:56
+#: src/Shortcode/CalendarShortcode.php:128
+msgid "No events match your selection."
+msgstr ""
+
+#: src/Lifecycle/Activator.php:26
+msgid "WP Simple Events must currently be activated separately on each site in a multisite network."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:86
+msgid "The requested calendar period is invalid or exceeds four hundred days."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:121
+msgid "Inclusive ISO 8601 calendar start with timezone."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:127
+msgid "Exclusive ISO 8601 calendar end with timezone."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:133
+msgid "Comma-separated event category slugs."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:140
+msgid "Comma-separated event tag slugs."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:147
+msgid "Current result page."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:154
+msgid "Maximum events per result page."
+msgstr ""
+
+#: src/Rest/EventRestController.php:104
+msgid "The event could not be saved because its details are invalid."
+msgstr ""
+
+#: src/Shortcode/CalendarControls.php:43
+msgid "Filter calendar"
+msgstr ""
+
+#: src/Shortcode/CalendarControls.php:57
+#: src/Shortcode/CalendarShortcode.php:84
+msgid "Reset filters"
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:82
+msgid "Events calendar"
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:87
+msgid "Upcoming events"
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:124
+msgid "Today"
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:127
+msgid "Loading events…"
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:129
+msgid "1 event loaded."
+msgstr ""
+
+#. Translators: %d is the number of loaded events.
+#: src/Shortcode/CalendarShortcode.php:131
+#, php-format
+msgid "%d events loaded."
+msgstr ""
+
+#: src/Shortcode/CalendarShortcode.php:132
+msgid "The calendar could not be loaded. The event list remains available below."
+msgstr ""
+
+#. Translators: %d is the maximum number of events currently shown.
+#: src/Shortcode/CalendarShortcode.php:134
+#, php-format
+msgid "Only the first %d events are shown. Narrow the calendar period or filters."
+msgstr ""
+
+#. Translators: %d is the number of additional events on a calendar day.
+#: src/Shortcode/CalendarShortcode.php:136
+#, php-format
+msgid "%d more"
+msgstr ""
+
+#. Translators: %s is the translated name of the calendar view.
+#: src/Shortcode/CalendarShortcode.php:138
+#, php-format
+msgid "%s view"
+msgstr ""
+
+#: wp-simple-events.php:40
+msgid "WP Simple Events could not start because its required files are missing. Install a complete release package."
+msgstr ""
