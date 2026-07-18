@@ -26,7 +26,7 @@ The Playground smoke journey covers activation, creating, editing, publishing, f
 
 A separate Playwright suite exercises browser-only layout, responsive, keyboard and interaction behaviour against a disposable Playground site. It uses the exact pinned `@playwright/test` development dependency and a separately installed Chromium build. Assertions target stable component semantics and geometry rather than theme-wide screenshots. Playwright and its browser binaries are never shipped in the plugin archive.
 
-The initial calendar lifecycle contract is protected by six deterministic journeys: first-load/reload/resized seven-column geometry and controls, the configured mobile list view, a delayed REST feed, a failed feed with retained fallback, two independent calendar instances and recovery after an initially hidden host becomes visible. The disposable Playground runtime and database are removed before and after every suite to prevent state leakage between runs.
+The calendar contract is protected by seven deterministic journeys: first-load/reload/resized seven-column geometry and controls, the configured mobile list view, readable normal/hover/pressed/focus/selected/disabled button states including forced-colors, a delayed REST feed, a failed feed with retained fallback, two independent calendar instances and recovery after an initially hidden host becomes visible. The disposable Playground runtime and database are removed before and after every suite to prevent state leakage between runs.
 
 ### Manual exploratory QA
 

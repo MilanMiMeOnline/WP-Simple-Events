@@ -231,8 +231,8 @@
 }
 
 .wpse-calendar {
-	--wpse-calendar-accent: currentcolor;
-	--wpse-calendar-on-accent: Canvas;
+	--wpse-calendar-accent: var(--wp--preset--color--contrast, CanvasText);
+	--wpse-calendar-on-accent: var(--wp--preset--color--base, Canvas);
 	--wpse-calendar-today: rgb(128 128 128 / 15%);
 	--wpse-calendar-hover: rgb(128 128 128 / 15%);
 
@@ -284,21 +284,37 @@
 }
 
 .wpse-calendar .fc .fc-button {
-	border-color: currentcolor;
-	background: transparent;
+	border-color: var(--wpse-calendar-accent);
+	background-color: transparent;
 	color: inherit;
 	font: inherit;
 }
 
-.wpse-calendar .fc .fc-button:hover,
-.wpse-calendar .fc .fc-button:focus-visible,
+.wpse-calendar .fc .fc-button-primary:focus {
+	box-shadow: none;
+}
+
+.wpse-calendar .fc .fc-button-primary:disabled {
+	border-color: var(--wpse-calendar-accent);
+	background-color: transparent;
+	color: inherit;
+	opacity: 0.55;
+}
+
+.wpse-calendar .fc .fc-button-primary:not(:disabled):hover,
+.wpse-calendar .fc .fc-button-primary:not(:disabled):focus-visible,
+.wpse-calendar .fc .fc-button-primary:not(:disabled):active,
 .wpse-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
-	border-color: currentcolor;
-	background: currentcolor;
+	border-color: var(--wpse-calendar-accent);
+	background-color: var(--wpse-calendar-accent);
 	color: var(--wpse-calendar-on-accent);
 }
 
-.wpse-calendar .fc .fc-button:focus-visible,
+.wpse-calendar .fc .fc-button:focus-visible {
+	outline: 2px solid var(--wpse-calendar-accent);
+	outline-offset: 2px;
+}
+
 .wpse-calendar .fc a:focus-visible,
 .wpse-calendar-filters select:focus-visible,
 .wpse-calendar-filters button:focus-visible,

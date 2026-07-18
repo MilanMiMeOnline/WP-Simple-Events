@@ -183,6 +183,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'calendar_typography',
+				'label'    => esc_html__( 'Calendar typography', 'wp-simple-events' ),
 				'selector' => '{{WRAPPER}} .wpse-calendar',
 			)
 		);
@@ -190,6 +191,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
+				'label'    => esc_html__( 'Button typography', 'wp-simple-events' ),
 				'selector' => '{{WRAPPER}} .wpse-calendar button',
 			)
 		);

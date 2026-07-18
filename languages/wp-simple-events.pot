@@ -822,6 +822,14 @@ msgstr ""
 msgid "Border color"
 msgstr ""
 
+#: src/Elementor/EventCalendarWidget.php:186
+msgid "Calendar typography"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:194
+msgid "Button typography"
+msgstr ""
+
 #: src/Elementor/EventDetailsWidget.php:65
 msgid "Event Details"
 msgstr ""

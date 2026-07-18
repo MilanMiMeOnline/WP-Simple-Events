@@ -72,6 +72,19 @@ final class ElementorWidgetsTest extends TestCase {
 	}
 
 	/**
+	 * Calendar and button typography controls have distinct editor labels.
+	 */
+	public function test_calendar_typography_controls_have_clear_labels(): void {
+		$widget = new EventCalendarWidget();
+		$method = new ReflectionMethod( $widget, 'register_controls' );
+		$method->invoke( $widget );
+		$controls = $widget->wpse_test_group_controls();
+
+		self::assertSame( 'Calendar typography', $controls['calendar_typography']['args']['label'] ?? null );
+		self::assertSame( 'Button typography', $controls['button_typography']['args']['label'] ?? null );
+	}
+
+	/**
 	 * A selected preview event reaches the shared details renderer.
 	 */
 	public function test_details_widget_delegates_a_valid_preview_event(): void {

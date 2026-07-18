@@ -71,3 +71,5 @@ All notable changes to WP Simple Events are documented here.
 - Preserve WordPress' complete password form while continuing to hide protected event metadata.
 - Scope visible single-event ordering assertions to the article so matching JSON-LD values in the document head do not create false failures.
 - Render the calendar against a measurable canvas on first load and recalculate its geometry when an initially hidden integration container becomes visible.
+- Keep calendar toolbar labels readable across normal, hover, keyboard-focus, pressed, selected and disabled states, including custom Elementor accent colors.
+- Give the two Event Calendar typography controls distinct translated labels without changing their saved Elementor identifiers.

@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0 and WP1.1 completed 2026-07-18; WP1.2 is next\
+**Status:** WP0, WP1.1 and WP1.2 completed 2026-07-18; WP1.3 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -101,6 +101,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 4. Verify light/dark defaults and custom Elementor colors in editor and frontend.
 5. Rename the two Elementor typography controls so their targets are unambiguous; keep stable saved control identifiers.
 6. Check default-state contrast and forced-colors/high-contrast behaviour in addition to ordinary visual states.
+
+**Completion note (2026-07-18):** Toolbar buttons now use deterministic accent/on-accent variables for hover, focus-visible, pressed and selected states; disabled controls remain readable and keyboard focus has an independent outline. Default colors use WordPress block-theme contrast/base presets with adaptive system-color fallbacks. The original custom-Elementor-color failure, normal/hover/pressed/focus/selected/disabled states and forced-colors behaviour are protected by browser assertions. Stable Elementor control IDs were retained while their labels became `Calendar typography` and `Button typography`.
 
 ### WP1.3 Filter empty state and clarity — BL-002
 

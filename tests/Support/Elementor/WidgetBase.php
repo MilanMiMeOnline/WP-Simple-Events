@@ -21,6 +21,13 @@ abstract class Widget_Base {
 	private array $wpse_test_settings = array();
 
 	/**
+	 * Recorded group controls for registration assertions.
+	 *
+	 * @var array<string, array<string, mixed>>
+	 */
+	private array $wpse_test_group_controls = array();
+
+	/**
 	 * Mirror Elementor's untyped constructor for extension compatibility.
 	 *
 	 * @param mixed $data Widget data.
@@ -46,6 +53,15 @@ abstract class Widget_Base {
 	 */
 	final public function wpse_set_test_settings( array $settings ): void {
 		$this->wpse_test_settings = $settings;
+	}
+
+	/**
+	 * Return group controls recorded during a registration test.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	final public function wpse_test_group_controls(): array {
+		return $this->wpse_test_group_controls;
 	}
 
 	/**
@@ -88,6 +104,14 @@ abstract class Widget_Base {
 	 * @param array<string, mixed> $args       Group arguments.
 	 * @param array<string, mixed> $options    Registration options.
 	 */
-	public function add_group_control( string $group_name, array $args = array(), array $options = array() ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Test recorder is added only when needed.
+	public function add_group_control( string $group_name, array $args = array(), array $options = array() ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Test double mirrors Elementor's complete signature.
+		$name = $args['name'] ?? '';
+
+		if ( is_string( $name ) && '' !== $name ) {
+			$this->wpse_test_group_controls[ $name ] = array(
+				'group_name' => $group_name,
+				'args'       => $args,
+			);
+		}
 	}
 }

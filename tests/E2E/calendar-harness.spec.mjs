@@ -67,6 +67,26 @@ const gotoFixturePage = async ( page, slug ) => {
 	expect( response.status() ).toBeLessThan( 400 );
 };
 
+/**
+ * Return the stable visual state properties used by calendar button assertions.
+ *
+ * @param {import('@playwright/test').Locator} button Calendar button.
+ * @return {Promise<Object>} Computed state properties.
+ */
+const buttonState = ( button ) => button.evaluate( ( element ) => {
+	const style = window.getComputedStyle( element );
+
+	return {
+		backgroundColor: style.backgroundColor,
+		borderColor: style.borderColor,
+		color: style.color,
+		opacity: style.opacity,
+		outlineColor: style.outlineColor,
+		outlineStyle: style.outlineStyle,
+		outlineWidth: style.outlineWidth,
+	};
+} );
+
 test( 'loads the progressively enhanced public calendar', async ( { page } ) => {
 	const pageErrors = [];
 
@@ -86,6 +106,11 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	await expect( canvas.getByRole( 'button', { name: 'Next' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+	const activeState = await buttonState(
+		canvas.getByRole( 'button', { name: 'Month' } ),
+	);
+
+	expect( activeState.backgroundColor ).not.toBe( activeState.color );
 	await expectHealthyMonthGrid( canvas );
 
 	await page.reload();
@@ -114,6 +139,72 @@ test( 'uses the configured mobile list view on its first render', async ( {
 	await expect( canvas.locator( '.fc-listMonth-view' ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+} );
+
+test( 'keeps calendar button states readable with custom accent colors', async ( {
+	page,
+} ) => {
+	await gotoFixturePage( page, 'wpse-e2e-calendar' );
+
+	const calendar = page.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'No events match your selection.',
+	);
+	await calendar.evaluate( ( element ) => {
+		element.style.color = 'rgb(75 80 90)';
+		element.style.setProperty( '--wpse-calendar-accent', 'rgb(18 112 165)' );
+		element.style.setProperty( '--wpse-calendar-on-accent', 'rgb(255 255 255)' );
+	} );
+
+	const next = canvas.getByRole( 'button', { name: 'Next' } );
+	const month = canvas.getByRole( 'button', { name: 'Month' } );
+	const today = canvas.getByRole( 'button', { name: 'Today' } );
+
+	await expect( next ).toBeVisible();
+	expect( await buttonState( next ) ).toMatchObject( {
+		backgroundColor: 'rgba(0, 0, 0, 0)',
+		color: 'rgb(75, 80, 90)',
+	} );
+
+	await next.hover();
+	expect( await buttonState( next ) ).toMatchObject( {
+		backgroundColor: 'rgb(18, 112, 165)',
+		borderColor: 'rgb(18, 112, 165)',
+		color: 'rgb(255, 255, 255)',
+	} );
+	await page.mouse.down();
+	expect( await buttonState( next ) ).toMatchObject( {
+		backgroundColor: 'rgb(18, 112, 165)',
+		color: 'rgb(255, 255, 255)',
+	} );
+	await page.mouse.move( 0, 0 );
+	await page.mouse.up();
+
+	await page.keyboard.press( 'Tab' );
+	await next.focus();
+	expect( await buttonState( next ) ).toMatchObject( {
+		backgroundColor: 'rgb(18, 112, 165)',
+		color: 'rgb(255, 255, 255)',
+		outlineColor: 'rgb(18, 112, 165)',
+		outlineStyle: 'solid',
+		outlineWidth: '2px',
+	} );
+
+	expect( await buttonState( month ) ).toMatchObject( {
+		backgroundColor: 'rgb(18, 112, 165)',
+		color: 'rgb(255, 255, 255)',
+	} );
+	await expect( today ).toBeDisabled();
+	expect( Number.parseFloat( ( await buttonState( today ) ).opacity ) ).toBeLessThan( 1 );
+
+	await page.emulateMedia( { forcedColors: 'active' } );
+	const forcedActiveState = await buttonState( month );
+
+	expect( forcedActiveState.backgroundColor ).not.toBe(
+		forcedActiveState.color,
+	);
 } );
 
 test( 'keeps a measurable grid after a delayed event feed', async ( {

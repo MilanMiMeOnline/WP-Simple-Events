@@ -5,7 +5,7 @@ This backlog records findings from manual acceptance testing. The tester closed 
 ## WPSE-BL-001 — Calendar buttons lose readable state styling
 
 - **Type:** Bug — visual styling, accessibility and Elementor integration
-- **State:** Triaged; not scheduled
+- **State:** Resolved in development on 2026-07-18; pending release qualification
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Native calendar shortcode, Elementor Event Calendar widget, keyboard and pointer interaction
@@ -46,6 +46,12 @@ This appears to be a plugin CSS/control-mapping defect rather than a theme-only 
 - `codex-clipboard-eb8990cb-20bf-41e7-b76a-2f4849163c29.png` — hovered view button loses its label.
 - `codex-clipboard-8958396c-8796-4b9d-9c11-d6016ee1e9fc.png` — selected month/list state with custom Elementor colors.
 - `codex-clipboard-629ff457-3180-4212-be94-6a2d192e8e7c.png` — Elementor calendar color and typography controls.
+- `tests/E2E/calendar-harness.spec.mjs` — computed-style regressions for normal, hover, pressed, focus-visible, selected, disabled and forced-colors states with custom accent colors.
+- `tests/Unit/ElementorWidgetsTest.php` — stable group-control registration with distinct typography labels.
+
+### Resolution
+
+The state rules no longer use `background: currentcolor`. Hover, focus-visible, pressed and selected buttons now use `--wpse-calendar-accent` for their border/background and `--wpse-calendar-on-accent` for text. Defaults follow WordPress contrast/base presets when present and otherwise use adaptive `CanvasText`/`Canvas` system colors. Disabled buttons keep their normal foreground/background contract with reduced opacity, and keyboard focus receives a separate accent outline. Elementor's saved `calendar_typography` and `button_typography` identifiers remain unchanged; only their translated panel labels were clarified.
 
 ### Planning note
 
