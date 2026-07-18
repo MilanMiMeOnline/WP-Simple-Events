@@ -1,0 +1,99 @@
+import { spawn } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve as resolvePath } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const projectDirectory = resolvePath(
+	dirname( fileURLToPath( import.meta.url ) ),
+	'../../..',
+);
+const baseConfiguration = JSON.parse(
+	readFileSync( join( projectDirectory, '.wp-env.json' ), 'utf8' ),
+);
+const requestedCore = process.env.WPSE_E2E_CORE ?? baseConfiguration.core;
+const identifier = ( requestedCore ?? 'configured' ).replace(
+	/[^a-z0-9.-]+/gi,
+	'-',
+);
+const wpEnvHome = join( tmpdir(), `wp-simple-events-e2e-wp-env-${ identifier }` );
+const configDirectory = join(
+	tmpdir(),
+	`wp-simple-events-e2e-config-${ identifier }`,
+);
+const pluginPath = resolvePath(
+	projectDirectory,
+	process.env.WPSE_E2E_PLUGIN_PATH ?? '.release/wp-simple-events',
+);
+const fixturePluginPath = join(
+	projectDirectory,
+	'tests/E2E/fixtures/wpse-e2e-fixtures',
+);
+const wpEnvExecutable = join( projectDirectory, 'node_modules/.bin/wp-env' );
+
+/**
+ * Run wp-env in the isolated browser-test environment.
+ *
+ * @param {Array<string>} argumentsList        wp-env arguments.
+ * @param {Object}        options              Failure and output behaviour.
+ * @param {boolean}       options.allowFailure Accept a non-zero exit status.
+ * @param {boolean}       options.silent       Suppress child-process output.
+ * @return {Promise<void>}
+ */
+function runWpEnv(
+	argumentsList,
+	{ allowFailure = false, silent = false } = {},
+) {
+	return new Promise( ( resolve, reject ) => {
+		const child = spawn( wpEnvExecutable, argumentsList, {
+			cwd: configDirectory,
+			env: {
+				...process.env,
+				WP_ENV_HOME: wpEnvHome,
+				...( requestedCore ? { WP_ENV_CORE: requestedCore } : {} ),
+			},
+			stdio: silent ? 'ignore' : 'inherit',
+		} );
+
+		child.once( 'error', reject );
+		child.once( 'exit', ( code ) => {
+			if ( code === 0 || allowFailure ) {
+				resolve();
+				return;
+			}
+
+			reject( new Error( `wp-env exited with code ${ code }.` ) );
+		} );
+	} );
+}
+
+/** Prepare and start a clean WordPress browser-test site. */
+export async function startE2EEnvironment() {
+	const configuration = structuredClone( baseConfiguration );
+
+	configuration.plugins = [ pluginPath, fixturePluginPath ];
+
+	await rm( configDirectory, { force: true, recursive: true } );
+	await mkdir( configDirectory, { recursive: true } );
+	await writeFile(
+		join( configDirectory, '.wp-env.json' ),
+		`${ JSON.stringify( configuration, null, 2 ) }\n`,
+		'utf8',
+	);
+
+	await runWpEnv( [ 'stop' ], { allowFailure: true, silent: true } );
+	await runWpEnv( [ 'destroy', '--force' ], {
+		allowFailure: true,
+		silent: true,
+	} );
+	await rm( wpEnvHome, { force: true, recursive: true } );
+	await runWpEnv( [ 'start', '--runtime=playground' ] );
+}
+
+/** Stop and remove the isolated browser-test site. */
+export async function stopE2EEnvironment() {
+	await runWpEnv( [ 'stop' ], { allowFailure: true, silent: true } );
+	await rm( configDirectory, { force: true, recursive: true } );
+	await rm( wpEnvHome, { force: true, recursive: true } );
+}

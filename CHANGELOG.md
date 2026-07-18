@@ -63,9 +63,11 @@ All notable changes to WP Simple Events are documented here.
 - A deterministic WordPress translation template and CI freshness check using WP-CLI 2.12.0.
 - Packaged WordPress Playground smoke coverage on WordPress 6.9 and 7.0.1 with PHP 8.3.
 - Strict official WordPress Plugin Check and release-artifact upload jobs against the exact staging package.
+- Pinned Playwright browser regression coverage against a disposable WordPress Playground site, including reusable calendar boundary fixtures and CI execution.
 
 ### Fixed
 
 - Save Event details atomically with Gutenberg publication instead of racing the legacy metabox request, and surface the first actionable validation message in the editor.
 - Preserve WordPress' complete password form while continuing to hide protected event metadata.
 - Scope visible single-event ordering assertions to the article so matching JSON-LD values in the document head do not create false failures.
+- Render the calendar against a measurable canvas on first load and recalculate its geometry when an initially hidden integration container becomes visible.

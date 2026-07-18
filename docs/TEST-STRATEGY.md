@@ -24,6 +24,10 @@ These verify registrations, capabilities, metadata authorization, persistence, q
 
 The Playground smoke journey covers activation, creating, editing, publishing, filtering and opening events; admin actions and forged nonces; REST validation and visibility; settings and maintenance; list, details and calendar shortcodes; archive routing; structured data; and graceful native behaviour without Elementor or WooCommerce. Release candidates run the packaged staging directory on WordPress 6.9 and 7.0.1 with PHP 8.3.
 
+A separate Playwright suite exercises browser-only layout, responsive, keyboard and interaction behaviour against a disposable Playground site. It uses the exact pinned `@playwright/test` development dependency and a separately installed Chromium build. Assertions target stable component semantics and geometry rather than theme-wide screenshots. Playwright and its browser binaries are never shipped in the plugin archive.
+
+The initial calendar lifecycle contract is protected by six deterministic journeys: first-load/reload/resized seven-column geometry and controls, the configured mobile list view, a delayed REST feed, a failed feed with retained fallback, two independent calendar instances and recovery after an initially hidden host becomes visible. The disposable Playground runtime and database are removed before and after every suite to prevent state leakage between runs.
+
 ### Manual exploratory QA
 
 Manual checks focus on UX, theme compatibility, responsive layouts, localization, accessibility and failure recovery. They complement rather than replace automated regression coverage.

@@ -364,6 +364,7 @@ try {
 		allowFailure: true,
 		silent: true,
 	} );
+	await rm( smokeWpEnvHome, { force: true, recursive: true } );
 	await runWpEnv( [ 'start', '--runtime=playground' ] );
 	await fetchHealthyPage( 'http://localhost:8888/' );
 	const session = await authenticateAdministrator();
@@ -1346,4 +1347,5 @@ try {
 } finally {
 	await runWpEnv( [ 'stop' ], { allowFailure: true } );
 	await rm( smokeConfigDirectory, { force: true, recursive: true } );
+	await rm( smokeWpEnvHome, { force: true, recursive: true } );
 }

@@ -129,6 +129,43 @@ const clearFilters = ( root ) => {
 };
 
 /**
+ * Repair FullCalendar after a hidden or resized integration container becomes
+ * measurable. This covers tabs, accordions and editor preview containers.
+ *
+ * @param {HTMLElement} canvas   Calendar canvas.
+ * @param {Calendar}    calendar FullCalendar instance.
+ */
+const observeCalendarSize = ( canvas, calendar ) => {
+	if ( typeof window.ResizeObserver !== 'function' ) {
+		return;
+	}
+
+	let previousWidth = canvas.getBoundingClientRect().width;
+	const observer = new window.ResizeObserver( ( entries ) => {
+		if ( ! canvas.isConnected ) {
+			observer.disconnect();
+			return;
+		}
+
+		const width = entries[ 0 ]?.contentRect.width ?? 0;
+
+		if ( width <= 0 || Math.abs( width - previousWidth ) < 1 ) {
+			previousWidth = width;
+			return;
+		}
+
+		previousWidth = width;
+		window.requestAnimationFrame( () => {
+			if ( canvas.isConnected && canvas.getBoundingClientRect().width > 0 ) {
+				calendar.updateSize();
+			}
+		} );
+	} );
+
+	observer.observe( canvas );
+};
+
+/**
  * Progressively enhance one server-rendered calendar instance.
  *
  * @param {HTMLElement} root Calendar root.
@@ -199,7 +236,6 @@ const initializeCalendar = ( root ) => {
 				lastResult = await fetchEvents( config, root, range );
 				success( lastResult.events );
 				root.classList.add( 'is-ready' );
-				canvas.hidden = false;
 			} catch ( error ) {
 				loadFailed = true;
 				status.textContent = config.strings.loadError;
@@ -267,7 +303,11 @@ const initializeCalendar = ( root ) => {
 		},
 	} );
 
+	// FullCalendar must be measurable during its initial render. The server-side
+	// fallback remains available until the first event request succeeds.
+	canvas.hidden = false;
 	calendar.render();
+	observeCalendarSize( canvas, calendar );
 
 	if ( filters ) {
 		filters.addEventListener( 'submit', ( event ) => {

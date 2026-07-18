@@ -239,7 +239,7 @@ Keep this item scoped to one customizable label for the existing single external
 ## WPSE-BL-006 — Calendar is malformed on initial page load until its view changes
 
 - **Type:** Bug — frontend initialization, responsive layout and Elementor integration
-- **State:** Triaged; not scheduled
+- **State:** Resolved in development on 2026-07-18; pending release qualification
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Calendar shortcode and Elementor Event Calendar widget on initial frontend load
@@ -277,6 +277,11 @@ This is a strong code-supported cause rather than an Elementor styling issue, al
 ### Evidence
 
 - `codex-clipboard-4ff0e9f0-f43a-41c2-9ee2-799172f23fae.png` — malformed first-load month grid that is corrected by changing the view.
+- `tests/E2E/calendar-harness.spec.mjs` — browser regressions for initial geometry, delayed/error feeds, multiple instances and hidden-container recovery.
+
+### Resolution
+
+The calendar canvas is revealed before FullCalendar performs its first measurement. The no-JavaScript/server fallback remains available until the initial feed succeeds and is restored if that feed fails. A component-scoped `ResizeObserver` calls FullCalendar's size update when a calendar host changes from zero to a measurable width, covering delayed Elementor/tab/accordion layouts without adding an Elementor runtime dependency.
 
 ### Planning note
 

@@ -50,11 +50,13 @@ npm run lint:js
 npm run lint:css
 npm run build
 npm run audit:production
+npm run test:e2e:install
+npm run test:e2e
 npm run i18n:check
 npm run test:release
 ```
 
-`composer test:integration` delegates to the real WordPress Playground smoke journey described above; it is deliberately not an empty or WordPress-stubbed PHPUnit suite. `composer qa` and `npm run qa` are the normal pre-handoff gates. `npm run test:release` additionally proves archive contents, shipped PHP syntax, the production autoloader, checksum integrity and byte-for-byte reproducibility. The official Plugin Check result is produced in CI against the same staging directory.
+`composer test:integration` delegates to the real WordPress Playground smoke journey described above; it is deliberately not an empty or WordPress-stubbed PHPUnit suite. `npm run test:e2e:install` installs the pinned Chromium build once, and `npm run test:e2e` first builds the exact staging package and then runs isolated browser regressions against that package in another disposable Playground site. `WPSE_E2E_CORE` and `WPSE_E2E_PLUGIN_PATH` are optional overrides for compatibility work. `composer qa` and `npm run qa` are the normal pre-handoff gates. `npm run test:release` additionally proves archive contents, shipped PHP syntax, the production autoloader, checksum integrity and byte-for-byte reproducibility. The official Plugin Check result is produced in CI against the same staging directory.
 
 ## Change workflow
 

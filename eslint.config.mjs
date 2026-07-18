@@ -17,10 +17,11 @@ export default [
     },
   },
   {
-    files: [ 'tools/**/*.mjs' ],
+    files: [ 'tools/**/*.mjs', 'tests/E2E/**/*.mjs', 'playwright.config.mjs' ],
     languageOptions: {
       globals: {
         fetch: 'readonly',
+        process: 'readonly',
       },
     },
     // Node validates built-in module specifiers when this smoke-test tool runs.

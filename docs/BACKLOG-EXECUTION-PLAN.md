@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** Approved; WP0 started 2026-07-18\
+**Status:** WP0 and WP1.1 completed 2026-07-18; WP1.2 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -78,6 +78,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 - Test data setup and cleanup are isolated and reproducible.
 - The dependency decision is recorded in `docs/DECISIONS.md` if a new test dependency is introduced.
 
+**Completion note (2026-07-18):** The pinned Playwright/Chromium harness now runs against a disposable WordPress Playground site with reusable calendar boundary fixtures. It covers initial/reloaded/resized geometry, the mobile initial view, a delayed feed, feed failure, multiple instances and initially hidden integration containers. Browser tests are registered in CI and `npm run test:e2e` is a required calendar gate.
+
 ## 5. WP1 — Calendar lifecycle and controls
 
 ### WP1.1 First-render lifecycle — BL-006
@@ -88,6 +90,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 4. Test slow, immediate, empty and failed feed responses.
 5. Test viewport resize, mobile initial view, multiple calendars and containers that become visible after page load.
 6. Introduce `ResizeObserver` or an Elementor-specific visibility hook only if the simpler lifecycle correction cannot pass the hidden-container cases; disconnect observers on teardown.
+
+**Completion note (2026-07-18):** FullCalendar's canvas is now made measurable before its first render while the accessible server fallback remains present until data loads. A scoped `ResizeObserver` requests a size update when a previously hidden or resized host becomes measurable. The six browser lifecycle regressions pass without whole-page snapshot coupling.
 
 ### WP1.2 Button states — BL-001
 
@@ -269,11 +273,12 @@ composer qa
 npm run qa
 composer test:integration
 npm run test:smoke
+npm run test:e2e
 ```
 
 Run the new browser suite for calendar and component changes. For a release candidate also run translation generation/checks, deterministic release build/verification, supported WordPress smoke matrix, production dependency audits and official WordPress Plugin Check against the packaged staging directory.
 
-Once WP0 registers its stable browser command, add that command to the required per-package gates rather than treating browser QA as an informal manual step.
+The browser suite is a required gate for calendar and component work rather than an informal manual step.
 
 No installable ZIP is handed off until the package, not only the working tree, passes the complete release qualification.
 

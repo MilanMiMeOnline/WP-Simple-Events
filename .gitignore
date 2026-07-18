@@ -6,7 +6,9 @@
 /coverage/
 /dist/
 /node_modules/
+/playwright-report/
 /.release/
+/test-results/
 /vendor/
 *.log
 .DS_Store

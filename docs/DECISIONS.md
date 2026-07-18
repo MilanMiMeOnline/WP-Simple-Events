@@ -157,3 +157,11 @@ The generated translation template is a required runtime artifact under `/langua
 The Event details interface remains a native metabox so it also works in the classic editor and does not introduce a custom React editor dependency. Gutenberg, however, saves the post through REST while legacy metaboxes use a separate request whose ordering is not atomic. Every editable Event detail is therefore mirrored into the block editor's registered, typed post-meta state through WordPress' `core/editor` data store. Gutenberg then submits the post status and event record together; the shared REST validator remains the authoritative security and correctness boundary.
 
 The mirror preserves registered metadata owned by other plugins and never exposes or writes the internal UTC indexes. Classic-editor POST handling retains its existing nonce, capability and validation path. If the Gutenberg data store is unavailable, the editor script degrades to the classic time-field behaviour without attempting a separate custom request.
+
+## ADR-022: Browser regressions use pinned Playwright against WordPress Playground
+
+**Status:** Accepted
+
+Layout and interaction failures cannot be proved by PHP stubs or HTTP-only smoke tests. The development toolchain therefore pins `@playwright/test` 1.61.1 under its Apache-2.0 licence and installs only its Chromium browser for the initial critical calendar journeys. Tests run against an isolated WordPress Playground site with bounded fixtures and assert component semantics, visibility, interaction and stable geometry rather than full-theme pixel snapshots.
+
+Playwright remains development-only, loads no visitor asset and is excluded from production releases with all other `node_modules`. CI installs the matching browser explicitly. Removal requires replacing its browser-level calendar, responsive and accessibility evidence; HTTP smoke and manual screenshots alone are not equivalent coverage.
