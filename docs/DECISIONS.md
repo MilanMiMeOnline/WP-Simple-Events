@@ -185,3 +185,13 @@ Public calendars place every event on its canonical saved local date and clock t
 The FullCalendar-facing `start` and `end` values are therefore floating local ISO values. Timed feed records also retain the captured timezone and offset-bearing machine instants as explicit presentation metadata; all-day records remain date-only with an exclusive end. Storage and structured-data machine values are unchanged.
 
 Calendar requests are day-aligned wall-time windows with an explicit client offset for unambiguous transport. Their bounded overlap query uses canonical `_wpse_start_local` and `_wpse_end_local` values rather than one browser-relative UTC window. This keeps events at the supported `-14:00` and `+14:00` extremes in the correct visible month, preserves truthful WordPress pagination and avoids an unbounded post-filtering pass. UTC indexes remain authoritative for chronological lists, active/past classification and machine-instant output.
+
+## ADR-025: Calendar time notation inherits WordPress
+
+**Status:** Accepted
+
+Public event details, cards and calendars inherit the site's WordPress `time_format`. WP Simple Events does not introduce a duplicate global setting in this package. A future atomic date/time component may offer an explicit presentation-only override, but inheritance remains the default.
+
+Server-rendered output continues through localized `wp_date()`. A bounded adapter maps only the relevant unescaped PHP tokens (`H`, `G`, `h`, `g`, `i`, `a` and `A`) to FullCalendar options. Explicit `h23` and `h12` hour cycles prevent the visitor locale from silently changing WordPress' 12/24-hour choice; uppercase meridiems remain browser-localized rather than being hard-coded in English. Invalid formats fall back to zero-padded `H:i` presentation.
+
+This is presentation only. Canonical local values, derived UTC indexes, captured timezones, feed boundaries and structured-data machine values do not change. Native HTML time controls may look platform-specific, but their submitted value remains canonical 24-hour input; the editor explains that distinction.

@@ -10,6 +10,8 @@
     "SCRIPT_DEBUG": true,
     "WP_DEBUG": true,
     "WP_DEBUG_LOG": true,
-    "WP_ENVIRONMENT_TYPE": "local"
+    "WP_ENVIRONMENT_TYPE": "local",
+    "WP_HOME": "http://localhost:8888",
+    "WP_SITEURL": "http://localhost:8888"
   }
 }

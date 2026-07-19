@@ -54,10 +54,20 @@ const isEventFeed = ( url ) =>
  * @param {string}                          slug Fixture page slug.
  */
 const gotoFixturePage = async ( page, slug ) => {
-	let response = await page.goto( `/?pagename=${ slug }` );
+	let response;
 
-	if ( response?.status() === 404 ) {
-		response = await page.reload();
+	for ( let attempt = 0; attempt < 3; attempt += 1 ) {
+		response = attempt === 0
+			? await page.goto( `/?pagename=${ slug }` )
+			: await page.reload();
+
+		if (
+			response &&
+			response.status() < 400 &&
+			( await page.locator( '[data-wpse-calendar]' ).count() ) > 0
+		) {
+			break;
+		}
 	}
 
 	if ( ! response ) {
@@ -65,6 +75,7 @@ const gotoFixturePage = async ( page, slug ) => {
 	}
 
 	expect( response.status() ).toBeLessThan( 400 );
+	expect( await page.locator( '[data-wpse-calendar]' ).count() ).toBeGreaterThan( 0 );
 };
 
 /**
@@ -340,6 +351,68 @@ for ( const timezoneId of [ 'Europe/Brussels', 'America/Los_Angeles' ] ) {
 		} finally {
 			await context.close();
 		}
+	} );
+}
+
+for ( const scenario of [
+	{
+		slug: 'wpse-e2e-calendar-time-24',
+		contract: {
+			hour: '2-digit',
+			hourCycle: 'h23',
+			meridiem: false,
+			minute: '2-digit',
+		},
+		midnight: '00:30 - 01:30',
+		name: '24-hour',
+		noon: '12:05 - 22:05',
+	},
+	{
+		slug: 'wpse-e2e-calendar-time-12',
+		contract: {
+			hour: 'numeric',
+			hourCycle: 'h12',
+			meridiem: 'lowercase',
+			minute: '2-digit',
+		},
+		midnight: '12:30 am - 1:30 am',
+		name: '12-hour',
+		noon: '12:05 pm - 10:05 pm',
+	},
+] ) {
+	test( `inherits WordPress ${ scenario.name } time presentation`, async ( {
+		page,
+	} ) => {
+		await gotoFixturePage( page, scenario.slug );
+
+		const calendar = page.locator( '[data-wpse-calendar]' );
+		const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+		const configuration = await calendar.evaluate( ( element ) =>
+			JSON.parse( element.dataset.wpseCalendar ),
+		);
+
+		expect( configuration.eventTimeFormat ).toEqual( scenario.contract );
+		await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+			'No events match your selection.',
+		);
+		await canvas.getByRole( 'button', { name: 'Next' } ).click();
+		await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+			'3 events loaded.',
+		);
+
+		const midnightEvent = canvas.locator( '.fc-list-event' ).filter( {
+			hasText: 'E2E positive-offset event',
+		} );
+		const noonEvent = canvas.locator( '.fc-list-event' ).filter( {
+			hasText: 'E2E UTC same-day event',
+		} );
+
+		await expect( midnightEvent.locator( '.fc-list-event-time' ) ).toHaveText(
+			scenario.midnight,
+		);
+		await expect( noonEvent.locator( '.fc-list-event-time' ) ).toHaveText(
+			scenario.noon,
+		);
 	} );
 }
 

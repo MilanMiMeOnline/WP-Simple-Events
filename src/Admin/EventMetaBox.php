@@ -95,6 +95,9 @@ final class EventMetaBox {
 				);
 				?>
 			</p>
+			<p class="description wpse-event-fields-time-format">
+				<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'wp-simple-events' ); ?>
+			</p>
 
 			<div class="wpse-event-fields-grid">
 				<?php $this->render_input( 'venue', 'venue', __( 'Venue', 'wp-simple-events' ), 'text', $input->venue, null, 200 ); ?>

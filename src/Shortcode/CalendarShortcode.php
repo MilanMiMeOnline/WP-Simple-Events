@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
+use MiMe\WPSimpleEvents\Calendar\CalendarTimeFormat;
 use MiMe\WPSimpleEvents\Domain\CalendarView;
 use MiMe\WPSimpleEvents\Domain\EventListView;
 use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
@@ -25,16 +26,18 @@ final class CalendarShortcode implements ShortcodeRenderer {
 	/**
 	 * Create the shortcode adapter.
 	 *
-	 * @param EventRepository   $events   Public event repository.
-	 * @param EventListRenderer $renderer Shared no-JavaScript list renderer.
-	 * @param CalendarControls  $controls Accessible filter controls.
-	 * @param CalendarAssets    $assets   On-demand calendar assets.
+	 * @param EventRepository    $events   Public event repository.
+	 * @param EventListRenderer  $renderer Shared no-JavaScript list renderer.
+	 * @param CalendarControls   $controls Accessible filter controls.
+	 * @param CalendarAssets     $assets   On-demand calendar assets.
+	 * @param CalendarTimeFormat $time_format WordPress-to-calendar time presentation.
 	 */
 	public function __construct(
 		private readonly EventRepository $events = new EventRepository(),
 		private readonly EventListRenderer $renderer = new EventListRenderer(),
 		private readonly CalendarControls $controls = new CalendarControls(),
-		private readonly CalendarAssets $assets = new CalendarAssets()
+		private readonly CalendarAssets $assets = new CalendarAssets(),
+		private readonly CalendarTimeFormat $time_format = new CalendarTimeFormat()
 	) {}
 
 	/**
@@ -106,21 +109,24 @@ final class CalendarShortcode implements ShortcodeRenderer {
 	private function configuration( CalendarShortcodeAttributes $attributes, string $prefix ): array {
 		$start_of_week = get_option( 'start_of_week', 1 );
 		$start_of_week = is_numeric( $start_of_week ) ? min( 6, max( 0, (int) $start_of_week ) ) : 1;
+		$time_format   = get_option( 'time_format', 'H:i' );
+		$time_format   = is_string( $time_format ) && '' !== $time_format ? $time_format : 'H:i';
 
 		return array(
-			'endpoint'       => rest_url( 'wpse/v1/events' ),
-			'initialView'    => $this->fullcalendar_view( $attributes->initial_view ),
-			'mobileView'     => $this->fullcalendar_view( $attributes->mobile_view ),
-			'locale'         => strtolower( str_replace( '_', '-', determine_locale() ) ),
-			'firstDay'       => $start_of_week,
-			'perPage'        => 100,
-			'maxPages'       => 5,
-			'categoryKey'    => $prefix . '_category',
-			'tagKey'         => $prefix . '_tag',
-			'categories'     => $attributes->category_slugs,
-			'tags'           => $attributes->tag_slugs,
-			'filtersEnabled' => $attributes->filters,
-			'strings'        => array(
+			'endpoint'        => rest_url( 'wpse/v1/events' ),
+			'initialView'     => $this->fullcalendar_view( $attributes->initial_view ),
+			'mobileView'      => $this->fullcalendar_view( $attributes->mobile_view ),
+			'locale'          => strtolower( str_replace( '_', '-', determine_locale() ) ),
+			'firstDay'        => $start_of_week,
+			'eventTimeFormat' => $this->time_format->fullcalendar( $time_format ),
+			'perPage'         => 100,
+			'maxPages'        => 5,
+			'categoryKey'     => $prefix . '_category',
+			'tagKey'          => $prefix . '_tag',
+			'categories'      => $attributes->category_slugs,
+			'tags'            => $attributes->tag_slugs,
+			'filtersEnabled'  => $attributes->filters,
+			'strings'         => array(
 				'previous'   => __( 'Previous', 'wp-simple-events' ),
 				'next'       => __( 'Next', 'wp-simple-events' ),
 				'today'      => __( 'Today', 'wp-simple-events' ),

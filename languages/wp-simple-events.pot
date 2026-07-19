@@ -99,7 +99,7 @@ msgid "Event Categories"
 msgstr ""
 
 #: src/Admin/EventListTable.php:60
-#: src/Admin/EventMetaBox.php:227
+#: src/Admin/EventMetaBox.php:230
 #: src/Content/EventMeta.php:138
 msgid "Event status"
 msgstr ""
@@ -117,23 +117,23 @@ msgid "No"
 msgstr ""
 
 #: src/Admin/EventListTable.php:103
-#: src/Admin/EventMetaBox.php:221
+#: src/Admin/EventMetaBox.php:224
 msgid "Scheduled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:104
-#: src/Admin/EventMetaBox.php:222
+#: src/Admin/EventMetaBox.php:225
 #: src/Frontend/EventDetailsRenderer.php:130
 #: src/Frontend/EventRenderer.php:119
-#: src/Shortcode/CalendarShortcode.php:141
+#: src/Shortcode/CalendarShortcode.php:147
 msgid "Cancelled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:105
-#: src/Admin/EventMetaBox.php:223
+#: src/Admin/EventMetaBox.php:226
 #: src/Frontend/EventDetailsRenderer.php:131
 #: src/Frontend/EventRenderer.php:120
-#: src/Shortcode/CalendarShortcode.php:142
+#: src/Shortcode/CalendarShortcode.php:148
 msgid "Postponed"
 msgstr ""
 
@@ -219,31 +219,35 @@ msgstr ""
 msgid "Timezone: %s. Existing events keep their saved timezone."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:100
+#: src/Admin/EventMetaBox.php:99
+msgid "Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:103
 #: src/Content/EventMeta.php:106
 msgid "Venue"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:104
+#: src/Admin/EventMetaBox.php:107
 #: src/Content/EventMeta.php:114
 msgid "Address"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:107
+#: src/Admin/EventMetaBox.php:110
 #: src/Content/EventMeta.php:122
 msgid "Location URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:107
+#: src/Admin/EventMetaBox.php:110
 msgid "Optional route or location page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:108
+#: src/Admin/EventMetaBox.php:111
 #: src/Content/EventMeta.php:130
 msgid "External event URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:108
+#: src/Admin/EventMetaBox.php:111
 msgid "Optional information or registration page using HTTP(S)."
 msgstr ""
 
@@ -796,13 +800,13 @@ msgid "Let visitors filter by available event categories and tags. Hidden when n
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:139
-#: src/Shortcode/CalendarShortcode.php:127
+#: src/Shortcode/CalendarShortcode.php:133
 msgid "Month"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:140
 #: src/Elementor/EventListWidget.php:64
-#: src/Shortcode/CalendarShortcode.php:128
+#: src/Shortcode/CalendarShortcode.php:134
 msgid "List"
 msgstr ""
 
@@ -974,13 +978,13 @@ msgid "Apply filters"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:82
-#: src/Shortcode/CalendarShortcode.php:124
+#: src/Shortcode/CalendarShortcode.php:130
 #: src/Shortcode/EventListControls.php:91
 msgid "Previous"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:83
-#: src/Shortcode/CalendarShortcode.php:125
+#: src/Shortcode/CalendarShortcode.php:131
 #: src/Shortcode/EventListControls.php:92
 msgid "Next"
 msgstr ""
@@ -1027,7 +1031,7 @@ msgid "Tags:"
 msgstr ""
 
 #: src/Frontend/EventListRenderer.php:56
-#: src/Shortcode/CalendarShortcode.php:130
+#: src/Shortcode/CalendarShortcode.php:136
 msgid "No events match your selection."
 msgstr ""
 
@@ -1072,54 +1076,54 @@ msgid "Filter calendar"
 msgstr ""
 
 #: src/Shortcode/CalendarControls.php:62
-#: src/Shortcode/CalendarShortcode.php:84
+#: src/Shortcode/CalendarShortcode.php:87
 msgid "Reset filters"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:82
+#: src/Shortcode/CalendarShortcode.php:85
 msgid "Events calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:87
+#: src/Shortcode/CalendarShortcode.php:90
 msgid "Upcoming events"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:126
+#: src/Shortcode/CalendarShortcode.php:132
 msgid "Today"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:129
+#: src/Shortcode/CalendarShortcode.php:135
 msgid "Loading events…"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:131
+#: src/Shortcode/CalendarShortcode.php:137
 msgid "1 event loaded."
 msgstr ""
 
 #. Translators: %d is the number of loaded events.
-#: src/Shortcode/CalendarShortcode.php:133
+#: src/Shortcode/CalendarShortcode.php:139
 #, php-format
 msgid "%d events loaded."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:134
+#: src/Shortcode/CalendarShortcode.php:140
 msgid "The calendar could not be loaded. The event list remains available below."
 msgstr ""
 
 #. Translators: %d is the maximum number of events currently shown.
-#: src/Shortcode/CalendarShortcode.php:136
+#: src/Shortcode/CalendarShortcode.php:142
 #, php-format
 msgid "Only the first %d events are shown. Narrow the calendar period or filters."
 msgstr ""
 
 #. Translators: %d is the number of additional events on a calendar day.
-#: src/Shortcode/CalendarShortcode.php:138
+#: src/Shortcode/CalendarShortcode.php:144
 #, php-format
 msgid "%d more"
 msgstr ""
 
 #. Translators: %s is the translated name of the calendar view.
-#: src/Shortcode/CalendarShortcode.php:140
+#: src/Shortcode/CalendarShortcode.php:146
 #, php-format
 msgid "%s view"
 msgstr ""

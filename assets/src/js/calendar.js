@@ -205,6 +205,7 @@ const initializeCalendar = ( root ) => {
 		initialView,
 		firstDay: config.firstDay,
 		timeZone: 'local',
+		eventTimeFormat: config.eventTimeFormat,
 		height: 'auto',
 		headerToolbar: {
 			start: 'prev,next today',

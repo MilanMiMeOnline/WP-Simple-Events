@@ -162,7 +162,7 @@ ADR-024 makes captured event wall time authoritative for calendar placement. The
 ## WPSE-BL-004 — Make 12/24-hour time presentation consistent and configurable
 
 - **Type:** Improvement — formatting, localisation and configuration
-- **State:** Triaged; not scheduled
+- **State:** Resolved in WP2.2 on 2026-07-19
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Single-event details, event lists/cards, calendar month/list views, Elementor widgets and editor guidance
@@ -203,6 +203,12 @@ Time presentation must remain separate from time storage and time-zone conversio
 ### Planning note
 
 Prefer WordPress General Settings as the zero-configuration default. During backlog planning, decide whether a global plugin override is genuinely needed and whether Elementor needs a per-widget override. Avoid adding a redundant setting unless users need different notation from the rest of the site.
+
+### Resolution
+
+Calendar configuration now derives a bounded FullCalendar format from the active WordPress `time_format`. Explicit `h12`/`h23` hour cycles prevent the browser locale from overriding WordPress' 12/24-hour choice; `H/h` preserve leading-zero intent, `G/g` remain unpadded, and `a/A` retain the intended meridiem mode while allowing localized browser output. Server-rendered details and cards continue to use `wp_date()`.
+
+The editor now explains that its native time control can look different per browser while the saved canonical value remains equivalent. No duplicate global plugin setting and no Elementor override were added. Unit coverage protects PHP escaping and malformed fallbacks; real WordPress/Chromium journeys verify midnight and noon output for `H:i` and `g:i a` without changing feed dates or event placement.
 
 ## WPSE-BL-005 — Editable external-link label per event
 

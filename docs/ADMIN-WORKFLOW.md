@@ -1,5 +1,11 @@
 # Event administration workflow
 
+## Event time controls
+
+The native date and time fields save canonical local values. Browsers and operating systems may present an HTML time picker differently, including a 12-hour or 24-hour control, but that appearance does not change the saved value.
+
+Public event details, cards and calendars follow **Settings → General → Time Format**. WP Simple Events does not add a second global time-format setting. Changing the WordPress format changes presentation only; it does not alter event dates, durations, captured timezones, query indexes or machine-readable output.
+
 ## Events overview
 
 The native **Events → All Events** table keeps WordPress' selection and title columns and adds:

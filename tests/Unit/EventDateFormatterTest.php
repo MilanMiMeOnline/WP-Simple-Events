@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use DateTimeImmutable;
 use DateTimeZone;
 use MiMe\WPSimpleEvents\Frontend\EventDateFormatter;
+use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -20,6 +21,11 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( EventDateFormatter::class )]
 final class EventDateFormatterTest extends TestCase {
+	/** Reset mutable WordPress options between formatting scenarios. */
+	protected function setUp(): void {
+		WordPressState::reset();
+	}
+
 	/**
 	 * A same-day timed event uses one date and a time range.
 	 */
@@ -76,6 +82,38 @@ final class EventDateFormatterTest extends TestCase {
 		);
 
 		self::assertSame( '2026-07-20, 23:00 – 2026-07-21, 01:00', $presentation?->label );
+	}
+
+	/**
+	 * WordPress's 24-hour setting keeps midnight, noon and leading zeros explicit.
+	 */
+	public function test_uses_wordpress_24_hour_format_at_midnight_and_noon(): void {
+		WordPressState::set_option( 'time_format', 'H:i' );
+
+		$presentation = ( new EventDateFormatter() )->format(
+			$this->timestamp( '2026-07-20 00:05:00', 'Europe/Brussels' ),
+			$this->timestamp( '2026-07-20 12:05:00', 'Europe/Brussels' ),
+			false,
+			'Europe/Brussels'
+		);
+
+		self::assertSame( '2026-07-20, 00:05 – 12:05', $presentation?->label );
+	}
+
+	/**
+	 * WordPress's 12-hour setting distinguishes midnight and noon with meridiems.
+	 */
+	public function test_uses_wordpress_12_hour_format_at_midnight_and_noon(): void {
+		WordPressState::set_option( 'time_format', 'g:i a' );
+
+		$presentation = ( new EventDateFormatter() )->format(
+			$this->timestamp( '2026-07-20 00:05:00', 'Europe/Brussels' ),
+			$this->timestamp( '2026-07-20 12:05:00', 'Europe/Brussels' ),
+			false,
+			'Europe/Brussels'
+		);
+
+		self::assertSame( '2026-07-20, 12:05 am – 12:05 pm', $presentation?->label );
 	}
 
 	/**

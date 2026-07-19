@@ -42,6 +42,16 @@ function wpse_e2e_seed_calendar_page(): void {
 		'Calendar Wall-time Harness',
 		'[wpse_calendar category="wpse-e2e-wall-time" filters="false"]'
 	);
+	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-time-24',
+		'Calendar 24-hour Harness',
+		'[wpse_e2e_calendar_time]'
+	);
+	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-time-12',
+		'Calendar 12-hour Harness',
+		'[wpse_e2e_calendar_time]'
+	);
 
 	if ( ! current_user_can( MiMe\WPSimpleEvents\Access\EventCapabilities::EDIT_POSTS ) ) {
 		return;
@@ -177,6 +187,38 @@ function wpse_e2e_render_hidden_calendar(): string {
 }
 
 /**
+ * Render the shared calendar under one temporary WordPress time format.
+ *
+ * @param string $time_format WordPress/PHP time format.
+ * @return string Test-only calendar markup.
+ */
+function wpse_e2e_render_calendar_with_time_format( string $time_format ): string {
+	$callback = static fn (): string => $time_format;
+
+	add_filter( 'pre_option_time_format', $callback );
+
+	try {
+		return do_shortcode( '[wpse_calendar category=wpse-e2e-wall-time filters=false initial_view=list]' );
+	} finally {
+		remove_filter( 'pre_option_time_format', $callback );
+	}
+}
+
+/** Render the calendar with the format selected by its fixture page. */
+function wpse_e2e_render_calendar_time(): string {
+	$slug        = get_post_field( 'post_name', get_queried_object_id() );
+	$time_format = is_string( $slug ) && str_ends_with( $slug, '-12' ) ? 'g:i a' : 'H:i';
+
+	return wpse_e2e_render_calendar_with_time_format( $time_format );
+}
+
+/** Register test-only shortcodes before fixture pages are seeded. */
+function wpse_e2e_register_shortcodes(): void {
+	add_shortcode( 'wpse_e2e_hidden_calendar', 'wpse_e2e_render_hidden_calendar' );
+	add_shortcode( 'wpse_e2e_calendar_time', 'wpse_e2e_render_calendar_time' );
+}
+
+/**
  * Create or find one deterministic test taxonomy term.
  *
  * @param string $taxonomy Taxonomy name.
@@ -299,5 +341,5 @@ function wpse_e2e_insert_page( string $slug, string $title, string $content ): v
 }
 
 register_activation_hook( __FILE__, 'wpse_e2e_seed_calendar_page' );
-add_shortcode( 'wpse_e2e_hidden_calendar', 'wpse_e2e_render_hidden_calendar' );
+add_action( 'init', 'wpse_e2e_register_shortcodes', 5 );
 add_action( 'init', 'wpse_e2e_seed_calendar_page', 20 );

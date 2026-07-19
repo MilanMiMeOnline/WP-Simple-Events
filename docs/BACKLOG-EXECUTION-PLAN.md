@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0, WP1 and WP2.1 completed 2026-07-19; WP2.2 is next\
+**Status:** WP0, WP1 and WP2 completed 2026-07-19; WP3.1 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -142,6 +142,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 3. Keep server-rendered details/cards on WordPress formatting and verify noon, midnight, leading zeros and translated meridiems.
 4. Document that native browser time inputs may look platform-specific while saving the same canonical 24-hour value.
 5. Leave global/per-widget overrides out of this package; the future atomic date/time component may add an explicit override without changing the default.
+
+**Completion note (2026-07-19):** A bounded PHP-format adapter now derives FullCalendar's hour cycle, leading-zero, minute and meridiem presentation from WordPress `time_format`. The calendar uses explicit `h23`/`h12` cycles, while server details/cards continue through localized `wp_date()`. Native editor help explains browser-specific time controls and canonical storage. Unit and Chromium regressions cover escaped tokens, safe fallbacks, midnight, noon, leading zeros and `H:i`/`g:i a`; no duplicate plugin or widget setting was added.
 
 ### Exit criteria
 

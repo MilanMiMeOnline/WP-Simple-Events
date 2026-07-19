@@ -204,6 +204,7 @@ Omdat geregistreerde meta via REST beschikbaar moet zijn, declareert het CPT ond
 5. Bij opslaan worden UTC-timestamps afgeleid.
 6. Chronologische sortering en actief/verleden-vergelijking gebruiken UTC; kalenderplaatsing gebruikt de canonieke lokale waarden zodat een browserzone het event niet naar een andere dag verplaatst.
 7. Weergave gebruikt `wp_date()` in de opgeslagen eventtijdzone.
+8. Zichtbare eventuren volgen standaard WordPress `time_format`; de kalender ontvangt daarvan een beperkte 12/24-uurs-presentatieconfiguratie. Dit wijzigt nooit de canonieke opslag of machinewaarden.
 
 Hierdoor blijft het eventuur stabiel wanneer de algemene sitetijdzone later wordt aangepast. WordPress biedt `wp_timezone()` en gelokaliseerde formatting via `wp_date()`. [WordPress `wp_date`](https://developer.wordpress.org/reference/functions/wp_date/)
 
@@ -261,6 +262,7 @@ Gebruik een native WordPress-metabox “Eventgegevens”. Dat blijft licht en we
 - Einddatum.
 - Eindtijd.
 - Niet-bewerkbare indicatie van de tijdzone.
+- Uitleg dat de native tijdkiezer er per browser anders kan uitzien, terwijl dezelfde canonieke 24-uurswaarde wordt opgeslagen en publieke output WordPress `time_format` volgt.
 
 #### Locatie
 
@@ -610,6 +612,7 @@ AND event.start_local < requested.endExclusiveLocalDate
 - klik opent de eventpagina;
 - geen popup vereist;
 - no-JavaScriptfallback met eventlijst.
+- eventuren volgen dezelfde 12/24-uursnotatie als de WordPress-instelling, zonder aparte plugininstelling.
 
 ### 10.4 Toegankelijkheid
 
@@ -1287,6 +1290,7 @@ De plugin is pas klaar wanneer:
 - kalenderitems de correcte eventpagina openen;
 - alle front-endweergaven mobiel bruikbaar zijn;
 - de kalender met toetsenbord te bedienen is;
+- kalender, eventdetails en eventkaarten dezelfde 12/24-uurskeuze van WordPress volgen;
 - zonder JavaScript een bruikbare eventlijst zichtbaar blijft;
 - Elementor-widgets dezelfde query- en renderlogica gebruiken als shortcodes;
 - CSS en JavaScript alleen worden geladen waar nodig;
