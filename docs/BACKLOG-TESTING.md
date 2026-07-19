@@ -109,7 +109,7 @@ The existing enabled default was retained for backward compatibility. The render
 ## WPSE-BL-003 — Same-day timed event incorrectly spans two calendar days
 
 - **Type:** Bug — date/time correctness and time-zone handling
-- **State:** Triaged; not scheduled
+- **State:** Resolved in WP2.1 on 2026-07-19
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Calendar month/list views, calendar event feed and consistency with the single-event page
@@ -154,6 +154,10 @@ This explains the screenshots and the discrepancy with the server-rendered singl
 ### Planning note
 
 Define whether public calendars preserve each event's saved wall-clock date/time or convert all events to one documented site zone. The current product behaviour implies preservation of the event's captured zone. Choose the FullCalendar feed and client configuration only after that contract is explicit; a blanket `UTC` setting is not automatically safe for mixed event zones.
+
+### Resolution
+
+ADR-024 makes captured event wall time authoritative for calendar placement. The feed supplies floating canonical local values to FullCalendar, while timed records retain their stored timezone and offset-bearing start/end instants as explicit metadata. Calendar windows are validated as bounded, day-aligned wall-time ranges and queried against canonical local metadata, preventing browser offsets and mixed event zones from omitting or moving records. Browser regressions reproduce the original `+00:00` case in `Europe/Brussels`, repeat it in `America/Los_Angeles`, cover `±14:00` boundary fixtures and compare month, list and native single-event output.
 
 ## WPSE-BL-004 — Make 12/24-hour time presentation consistent and configurable
 

@@ -26,8 +26,11 @@ final class CalendarFeedControllerTest extends TestCase {
 
 		self::assertTrue( $controller->valid_iso_boundary( '2026-07-01T00:00:00+02:00' ) );
 		self::assertTrue( $controller->valid_iso_boundary( '2026-07-01T00:00:00Z' ) );
+		self::assertTrue( $controller->valid_iso_boundary( '2026-07-01T00:00:00-14:00' ) );
 		self::assertFalse( $controller->valid_iso_boundary( '2026-07-01' ) );
 		self::assertFalse( $controller->valid_iso_boundary( '2026-07-01T00:00:00' ) );
+		self::assertFalse( $controller->valid_iso_boundary( '2026-07-01T12:00:00+02:00' ) );
+		self::assertFalse( $controller->valid_iso_boundary( '2026-07-01T00:00:00+14:01' ) );
 		self::assertFalse( $controller->valid_iso_boundary( array() ) );
 	}
 

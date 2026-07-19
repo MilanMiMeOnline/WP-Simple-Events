@@ -25,7 +25,7 @@ final class EventWindowCriteriaTest extends TestCase {
 	 */
 	public function test_supported_boundaries_are_accepted(): void {
 		$criteria = new EventWindowCriteria(
-			new CalendarWindow( 1_800_000_000, 1_800_086_400 ),
+			new CalendarWindow( '2027-01-15', '2027-01-16' ),
 			EventWindowCriteria::MAX_LIMIT,
 			EventWindowCriteria::MAX_PAGE,
 			array( 'workshops' ),
@@ -44,7 +44,7 @@ final class EventWindowCriteriaTest extends TestCase {
 		$this->expectException( InvalidArgumentException::class );
 
 		new EventWindowCriteria(
-			new CalendarWindow( 1_800_000_000, 1_800_086_400 ),
+			new CalendarWindow( '2027-01-15', '2027-01-16' ),
 			EventWindowCriteria::MAX_LIMIT + 1,
 			1,
 			array(),
@@ -59,7 +59,7 @@ final class EventWindowCriteriaTest extends TestCase {
 		$this->expectException( InvalidArgumentException::class );
 
 		new EventWindowCriteria(
-			new CalendarWindow( 1_800_000_000, 1_800_086_400 ),
+			new CalendarWindow( '2027-01-15', '2027-01-16' ),
 			50,
 			1,
 			array_fill( 0, 21, 'term' ),

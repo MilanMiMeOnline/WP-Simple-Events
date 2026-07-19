@@ -118,13 +118,13 @@ final readonly class CalendarFeedController {
 	private function collection_parameters(): array {
 		return array(
 			'start'      => array(
-				'description'       => __( 'Inclusive ISO 8601 calendar start with timezone.', 'wp-simple-events' ),
+				'description'       => __( 'Inclusive local-midnight ISO 8601 calendar start with timezone.', 'wp-simple-events' ),
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => array( $this, 'valid_iso_boundary' ),
 			),
 			'end'        => array(
-				'description'       => __( 'Exclusive ISO 8601 calendar end with timezone.', 'wp-simple-events' ),
+				'description'       => __( 'Exclusive local-midnight ISO 8601 calendar end with timezone.', 'wp-simple-events' ),
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => array( $this, 'valid_iso_boundary' ),
@@ -171,7 +171,7 @@ final readonly class CalendarFeedController {
 		}
 
 		try {
-			CalendarWindow::timestamp_from_iso( $value );
+			CalendarWindow::local_date_from_iso( $value );
 		} catch ( InvalidArgumentException ) {
 			return false;
 		}

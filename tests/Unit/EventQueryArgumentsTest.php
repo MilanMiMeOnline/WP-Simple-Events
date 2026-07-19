@@ -96,7 +96,7 @@ final class EventQueryArgumentsTest extends TestCase {
 	public function test_window_query_uses_the_documented_overlap_boundaries(): void {
 		$arguments = ( new EventQueryArguments() )->build_window(
 			new EventWindowCriteria(
-				new CalendarWindow( 1_800_000_000, 1_802_678_400 ),
+				new CalendarWindow( '2027-01-15', '2027-02-15' ),
 				100,
 				2,
 				array( 'workshops' ),
@@ -107,12 +107,16 @@ final class EventQueryArgumentsTest extends TestCase {
 		self::assertSame( 'publish', $arguments['post_status'] );
 		self::assertFalse( $arguments['has_password'] );
 		self::assertSame( 'AND', $arguments['meta_query']['relation'] );
-		self::assertSame( EventMeta::END_UTC, $arguments['meta_query'][0]['key'] );
+		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_key'] );
+		self::assertSame( 'meta_value', $arguments['orderby'] );
+		self::assertSame( EventMeta::END_LOCAL, $arguments['meta_query'][0]['key'] );
 		self::assertSame( '>=', $arguments['meta_query'][0]['compare'] );
-		self::assertSame( 1_800_000_000, $arguments['meta_query'][0]['value'] );
-		self::assertSame( EventMeta::START_UTC, $arguments['meta_query'][1]['key'] );
+		self::assertSame( '2027-01-15', $arguments['meta_query'][0]['value'] );
+		self::assertSame( 'CHAR', $arguments['meta_query'][0]['type'] );
+		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_query'][1]['key'] );
 		self::assertSame( '<', $arguments['meta_query'][1]['compare'] );
-		self::assertSame( 1_802_678_400, $arguments['meta_query'][1]['value'] );
+		self::assertSame( '2027-02-15', $arguments['meta_query'][1]['value'] );
+		self::assertSame( 'CHAR', $arguments['meta_query'][1]['type'] );
 		self::assertSame( 100, $arguments['posts_per_page'] );
 		self::assertSame( 2, $arguments['paged'] );
 	}

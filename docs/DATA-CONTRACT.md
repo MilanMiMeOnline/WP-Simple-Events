@@ -16,8 +16,9 @@ The publication date is never an event date.
 - All-day values are stored as inclusive `Y-m-d` dates.
 - A missing end is normalized to the start value.
 - A single all-day event ends at local `23:59:59` for its inclusive end date.
-- `_wpse_start_utc` and `_wpse_end_utc` are derived Unix timestamps used only for sorting and overlap queries.
-- `_wpse_end_utc` is inclusive. Calendar adapters may later convert it to an exclusive end required by a specific calendar protocol.
+- `_wpse_start_utc` and `_wpse_end_utc` are derived Unix timestamps used for chronological sorting, active/past queries and machine-instant output.
+- `_wpse_end_utc` is inclusive. The public calendar validates it against canonical local data, while all-day calendar output converts the canonical inclusive local end to an exclusive date.
+- Public calendar placement and visible-window overlap use `_wpse_start_local` and `_wpse_end_local`; visitor timezone offsets never change those saved wall-time dates.
 - The stored timezone is an IANA identifier where possible. WordPress fixed offsets from `-14:00` through `+14:00` are accepted for sites configured without a named timezone.
 
 `EventDateRange` rejects invalid calendar values, reversed ranges, nonexistent local times during a spring DST jump and ambiguous repeated local times during an autumn DST rollback. Ambiguous input is safer to reject because a local value without an offset cannot express which occurrence the editor intended.

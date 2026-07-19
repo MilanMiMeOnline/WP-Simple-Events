@@ -457,7 +457,7 @@ msgid "Event end UTC index"
 msgstr ""
 
 #: src/Content/EventMeta.php:83
-msgid "Internal inclusive UTC end timestamp used for overlap queries."
+msgid "Internal inclusive UTC end timestamp used for chronological period queries."
 msgstr ""
 
 #: src/Content/EventMeta.php:91
@@ -1040,11 +1040,11 @@ msgid "The requested calendar period is invalid or exceeds four hundred days."
 msgstr ""
 
 #: src/Rest/CalendarFeedController.php:121
-msgid "Inclusive ISO 8601 calendar start with timezone."
+msgid "Inclusive local-midnight ISO 8601 calendar start with timezone."
 msgstr ""
 
 #: src/Rest/CalendarFeedController.php:127
-msgid "Exclusive ISO 8601 calendar end with timezone."
+msgid "Exclusive local-midnight ISO 8601 calendar end with timezone."
 msgstr ""
 
 #: src/Rest/CalendarFeedController.php:133

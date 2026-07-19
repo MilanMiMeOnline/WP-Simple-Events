@@ -40,6 +40,8 @@ final readonly class CalendarEventFormatter {
 
 		$all_day = $this->boolean_meta( $event->ID, EventMeta::ALL_DAY );
 		$dates   = $this->dates->format(
+			$this->string_meta( $event->ID, EventMeta::START_LOCAL ),
+			$this->string_meta( $event->ID, EventMeta::END_LOCAL ),
 			$this->integer_meta( $event->ID, EventMeta::START_UTC ),
 			$this->integer_meta( $event->ID, EventMeta::END_UTC ),
 			$all_day,
@@ -56,7 +58,13 @@ final readonly class CalendarEventFormatter {
 		$venue     = $this->string_meta( $event->ID, EventMeta::VENUE );
 		$extended  = array(
 			'categories' => $this->category_slugs( $event->ID ),
+			'timezone'   => $dates['timezone'],
 		);
+
+		if ( null !== $dates['start_instant'] && null !== $dates['end_instant'] ) {
+			$extended['startInstant'] = $dates['start_instant'];
+			$extended['endInstant']   = $dates['end_instant'];
+		}
 
 		if ( '' === $title || '' === $permalink ) {
 			return null;

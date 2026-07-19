@@ -70,9 +70,13 @@ The `wpse-frontend` stylesheet is component-scoped, has no global reset, inherit
 ## Calendar feed
 
 `GET /wp-json/wpse/v1/events` is a public, read-only representation owned by
-`CalendarFeedController`. Its required `start` and `end` parameters are strict
-ISO 8601 date-times with an explicit timezone. `start` is inclusive and `end`
-is exclusive. The non-empty request window may span at most 400 days.
+`CalendarFeedController`. Its required `start` and `end` parameters are strict,
+local-midnight ISO 8601 date-times with an explicit transport timezone.
+`start` is inclusive and `end` is exclusive. The offset does not convert the
+requested calendar dates: `2026-08-01T00:00:00+14:00` and
+`2026-08-01T00:00:00-14:00` both identify the same local calendar boundary.
+The non-empty wall-time request window may span at most 400 days. Partial-day
+boundaries and offsets outside `-14:00` through `+14:00` are rejected.
 
 Optional `categories` and `tags` values contain at most 20 comma-separated
 slugs per taxonomy; each normalized slug is at most 200 bytes. `per_page` is
@@ -80,23 +84,28 @@ bounded from 1 through 100 and `page` from 1 through 1000. Invalid standalone
 or relational input returns HTTP 400 before WordPress is queried.
 
 The feed reuses `EventRepository` and selects only published, non-password
-events with this exact overlap condition:
+events with this wall-time overlap condition:
 
 ```text
-_wpse_end_utc >= requested.start
-AND _wpse_start_utc < requested.end
+_wpse_end_local >= requested.startLocalDate
+AND _wpse_start_local < requested.endExclusiveLocalDate
 ```
 
-Results are ordered by `_wpse_start_utc` ascending and expose only ID, plain
+Results are ordered by `_wpse_start_local` ascending and expose only ID, plain
 text title, formatted start/end, all-day flag, visible event status, permalink,
 venue and category slugs. Draft/private state, content, addresses, internal
 metadata keys and write capabilities are not exposed. Corrupt event date
 records are omitted. `X-WP-Total` and `X-WP-TotalPages` describe the bounded
 public query.
 
-For timed events, start and end retain the captured event timezone offset.
-For all-day events, stored inclusive end dates are converted to FullCalendar's
-exclusive end date.
+For timed events, top-level `start` and `end` are floating canonical local ISO
+values used only for calendar placement; FullCalendar must not convert them to
+the browser zone. `extendedProps.timezone`, `startInstant` and `endInstant`
+retain the captured timezone and offset-bearing machine instants. These
+machine instants are validated against the canonical local values before the
+record is exposed. For all-day events, top-level values remain dates, the
+stored inclusive end becomes FullCalendar's exclusive end, and instant fields
+are omitted because an all-day date is not a machine instant.
 
 ## `[wpse_calendar]` shortcode
 

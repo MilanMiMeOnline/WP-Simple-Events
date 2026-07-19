@@ -37,20 +37,26 @@ function wpse_e2e_seed_calendar_page(): void {
 		'Hidden Calendar Harness',
 		'[wpse_e2e_hidden_calendar]'
 	);
+	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-wall-time',
+		'Calendar Wall-time Harness',
+		'[wpse_calendar category="wpse-e2e-wall-time" filters="false"]'
+	);
 
 	if ( ! current_user_can( MiMe\WPSimpleEvents\Access\EventCapabilities::EDIT_POSTS ) ) {
 		return;
 	}
 
-	if ( get_option( 'wpse_e2e_events_seeded', false ) ) {
+	if ( get_option( 'wpse_e2e_events_seeded_v2', false ) ) {
 		return;
 	}
 
 	$empty_category = wpse_e2e_term_id( 'wpse_event_category', 'E2E Empty', 'wpse-e2e-empty' );
 	$category_only  = wpse_e2e_term_id( 'wpse_event_category', 'E2E Category', 'wpse-e2e-category' );
 	$tag_only       = wpse_e2e_term_id( 'wpse_event_tag', 'E2E Tag', 'wpse-e2e-tag' );
+	$wall_time      = wpse_e2e_term_id( 'wpse_event_category', 'E2E Wall Time', 'wpse-e2e-wall-time' );
 
-	if ( 0 === $empty_category || 0 === $category_only || 0 === $tag_only ) {
+	if ( 0 === $empty_category || 0 === $category_only || 0 === $tag_only || 0 === $wall_time ) {
 		return;
 	}
 
@@ -98,9 +104,42 @@ function wpse_e2e_seed_calendar_page(): void {
 		array( $category_only ),
 		array( $tag_only )
 	);
+	wpse_e2e_insert_event(
+		'wpse-e2e-wall-utc',
+		'E2E UTC same-day event',
+		'2026-08-10T12:05:00',
+		'2026-08-10T22:05:00',
+		false,
+		'+00:00',
+		'scheduled',
+		array( $wall_time ),
+		array()
+	);
+	wpse_e2e_insert_event(
+		'wpse-e2e-wall-positive',
+		'E2E positive-offset event',
+		'2026-08-01T00:30:00',
+		'2026-08-01T01:30:00',
+		false,
+		'+14:00',
+		'scheduled',
+		array( $wall_time ),
+		array()
+	);
+	wpse_e2e_insert_event(
+		'wpse-e2e-wall-negative',
+		'E2E negative-offset event',
+		'2026-08-31T22:30:00',
+		'2026-08-31T23:30:00',
+		false,
+		'-14:00',
+		'scheduled',
+		array( $wall_time ),
+		array()
+	);
 
 	// Keep hide_empty filter fixtures deterministic after same-request seeding.
-	wp_update_term_count( array( $empty_category, $category_only ), 'wpse_event_category', true );
+	wp_update_term_count( array( $empty_category, $category_only, $wall_time ), 'wpse_event_category', true );
 	wp_update_term_count( array( $tag_only ), 'wpse_event_tag', true );
 
 	$event_slugs = array(
@@ -108,6 +147,9 @@ function wpse_e2e_seed_calendar_page(): void {
 		'wpse-e2e-overnight',
 		'wpse-e2e-multi-day',
 		'wpse-e2e-all-day',
+		'wpse-e2e-wall-utc',
+		'wpse-e2e-wall-positive',
+		'wpse-e2e-wall-negative',
 	);
 	$published   = array_filter(
 		$event_slugs,
@@ -119,7 +161,7 @@ function wpse_e2e_seed_calendar_page(): void {
 	);
 
 	if ( count( $event_slugs ) === count( $published ) ) {
-		update_option( 'wpse_e2e_events_seeded', true, false );
+		update_option( 'wpse_e2e_events_seeded_v2', true, false );
 	}
 }
 

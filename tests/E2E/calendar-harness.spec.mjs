@@ -230,6 +230,119 @@ test( 'uses the configured mobile list view on its first render', async ( {
 	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
 } );
 
+for ( const timezoneId of [ 'Europe/Brussels', 'America/Los_Angeles' ] ) {
+	test( `preserves captured wall time in ${ timezoneId }`, async ( {
+		browser,
+	} ) => {
+		const context = await browser.newContext( {
+			baseURL: 'http://localhost:8888',
+			timezoneId,
+			viewport: { width: 1280, height: 900 },
+		} );
+		const page = await context.newPage();
+
+		try {
+			await gotoFixturePage( page, 'wpse-e2e-calendar-wall-time' );
+			await expect.poll( () => page.evaluate(
+				() => Intl.DateTimeFormat().resolvedOptions().timeZone,
+			) ).toBe( timezoneId );
+
+			const calendar = page.locator( '[data-wpse-calendar]' );
+			const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+			await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+				'1 event loaded.',
+			);
+			const responsePromise = page.waitForResponse( ( response ) =>
+				isEventFeed( new URL( response.url() ) ),
+			);
+
+			await canvas.getByRole( 'button', { name: 'Next' } ).click();
+			const response = await responsePromise;
+			const events = await response.json();
+			const sameDay = events.find(
+				( event ) => event.title === 'E2E UTC same-day event',
+			);
+
+			expect( sameDay ).toMatchObject( {
+				start: '2026-08-10T12:05:00',
+				end: '2026-08-10T22:05:00',
+				extendedProps: {
+					timezone: '+00:00',
+					startInstant: '2026-08-10T12:05:00+00:00',
+					endInstant: '2026-08-10T22:05:00+00:00',
+				},
+			} );
+			await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+				'3 events loaded.',
+			);
+			await expect(
+				canvas.locator( '[data-date="2026-08-10"]' ).getByText(
+					'E2E UTC same-day event',
+				),
+			).toHaveCount( 1 );
+			await expect(
+				canvas.locator( '[data-date="2026-08-11"]' ).getByText(
+					'E2E UTC same-day event',
+				),
+			).toHaveCount( 0 );
+			await expect(
+				canvas.locator( '[data-date="2026-08-01"]' ).getByText(
+					'E2E positive-offset event',
+				),
+			).toHaveCount( 1 );
+			await expect(
+				canvas.locator( '[data-date="2026-08-31"]' ).getByText(
+					'E2E negative-offset event',
+				),
+			).toHaveCount( 1 );
+
+			await canvas.getByRole( 'button', { name: 'List' } ).click();
+			const listEvent = canvas.locator( '.fc-list-event' ).filter( {
+				hasText: 'E2E UTC same-day event',
+			} );
+
+			await expect( listEvent ).toHaveCount( 1 );
+			expect( await listEvent.evaluate( ( row ) => {
+				let sibling = row.previousElementSibling;
+
+				while ( sibling ) {
+					const date = sibling.getAttribute( 'data-date' ) ??
+						sibling.querySelector( '[data-date]' )?.getAttribute( 'data-date' );
+
+					if ( date ) {
+						return date;
+					}
+
+					sibling = sibling.previousElementSibling;
+				}
+
+				return null;
+			} ) ).toBe( '2026-08-10' );
+
+			const eventLink = listEvent.getByRole( 'link', {
+				name: 'E2E UTC same-day event',
+			} );
+
+			await expect( eventLink ).toBeVisible();
+			const eventUrl = await eventLink.getAttribute( 'href' );
+
+			expect( eventUrl ).not.toBeNull();
+			await page.goto( new URL( eventUrl ).pathname );
+			await expect( page.locator( '.wpse-event-date time' ) ).toHaveAttribute(
+				'datetime',
+				'2026-08-10T12:05:00+00:00',
+			);
+			await expect( page.locator( '.wpse-event-date time' ) ).toHaveAttribute(
+				'data-wpse-end',
+				'2026-08-10T22:05:00+00:00',
+			);
+		} finally {
+			await context.close();
+		}
+	} );
+}
+
 test( 'keeps calendar button states readable with custom accent colors', async ( {
 	page,
 } ) => {

@@ -204,6 +204,7 @@ const initializeCalendar = ( root ) => {
 		plugins: [ dayGridPlugin, listPlugin ],
 		initialView,
 		firstDay: config.firstDay,
+		timeZone: 'local',
 		height: 'auto',
 		headerToolbar: {
 			start: 'prev,next today',
@@ -286,8 +287,15 @@ const initializeCalendar = ( root ) => {
 		},
 		eventContent: ( argument ) => {
 			const eventStatus = argument.event.extendedProps.status;
-			const wrapper = document.createElement( 'span' );
+			const isListView = argument.view.type.startsWith( 'list' );
+			const wrapper = document.createElement(
+				isListView && argument.event.url ? 'a' : 'span',
+			);
 			const title = document.createElement( 'span' );
+
+			if ( wrapper.tagName === 'A' ) {
+				wrapper.href = argument.event.url;
+			}
 
 			title.textContent = argument.event.title;
 			wrapper.append( title );

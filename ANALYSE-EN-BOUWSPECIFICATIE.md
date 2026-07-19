@@ -168,10 +168,10 @@ De WordPress-publicatiedatum wordt niet als eventdatum gebruikt. Publicatiedatum
 
 | Metakey | Type | Verplicht | Functie |
 |---|---:|---:|---|
-| `_wpse_start_local` | string | ja | Lokale startdatum en -tijd |
-| `_wpse_end_local` | string | nee | Lokale einddatum en -tijd |
+| `_wpse_start_local` | string | ja | Lokale startdatum en -tijd; kalenderplaatsing en wall-timequery |
+| `_wpse_end_local` | string | nee | Lokale einddatum en -tijd; kalender-wall-timequery |
 | `_wpse_start_utc` | integer | afgeleid | Sortering en datumqueries |
-| `_wpse_end_utc` | integer | afgeleid | Overlap- en kalenderqueries |
+| `_wpse_end_utc` | integer | afgeleid | Actief/verleden-query en machine-instant |
 | `_wpse_all_day` | boolean | ja | Hele-dag-event |
 | `_wpse_timezone` | string | ja | IANA-tijdzone bij opslag |
 | `_wpse_venue` | string | nee | Locatie- of zaalnaam |
@@ -202,7 +202,7 @@ Omdat geregistreerde meta via REST beschikbaar moet zijn, declareert het CPT ond
 3. De gebruikte IANA-tijdzone, bijvoorbeeld `Europe/Brussels`, wordt bij het event opgeslagen.
 4. De lokale invoer blijft beschikbaar voor beheer.
 5. Bij opslaan worden UTC-timestamps afgeleid.
-6. Sortering en vergelijking gebruiken UTC.
+6. Chronologische sortering en actief/verleden-vergelijking gebruiken UTC; kalenderplaatsing gebruikt de canonieke lokale waarden zodat een browserzone het event niet naar een andere dag verplaatst.
 7. Weergave gebruikt `wp_date()` in de opgeslagen eventtijdzone.
 
 Hierdoor blijft het eventuur stabiel wanneer de algemene sitetijdzone later wordt aangepast. WordPress biedt `wp_timezone()` en gelokaliseerde formatting via `wp_date()`. [WordPress `wp_date`](https://developer.wordpress.org/reference/functions/wp_date/)
@@ -551,8 +551,8 @@ GET /wp-json/wpse/v1/events
 
 Parameters:
 
-- `start`: ISO 8601, verplicht;
-- `end`: ISO 8601, verplicht en exclusief;
+- `start`: lokale middernacht in ISO 8601 met transportoffset, verplicht;
+- `end`: lokale middernacht in ISO 8601 met transportoffset, verplicht en exclusief;
 - `categories`: kommagescheiden slugs;
 - `tags`: kommagescheiden slugs;
 - `page` en `per_page`: begrensd.
@@ -575,14 +575,17 @@ Voorbeeldresponse:
 {
   "id": 123,
   "title": "Workshop keramiek",
-  "start": "2026-09-12T14:00:00+02:00",
-  "end": "2026-09-12T17:00:00+02:00",
+  "start": "2026-09-12T14:00:00",
+  "end": "2026-09-12T17:00:00",
   "allDay": false,
   "status": "scheduled",
   "url": "https://example.com/events/workshop-keramiek/",
   "extendedProps": {
     "venue": "Atelier Noord",
-    "categories": ["workshops"]
+    "categories": ["workshops"],
+    "timezone": "Europe/Brussels",
+    "startInstant": "2026-09-12T14:00:00+02:00",
+    "endInstant": "2026-09-12T17:00:00+02:00"
   }
 }
 ```
@@ -590,8 +593,8 @@ Voorbeeldresponse:
 Overlapvoorwaarde:
 
 ```text
-event.end_utc >= requested.start
-AND event.start_utc < requested.end
+event.end_local >= requested.startLocalDate
+AND event.start_local < requested.endExclusiveLocalDate
 ```
 
 ### 10.3 Kalenderervaring

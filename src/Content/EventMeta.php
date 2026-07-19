@@ -80,7 +80,7 @@ final class EventMeta {
 			self::END_UTC           => $common + array(
 				'type'              => 'integer',
 				'label'             => __( 'Event end UTC index', 'wp-simple-events' ),
-				'description'       => __( 'Internal inclusive UTC end timestamp used for overlap queries.', 'wp-simple-events' ),
+				'description'       => __( 'Internal inclusive UTC end timestamp used for chronological period queries.', 'wp-simple-events' ),
 				'default'           => 0,
 				'sanitize_callback' => array( $sanitizer, 'timestamp' ),
 				'show_in_rest'      => false,

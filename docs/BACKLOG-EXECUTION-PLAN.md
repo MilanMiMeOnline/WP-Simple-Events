@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0 and WP1 completed 2026-07-18; WP2.1 is next\
+**Status:** WP0, WP1 and WP2.1 completed 2026-07-19; WP2.2 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -132,6 +132,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 5. Review visible-window querying at the maximum supported offsets (`-14:00` through `+14:00`). If the feed uses floating wall times, ensure boundary events are not omitted by an absolute UTC query window. Keep all queries bounded and pagination truthful.
 6. Update the REST/feed schema and `docs/PUBLIC-QUERY-CONTRACT.md` to distinguish UI wall-time values from machine instants. Do not silently change a documented response contract.
 7. Compare calendar month/list output with the native single-event formatter for every fixture.
+
+**Completion note (2026-07-19):** ADR-024 freezes captured wall time as the calendar presentation contract. Timed feed values now use floating canonical local ISO values for FullCalendar placement and retain the captured timezone plus offset-bearing machine instants in `extendedProps`. Day-aligned REST windows query canonical local boundaries, so mixed zones and the supported `-14:00`/`+14:00` extremes remain inside truthful bounded pagination. Pure coverage protects fixed offsets, IANA/DST transitions, same-day, overnight, multi-day and all-day ranges; controlled Chromium journeys in positive and negative browser zones compare month, list and native event output.
 
 ### WP2.2 Consistent 12/24-hour notation — BL-004
 

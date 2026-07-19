@@ -34,7 +34,7 @@ Recurrence, interactive maps, geocoding and ticketing are explicit non-goals. Ad
 
 **Status:** Accepted
 
-Timed values use local ISO `Y-m-d\TH:i:s`; all-day values use inclusive `Y-m-d` dates. A stored timezone makes the intended wall time stable while derived UTC timestamps support sorting and overlap queries. Invalid, nonexistent and ambiguous local times are rejected rather than silently normalized.
+Timed values use local ISO `Y-m-d\TH:i:s`; all-day values use inclusive `Y-m-d` dates. A stored timezone makes the intended wall time stable while derived UTC timestamps support chronological sorting, active/past queries and machine-instant output. Calendar wall-time overlap is refined in ADR-024. Invalid, nonexistent and ambiguous local times are rejected rather than silently normalized.
 
 ## ADR-007: WordPress fixed-offset timezone compatibility
 
@@ -175,3 +175,13 @@ The calendar's `category` and `tag` values are initial query constraints, while 
 Visitor controls list only non-empty public event terms and the entire filter form is omitted when neither taxonomy offers a usable choice. This avoids a submit action with no possible effect. Server-rendered GET forms remain the no-JavaScript baseline, use instance-specific request names and preserve only allowlisted state belonging to other calendar instances.
 
 Initial constraints are also embedded as bounded sanitized arrays in the calendar's JavaScript configuration. The feed uses them whenever the matching visitor selector is absent, including calendars with filters disabled and calendars whose only usable selector belongs to the other taxonomy. Hiding presentation controls therefore cannot silently broaden the public event query.
+
+## ADR-024: Calendars preserve captured event wall time
+
+**Status:** Accepted
+
+Public calendars place every event on its canonical saved local date and clock time. They do not convert an event to the visitor browser's timezone. This matches the native event details, keeps mixed captured timezones meaningful and prevents a browser offset from moving a same-day event across midnight. A future visitor-local-time mode would require a separate explicit product contract.
+
+The FullCalendar-facing `start` and `end` values are therefore floating local ISO values. Timed feed records also retain the captured timezone and offset-bearing machine instants as explicit presentation metadata; all-day records remain date-only with an exclusive end. Storage and structured-data machine values are unchanged.
+
+Calendar requests are day-aligned wall-time windows with an explicit client offset for unambiguous transport. Their bounded overlap query uses canonical `_wpse_start_local` and `_wpse_end_local` values rather than one browser-relative UTC window. This keeps events at the supported `-14:00` and `+14:00` extremes in the correct visible month, preserves truthful WordPress pagination and avoids an unbounded post-filtering pass. UTC indexes remain authoritative for chronological lists, active/past classification and machine-instant output.
