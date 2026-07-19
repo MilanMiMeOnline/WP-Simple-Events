@@ -9,49 +9,80 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Frontend;
 
-use MiMe\WPSimpleEvents\Content\EventMeta;
-use MiMe\WPSimpleEvents\Content\EventPostType;
-use MiMe\WPSimpleEvents\Content\EventTaxonomies;
-use MiMe\WPSimpleEvents\Domain\EventStatus;
-use WP_Post;
-use WP_Term;
-
 /**
- * Renders one event from an explicit ID for templates, shortcodes and adapters.
+ * Composes the named presentation fields for native, shortcode and Elementor use.
  */
 final class EventDetailsRenderer {
 	/**
-	 * Event IDs currently rendering, used to stop recursive content shortcodes.
+	 * Event IDs currently rendering across all instances in this request.
 	 *
 	 * @var array<int, true>
 	 */
-	private array $rendering = array();
+	private static array $rendering = array();
 
 	/**
-	 * Create the renderer.
+	 * Request-local access-aware event resolver.
+	 *
+	 * @var EventContextResolver
+	 */
+	private readonly EventContextResolver $contexts;
+
+	/**
+	 * Named semantic event-field renderer.
+	 *
+	 * @var EventFieldRenderer
+	 */
+	private readonly EventFieldRenderer $fields;
+
+	/**
+	 * Create the renderer while preserving the existing formatter dependencies.
 	 *
 	 * @param EventDateFormatter           $date_formatter    Public event date formatter.
 	 * @param EventTimezoneDisplaySettings $timezone_settings Global timezone-display setting.
+	 * @param EventContextResolver|null    $contexts          Shared access-aware context resolver.
+	 * @param EventFieldRenderer|null      $fields            Shared named field renderer.
 	 */
 	public function __construct(
-		private readonly EventDateFormatter $date_formatter = new EventDateFormatter(),
-		private readonly EventTimezoneDisplaySettings $timezone_settings = new EventTimezoneDisplaySettings()
-	) {}
+		EventDateFormatter $date_formatter = new EventDateFormatter(),
+		EventTimezoneDisplaySettings $timezone_settings = new EventTimezoneDisplaySettings(),
+		?EventContextResolver $contexts = null,
+		?EventFieldRenderer $fields = null
+	) {
+		$this->contexts = $contexts ?? new EventContextResolver(
+			new EventPresentationFactory( $date_formatter, $timezone_settings )
+		);
+		$this->fields   = $fields ?? new EventFieldRenderer();
+	}
 
 	/**
-	 * Render a complete event in the required presentation order.
+	 * Render a current page/template event, including authorized previews.
 	 *
-	 * The caller owns visibility decisions for explicit IDs. Password protection
-	 * is always enforced here because every presentation adapter uses this method.
-	 *
-	 * @param int $event_id Explicit event post ID.
+	 * @param int $event_id Current event post ID.
 	 */
 	public function render( int $event_id ): string {
-		$event = get_post( $event_id );
+		return $this->render_presentation( $this->contexts->resolve_current( $event_id ) );
+	}
 
-		if ( ! $event instanceof WP_Post || EventPostType::POST_TYPE !== $event->post_type ) {
+	/**
+	 * Render an explicitly selected public, password-free event.
+	 *
+	 * @param int $event_id Explicit public event ID.
+	 */
+	public function render_public( int $event_id ): string {
+		return $this->render_presentation( $this->contexts->resolve_public( $event_id ) );
+	}
+
+	/**
+	 * Render a complete event in the established presentation order.
+	 *
+	 * @param EventPresentation|null $presentation Resolved event presentation.
+	 */
+	private function render_presentation( ?EventPresentation $presentation ): string {
+		if ( null === $presentation ) {
 			return '';
 		}
+
+		$event = $presentation->event;
 
 		if ( post_password_required( $event ) ) {
 			// WordPress builds and contextually escapes the complete form. Applying
@@ -59,247 +90,84 @@ final class EventDetailsRenderer {
 			return get_the_password_form( $event );
 		}
 
-		if ( isset( $this->rendering[ $event_id ] ) ) {
+		if ( isset( self::$rendering[ $event->ID ] ) ) {
 			return '';
 		}
 
-		$this->rendering[ $event_id ] = true;
-		$instance                     = RenderInstanceIds::next( RenderInstanceIds::EVENT_DETAILS );
+		self::$rendering[ $event->ID ] = true;
+		$instance                      = RenderInstanceIds::next( RenderInstanceIds::EVENT_DETAILS );
 
 		try {
-			return $this->event( $event, 'wpse-event-title-' . $event->ID . '-' . $instance );
+			return $this->event( $presentation, 'wpse-event-title-' . $event->ID . '-' . $instance );
 		} finally {
-			unset( $this->rendering[ $event_id ] );
+			unset( self::$rendering[ $event->ID ] );
 		}
 	}
 
 	/**
-	 * Compose one complete event from a validated post object.
+	 * Compose the existing complete event markup from named field fragments.
 	 *
-	 * @param WP_Post $event    Event post.
-	 * @param string  $title_id Unique heading ID for this rendered instance.
+	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param string            $title_id     Unique composite heading ID.
 	 */
-	private function event( WP_Post $event, string $title_id ): string {
-		$title   = trim( get_the_title( $event ) );
-		$content = trim( (string) apply_filters( 'the_content', $event->post_content ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Rendering stored post content requires the core WordPress content pipeline.
+	private function event( EventPresentation $presentation, string $title_id ): string {
+		$title      = $this->fields->title( $presentation, 'h1', $title_id );
+		$image      = $this->fields->featured_image( $presentation );
+		$date       = $this->fields->date_time( $presentation );
+		$status     = $this->fields->status( $presentation );
+		$venue      = $this->fields->venue( $presentation );
+		$address    = $this->fields->address( $presentation );
+		$location   = $this->fields->location_action( $presentation );
+		$content    = $this->fields->content( $presentation );
+		$action     = $this->fields->external_action( $presentation );
+		$categories = $this->fields->categories( $presentation );
+		$tags       = $this->fields->tags( $presentation );
+		$summary    = $this->summary( $date, $status, $venue, $address, $location );
+		$terms      = $this->terms( $categories, $tags );
 
-		if ( '' === $title ) {
-			$title = __( 'Untitled event', 'wp-simple-events' );
-		}
-
-		ob_start();
-		?>
-		<article class="wpse-single-event" aria-labelledby="<?php echo esc_attr( $title_id ); ?>">
-			<header class="wpse-single-event-header">
-				<h1 class="wpse-single-event-title" id="<?php echo esc_attr( $title_id ); ?>"><?php echo esc_html( $title ); ?></h1>
-
-				<?php if ( has_post_thumbnail( $event ) ) : ?>
-					<div class="wpse-single-event-image">
-						<?php echo wp_kses_post( get_the_post_thumbnail( $event, 'large' ) ); ?>
-					</div>
-				<?php endif; ?>
-			</header>
-
-			<?php echo $this->summary( $event ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Every value is escaped by the renderer method. ?>
-
-			<?php if ( '' !== $content ) : ?>
-				<div class="wpse-single-event-content">
-					<?php echo wp_kses_post( $content ); ?>
-				</div>
-			<?php endif; ?>
-
-			<?php echo $this->action( $event ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Every value is escaped by the renderer method. ?>
-			<?php echo $this->terms( $event ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Every value is escaped by the renderer method. ?>
-		</article>
-		<?php
-		$output = ob_get_clean();
-
-		return false === $output ? '' : $output;
+		return '<article class="wpse-single-event" aria-labelledby="' . esc_attr( $title_id ) . '">'
+			. '<header class="wpse-single-event-header">' . $title . $image . '</header>'
+			. $summary
+			. $content
+			. $action
+			. $terms
+			. '</article>';
 	}
 
 	/**
-	 * Render date, status and location metadata.
+	 * Preserve the established summary and nested location wrappers.
 	 *
-	 * @param WP_Post $event Event post.
+	 * @param string $date     Date/time fragment.
+	 * @param string $status   Exceptional-status fragment.
+	 * @param string $venue    Venue fragment.
+	 * @param string $address  Address fragment.
+	 * @param string $location Location-action fragment.
 	 */
-	private function summary( WP_Post $event ): string {
-		$presentation = $this->date_formatter->format(
-			$this->integer_meta( $event->ID, EventMeta::START_UTC ),
-			$this->integer_meta( $event->ID, EventMeta::END_UTC ),
-			$this->boolean_meta( $event->ID, EventMeta::ALL_DAY ),
-			$this->string_meta( $event->ID, EventMeta::TIMEZONE ),
-			$this->timezone_settings->enabled()
-		);
-		$status       = EventStatus::tryFrom( $this->string_meta( $event->ID, EventMeta::STATUS ) );
-		$status_label = match ( $status ) {
-			EventStatus::CANCELLED => __( 'Cancelled', 'wp-simple-events' ),
-			EventStatus::POSTPONED => __( 'Postponed', 'wp-simple-events' ),
-			default => '',
-		};
-		$venue        = $this->string_meta( $event->ID, EventMeta::VENUE );
-		$address      = $this->string_meta( $event->ID, EventMeta::ADDRESS );
-		$location_url = $this->string_meta( $event->ID, EventMeta::LOCATION_URL );
+	private function summary(
+		string $date,
+		string $status,
+		string $venue,
+		string $address,
+		string $location
+	): string {
+		$location_group = '' !== $venue || '' !== $address || '' !== $location
+			? '<div class="wpse-event-location">' . $venue . $address . $location . '</div>'
+			: '';
 
-		if ( null === $presentation && '' === $status_label && '' === $venue && '' === $address && '' === $location_url ) {
-			return '';
-		}
-
-		ob_start();
-		?>
-		<div class="wpse-event-summary">
-			<?php if ( null !== $presentation ) : ?>
-				<p class="wpse-event-date">
-					<span class="wpse-event-label"><?php esc_html_e( 'Date and time:', 'wp-simple-events' ); ?></span>
-					<time datetime="<?php echo esc_attr( $presentation->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->end_iso ); ?>"><?php echo esc_html( $presentation->label ); ?></time>
-					<?php if ( '' !== $presentation->timezone_label ) : ?>
-						<span class="wpse-event-timezone"><?php echo esc_html( $presentation->timezone_label ); ?></span>
-					<?php endif; ?>
-				</p>
-			<?php endif; ?>
-
-			<?php if ( '' !== $status_label && null !== $status ) : ?>
-				<p class="wpse-event-status wpse-event-status-<?php echo esc_attr( $status->value ); ?>" role="status"><?php echo esc_html( $status_label ); ?></p>
-			<?php endif; ?>
-
-			<?php if ( '' !== $venue || '' !== $address || '' !== $location_url ) : ?>
-				<div class="wpse-event-location">
-					<?php if ( '' !== $venue ) : ?>
-						<p class="wpse-event-venue"><span class="wpse-event-label"><?php esc_html_e( 'Location:', 'wp-simple-events' ); ?></span> <?php echo esc_html( $venue ); ?></p>
-					<?php endif; ?>
-
-					<?php if ( '' !== $address ) : ?>
-						<address class="wpse-event-address"><?php echo nl2br( esc_html( $address ) ); ?></address>
-					<?php endif; ?>
-
-					<?php if ( '' !== $location_url ) : ?>
-						<p class="wpse-event-location-link"><a href="<?php echo esc_url( $location_url ); ?>"><?php esc_html_e( 'View location', 'wp-simple-events' ); ?></a></p>
-					<?php endif; ?>
-				</div>
-			<?php endif; ?>
-		</div>
-		<?php
-		$output = ob_get_clean();
-
-		return false === $output ? '' : $output;
+		return '' !== $date || '' !== $status || '' !== $location_group
+			? '<div class="wpse-event-summary">' . $date . $status . $location_group . '</div>'
+			: '';
 	}
 
 	/**
-	 * Render the optional external event action.
+	 * Preserve the established combined taxonomy footer.
 	 *
-	 * @param WP_Post $event Event post.
+	 * @param string $categories Category fragment.
+	 * @param string $tags       Tag fragment.
 	 */
-	private function action( WP_Post $event ): string {
-		$url   = $this->string_meta( $event->ID, EventMeta::EVENT_URL );
-		$label = $this->string_meta( $event->ID, EventMeta::EVENT_URL_LABEL );
-
-		if ( '' === $url ) {
-			return '';
-		}
-
-		if ( '' === $label ) {
-			$label = __( 'More event information', 'wp-simple-events' );
-		}
-
-		return sprintf(
-			'<p class="wpse-event-action"><a class="wpse-event-action-link" href="%1$s">%2$s</a></p>',
-			esc_url( $url ),
-			esc_html( $label )
-		);
-	}
-
-	/**
-	 * Render linked event categories and tags.
-	 *
-	 * @param WP_Post $event Event post.
-	 */
-	private function terms( WP_Post $event ): string {
-		$categories = $this->term_links( $event->ID, EventTaxonomies::CATEGORY );
-		$tags       = $this->term_links( $event->ID, EventTaxonomies::TAG );
-
-		if ( array() === $categories && array() === $tags ) {
-			return '';
-		}
-
-		$output = '<footer class="wpse-event-taxonomies">';
-
-		if ( array() !== $categories ) {
-			$output .= '<p class="wpse-event-categories"><span class="wpse-event-label">'
-				. esc_html__( 'Categories:', 'wp-simple-events' ) . '</span> '
-				. implode( '<span aria-hidden="true">, </span>', $categories ) . '</p>';
-		}
-
-		if ( array() !== $tags ) {
-			$output .= '<p class="wpse-event-tags"><span class="wpse-event-label">'
-				. esc_html__( 'Tags:', 'wp-simple-events' ) . '</span> '
-				. implode( '<span aria-hidden="true">, </span>', $tags ) . '</p>';
-		}
-
-		return $output . '</footer>';
-	}
-
-	/**
-	 * Build safe links for one event taxonomy.
-	 *
-	 * @param int    $event_id Event post ID.
-	 * @param string $taxonomy Event taxonomy.
-	 * @return string[]
-	 */
-	private function term_links( int $event_id, string $taxonomy ): array {
-		$terms = get_the_terms( $event_id, $taxonomy );
-
-		if ( false === $terms || is_wp_error( $terms ) ) {
-			return array();
-		}
-
-		$links = array();
-
-		foreach ( $terms as $term ) {
-			$url = get_term_link( $term, $taxonomy );
-
-			if ( is_wp_error( $url ) ) {
-				continue;
-			}
-
-			$links[] = sprintf( '<a href="%1$s">%2$s</a>', esc_url( $url ), esc_html( $term->name ) );
-		}
-
-		return $links;
-	}
-
-	/**
-	 * Read one scalar metadata value as a string.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function string_meta( int $post_id, string $meta_key ): string {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return is_scalar( $value ) ? trim( (string) $value ) : '';
-	}
-
-	/**
-	 * Read one numeric metadata value as an integer.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function integer_meta( int $post_id, string $meta_key ): int {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return is_numeric( $value ) ? (int) $value : 0;
-	}
-
-	/**
-	 * Read one boolean metadata value safely.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function boolean_meta( int $post_id, string $meta_key ): bool {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return ( is_bool( $value ) || is_string( $value ) || is_int( $value ) )
-			&& rest_sanitize_boolean( $value );
+	private function terms( string $categories, string $tags ): string {
+		return '' !== $categories || '' !== $tags
+			? '<footer class="wpse-event-taxonomies">' . $categories . $tags . '</footer>'
+			: '';
 	}
 }

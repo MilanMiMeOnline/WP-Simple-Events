@@ -56,6 +56,34 @@ final class WordPressState {
 	private static array $image_urls = array();
 
 	/**
+	 * Featured-image alternative text keyed by post ID.
+	 *
+	 * @var array<int, string>
+	 */
+	private static array $image_alts = array();
+
+	/**
+	 * Configured term objects keyed by term ID.
+	 *
+	 * @var array<int, \WP_Term>
+	 */
+	private static array $terms = array();
+
+	/**
+	 * Public term URLs keyed by term ID.
+	 *
+	 * @var array<int, string>
+	 */
+	private static array $term_links = array();
+
+	/**
+	 * Deterministic filter callbacks keyed by hook.
+	 *
+	 * @var array<string, callable>
+	 */
+	private static array $filters = array();
+
+	/**
 	 * Explicit option values keyed by site and option name.
 	 *
 	 * @var array<int, array<string, mixed>>
@@ -205,6 +233,10 @@ final class WordPressState {
 		self::$posts                   = array();
 		self::$permalinks              = array();
 		self::$image_urls              = array();
+		self::$image_alts              = array();
+		self::$terms                   = array();
+		self::$term_links              = array();
+		self::$filters                 = array();
 		self::$options                 = array();
 		self::$multisite               = false;
 		self::$site_ids                = array( 1 );
@@ -402,11 +434,13 @@ final class WordPressState {
 	 * @param \WP_Post $post       Post object.
 	 * @param string   $permalink  Public URL.
 	 * @param string   $image_url  Featured-image URL.
+	 * @param string   $image_alt  Featured-image alternative text.
 	 */
-	public static function add_post( \WP_Post $post, string $permalink = '', string $image_url = '' ): void {
+	public static function add_post( \WP_Post $post, string $permalink = '', string $image_url = '', string $image_alt = '' ): void {
 		self::$posts[ $post->ID ]      = $post;
 		self::$permalinks[ $post->ID ] = $permalink;
 		self::$image_urls[ $post->ID ] = $image_url;
+		self::$image_alts[ $post->ID ] = $image_alt;
 	}
 
 	/**
@@ -538,6 +572,67 @@ final class WordPressState {
 	 */
 	public static function image_url( int $post_id ): string {
 		return self::$image_urls[ $post_id ] ?? '';
+	}
+
+	/**
+	 * Retrieve configured featured-image alternative text.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function image_alt( int $post_id ): string {
+		return self::$image_alts[ $post_id ] ?? '';
+	}
+
+	/**
+	 * Store one deterministic term and its public URL.
+	 *
+	 * @param \WP_Term $term      Term object.
+	 * @param string   $permalink Public term URL.
+	 */
+	public static function add_term( \WP_Term $term, string $permalink ): void {
+		self::$terms[ $term->term_id ]      = $term;
+		self::$term_links[ $term->term_id ] = $permalink;
+	}
+
+	/**
+	 * Retrieve one deterministic term.
+	 *
+	 * @param int $term_id Term ID.
+	 */
+	public static function term( int $term_id ): ?\WP_Term {
+		return self::$terms[ $term_id ] ?? null;
+	}
+
+	/**
+	 * Retrieve one deterministic public term URL.
+	 *
+	 * @param int $term_id Term ID.
+	 */
+	public static function term_link( int $term_id ): string {
+		return self::$term_links[ $term_id ] ?? '';
+	}
+
+	/**
+	 * Configure one deterministic WordPress filter callback.
+	 *
+	 * @param string   $hook_name Filter name.
+	 * @param callable $callback  Filter callback.
+	 */
+	public static function set_filter( string $hook_name, callable $callback ): void {
+		self::$filters[ $hook_name ] = $callback;
+	}
+
+	/**
+	 * Apply a configured filter or preserve its original value.
+	 *
+	 * @param string $hook_name Filter name.
+	 * @param mixed  $value     Original value.
+	 * @param mixed  ...$args   Additional filter arguments.
+	 */
+	public static function apply_filter( string $hook_name, mixed $value, mixed ...$args ): mixed {
+		$callback = self::$filters[ $hook_name ] ?? null;
+
+		return is_callable( $callback ) ? $callback( $value, ...$args ) : $value;
 	}
 
 	/**

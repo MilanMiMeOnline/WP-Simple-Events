@@ -646,10 +646,15 @@ Hoewel de widgets later worden gebouwd, moeten deze contracten vanaf fase 1 stab
 - HTML-classes en CSS custom properties zijn stabiel en genamespaced;
 - lege velden worden door de renderer conditioneel behandeld;
 - een eventdetailsrenderer accepteert expliciet een event-ID, zodat Elementor previewdata kan leveren;
+- één toegangsbewuste contextresolver onderscheidt huidige/previewcontext van een expliciet geselecteerd publiek event;
+- één gedeelde presentatiefactory normaliseert benoemde publieke velden en hergebruikt die data binnen dezelfde request;
+- losse veldrenderers leveren semantische, conditionele HTML zonder metadata keys aan Elementor of Gutenberg bloot te stellen;
 - native templatekeuze blokkeert Theme Builder niet;
 - publieke hooks en filters zijn gedocumenteerd.
 
 Met deze voorbereiding hoeft de Elementorfase geen opslag, queries of templates opnieuw uit te vinden.
+
+Het vaste contract van deze laag, inclusief source-toegang, passwordbeveiliging, recursiegrenzen en CSS-classes, staat in `docs/PRESENTATION-CONTRACT.md`.
 
 ### 11.2 Widgets
 

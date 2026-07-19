@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Shortcode;
 
-use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
-use WP_Post;
 
 /**
  * Selects a visible event and delegates all presentation to the shared renderer.
@@ -49,22 +47,16 @@ final readonly class EventDetailsShortcode implements ShortcodeRenderer {
 			return '';
 		}
 
-		$event = get_post( $event_id );
+		$output = $normalized->has_explicit_id
+			? $this->renderer->render_public( $event_id )
+			: $this->renderer->render( $event_id );
 
-		if ( ! $event instanceof WP_Post || EventPostType::POST_TYPE !== $event->post_type ) {
-			return '';
-		}
-
-		if ( $normalized->has_explicit_id ) {
-			if ( 'publish' !== $event->post_status || '' !== $event->post_password ) {
-				return '';
-			}
-		} elseif ( 'publish' !== $event->post_status && ! current_user_can( 'read_post', $event_id ) ) {
+		if ( '' === $output ) {
 			return '';
 		}
 
 		$this->assets->enqueue();
 
-		return $this->renderer->render( $event_id );
+		return $output;
 	}
 }

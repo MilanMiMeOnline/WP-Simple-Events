@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0, WP1, WP2 and WP3 completed 2026-07-19; WP4 is next\
+**Status:** WP0 through WP4 completed 2026-07-19; WP5 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -207,6 +207,8 @@ This foundation must land before host-specific components. Refactor in small ste
 5. Add request-level reuse of resolved public presentation data so a template with many atomic fields does not repeat avoidable queries or formatting work. Do not cache across requests.
 6. Rebuild the existing Event Details renderer from these services and prove output/backward compatibility before adding new widgets or blocks.
 7. Document stable semantic classes and extension points.
+
+**Completion note (2026-07-19):** One access-aware resolver now separates authorized current/template previews from explicit published, password-free selections and reuses normalized presentation snapshots within the request. A shared factory keeps metadata keys inside the presentation layer and a named field renderer covers the complete WP4 palette with empty-field omission, contextual escaping, password protection and request-wide content recursion guards. The existing native/shortcode/Elementor details renderer is composed from those fragments while retaining its grouping classes, field order, password form and explicit-selection visibility contract. `docs/PRESENTATION-CONTRACT.md` freezes the semantic classes and adapter boundary.
 
 ### Exit criteria
 

@@ -362,7 +362,7 @@ Decide whether public time-zone visibility is a global display setting, an Eleme
 ## WPSE-BL-008 — Atomic event-field components for Elementor and Gutenberg templates
 
 - **Type:** Feature epic — template building, Elementor integration and Gutenberg blocks
-- **State:** Triaged; not scheduled
+- **State:** In progress; WP4 foundation completed 2026-07-19, WP5/WP6 pending
 - **Severity:** Major product gap
 - **Suggested priority:** P2
 - **Affected surfaces:** Elementor widget library, Gutenberg editor/Site Editor, single-event templates and shared frontend render services
@@ -428,3 +428,7 @@ Empty optional fields should render nothing on the frontend and an explicit, non
 ### Planning note
 
 Treat this as an epic and deliver it in phases: first define/test shared event-context and field renderers, then add Elementor adapters, then Gutenberg dynamic blocks and template patterns. Decide before implementation whether discoverable dedicated widgets/blocks are preferred for every field or whether closely related fields should use a configurable component; avoid one generic raw-meta widget. Template assignment remains host-owned and outside plugin scope; the components themselves must work identically on static pages and in dynamic templates.
+
+### WP4 foundation progress — 2026-07-19
+
+The shared foundation is complete. Current/template context and explicit public selection now use one resolver with request-local presentation reuse. Named field methods cover the complete proposed palette, keep metadata keys private, omit missing/corrupt output and centralize escaping, password protection and recursion handling. The existing composite native/shortcode/Elementor details output is rebuilt from this layer. The BL-008 epic remains open until the dedicated Elementor widgets and Gutenberg blocks in WP5/WP6 are delivered.

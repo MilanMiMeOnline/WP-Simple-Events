@@ -71,6 +71,12 @@ The post type uses explicit meta and primitive capabilities with `map_meta_cap` 
 
 Term management and assignment use their own event capabilities. WooCommerce `shop_manager` receives no event rights automatically. Custom role support can be added later through an explicit administrator workflow rather than implicit WooCommerce coupling.
 
+## Public presentation boundary
+
+Public presentation never accepts a metadata key from a shortcode, block, widget or template. `EventPresentationFactory` reads the fixed internal allowlist once, normalizes stored values through the registered sanitizers and creates named presentation data. `EventFieldRenderer` is the shared HTML boundary for title, featured image, date/time/timezone, event status, venue, address, location action, content, excerpt, external action, categories and tags.
+
+Current event context may include a non-public event only when WordPress grants `read_post`; explicit selections are restricted to published, password-free events. Password-protected atomic fields render nothing, while the complete native details output preserves WordPress' password form. Resolved presentation snapshots live only in one resolver instance for the current PHP request. See `docs/PRESENTATION-CONTRACT.md` for the stable field classes and adapter rules.
+
 ## Lifecycle
 
 Activation registers content before flushing rewrite rules, grants capabilities idempotently and stores `wpse_schema_version`. Normal boot reruns installation only when that version changes. Deactivation flushes rewrite rules but does not delete events, metadata, terms, capabilities or options.

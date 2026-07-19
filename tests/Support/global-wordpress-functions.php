@@ -645,6 +645,145 @@ if ( ! function_exists( 'get_the_post_thumbnail_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'has_post_thumbnail' ) ) {
+	/**
+	 * Determine whether a deterministic post has a featured image.
+	 *
+	 * @param WP_Post|int $post Post or post ID.
+	 */
+	function has_post_thumbnail( WP_Post|int $post ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return '' !== WordPressState::image_url( $post instanceof WP_Post ? $post->ID : $post );
+	}
+}
+
+if ( ! function_exists( 'get_the_post_thumbnail' ) ) {
+	/**
+	 * Build deterministic featured-image markup.
+	 *
+	 * @param WP_Post|int          $post       Post or post ID.
+	 * @param string|int[]         $size       Requested image size.
+	 * @param array<string, mixed> $attr       Image attributes.
+	 */
+	function get_the_post_thumbnail( WP_Post|int $post, string|array $size = 'post-thumbnail', array $attr = array() ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$post_id = $post instanceof WP_Post ? $post->ID : $post;
+		$url     = WordPressState::image_url( $post_id );
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		$size_name = is_string( $size ) ? $size : 'custom';
+		$class     = is_string( $attr['class'] ?? null ) ? $attr['class'] : 'attachment-' . $size_name . ' size-' . $size_name;
+
+		return sprintf(
+			'<img src="%1$s" class="%2$s" alt="%3$s">',
+			esc_url( $url ),
+			esc_attr( $class ),
+			esc_attr( WordPressState::image_alt( $post_id ) )
+		);
+	}
+}
+
+if ( ! function_exists( 'get_the_excerpt' ) ) {
+	/**
+	 * Retrieve a deterministic excerpt with a core-like content fallback.
+	 *
+	 * @param WP_Post|int $post Post or post ID.
+	 */
+	function get_the_excerpt( WP_Post|int $post ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$post_object = $post instanceof WP_Post ? $post : WordPressState::post( $post );
+
+		if ( ! $post_object instanceof WP_Post ) {
+			return '';
+		}
+
+		$value = '' !== trim( $post_object->post_excerpt )
+			? $post_object->post_excerpt
+			: wp_trim_words( wp_strip_all_tags( strip_shortcodes( $post_object->post_content ), true ), 55 );
+
+		return (string) WordPressState::apply_filter( 'get_the_excerpt', $value, $post_object );
+	}
+}
+
+if ( ! function_exists( 'post_password_required' ) ) {
+	/**
+	 * Treat every configured password as locked in isolated tests.
+	 *
+	 * @param WP_Post|int|null $post Post, post ID or current post.
+	 */
+	function post_password_required( WP_Post|int|null $post = null ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$post_object = $post instanceof WP_Post ? $post : ( is_int( $post ) ? WordPressState::post( $post ) : null );
+
+		return $post_object instanceof WP_Post && '' !== $post_object->post_password;
+	}
+}
+
+if ( ! function_exists( 'get_the_password_form' ) ) {
+	/**
+	 * Return one deterministic complete password form.
+	 *
+	 * @param WP_Post|int|null $post Post, post ID or current post.
+	 */
+	function get_the_password_form( WP_Post|int|null $post = null ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$post_object = $post instanceof WP_Post ? $post : ( is_int( $post ) ? WordPressState::post( $post ) : null );
+		$post_id     = $post_object instanceof WP_Post ? $post_object->ID : 0;
+
+		return '<form class="post-password-form" data-post="' . esc_attr( (string) $post_id ) . '"><input type="password"></form>';
+	}
+}
+
+if ( ! function_exists( 'get_the_terms' ) ) {
+	/**
+	 * Return deterministic post term objects.
+	 *
+	 * @param int    $post_id  Post ID.
+	 * @param string $taxonomy Taxonomy name.
+	 * @return WP_Term[]|false|WP_Error
+	 */
+	function get_the_terms( int $post_id, string $taxonomy ): array|false|WP_Error { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		if ( WordPressState::term_operations_fail() ) {
+			return new WP_Error( 'term_read_failed', 'Term read failed.' );
+		}
+
+		$terms = array();
+
+		foreach ( WordPressState::post_terms( $post_id, $taxonomy ) as $term_id ) {
+			$term = WordPressState::term( $term_id );
+
+			if ( $term instanceof WP_Term ) {
+				$terms[] = $term;
+			}
+		}
+
+		return array() === $terms ? false : $terms;
+	}
+}
+
+if ( ! function_exists( 'get_term_link' ) ) {
+	/**
+	 * Return one deterministic term URL.
+	 *
+	 * @param WP_Term|int $term     Term object or ID.
+	 * @param string      $taxonomy Taxonomy name.
+	 */
+	function get_term_link( WP_Term|int $term, string $taxonomy = '' ): string|WP_Error { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		$url = WordPressState::term_link( $term instanceof WP_Term ? $term->term_id : $term );
+
+		return '' === $url ? new WP_Error( 'missing_term_link', 'Term link missing.' ) : $url;
+	}
+}
+
+if ( ! function_exists( 'wp_kses_post' ) ) {
+	/**
+	 * Preserve deterministic trusted test markup.
+	 *
+	 * @param string $data Markup to filter.
+	 */
+	function wp_kses_post( string $data ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return $data;
+	}
+}
+
 if ( ! function_exists( 'wp_strip_all_tags' ) ) {
 	/**
 	 * Strip HTML tags from test content.
@@ -719,7 +858,7 @@ if ( ! function_exists( 'apply_filters' ) ) {
 	 * @param mixed  ...$args   Filter context.
 	 */
 	function apply_filters( string $hook_name, mixed $value, mixed ...$args ): mixed { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
-		return $value;
+		return WordPressState::apply_filter( $hook_name, $value, ...$args );
 	}
 }
 

@@ -213,3 +213,13 @@ WordPress remains the sole authority for the site timezone. Event Settings repor
 One strictly validated global option controls visible timezone context and is disabled by default for backward compatibility. When enabled, timed native details and the shared composite Elementor details widget show an IANA identifier with the offset at the event boundary. A range crossing an offset transition shows both boundary offsets; fixed-offset zones use a concise `UTC±HH:MM` label. All-day events omit timezone context. Long identifiers may wrap within the component instead of overflowing it.
 
 The option changes presentation only. Canonical dates, derived UTC indexes, cards, calendar placement and feeds, REST values and structured-data machine values remain unchanged. Per-event timezone editing and atomic component-level overrides are deferred product choices for the shared presentation work rather than hidden extensions of this setting.
+
+## ADR-028: Atomic hosts share one named, access-aware presentation layer
+
+**Status:** Accepted
+
+Current template context and explicit event selection have different authorization contracts. The shared resolver permits published events and authorized non-public previews in current context, while explicit selection accepts only published, password-free events and never falls back to another post. Positive and negative presentation snapshots are reused only within one resolver/request; cross-request caching is deliberately absent.
+
+Stored metadata and taxonomy objects remain inside the presentation factory. The host-facing renderer exposes named title, image, date/time/timezone, status, venue, address, location action, content, excerpt, external action, category and tag methods rather than arbitrary metadata access. Stored values are normalized again as untrusted input and escaped at the final HTML context. Empty or corrupt optional values produce no wrapper.
+
+Atomic protected fields return nothing, while the established composite details output returns WordPress' complete password form. Request-wide recursion guards cover both content fields and complete details across separate renderer instances. The existing composite renderer is rebuilt from the named fragments without changing its grouping classes, field order or public access behaviour. Future Elementor and Gutenberg adapters must share these services; host-specific copies of field logic are not accepted.

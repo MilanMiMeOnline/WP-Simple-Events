@@ -123,7 +123,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:104
 #: src/Admin/EventMetaBox.php:228
-#: src/Frontend/EventDetailsRenderer.php:135
+#: src/Frontend/EventFieldRenderer.php:118
 #: src/Frontend/EventRenderer.php:119
 #: src/Shortcode/CalendarShortcode.php:147
 msgid "Cancelled"
@@ -131,7 +131,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:105
 #: src/Admin/EventMetaBox.php:229
-#: src/Frontend/EventDetailsRenderer.php:136
+#: src/Frontend/EventFieldRenderer.php:119
 #: src/Frontend/EventRenderer.php:120
 #: src/Shortcode/CalendarShortcode.php:148
 msgid "Postponed"
@@ -1059,39 +1059,39 @@ msgstr ""
 msgid "%1$s (UTC%2$s → UTC%3$s)"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:87
-#: src/Frontend/EventRenderer.php:59
-msgid "Untitled event"
-msgstr ""
-
-#: src/Frontend/EventDetailsRenderer.php:152
+#: src/Frontend/EventFieldRenderer.php:95
 msgid "Date and time:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:167
+#: src/Frontend/EventFieldRenderer.php:137
 #: src/Frontend/EventRenderer.php:92
 msgid "Location:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:175
+#: src/Frontend/EventFieldRenderer.php:161
 msgid "View location"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:200
+#: src/Frontend/EventFieldRenderer.php:222
 msgid "More event information"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:227
+#: src/Frontend/EventFieldRenderer.php:238
 msgid "Categories:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:233
+#: src/Frontend/EventFieldRenderer.php:252
 msgid "Tags:"
 msgstr ""
 
 #: src/Frontend/EventListRenderer.php:56
 #: src/Shortcode/CalendarShortcode.php:136
 msgid "No events match your selection."
+msgstr ""
+
+#: src/Frontend/EventPresentationFactory.php:44
+#: src/Frontend/EventRenderer.php:59
+msgid "Untitled event"
 msgstr ""
 
 #: src/Lifecycle/Activator.php:26

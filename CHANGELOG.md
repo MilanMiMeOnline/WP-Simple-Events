@@ -66,6 +66,7 @@ All notable changes to WP Simple Events are documented here.
 - Pinned Playwright browser regression coverage against a disposable WordPress Playground site, including reusable calendar boundary fixtures and CI execution.
 - An optional, revisioned external event link label with a translated fallback, bounded plain-text validation and atomic native/Gutenberg persistence.
 - Administrator visibility of WordPress' authoritative event timezone plus an optional, disabled-by-default timed-event label with event-date and DST-transition offsets.
+- An access-aware, request-local event presentation layer with named renderers for every atomic event field and a backward-compatible composite details renderer.
 
 ### Fixed
 
