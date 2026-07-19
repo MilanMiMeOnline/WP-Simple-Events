@@ -60,6 +60,7 @@ final class EventDuplicatePlanTest extends TestCase {
 		self::assertContains( EventMeta::LOCATION_URL, $keys );
 		self::assertContains( '_thumbnail_id', $keys );
 		self::assertNotContains( EventMeta::EVENT_URL, $keys );
+		self::assertNotContains( EventMeta::EVENT_URL_LABEL, $keys );
 		self::assertNotContains( EventMeta::DATES_NEED_REVIEW, $keys );
 		self::assertNotContains( '_third_party_secret', $keys );
 	}

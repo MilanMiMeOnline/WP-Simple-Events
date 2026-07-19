@@ -50,6 +50,7 @@ final class EventDuplicatorTest extends TestCase {
 		WordPressState::update_post_meta( 88, EventMeta::START_UTC, 1_792_483_200 );
 		WordPressState::update_post_meta( 88, EventMeta::VENUE, 'Town Hall' );
 		WordPressState::update_post_meta( 88, EventMeta::EVENT_URL, 'https://tickets.example.com/' );
+		WordPressState::update_post_meta( 88, EventMeta::EVENT_URL_LABEL, 'Buy tickets' );
 		WordPressState::update_post_meta( 88, '_third_party_secret', 'do-not-copy' );
 		WordPressState::set_post_terms( 88, EventTaxonomies::CATEGORY, array( 4, 9 ) );
 		WordPressState::set_post_terms( 88, EventTaxonomies::TAG, array( 12 ) );
@@ -63,6 +64,7 @@ final class EventDuplicatorTest extends TestCase {
 		self::assertSame( 'Town Hall', WordPressState::post_meta( 1001, EventMeta::VENUE ) );
 		self::assertTrue( WordPressState::post_meta( 1001, EventMeta::DATES_NEED_REVIEW ) );
 		self::assertFalse( WordPressState::has_post_meta( 1001, EventMeta::EVENT_URL ) );
+		self::assertFalse( WordPressState::has_post_meta( 1001, EventMeta::EVENT_URL_LABEL ) );
 		self::assertFalse( WordPressState::has_post_meta( 1001, '_third_party_secret' ) );
 		self::assertSame( array( 4, 9 ), WordPressState::post_terms( 1001, EventTaxonomies::CATEGORY ) );
 		self::assertSame( array( 12 ), WordPressState::post_terms( 1001, EventTaxonomies::TAG ) );

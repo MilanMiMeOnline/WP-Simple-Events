@@ -181,16 +181,21 @@ final class EventDetailsRenderer {
 	 * @param WP_Post $event Event post.
 	 */
 	private function action( WP_Post $event ): string {
-		$url = $this->string_meta( $event->ID, EventMeta::EVENT_URL );
+		$url   = $this->string_meta( $event->ID, EventMeta::EVENT_URL );
+		$label = $this->string_meta( $event->ID, EventMeta::EVENT_URL_LABEL );
 
 		if ( '' === $url ) {
 			return '';
 		}
 
+		if ( '' === $label ) {
+			$label = __( 'More event information', 'wp-simple-events' );
+		}
+
 		return sprintf(
 			'<p class="wpse-event-action"><a class="wpse-event-action-link" href="%1$s">%2$s</a></p>',
 			esc_url( $url ),
-			esc_html__( 'More event information', 'wp-simple-events' )
+			esc_html( $label )
 		);
 	}
 

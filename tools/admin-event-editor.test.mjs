@@ -31,6 +31,7 @@ function editorFixture( { withEditorStore = true } = {} ) {
 		'#wpse-end-date': control(),
 		'#wpse-end-time': control(),
 		'#wpse-event-url': control(),
+		'#wpse-event-url-label': control(),
 		'#wpse-location-url': control(),
 		'#wpse-start-date': control(),
 		'#wpse-start-time': control(),
@@ -60,6 +61,7 @@ function editorFixture( { withEditorStore = true } = {} ) {
 		_wpse_end_local: '',
 		_wpse_event_status: 'scheduled',
 		_wpse_event_url: '',
+		_wpse_event_url_label: '',
 		_wpse_location_url: '',
 		_wpse_start_local: '',
 		_wpse_timezone: 'Europe/Brussels',
@@ -111,6 +113,7 @@ test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
 	controls[ '#wpse-location-url' ].value =
 		'https://maps.example.test/casa-milan';
 	controls[ '#wpse-event-url' ].value = 'https://mime-online.be';
+	controls[ '#wpse-event-url-label' ].value = 'Bekijk het parkingplan';
 	controls[ '#wpse-start-date' ].fire( 'input' );
 
 	assert.deepEqual( edits.at( -1 ), {
@@ -121,6 +124,7 @@ test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
 			_wpse_end_local: '2026-07-19T21:24',
 			_wpse_event_status: 'scheduled',
 			_wpse_event_url: 'https://mime-online.be',
+			_wpse_event_url_label: 'Bekijk het parkingplan',
 			_wpse_location_url: 'https://maps.example.test/casa-milan',
 			_wpse_start_local: '2026-07-19T16:23',
 			_wpse_timezone: 'Europe/Brussels',

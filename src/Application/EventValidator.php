@@ -34,11 +34,12 @@ final readonly class EventValidator {
 	 * @param bool       $date_range_required Whether publication requires a complete start.
 	 */
 	public function validate( EventInput $input, bool $date_range_required ): EventValidationResult {
-		$errors       = array();
-		$timezone     = $this->sanitizer->timezone( $input->timezone );
-		$status       = EventStatus::tryFrom( trim( $input->status ) );
-		$location_url = $this->sanitizer->url( trim( $input->location_url ) );
-		$event_url    = $this->sanitizer->url( trim( $input->event_url ) );
+		$errors          = array();
+		$timezone        = $this->sanitizer->timezone( $input->timezone );
+		$status          = EventStatus::tryFrom( trim( $input->status ) );
+		$location_url    = $this->sanitizer->url( trim( $input->location_url ) );
+		$event_url       = $this->sanitizer->url( trim( $input->event_url ) );
+		$event_url_label = $this->sanitizer->event_url_label( trim( $input->event_url_label ) );
 
 		if ( '' === $timezone ) {
 			$errors[] = EventValidationError::INVALID_TIMEZONE;
@@ -72,6 +73,7 @@ final readonly class EventValidator {
 				$this->sanitizer->address( $input->address ),
 				$location_url,
 				$event_url,
+				$event_url_label,
 				$status
 			)
 		);

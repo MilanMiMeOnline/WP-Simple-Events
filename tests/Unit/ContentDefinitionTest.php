@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
@@ -90,6 +91,7 @@ final class ContentDefinitionTest extends TestCase {
 			EventMeta::ADDRESS,
 			EventMeta::LOCATION_URL,
 			EventMeta::EVENT_URL,
+			EventMeta::EVENT_URL_LABEL,
 			EventMeta::STATUS,
 			EventMeta::DATES_NEED_REVIEW,
 		);
@@ -110,6 +112,10 @@ final class ContentDefinitionTest extends TestCase {
 		self::assertSame(
 			EventStatus::values(),
 			$definitions[ EventMeta::STATUS ]['show_in_rest']['schema']['enum']
+		);
+		self::assertSame(
+			EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH,
+			$definitions[ EventMeta::EVENT_URL_LABEL ]['show_in_rest']['schema']['maxLength']
 		);
 	}
 }

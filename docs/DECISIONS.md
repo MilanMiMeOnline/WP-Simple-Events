@@ -106,7 +106,7 @@ No structured-data cache is introduced. A single event schema is small and gener
 
 The Events list table uses post-type-specific column hooks, one allowlisted view filter, the native event-category query variable and a main-admin-query adapter. Upcoming and past filters use the existing derived UTC metadata; cancelled and postponed remain event-status filters rather than WordPress publication statuses. Start and end are sortable only through allowlisted numeric metadata keys. The adapter never alters secondary, front-end or non-event queries.
 
-Duplication is a deliberate replacement workflow for recurrence, not a generic post-meta clone. A nonce-protected `admin_action` requires permission to edit the source, create events and assign event terms. It creates a new draft, copies title/content/excerpt, featured image, event categories/tags and an explicit event-data allowlist. It does not copy the external event/registration URL, passwords, revisions or arbitrary third-party metadata.
+Duplication is a deliberate replacement workflow for recurrence, not a generic post-meta clone. A nonce-protected `admin_action` requires permission to edit the source, create events and assign event terms. It creates a new draft, copies title/content/excerpt, featured image, event categories/tags and an explicit event-data allowlist. It does not copy the external event/registration URL or its label, passwords, revisions or arbitrary third-party metadata.
 
 Copied date fields receive an internal review flag and a prominent editor message. The flag is removed only after the shared validator and persistence gateway accept an editor save. This keeps copied dates usable while making the required human review explicit.
 
@@ -195,3 +195,11 @@ Public event details, cards and calendars inherit the site's WordPress `time_for
 Server-rendered output continues through localized `wp_date()`. A bounded adapter maps only the relevant unescaped PHP tokens (`H`, `G`, `h`, `g`, `i`, `a` and `A`) to FullCalendar options. Explicit `h23` and `h12` hour cycles prevent the visitor locale from silently changing WordPress' 12/24-hour choice; uppercase meridiems remain browser-localized rather than being hard-coded in English. Invalid formats fall back to zero-padded `H:i` presentation.
 
 This is presentation only. Canonical local values, derived UTC indexes, captured timezones, feed boundaries and structured-data machine values do not change. Native HTML time controls may look platform-specific, but their submitted value remains canonical 24-hour input; the editor explains that distinction.
+
+## ADR-026: The external event action has one optional plain-text label
+
+**Status:** Accepted
+
+The existing external event URL keeps one optional, revisioned label rather than becoming a repeatable resource-link model. The label is at most 120 characters, accepts scalar input only, is sanitized as plain text at the shared write boundary and is escaped when rendered. Existing events and whitespace-only labels retain the translated `More event information` fallback.
+
+The label may be saved before its URL so an editor does not lose prepared text, but it never renders without a valid external event URL. Event duplication omits both the URL and its label because the destination may be registration- or event-specific. Uninstall needs no separate metadata deletion path because WordPress removes post metadata with the event; UTC-index maintenance deliberately leaves both fields untouched.

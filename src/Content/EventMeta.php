@@ -25,6 +25,7 @@ final class EventMeta {
 	public const ADDRESS           = '_wpse_address';
 	public const LOCATION_URL      = '_wpse_location_url';
 	public const EVENT_URL         = '_wpse_event_url';
+	public const EVENT_URL_LABEL   = '_wpse_event_url_label';
 	public const STATUS            = '_wpse_event_status';
 	public const DATES_NEED_REVIEW = '_wpse_dates_need_review';
 
@@ -132,6 +133,19 @@ final class EventMeta {
 				'default'           => '',
 				'sanitize_callback' => array( $sanitizer, 'url' ),
 				'show_in_rest'      => true,
+			),
+			self::EVENT_URL_LABEL   => $common + array(
+				'type'              => 'string',
+				'label'             => __( 'External event link label', 'wp-simple-events' ),
+				'description'       => __( 'Optional plain-text label for the external event link.', 'wp-simple-events' ),
+				'default'           => '',
+				'sanitize_callback' => array( $sanitizer, 'event_url_label' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'      => 'string',
+						'maxLength' => EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH,
+					),
+				),
 			),
 			self::STATUS            => $common + array(
 				'type'              => 'string',

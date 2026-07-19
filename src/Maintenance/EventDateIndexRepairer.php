@@ -68,6 +68,7 @@ final readonly class EventDateIndexRepairer {
 			'',
 			'',
 			'',
+			'',
 			EventStatus::SCHEDULED->value
 		);
 		$result = $this->validator->validate(

@@ -55,7 +55,7 @@ msgid "Event duplication incomplete"
 msgstr ""
 
 #: src/Admin/EventDuplicateController.php:124
-msgid "Event duplicated as a draft. Review the copied dates before publishing; the external event URL was not copied."
+msgid "Event duplicated as a draft. Review the copied dates before publishing; the external event link and its label were not copied."
 msgstr ""
 
 #. translators: %s: Original event title.
@@ -99,8 +99,8 @@ msgid "Event Categories"
 msgstr ""
 
 #: src/Admin/EventListTable.php:60
-#: src/Admin/EventMetaBox.php:230
-#: src/Content/EventMeta.php:138
+#: src/Admin/EventMetaBox.php:233
+#: src/Content/EventMeta.php:152
 msgid "Event status"
 msgstr ""
 
@@ -117,12 +117,12 @@ msgid "No"
 msgstr ""
 
 #: src/Admin/EventListTable.php:103
-#: src/Admin/EventMetaBox.php:224
+#: src/Admin/EventMetaBox.php:227
 msgid "Scheduled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:104
-#: src/Admin/EventMetaBox.php:225
+#: src/Admin/EventMetaBox.php:228
 #: src/Frontend/EventDetailsRenderer.php:130
 #: src/Frontend/EventRenderer.php:119
 #: src/Shortcode/CalendarShortcode.php:147
@@ -130,7 +130,7 @@ msgid "Cancelled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:105
-#: src/Admin/EventMetaBox.php:226
+#: src/Admin/EventMetaBox.php:229
 #: src/Frontend/EventDetailsRenderer.php:131
 #: src/Frontend/EventRenderer.php:120
 #: src/Shortcode/CalendarShortcode.php:148
@@ -179,62 +179,62 @@ msgstr ""
 msgid "Event maintenance denied"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:39
+#: src/Admin/EventMetaBox.php:40
 #: src/Elementor/EventDetailsWidget.php:134
 msgid "Event details"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:62
+#: src/Admin/EventMetaBox.php:63
 msgid "A start is required before an event can be published. Drafts may remain incomplete."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:67
+#: src/Admin/EventMetaBox.php:68
 msgid "Review the copied start and end date before publishing this event."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:74
-#: src/Content/EventMeta.php:90
+#: src/Admin/EventMetaBox.php:75
+#: src/Content/EventMeta.php:91
 msgid "All-day event"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:79
+#: src/Admin/EventMetaBox.php:80
 msgid "Start date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:81
+#: src/Admin/EventMetaBox.php:82
 msgid "Start time"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:83
+#: src/Admin/EventMetaBox.php:84
 msgid "End date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:85
+#: src/Admin/EventMetaBox.php:86
 msgid "End time"
 msgstr ""
 
 #. translators: %s: Event timezone identifier.
-#: src/Admin/EventMetaBox.php:93
+#: src/Admin/EventMetaBox.php:94
 #, php-format
 msgid "Timezone: %s. Existing events keep their saved timezone."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:99
+#: src/Admin/EventMetaBox.php:100
 msgid "Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:103
-#: src/Content/EventMeta.php:106
+#: src/Admin/EventMetaBox.php:104
+#: src/Content/EventMeta.php:107
 msgid "Venue"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:107
-#: src/Content/EventMeta.php:114
+#: src/Admin/EventMetaBox.php:108
+#: src/Content/EventMeta.php:115
 msgid "Address"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:110
-#: src/Content/EventMeta.php:122
+#: src/Content/EventMeta.php:123
 msgid "Location URL"
 msgstr ""
 
@@ -242,13 +242,22 @@ msgstr ""
 msgid "Optional route or location page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:111
-#: src/Content/EventMeta.php:130
+#: src/Admin/EventMetaBox.php:113
+#: src/Content/EventMeta.php:131
 msgid "External event URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:111
+#: src/Admin/EventMetaBox.php:113
 msgid "Optional information or registration page using HTTP(S)."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:114
+#: src/Content/EventMeta.php:139
+msgid "External event link label"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:114
+msgid "Optional link text. The default is “More event information”."
 msgstr ""
 
 #: src/Admin/EventSaveController.php:189
@@ -432,75 +441,79 @@ msgstr ""
 msgid "Enter a valid HTTP or HTTPS event URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:58
+#: src/Content/EventMeta.php:59
 msgid "Event start"
 msgstr ""
 
-#: src/Content/EventMeta.php:59
+#: src/Content/EventMeta.php:60
 msgid "Canonical local event start."
 msgstr ""
 
-#: src/Content/EventMeta.php:66
+#: src/Content/EventMeta.php:67
 msgid "Event end"
 msgstr ""
 
-#: src/Content/EventMeta.php:67
+#: src/Content/EventMeta.php:68
 msgid "Canonical local event end."
 msgstr ""
 
-#: src/Content/EventMeta.php:74
+#: src/Content/EventMeta.php:75
 msgid "Event start UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:75
+#: src/Content/EventMeta.php:76
 msgid "Internal UTC start timestamp used for sorting."
 msgstr ""
 
-#: src/Content/EventMeta.php:82
+#: src/Content/EventMeta.php:83
 msgid "Event end UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:83
+#: src/Content/EventMeta.php:84
 msgid "Internal inclusive UTC end timestamp used for chronological period queries."
 msgstr ""
 
-#: src/Content/EventMeta.php:91
+#: src/Content/EventMeta.php:92
 msgid "Whether the event uses inclusive dates without visible times."
 msgstr ""
 
-#: src/Content/EventMeta.php:98
+#: src/Content/EventMeta.php:99
 msgid "Event timezone"
 msgstr ""
 
-#: src/Content/EventMeta.php:99
+#: src/Content/EventMeta.php:100
 msgid "IANA timezone or WordPress fixed UTC offset used when the event was saved."
 msgstr ""
 
-#: src/Content/EventMeta.php:107
+#: src/Content/EventMeta.php:108
 msgid "Event location or venue name."
 msgstr ""
 
-#: src/Content/EventMeta.php:115
+#: src/Content/EventMeta.php:116
 msgid "Readable event address."
 msgstr ""
 
-#: src/Content/EventMeta.php:123
+#: src/Content/EventMeta.php:124
 msgid "Optional external HTTP(S) route or location URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:131
+#: src/Content/EventMeta.php:132
 msgid "Optional external HTTP(S) information or registration URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:139
+#: src/Content/EventMeta.php:140
+msgid "Optional plain-text label for the external event link."
+msgstr ""
+
+#: src/Content/EventMeta.php:153
 msgid "Scheduled, cancelled or postponed; separate from publication status."
 msgstr ""
 
-#: src/Content/EventMeta.php:151
+#: src/Content/EventMeta.php:165
 msgid "Copied event dates need review"
 msgstr ""
 
-#: src/Content/EventMeta.php:152
+#: src/Content/EventMeta.php:166
 msgid "Internal editor flag set when event dates were duplicated."
 msgstr ""
 
@@ -1018,15 +1031,15 @@ msgstr ""
 msgid "View location"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:193
+#: src/Frontend/EventDetailsRenderer.php:192
 msgid "More event information"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:214
+#: src/Frontend/EventDetailsRenderer.php:219
 msgid "Categories:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:220
+#: src/Frontend/EventDetailsRenderer.php:225
 msgid "Tags:"
 msgstr ""
 

@@ -26,6 +26,7 @@ final readonly class EventInput {
 	 * @param string $address     Readable address.
 	 * @param string $location_url External location URL.
 	 * @param string $event_url   External event URL.
+	 * @param string $event_url_label Optional external event link label.
 	 * @param string $status      Explicit event status.
 	 */
 	public function __construct(
@@ -39,6 +40,7 @@ final readonly class EventInput {
 		public string $address,
 		public string $location_url,
 		public string $event_url,
+		public string $event_url_label,
 		public string $status
 	) {}
 
@@ -53,6 +55,7 @@ final readonly class EventInput {
 	 * @param string $address     Readable address.
 	 * @param string $location_url External location URL.
 	 * @param string $event_url   External event URL.
+	 * @param string $event_url_label Optional external event link label.
 	 * @param string $status      Explicit event status.
 	 */
 	public static function from_canonical(
@@ -64,6 +67,7 @@ final readonly class EventInput {
 		string $address,
 		string $location_url,
 		string $event_url,
+		string $event_url_label,
 		string $status
 	): self {
 		$start_parts = self::split_local( $start_local, $all_day );
@@ -80,6 +84,7 @@ final readonly class EventInput {
 			$address,
 			$location_url,
 			$event_url,
+			$event_url_label,
 			$status
 		);
 	}

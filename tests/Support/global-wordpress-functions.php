@@ -232,6 +232,32 @@ if ( ! function_exists( 'get_post' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_is_post_autosave' ) ) {
+	/**
+	 * Keep ordinary isolated save tests outside autosave context.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	function wp_is_post_autosave( int $post_id ): false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $post_id );
+
+		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_revision' ) ) {
+	/**
+	 * Keep ordinary isolated save tests outside revision context.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	function wp_is_post_revision( int $post_id ): false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $post_id );
+
+		return false;
+	}
+}
+
 if ( ! function_exists( 'get_page_by_path' ) ) {
 	/**
 	 * Retrieve one deterministic root-level page by slug.

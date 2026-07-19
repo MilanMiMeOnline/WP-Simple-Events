@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0, WP1 and WP2 completed 2026-07-19; WP3.1 is next\
+**Status:** WP0, WP1, WP2 and WP3.1 completed 2026-07-19; WP3.2 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -162,6 +162,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 4. Render the custom escaped label when present and retain the translated fallback otherwise. Render nothing when the URL is empty.
 5. Update revisions, REST schemas, duplication policy, data contract, uninstall/maintenance allowlists where applicable and translation catalogue.
 6. Test malicious input, whitespace, maximum length, empty URL/label combinations, REST permissions and existing events without the new meta key.
+
+**Completion note (2026-07-19):** The existing external event URL now has one optional revisioned plain-text label, bounded to 120 characters in its registered REST schema and shared sanitizer. Native and Gutenberg writes use the same input, validation and persistence path. Existing/empty labels retain the translated fallback, labels without URLs remain hidden, output is escaped, and duplication omits both destination-specific values. Unit and real-WordPress coverage protect structured input, bounds, whitespace, legacy records, REST authorization, editor availability, atomic REST saves, public rendering and duplication.
 
 ### WP3.2 Time-zone visibility — BL-007
 

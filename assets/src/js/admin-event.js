@@ -11,6 +11,7 @@ if ( eventFields ) {
 		endDate: eventFields.querySelector( '#wpse-end-date' ),
 		endTime: eventFields.querySelector( '#wpse-end-time' ),
 		eventUrl: eventFields.querySelector( '#wpse-event-url' ),
+		eventUrlLabel: eventFields.querySelector( '#wpse-event-url-label' ),
 		locationUrl: eventFields.querySelector( '#wpse-location-url' ),
 		startDate: eventFields.querySelector( '#wpse-start-date' ),
 		startTime: eventFields.querySelector( '#wpse-start-time' ),
@@ -66,6 +67,7 @@ if ( eventFields ) {
 			),
 			_wpse_event_status: fields.status.value,
 			_wpse_event_url: fields.eventUrl.value,
+			_wpse_event_url_label: fields.eventUrlLabel.value,
 			_wpse_location_url: fields.locationUrl.value,
 			_wpse_start_local: canonicalLocal(
 				fields.startDate.value,

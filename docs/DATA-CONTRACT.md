@@ -37,6 +37,7 @@ The publication date is never an event date.
 | `_wpse_address` | string | empty | yes | Address, maximum 500 characters |
 | `_wpse_location_url` | string | empty | yes | HTTP(S) route/location URL |
 | `_wpse_event_url` | string | empty | yes | HTTP(S) information/registration URL |
+| `_wpse_event_url_label` | string | empty | yes | Optional plain-text external-link label, maximum 120 characters |
 | `_wpse_event_status` | string | `scheduled` | yes | `scheduled`, `cancelled` or `postponed` |
 | `_wpse_dates_need_review` | boolean | `false` | no | Internal editor warning after event duplication |
 
@@ -51,6 +52,7 @@ The native Event details panel and core REST API both pass through the same `Eve
 - A timed start requires both a date and time. A timed end is either completely absent or contains both a date and time.
 - An all-day start requires a date; submitted time controls are ignored. The end date remains optional and inclusive.
 - Optional non-empty URLs must be valid HTTP(S) URLs. Invalid protocols are errors rather than silently becoming empty values.
+- The external-link label is sanitized as plain text and bounded to 120 characters. It may be stored without a URL so an editor does not lose work, but public output renders it only with a valid external event URL. Empty and legacy labels use the translated default.
 - The explicit event status and timezone must pass their allowlists.
 - Native editor writes require the event nonce, the mapped event edit capability, and must not be autosaves, revisions or switched multisite writes.
 
@@ -58,7 +60,7 @@ For a native editor publication attempt, validation runs through `wp_insert_post
 
 After core REST metadata processing completes, or after a valid native save, `EventPersistence` replaces the event record and computes `_wpse_start_utc` and `_wpse_end_utc` from the accepted canonical range. Empty optional values and dates removed from a valid incomplete draft are deleted rather than stored as stale values.
 
-Event duplication creates a new password-free draft and copies only the documented editorial fields, event metadata, featured image and event taxonomies. `_wpse_event_url` and arbitrary custom metadata are deliberately excluded. Copied dates set `_wpse_dates_need_review`; any subsequent save that passes the shared validator and persistence gateway removes that flag.
+Event duplication creates a new password-free draft and copies only the documented editorial fields, event metadata, featured image and event taxonomies. `_wpse_event_url`, `_wpse_event_url_label` and arbitrary custom metadata are deliberately excluded. Copied dates set `_wpse_dates_need_review`; any subsequent save that passes the shared validator and persistence gateway removes that flag.
 
 ## Capabilities
 

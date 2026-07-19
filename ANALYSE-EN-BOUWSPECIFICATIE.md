@@ -178,6 +178,7 @@ De WordPress-publicatiedatum wordt niet als eventdatum gebruikt. Publicatiedatum
 | `_wpse_address` | string | nee | Leesbaar adres |
 | `_wpse_location_url` | string | nee | Externe route- of locatielink |
 | `_wpse_event_url` | string | nee | Externe info- of inschrijvingslink |
+| `_wpse_event_url_label` | string | nee | Optioneel tekstlabel voor de externe eventlink, maximaal 120 tekens |
 | `_wpse_event_status` | string | ja | `scheduled`, `cancelled`, `postponed` |
 
 Alle velden worden afzonderlijk opgeslagen. Er komt geen geserialiseerde eventdata-array en geen eigen databasetabel.

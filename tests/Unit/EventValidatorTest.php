@@ -173,6 +173,38 @@ final class EventValidatorTest extends TestCase {
 	}
 
 	/**
+	 * The optional external action label is normalized independently from its URL.
+	 */
+	public function test_event_url_label_is_sanitized_bounded_and_may_be_stored_without_url(): void {
+		$result = ( new EventValidator() )->validate(
+			$this->valid_input(
+				array(
+					'event_url'       => '',
+					'event_url_label' => '  <b>Parking plan</b> ' . str_repeat( 'x', 140 ),
+				)
+			),
+			true
+		);
+
+		self::assertTrue( $result->is_valid() );
+		self::assertSame( '', $result->data()?->event_url );
+		self::assertSame( 120, strlen( $result->data()?->event_url_label ?? '' ) );
+		self::assertStringStartsWith( 'Parking plan', $result->data()?->event_url_label ?? '' );
+	}
+
+	/**
+	 * Whitespace-only labels become empty so rendering can use its translated fallback.
+	 */
+	public function test_whitespace_only_event_url_label_becomes_empty(): void {
+		$result = ( new EventValidator() )->validate(
+			$this->valid_input( array( 'event_url_label' => " \t\n " ) ),
+			true
+		);
+
+		self::assertSame( '', $result->data()?->event_url_label );
+	}
+
+	/**
 	 * Build a complete valid input with selected overrides.
 	 *
 	 * @param array<string, bool|string> $overrides Selected property overrides.
@@ -180,17 +212,18 @@ final class EventValidatorTest extends TestCase {
 	private function valid_input( array $overrides = array() ): EventInput {
 		$values = array_merge(
 			array(
-				'start_date'   => '2026-07-20',
-				'start_time'   => '09:30',
-				'end_date'     => '2026-07-20',
-				'end_time'     => '11:00',
-				'all_day'      => false,
-				'timezone'     => 'Europe/Brussels',
-				'venue'        => 'Town Hall',
-				'address'      => 'Main Street 1',
-				'location_url' => 'https://example.com/location',
-				'event_url'    => 'https://example.com/event',
-				'status'       => EventStatus::SCHEDULED->value,
+				'start_date'      => '2026-07-20',
+				'start_time'      => '09:30',
+				'end_date'        => '2026-07-20',
+				'end_time'        => '11:00',
+				'all_day'         => false,
+				'timezone'        => 'Europe/Brussels',
+				'venue'           => 'Town Hall',
+				'address'         => 'Main Street 1',
+				'location_url'    => 'https://example.com/location',
+				'event_url'       => 'https://example.com/event',
+				'event_url_label' => '',
+				'status'          => EventStatus::SCHEDULED->value,
 			),
 			$overrides
 		);
@@ -206,6 +239,7 @@ final class EventValidatorTest extends TestCase {
 			(string) $values['address'],
 			(string) $values['location_url'],
 			(string) $values['event_url'],
+			(string) $values['event_url_label'],
 			(string) $values['status']
 		);
 	}

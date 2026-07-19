@@ -16,6 +16,7 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use WP_Post;
 
 /**
  * Verifies nonce, capability and invalid-publication behavior at the WP boundary.
@@ -135,6 +136,36 @@ final class EventSaveControllerTest extends TestCase {
 	}
 
 	/**
+	 * A nonce- and capability-authorized native save persists the sanitized label.
+	 */
+	public function test_valid_native_save_persists_sanitized_event_url_label(): void {
+		WordPressState::allow_current_user( true );
+		$_POST = array(
+			EventMetaBox::NONCE_NAME => 'valid-event-nonce',
+			'wpse_event'             => $this->payload(
+				array(
+					'event_url'       => 'https://example.com/parking',
+					'event_url_label' => '<b>Parking plan</b>',
+				)
+			),
+		);
+
+		( new EventSaveController() )->save(
+			42,
+			new WP_Post(
+				array(
+					'ID'          => 42,
+					'post_type'   => EventPostType::POST_TYPE,
+					'post_status' => 'publish',
+				)
+			),
+			true
+		);
+
+		self::assertSame( 'Parking plan', WordPressState::post_meta( 42, EventMeta::EVENT_URL_LABEL ) );
+	}
+
+	/**
 	 * Quick Edit may publish an already complete stored event without panel data.
 	 */
 	public function test_status_only_write_uses_complete_stored_event(): void {
@@ -164,15 +195,16 @@ final class EventSaveControllerTest extends TestCase {
 	private function payload( array $overrides = array() ): array {
 		return array_merge(
 			array(
-				'start_date'   => '2026-07-20',
-				'start_time'   => '09:30',
-				'end_date'     => '2026-07-20',
-				'end_time'     => '11:00',
-				'venue'        => 'Town Hall',
-				'address'      => 'Main Street 1',
-				'location_url' => '',
-				'event_url'    => '',
-				'status'       => 'scheduled',
+				'start_date'      => '2026-07-20',
+				'start_time'      => '09:30',
+				'end_date'        => '2026-07-20',
+				'end_time'        => '11:00',
+				'venue'           => 'Town Hall',
+				'address'         => 'Main Street 1',
+				'location_url'    => '',
+				'event_url'       => '',
+				'event_url_label' => '',
+				'status'          => 'scheduled',
 			),
 			$overrides
 		);

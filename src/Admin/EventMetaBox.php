@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Admin;
 
 use MiMe\WPSimpleEvents\Application\EventInput;
 use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
 use WP_Post;
@@ -106,9 +107,11 @@ final class EventMetaBox {
 
 			<?php $this->render_textarea( 'address', 'address', __( 'Address', 'wp-simple-events' ), $input->address, 500 ); ?>
 
+			<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'wp-simple-events' ), 'url', $input->location_url, null, 2048, __( 'Optional route or location page using HTTP(S).', 'wp-simple-events' ) ); ?>
+
 			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'wp-simple-events' ), 'url', $input->location_url, null, 2048, __( 'Optional route or location page using HTTP(S).', 'wp-simple-events' ) ); ?>
 				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'wp-simple-events' ), 'url', $input->event_url, null, 2048, __( 'Optional information or registration page using HTTP(S).', 'wp-simple-events' ) ); ?>
+				<?php $this->render_input( 'event-url-label', 'event_url_label', __( 'External event link label', 'wp-simple-events' ), 'text', $input->event_url_label, null, EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH, __( 'Optional link text. The default is “More event information”.', 'wp-simple-events' ) ); ?>
 			</div>
 		</div>
 		<?php
@@ -257,6 +260,7 @@ final class EventMetaBox {
 			$this->stored_string( $post_id, EventMeta::ADDRESS ),
 			$this->stored_string( $post_id, EventMeta::LOCATION_URL ),
 			$this->stored_string( $post_id, EventMeta::EVENT_URL ),
+			$this->stored_string( $post_id, EventMeta::EVENT_URL_LABEL ),
 			'' !== $status ? $status : EventStatus::SCHEDULED->value
 		);
 	}

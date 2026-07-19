@@ -17,6 +17,8 @@ use MiMe\WPSimpleEvents\Domain\EventStatus;
  * Provides narrow callbacks for registered event metadata.
  */
 final class EventMetaSanitizer {
+	public const EVENT_URL_LABEL_MAX_LENGTH = 120;
+
 	private const URL_MAX_LENGTH      = 2048;
 	private const VENUE_MAX_LENGTH    = 200;
 	private const ADDRESS_MAX_LENGTH  = 500;
@@ -147,6 +149,17 @@ final class EventMetaSanitizer {
 		}
 
 		return esc_url_raw( $value, array( 'http', 'https' ) );
+	}
+
+	/**
+	 * Normalize the optional plain-text label for the external event link.
+	 *
+	 * @param mixed $value Raw value.
+	 */
+	public function event_url_label( mixed $value ): string {
+		$value = is_scalar( $value ) ? (string) $value : '';
+
+		return $this->limit( sanitize_text_field( $value ), self::EVENT_URL_LABEL_MAX_LENGTH );
 	}
 
 	/**

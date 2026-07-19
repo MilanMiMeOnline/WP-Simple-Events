@@ -52,7 +52,7 @@ Copied values:
 
 Deliberately not copied:
 
-- external event/information/registration URL;
+- external event/information/registration URL and its optional link label;
 - source password;
 - revisions;
 - arbitrary custom metadata or third-party secrets;

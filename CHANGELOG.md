@@ -64,6 +64,7 @@ All notable changes to WP Simple Events are documented here.
 - Packaged WordPress Playground smoke coverage on WordPress 6.9 and 7.0.1 with PHP 8.3.
 - Strict official WordPress Plugin Check and release-artifact upload jobs against the exact staging package.
 - Pinned Playwright browser regression coverage against a disposable WordPress Playground site, including reusable calendar boundary fixtures and CI execution.
+- An optional, revisioned external event link label with a translated fallback, bounded plain-text validation and atomic native/Gutenberg persistence.
 
 ### Fixed
 

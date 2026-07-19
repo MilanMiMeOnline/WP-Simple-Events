@@ -80,6 +80,21 @@ final class EventMetaSanitizerTest extends TestCase {
 	}
 
 	/**
+	 * External action labels are plain text, bounded and reject structured input.
+	 */
+	public function test_event_url_label_is_plain_bounded_scalar_text(): void {
+		self::assertSame(
+			'Register alert(1) now',
+			$this->sanitizer->event_url_label( '<b>Register</b> <script>alert(1)</script> now' )
+		);
+		self::assertSame(
+			EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH,
+			strlen( $this->sanitizer->event_url_label( str_repeat( 'a', 140 ) ) )
+		);
+		self::assertSame( '', $this->sanitizer->event_url_label( array( 'Register' ) ) );
+	}
+
+	/**
 	 * Boolean strings follow WordPress REST semantics.
 	 */
 	public function test_boolean_matches_rest_semantics(): void {

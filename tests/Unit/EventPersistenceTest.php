@@ -43,6 +43,7 @@ final class EventPersistenceTest extends TestCase {
 			'Main Street 1',
 			'https://example.com/location',
 			'https://example.com/event',
+			'Register now',
 			EventStatus::SCHEDULED
 		);
 
@@ -52,6 +53,7 @@ final class EventPersistenceTest extends TestCase {
 		self::assertSame( 1784532600, WordPressState::post_meta( 42, EventMeta::START_UTC ) );
 		self::assertSame( 1784538000, WordPressState::post_meta( 42, EventMeta::END_UTC ) );
 		self::assertSame( 'Town Hall', WordPressState::post_meta( 42, EventMeta::VENUE ) );
+		self::assertSame( 'Register now', WordPressState::post_meta( 42, EventMeta::EVENT_URL_LABEL ) );
 		self::assertFalse( WordPressState::has_post_meta( 42, EventMeta::DATES_NEED_REVIEW ) );
 	}
 
@@ -62,11 +64,13 @@ final class EventPersistenceTest extends TestCase {
 		WordPressState::update_post_meta( 42, EventMeta::START_LOCAL, 'stale' );
 		WordPressState::update_post_meta( 42, EventMeta::START_UTC, 123 );
 		WordPressState::update_post_meta( 42, EventMeta::VENUE, 'Old venue' );
+		WordPressState::update_post_meta( 42, EventMeta::EVENT_URL_LABEL, 'Old label' );
 
 		$data = new ValidatedEventData(
 			null,
 			false,
 			'Europe/Brussels',
+			'',
 			'',
 			'',
 			'',
@@ -79,6 +83,7 @@ final class EventPersistenceTest extends TestCase {
 		self::assertFalse( WordPressState::has_post_meta( 42, EventMeta::START_LOCAL ) );
 		self::assertFalse( WordPressState::has_post_meta( 42, EventMeta::START_UTC ) );
 		self::assertFalse( WordPressState::has_post_meta( 42, EventMeta::VENUE ) );
+		self::assertFalse( WordPressState::has_post_meta( 42, EventMeta::EVENT_URL_LABEL ) );
 		self::assertSame( EventStatus::POSTPONED->value, WordPressState::post_meta( 42, EventMeta::STATUS ) );
 	}
 }

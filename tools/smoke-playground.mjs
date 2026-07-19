@@ -329,6 +329,7 @@ async function createPublishedEvent(
 		address = '',
 		locationUrl = '',
 		eventUrl = '',
+		eventUrlLabel = '',
 		eventStatus = 'scheduled',
 	},
 ) {
@@ -349,6 +350,7 @@ async function createPublishedEvent(
 				_wpse_address: address,
 				_wpse_location_url: locationUrl,
 				_wpse_event_url: eventUrl,
+				_wpse_event_url_label: eventUrlLabel,
 				_wpse_event_status: eventStatus,
 			},
 		} ),
@@ -393,6 +395,11 @@ try {
 	requireCondition( category.slug === 'wpse_event_category', 'The event category taxonomy is not registered.' );
 	requireCondition( tag.slug === 'wpse_event_tag', 'The event tag taxonomy is not registered.' );
 	requireCondition( '_wpse_start_local' in metaSchema, 'Editable event metadata is missing from REST.' );
+	requireCondition( '_wpse_event_url_label' in metaSchema, 'The external event link label is missing from REST.' );
+	requireCondition(
+		metaSchema._wpse_event_url_label.maxLength === 120,
+		'The external event link label REST schema is not bounded to 120 characters.',
+	);
 	requireCondition( ! ( '_wpse_start_utc' in metaSchema ), 'Internal UTC metadata leaked into core REST.' );
 
 	const editorResponse = await fetch(
@@ -404,6 +411,12 @@ try {
 	requireCondition( editorResponse.ok, 'The event editor is unavailable.' );
 	requireCondition( editorBody.includes( 'menu-posts-wpse_event' ), 'The Events admin menu is unavailable.' );
 	requireCondition( editorBody.includes( 'wpse-event-details' ), 'The native event details panel is unavailable.' );
+	requireCondition(
+		editorBody.includes( 'id="wpse-event-url-label"' ) &&
+			editorBody.includes( 'name="wpse_event[event_url_label]"' ) &&
+			editorBody.includes( 'maxlength="120"' ),
+		'The bounded external event link label control is unavailable.',
+	);
 
 	const settingsResponse = await fetch(
 		'http://localhost:8888/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
@@ -477,6 +490,7 @@ try {
 			address: 'Main Square 1',
 			locationUrl: 'https://example.com/location',
 			eventUrl: 'https://example.com/event',
+			eventUrlLabel: '<b>Register</b> <script>alert(1)</script> now',
 			eventStatus: 'postponed',
 		},
 	);
@@ -487,6 +501,25 @@ try {
 	requireCondition(
 		validCreate.data.meta._wpse_start_local === `${ localDate( 3 ) }T09:30:00`,
 		'The valid REST event start was not canonicalized.',
+	);
+	requireCondition(
+		validCreate.data.meta._wpse_event_url_label === 'Register alert(1) now',
+		'The external event link label was not sanitized through REST.',
+	);
+
+	const unauthorizedLabelUpdate = await requestJson(
+		`http://localhost:8888/wp-json/wp/v2/wpse_event/${ eventId }`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				meta: { _wpse_event_url_label: 'Unauthorized change' },
+			} ),
+		},
+	);
+	requireCondition(
+		[ 401, 403 ].includes( unauthorizedLabelUpdate.response.status ),
+		'An unauthenticated REST request changed the external event link label.',
 	);
 
 	const invalidUpdate = await authenticatedRequest(
@@ -524,6 +557,7 @@ try {
 			title: 'Ongoing smoke event',
 			startOffset: -1,
 			endOffset: 1,
+			eventUrl: 'https://example.com/fallback',
 		},
 	);
 	const pastCreate = await createPublishedEvent(
@@ -532,6 +566,7 @@ try {
 			title: 'Past smoke event',
 			startOffset: -3,
 			endOffset: -2,
+			eventUrlLabel: 'Orphaned label must stay hidden',
 		},
 	);
 	const protectedCreate = await createPublishedEvent(
@@ -705,6 +740,10 @@ try {
 	requireCondition(
 		duplicatedEvent.data.meta._wpse_event_url === '',
 		'The duplicate incorrectly copied its external commercial event URL.',
+	);
+	requireCondition(
+		duplicatedEvent.data.meta._wpse_event_url_label === '',
+		'The duplicate incorrectly copied its external event link label.',
 	);
 	requireCondition(
 		duplicatedEvent.data.wpse_event_category.includes( calendarCategory.data.id ),
@@ -911,7 +950,7 @@ try {
 		'Postponed',
 		'Town Hall',
 		'Single event body marker.',
-		'More event information',
+		'Register alert(1) now',
 	];
 	for ( const section of singleSections ) {
 		requireCondition( singleArticle.includes( section ), `The native single event omitted ${ section }.` );
@@ -924,6 +963,22 @@ try {
 	}
 	requireCondition( singleBody.includes( 'Main Square 1' ), 'The native single event omitted its address.' );
 	requireCondition( singleBody.includes( 'https://example.com/location' ), 'The native single event omitted its location link.' );
+	requireCondition(
+		! singleArticle.includes( '<script' ) && ! singleArticle.includes( '<b>Register</b>' ),
+		'The custom external event link label rendered submitted markup.',
+	);
+
+	const fallbackSingleBody = await fetchHealthyPage( ongoingCreate.data.link );
+	requireCondition(
+		fallbackSingleBody.includes( 'More event information' ),
+		'An event without a custom external link label lost the translated fallback.',
+	);
+	const noActionSingleBody = await fetchHealthyPage( pastCreate.data.link );
+	requireCondition(
+		! noActionSingleBody.includes( 'wpse-event-action' ) &&
+			! noActionSingleBody.includes( 'Orphaned label must stay hidden' ),
+		'An external event label rendered without an external URL.',
+	);
 	requireCondition(
 		singleBody.includes( '<script type="application/ld+json">' ) &&
 			singleBody.includes( '"@type":"Event"' ) &&

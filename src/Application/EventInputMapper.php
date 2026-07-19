@@ -43,6 +43,7 @@ final class EventInputMapper {
 			$this->payload_string( $payload, 'address' ),
 			$this->payload_string( $payload, 'location_url' ),
 			$this->payload_string( $payload, 'event_url' ),
+			$this->payload_string( $payload, 'event_url_label' ),
 			$this->payload_string( $payload, 'status', EventStatus::SCHEDULED->value )
 		);
 	}
@@ -68,6 +69,7 @@ final class EventInputMapper {
 			$this->rest_or_stored( $meta, EventMeta::ADDRESS, $post_id, '' ),
 			$this->rest_or_stored( $meta, EventMeta::LOCATION_URL, $post_id, '' ),
 			$this->rest_or_stored( $meta, EventMeta::EVENT_URL, $post_id, '' ),
+			$this->rest_or_stored( $meta, EventMeta::EVENT_URL_LABEL, $post_id, '' ),
 			$this->rest_or_stored( $meta, EventMeta::STATUS, $post_id, EventStatus::SCHEDULED->value )
 		);
 	}

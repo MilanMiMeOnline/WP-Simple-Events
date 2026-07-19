@@ -26,6 +26,7 @@ final readonly class ValidatedEventData {
 	 * @param string              $address      Sanitized address.
 	 * @param string              $location_url Sanitized location URL.
 	 * @param string              $event_url    Sanitized event URL.
+	 * @param string              $event_url_label Sanitized external event link label.
 	 * @param EventStatus         $status       Validated explicit event status.
 	 */
 	public function __construct(
@@ -36,6 +37,7 @@ final readonly class ValidatedEventData {
 		public string $address,
 		public string $location_url,
 		public string $event_url,
+		public string $event_url_label,
 		public EventStatus $status
 	) {}
 }

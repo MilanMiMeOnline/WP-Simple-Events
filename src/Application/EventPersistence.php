@@ -44,6 +44,7 @@ final class EventPersistence {
 		$this->update_optional( $post_id, EventMeta::ADDRESS, $data->address );
 		$this->update_optional( $post_id, EventMeta::LOCATION_URL, $data->location_url );
 		$this->update_optional( $post_id, EventMeta::EVENT_URL, $data->event_url );
+		$this->update_optional( $post_id, EventMeta::EVENT_URL_LABEL, $data->event_url_label );
 		delete_post_meta( $post_id, EventMeta::DATES_NEED_REVIEW );
 	}
 

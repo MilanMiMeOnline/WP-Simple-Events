@@ -121,7 +121,7 @@ final class EventDuplicateController {
 		}
 		?>
 		<div class="notice notice-success is-dismissible">
-			<p><?php esc_html_e( 'Event duplicated as a draft. Review the copied dates before publishing; the external event URL was not copied.', 'wp-simple-events' ); ?></p>
+			<p><?php esc_html_e( 'Event duplicated as a draft. Review the copied dates before publishing; the external event link and its label were not copied.', 'wp-simple-events' ); ?></p>
 		</div>
 		<?php
 	}
