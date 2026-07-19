@@ -112,7 +112,11 @@ Default attributes are:
 
 Each calendar receives an isolated `wpse_calendar_N` request namespace. Native
 GET controls work without JavaScript and preserve only allowlisted state from
-other calendar instances. The fallback is a bounded upcoming event list. After
+other calendar instances. The visitor form is omitted completely when neither
+event taxonomy has a non-empty public term; when only one taxonomy has choices,
+only that selector is shown. Configured category and tag constraints remain
+authoritative for both the server fallback and JavaScript feed when visitor
+controls are disabled or unavailable. The fallback is a bounded upcoming event list. After
 the first successful feed response, JavaScript replaces that list with the
 calendar. Feed failure leaves the list visible.
 

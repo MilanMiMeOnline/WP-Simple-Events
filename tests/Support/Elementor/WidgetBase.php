@@ -21,6 +21,13 @@ abstract class Widget_Base {
 	private array $wpse_test_settings = array();
 
 	/**
+	 * Recorded regular controls for registration assertions.
+	 *
+	 * @var array<string, array<string, mixed>>
+	 */
+	private array $wpse_test_controls = array();
+
+	/**
 	 * Recorded group controls for registration assertions.
 	 *
 	 * @var array<string, array<string, mixed>>
@@ -65,6 +72,15 @@ abstract class Widget_Base {
 	}
 
 	/**
+	 * Return regular controls recorded during a registration test.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	final public function wpse_test_controls(): array {
+		return $this->wpse_test_controls;
+	}
+
+	/**
 	 * Accept a control section.
 	 *
 	 * @param string               $section_id Section identifier.
@@ -84,7 +100,8 @@ abstract class Widget_Base {
 	 * @param array<string, mixed> $args    Control arguments.
 	 * @param array<string, mixed> $options Registration options.
 	 */
-	public function add_control( string $id, array $args, array $options = array() ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Test recorder is added only when needed.
+	public function add_control( string $id, array $args, array $options = array() ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Test double mirrors Elementor's complete signature.
+		$this->wpse_test_controls[ $id ] = $args;
 	}
 
 	/**

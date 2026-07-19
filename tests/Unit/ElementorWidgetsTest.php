@@ -85,6 +85,33 @@ final class ElementorWidgetsTest extends TestCase {
 	}
 
 	/**
+	 * Calendar query constraints and visitor controls are clearly distinguished.
+	 */
+	public function test_calendar_filter_controls_explain_their_scope(): void {
+		$widget = new EventCalendarWidget();
+		$method = new ReflectionMethod( $widget, 'register_controls' );
+		$method->invoke( $widget );
+		$controls = $widget->wpse_test_controls();
+
+		self::assertSame( 'Initial categories', $controls['category']['label'] ?? null );
+		self::assertSame(
+			'Applied when the calendar first loads. Visitors can change categories when visitor filters are shown.',
+			$controls['category']['description'] ?? null
+		);
+		self::assertSame( 'Initial tags', $controls['tag']['label'] ?? null );
+		self::assertSame(
+			'Applied when the calendar first loads. Visitors can change tags when visitor filters are shown.',
+			$controls['tag']['description'] ?? null
+		);
+		self::assertSame( 'Show visitor filters', $controls['filters']['label'] ?? null );
+		self::assertSame( 'yes', $controls['filters']['default'] ?? null );
+		self::assertSame(
+			'Let visitors filter by available event categories and tags. Hidden when no choices are available.',
+			$controls['filters']['description'] ?? null
+		);
+	}
+
+	/**
 	 * A selected preview event reaches the shared details renderer.
 	 */
 	public function test_details_widget_delegates_a_valid_preview_event(): void {

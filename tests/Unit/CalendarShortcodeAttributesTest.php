@@ -64,4 +64,22 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 
 		self::assertSame( array( 'talks' ), $attributes->category_slugs );
 	}
+
+	/**
+	 * Disabled visitor filters cannot override configured initial constraints.
+	 */
+	public function test_disabled_filters_ignore_matching_request_values(): void {
+		$attributes = CalendarShortcodeAttributes::from_shortcode(
+			array(
+				'category' => 'workshops',
+				'filters'  => 'false',
+			)
+		)->with_request(
+			array( 'wpse_calendar_1_category' => array( 'talks' ) ),
+			'wpse_calendar_1'
+		);
+
+		self::assertFalse( $attributes->filters );
+		self::assertSame( array( 'workshops' ), $attributes->category_slugs );
+	}
 }

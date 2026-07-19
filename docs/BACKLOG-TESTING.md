@@ -60,7 +60,7 @@ Decide during backlog planning whether one accent/on-accent pair is sufficient f
 ## WPSE-BL-002 — Empty calendar filter action and unclear opt-in behaviour
 
 - **Type:** Bug and usability improvement — calendar filtering and Elementor configuration
-- **State:** Triaged; not scheduled
+- **State:** Resolved in WP1.3 on 2026-07-18
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Calendar shortcode and Elementor Event Calendar widget
@@ -101,6 +101,10 @@ This is therefore primarily an empty-state rendering defect plus a configuration
 ### Planning note
 
 During backlog planning, decide whether filters should remain enabled by default for backward compatibility or become opt-in for newly created calendars. Hiding an empty filter form is required independently of that product-default decision.
+
+### Resolution
+
+The existing enabled default was retained for backward compatibility. The renderer omits the entire form when both non-empty public term collections are empty, and renders only the category/tag selectors that have choices. Elementor keeps the existing stable `category`, `tag` and `filters` identifiers while clarifying initial constraints versus visitor-facing controls. The interactive feed now also receives initial category/tag constraints when visitor controls are disabled or unavailable, matching the no-JavaScript fallback.
 
 ## WPSE-BL-003 — Same-day timed event incorrectly spans two calendar days
 

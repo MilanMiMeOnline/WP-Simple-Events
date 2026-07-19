@@ -87,6 +87,17 @@ const buttonState = ( button ) => button.evaluate( ( element ) => {
 	};
 } );
 
+/**
+ * Return all selected values from a multiple select.
+ *
+ * @param {import('@playwright/test').Locator} select Multiple select control.
+ * @return {Promise<Array<string>>} Selected option values.
+ */
+const selectedOptions = ( select ) =>
+	select.evaluate( ( element ) =>
+		Array.from( element.selectedOptions, ( option ) => option.value ),
+	);
+
 test( 'loads the progressively enhanced public calendar', async ( { page } ) => {
 	const pageErrors = [];
 
@@ -98,6 +109,9 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
 
 	await expect( calendar ).toBeVisible();
+	await expect(
+		calendar.locator( '[data-wpse-calendar-filters]' ),
+	).toHaveCount( 0 );
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
 		'No events match your selection.',
 	);
@@ -122,6 +136,81 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	await page.setViewportSize( { width: 800, height: 900 } );
 	await expectHealthyMonthGrid( canvas );
 	expect( pageErrors ).toEqual( [] );
+} );
+
+test( 'filters by category and tag with persistent namespaced URL state', async ( {
+	page,
+} ) => {
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+
+	const calendar = page.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+	const filters = calendar.locator( '[data-wpse-calendar-filters]' );
+	const category = filters.locator(
+		'[data-wpse-calendar-filter="category"]',
+	);
+	const tag = filters.locator( '[data-wpse-calendar-filter="tag"]' );
+
+	await expect( filters ).toBeVisible();
+	await expect( filters ).toHaveAttribute( 'method', 'get' );
+	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+		'wpse-e2e-category',
+	] );
+	await expect.poll( () => selectedOptions( tag ) ).toEqual( [] );
+	await expect(
+		filters.getByRole( 'button', { name: 'Apply filters' } ),
+	).toHaveAttribute( 'aria-controls', 'wpse-calendar-1-canvas' );
+
+	await canvas.getByRole( 'button', { name: 'Next' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
+
+	await tag.selectOption( 'wpse-e2e-tag' );
+	await filters.getByRole( 'button', { name: 'Apply filters' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'2 events loaded.',
+	);
+	await expect.poll( () => {
+		const url = new URL( page.url() );
+
+		return {
+			categories: url.searchParams.getAll(
+				'wpse_calendar_1_category[]',
+			),
+			tags: url.searchParams.getAll( 'wpse_calendar_1_tag[]' ),
+		};
+	} ).toEqual( {
+		categories: [ 'wpse-e2e-category' ],
+		tags: [ 'wpse-e2e-tag' ],
+	} );
+
+	await page.reload();
+	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+		'wpse-e2e-category',
+	] );
+	await expect.poll( () => selectedOptions( tag ) ).toEqual( [
+		'wpse-e2e-tag',
+	] );
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'No events match your selection.',
+	);
+	const reset = calendar
+		.locator( '[data-wpse-calendar-empty-action]' )
+		.getByRole( 'button', { name: 'Reset filters' } );
+
+	await expect( reset ).toBeVisible();
+	await reset.click();
+	await expect.poll( () => selectedOptions( category ) ).toEqual( [] );
+	await expect.poll( () => selectedOptions( tag ) ).toEqual( [] );
+	await expect.poll( () => {
+		const url = new URL( page.url() );
+
+		return [
+			...url.searchParams.getAll( 'wpse_calendar_1_category[]' ),
+			...url.searchParams.getAll( 'wpse_calendar_1_tag[]' ),
+		];
+	} ).toEqual( [] );
 } );
 
 test( 'uses the configured mobile list view on its first render', async ( {
@@ -281,6 +370,28 @@ test( 'keeps multiple calendar instances independent and measurable', async ( {
 			calendar.locator( '[data-wpse-calendar-canvas]' ),
 		);
 	}
+
+	const firstCalendar = calendars.nth( 0 );
+	const secondCalendar = calendars.nth( 1 );
+
+	await firstCalendar
+		.locator( '[data-wpse-calendar-canvas]' )
+		.getByRole( 'button', { name: 'Next' } )
+		.click();
+	await expect(
+		firstCalendar.locator( '[data-wpse-calendar-status]' ),
+	).toHaveText( '3 events loaded.' );
+	await expect(
+		secondCalendar.locator( '[data-wpse-calendar-status]' ),
+	).toHaveText( 'No events match your selection.' );
+
+	await secondCalendar
+		.locator( '[data-wpse-calendar-canvas]' )
+		.getByRole( 'button', { name: 'Next' } )
+		.click();
+	await expect(
+		secondCalendar.locator( '[data-wpse-calendar-status]' ),
+	).toHaveText( '3 events loaded.' );
 } );
 
 test( 'repairs its geometry after a hidden integration container is revealed', async ( {

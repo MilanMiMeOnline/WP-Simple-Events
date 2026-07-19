@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0, WP1.1 and WP1.2 completed 2026-07-18; WP1.3 is next\
+**Status:** WP0 and WP1 completed 2026-07-18; WP2.1 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -111,6 +111,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 3. Retain the existing enabled default and saved widget behaviour.
 4. Rename/describe the Elementor visitor-filter control clearly and distinguish it from initial category/tag constraints.
 5. Verify filter selection, reset, URL state, no-JavaScript GET fallback, multiple instances and accessible status messages.
+
+**Completion note (2026-07-18):** The existing enabled default and stable Elementor IDs remain unchanged. The complete visitor-filter form is now omitted when neither taxonomy has a non-empty public term; category-only, tag-only and combined states render only useful controls. Elementor labels its saved category/tag values as initial constraints and its switcher as `Show visitor filters`. Initial constraints are now carried in the JavaScript configuration as well as the server fallback, so disabling or omitting visitor controls cannot broaden the interactive feed. Unit and browser coverage protect GET state, selection, URL reload, reset, disabled filters, multiple instances and accessible result status.
 
 ### Exit criteria
 

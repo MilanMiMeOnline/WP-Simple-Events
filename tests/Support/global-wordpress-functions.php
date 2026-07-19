@@ -104,6 +104,64 @@ if ( ! function_exists( 'esc_html' ) ) {
 	}
 }
 
+if ( ! function_exists( 'esc_attr' ) ) {
+	/**
+	 * Escape deterministic test attribute text.
+	 *
+	 * @param string $text Raw attribute text.
+	 */
+	function esc_attr( string $text ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( 'esc_attr_e' ) ) {
+	/**
+	 * Echo escaped deterministic test attribute text.
+	 *
+	 * @param string $text   Source text.
+	 * @param string $domain Text domain.
+	 */
+	function esc_attr_e( string $text, string $domain = 'default' ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $domain );
+
+		echo esc_attr( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_html_e' ) ) {
+	/**
+	 * Echo escaped deterministic test HTML text.
+	 *
+	 * @param string $text   Source text.
+	 * @param string $domain Text domain.
+	 */
+	function esc_html_e( string $text, string $domain = 'default' ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $domain );
+
+		echo esc_html( $text );
+	}
+}
+
+if ( ! function_exists( 'selected' ) ) {
+	/**
+	 * Return or echo a deterministic selected attribute.
+	 *
+	 * @param mixed $selected Selected value.
+	 * @param mixed $current  Current value.
+	 * @param bool  $display  Whether to echo the attribute.
+	 */
+	function selected( mixed $selected, mixed $current = true, bool $display = true ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$result = $selected === $current ? ' selected="selected"' : '';
+
+		if ( $display ) {
+			echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fixed test-only HTML.
+		}
+
+		return $result;
+	}
+}
+
 if ( ! function_exists( 'wp_timezone_string' ) ) {
 	/**
 	 * Return the deterministic site timezone used by unit tests.
@@ -881,15 +939,23 @@ if ( ! function_exists( 'ms_is_switched' ) ) {
 
 if ( ! function_exists( 'add_query_arg' ) ) {
 	/**
-	 * Add one query argument in controller tests.
+	 * Add deterministic query arguments in controller tests.
 	 *
-	 * @param string $key      Query key.
-	 * @param string $value    Query value.
-	 * @param string $location Existing URL.
+	 * @param array<string, mixed>|string $key      Query arguments or one query key.
+	 * @param mixed                       $value    Existing URL for array input, or query value.
+	 * @param string                      $location Existing URL for scalar input.
 	 */
-	function add_query_arg( string $key, string $value, string $location ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
-		$separator = str_contains( $location, '?' ) ? '&' : '?';
+	function add_query_arg( array|string $key, mixed $value = '', string $location = '' ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$arguments = is_array( $key ) ? $key : array( $key => $value );
+		$url       = is_array( $key ) && is_string( $value ) ? $value : $location;
+		$query     = http_build_query( $arguments, '', '&', PHP_QUERY_RFC3986 );
 
-		return $location . $separator . rawurlencode( $key ) . '=' . rawurlencode( $value );
+		if ( '' === $query ) {
+			return $url;
+		}
+
+		$separator = str_contains( $url, '?' ) ? '&' : '?';
+
+		return $url . $separator . $query;
 	}
 }

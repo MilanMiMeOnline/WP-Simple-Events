@@ -165,3 +165,13 @@ The mirror preserves registered metadata owned by other plugins and never expose
 Layout and interaction failures cannot be proved by PHP stubs or HTTP-only smoke tests. The development toolchain therefore pins `@playwright/test` 1.61.1 under its Apache-2.0 licence and installs only its Chromium browser for the initial critical calendar journeys. Tests run against an isolated WordPress Playground site with bounded fixtures and assert component semantics, visibility, interaction and stable geometry rather than full-theme pixel snapshots.
 
 Playwright remains development-only, loads no visitor asset and is excluded from production releases with all other `node_modules`. CI installs the matching browser explicitly. Removal requires replacing its browser-level calendar, responsive and accessibility evidence; HTTP smoke and manual screenshots alone are not equivalent coverage.
+
+## ADR-023: Calendar constraints are independent from visitor-control visibility
+
+**Status:** Accepted
+
+The calendar's `category` and `tag` values are initial query constraints, while `filters` controls whether visitors receive selectors that can alter those values. The existing enabled default and stable shortcode/Elementor identifiers remain unchanged for backward compatibility. Elementor labels and descriptions must make this distinction explicit.
+
+Visitor controls list only non-empty public event terms and the entire filter form is omitted when neither taxonomy offers a usable choice. This avoids a submit action with no possible effect. Server-rendered GET forms remain the no-JavaScript baseline, use instance-specific request names and preserve only allowlisted state belonging to other calendar instances.
+
+Initial constraints are also embedded as bounded sanitized arrays in the calendar's JavaScript configuration. The feed uses them whenever the matching visitor selector is absent, including calendars with filters disabled and calendars whose only usable selector belongs to the other taxonomy. Hiding presentation controls therefore cannot silently broaden the public event query.

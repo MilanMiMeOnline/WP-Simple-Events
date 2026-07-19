@@ -125,7 +125,7 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:222
 #: src/Frontend/EventDetailsRenderer.php:130
 #: src/Frontend/EventRenderer.php:119
-#: src/Shortcode/CalendarShortcode.php:139
+#: src/Shortcode/CalendarShortcode.php:141
 msgid "Cancelled"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:223
 #: src/Frontend/EventDetailsRenderer.php:131
 #: src/Frontend/EventRenderer.php:120
-#: src/Shortcode/CalendarShortcode.php:140
+#: src/Shortcode/CalendarShortcode.php:142
 msgid "Postponed"
 msgstr ""
 
@@ -759,7 +759,7 @@ msgid "Event Calendar"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:61
-#: src/Elementor/EventCalendarWidget.php:146
+#: src/Elementor/EventCalendarWidget.php:149
 msgid "Calendar"
 msgstr ""
 
@@ -772,61 +772,64 @@ msgid "Mobile view"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:86
-#: src/Elementor/EventListWidget.php:111
-#: src/Frontend/EventArchiveControls.php:45
-#: src/Shortcode/CalendarControls.php:47
-#: src/Shortcode/EventListControls.php:53
-msgid "Categories"
+msgid "Initial categories"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:96
-#: src/Elementor/EventListWidget.php:121
-#: src/Frontend/EventArchiveControls.php:49
-#: src/Shortcode/CalendarControls.php:51
-#: src/Shortcode/EventListControls.php:57
-msgid "Tags"
+#: src/Elementor/EventCalendarWidget.php:91
+msgid "Applied when the calendar first loads. Visitors can change categories when visitor filters are shown."
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:106
-#: src/Elementor/EventListWidget.php:157
-msgid "Show filters"
+#: src/Elementor/EventCalendarWidget.php:97
+msgid "Initial tags"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:136
-#: src/Shortcode/CalendarShortcode.php:125
+#: src/Elementor/EventCalendarWidget.php:102
+msgid "Applied when the calendar first loads. Visitors can change tags when visitor filters are shown."
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:108
+msgid "Show visitor filters"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:112
+msgid "Let visitors filter by available event categories and tags. Hidden when no choices are available."
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:139
+#: src/Shortcode/CalendarShortcode.php:127
 msgid "Month"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:137
+#: src/Elementor/EventCalendarWidget.php:140
 #: src/Elementor/EventListWidget.php:64
-#: src/Shortcode/CalendarShortcode.php:126
+#: src/Shortcode/CalendarShortcode.php:128
 msgid "List"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:153
+#: src/Elementor/EventCalendarWidget.php:156
 #: src/Elementor/EventDetailsWidget.php:141
 #: src/Elementor/EventListWidget.php:193
 msgid "Text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:161
+#: src/Elementor/EventCalendarWidget.php:164
 msgid "Accent color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:169
+#: src/Elementor/EventCalendarWidget.php:172
 msgid "Accent text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:177
+#: src/Elementor/EventCalendarWidget.php:180
 #: src/Elementor/EventDetailsWidget.php:157
 msgid "Border color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:186
+#: src/Elementor/EventCalendarWidget.php:189
 msgid "Calendar typography"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:194
+#: src/Elementor/EventCalendarWidget.php:197
 msgid "Button typography"
 msgstr ""
 
@@ -889,6 +892,24 @@ msgstr ""
 msgid "Columns"
 msgstr ""
 
+#: src/Elementor/EventListWidget.php:111
+#: src/Frontend/EventArchiveControls.php:45
+#: src/Shortcode/CalendarControls.php:52
+#: src/Shortcode/EventListControls.php:53
+msgid "Categories"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:121
+#: src/Frontend/EventArchiveControls.php:49
+#: src/Shortcode/CalendarControls.php:56
+#: src/Shortcode/EventListControls.php:57
+msgid "Tags"
+msgstr ""
+
+#: src/Elementor/EventListWidget.php:157
+msgid "Show filters"
+msgstr ""
+
 #: src/Elementor/EventListWidget.php:158
 msgid "Show pagination"
 msgstr ""
@@ -947,19 +968,19 @@ msgid "Filter events"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:53
-#: src/Shortcode/CalendarControls.php:55
+#: src/Shortcode/CalendarControls.php:60
 #: src/Shortcode/EventListControls.php:61
 msgid "Apply filters"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:82
-#: src/Shortcode/CalendarShortcode.php:122
+#: src/Shortcode/CalendarShortcode.php:124
 #: src/Shortcode/EventListControls.php:91
 msgid "Previous"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:83
-#: src/Shortcode/CalendarShortcode.php:123
+#: src/Shortcode/CalendarShortcode.php:125
 #: src/Shortcode/EventListControls.php:92
 msgid "Next"
 msgstr ""
@@ -970,7 +991,7 @@ msgid "Events pagination"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:133
-#: src/Shortcode/CalendarControls.php:108
+#: src/Shortcode/CalendarControls.php:113
 #: src/Shortcode/EventListControls.php:142
 msgid "Select one or more."
 msgstr ""
@@ -1006,7 +1027,7 @@ msgid "Tags:"
 msgstr ""
 
 #: src/Frontend/EventListRenderer.php:56
-#: src/Shortcode/CalendarShortcode.php:128
+#: src/Shortcode/CalendarShortcode.php:130
 msgid "No events match your selection."
 msgstr ""
 
@@ -1046,11 +1067,11 @@ msgstr ""
 msgid "The event could not be saved because its details are invalid."
 msgstr ""
 
-#: src/Shortcode/CalendarControls.php:43
+#: src/Shortcode/CalendarControls.php:48
 msgid "Filter calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarControls.php:57
+#: src/Shortcode/CalendarControls.php:62
 #: src/Shortcode/CalendarShortcode.php:84
 msgid "Reset filters"
 msgstr ""
@@ -1063,42 +1084,42 @@ msgstr ""
 msgid "Upcoming events"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:124
+#: src/Shortcode/CalendarShortcode.php:126
 msgid "Today"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:127
+#: src/Shortcode/CalendarShortcode.php:129
 msgid "Loading events…"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:129
+#: src/Shortcode/CalendarShortcode.php:131
 msgid "1 event loaded."
 msgstr ""
 
 #. Translators: %d is the number of loaded events.
-#: src/Shortcode/CalendarShortcode.php:131
+#: src/Shortcode/CalendarShortcode.php:133
 #, php-format
 msgid "%d events loaded."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:132
+#: src/Shortcode/CalendarShortcode.php:134
 msgid "The calendar could not be loaded. The event list remains available below."
 msgstr ""
 
 #. Translators: %d is the maximum number of events currently shown.
-#: src/Shortcode/CalendarShortcode.php:134
+#: src/Shortcode/CalendarShortcode.php:136
 #, php-format
 msgid "Only the first %d events are shown. Narrow the calendar period or filters."
 msgstr ""
 
 #. Translators: %d is the number of additional events on a calendar day.
-#: src/Shortcode/CalendarShortcode.php:136
+#: src/Shortcode/CalendarShortcode.php:138
 #, php-format
 msgid "%d more"
 msgstr ""
 
 #. Translators: %s is the translated name of the calendar view.
-#: src/Shortcode/CalendarShortcode.php:138
+#: src/Shortcode/CalendarShortcode.php:140
 #, php-format
 msgid "%s view"
 msgstr ""

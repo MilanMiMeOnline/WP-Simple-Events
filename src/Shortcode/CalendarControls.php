@@ -32,11 +32,16 @@ final readonly class CalendarControls {
 	): string {
 		$categories = $this->terms( EventTaxonomies::CATEGORY );
 		$tags       = $this->terms( EventTaxonomies::TAG );
-		$action     = get_permalink( get_queried_object_id() );
-		$action     = is_string( $action ) ? $action : '';
-		$selected   = array() !== $attributes->category_slugs || array() !== $attributes->tag_slugs;
-		$preserved  = $this->preserved_instance_values( $request, $prefix );
-		$reset_url  = add_query_arg( $preserved, $action );
+
+		if ( array() === $categories && array() === $tags ) {
+			return '';
+		}
+
+		$action    = get_permalink( get_queried_object_id() );
+		$action    = is_string( $action ) ? $action : '';
+		$selected  = array() !== $attributes->category_slugs || array() !== $attributes->tag_slugs;
+		$preserved = $this->preserved_instance_values( $request, $prefix );
+		$reset_url = add_query_arg( $preserved, $action );
 
 		ob_start();
 		?>

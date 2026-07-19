@@ -117,6 +117,8 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			'maxPages'       => 5,
 			'categoryKey'    => $prefix . '_category',
 			'tagKey'         => $prefix . '_tag',
+			'categories'     => $attributes->category_slugs,
+			'tags'           => $attributes->tag_slugs,
 			'filtersEnabled' => $attributes->filters,
 			'strings'        => array(
 				'previous'   => __( 'Previous', 'wp-simple-events' ),

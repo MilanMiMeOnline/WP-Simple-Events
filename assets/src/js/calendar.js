@@ -15,17 +15,18 @@ const formatNumber = ( template, value ) =>
 /**
  * Return selected values for one filter type.
  *
- * @param {HTMLElement} root Calendar root.
- * @param {string}      type Stable filter type.
+ * @param {HTMLElement}   root     Calendar root.
+ * @param {string}        type     Stable filter type.
+ * @param {Array<string>} fallback Values used when no visitor control exists.
  * @return {Array<string>} Selected slugs.
  */
-const selectedValues = ( root, type ) => {
+const selectedValues = ( root, type, fallback = [] ) => {
 	const select = root.querySelector(
 		`[data-wpse-calendar-filter="${ type }"]`,
 	);
 
 	if ( ! select ) {
-		return [];
+		return Array.isArray( fallback ) ? fallback : [];
 	}
 
 	return Array.from( select.selectedOptions, ( option ) => option.value );
@@ -48,8 +49,8 @@ const fetchEvents = async ( config, root, range ) => {
 	endpoint.searchParams.set( 'end', range.endStr );
 	endpoint.searchParams.set( 'per_page', String( config.perPage ) );
 
-	const categories = selectedValues( root, 'category' );
-	const tags = selectedValues( root, 'tag' );
+	const categories = selectedValues( root, 'category', config.categories );
+	const tags = selectedValues( root, 'tag', config.tags );
 
 	if ( categories.length ) {
 		endpoint.searchParams.set( 'categories', categories.join( ',' ) );
@@ -107,7 +108,9 @@ const updateUrl = ( config, root ) => {
 		url.searchParams.delete( key );
 		url.searchParams.delete( `${ key }[]` );
 
-		selectedValues( root, type ).forEach( ( value ) => {
+		const fallback = type === 'category' ? config.categories : config.tags;
+
+		selectedValues( root, type, fallback ).forEach( ( value ) => {
 			url.searchParams.append( `${ key }[]`, value );
 		} );
 	} );

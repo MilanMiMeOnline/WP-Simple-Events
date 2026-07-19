@@ -83,30 +83,33 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'category',
 			array(
-				'label'       => esc_html__( 'Categories', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Initial categories', 'wp-simple-events' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
 				'options'     => $this->term_options( EventTaxonomies::CATEGORY ),
+				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change categories when visitor filters are shown.', 'wp-simple-events' ),
 			)
 		);
 		$this->add_control(
 			'tag',
 			array(
-				'label'       => esc_html__( 'Tags', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Initial tags', 'wp-simple-events' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
 				'options'     => $this->term_options( EventTaxonomies::TAG ),
+				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change tags when visitor filters are shown.', 'wp-simple-events' ),
 			)
 		);
 		$this->add_control(
 			'filters',
 			array(
-				'label'        => esc_html__( 'Show filters', 'wp-simple-events' ),
+				'label'        => esc_html__( 'Show visitor filters', 'wp-simple-events' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
 				'default'      => 'yes',
+				'description'  => esc_html__( 'Let visitors filter by available event categories and tags. Hidden when no choices are available.', 'wp-simple-events' ),
 			)
 		);
 		$this->end_controls_section();

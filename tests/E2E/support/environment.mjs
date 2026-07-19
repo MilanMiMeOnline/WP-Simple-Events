@@ -1,8 +1,15 @@
 import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve as resolvePath } from 'node:path';
+import {
+	basename,
+	dirname,
+	isAbsolute,
+	join,
+	resolve as resolvePath,
+} from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectDirectory = resolvePath(
@@ -31,6 +38,43 @@ const fixturePluginPath = join(
 	'tests/E2E/fixtures/wpse-e2e-fixtures',
 );
 const wpEnvExecutable = join( projectDirectory, 'node_modules/.bin/wp-env' );
+const localCoreDirectory =
+	typeof requestedCore === 'string' && isAbsolute( requestedCore )
+		? requestedCore
+		: null;
+const configFilePath = join( configDirectory, '.wp-env.json' );
+
+/**
+ * Seed the wp-env current-version cache for deterministic offline test runs.
+ * wp-env parses its empty defaults before applying our explicit core override.
+ */
+async function seedOfflineVersionCache() {
+	const configuredVersion = baseConfiguration.core?.match(
+		/#([0-9]+(?:\.[0-9]+)*)$/,
+	)?.[ 1 ];
+
+	if ( ! configuredVersion ) {
+		return;
+	}
+
+	const configHash = createHash( 'md5' )
+		.update( configFilePath )
+		.digest( 'hex' )
+		.slice( 0, 8 );
+	const workDirectory = join(
+		wpEnvHome,
+		`wp-env-${ basename( configDirectory ) }-${ configHash }`,
+	);
+
+	await mkdir( workDirectory, { recursive: true } );
+	await writeFile(
+		join( workDirectory, 'wp-env-cache.json' ),
+		`${ JSON.stringify( {
+			latestWordPressVersion: configuredVersion,
+		} ) }\n`,
+		'utf8',
+	);
+}
 
 /**
  * Run wp-env in the isolated browser-test environment.
@@ -46,8 +90,11 @@ function runWpEnv(
 	{ allowFailure = false, silent = false } = {},
 ) {
 	return new Promise( ( resolve, reject ) => {
-		const child = spawn( wpEnvExecutable, argumentsList, {
-			cwd: configDirectory,
+		const commandArguments = localCoreDirectory
+			? [ ...argumentsList, '--config', configFilePath ]
+			: argumentsList;
+		const child = spawn( wpEnvExecutable, commandArguments, {
+			cwd: localCoreDirectory ?? configDirectory,
 			env: {
 				...process.env,
 				WP_ENV_HOME: wpEnvHome,
@@ -72,12 +119,16 @@ function runWpEnv(
 export async function startE2EEnvironment() {
 	const configuration = structuredClone( baseConfiguration );
 
+	if ( requestedCore ) {
+		configuration.core = requestedCore;
+	}
+
 	configuration.plugins = [ pluginPath, fixturePluginPath ];
 
 	await rm( configDirectory, { force: true, recursive: true } );
 	await mkdir( configDirectory, { recursive: true } );
 	await writeFile(
-		join( configDirectory, '.wp-env.json' ),
+		configFilePath,
 		`${ JSON.stringify( configuration, null, 2 ) }\n`,
 		'utf8',
 	);
@@ -88,6 +139,7 @@ export async function startE2EEnvironment() {
 		silent: true,
 	} );
 	await rm( wpEnvHome, { force: true, recursive: true } );
+	await seedOfflineVersionCache();
 	await runWpEnv( [ 'start', '--runtime=playground' ] );
 }
 
