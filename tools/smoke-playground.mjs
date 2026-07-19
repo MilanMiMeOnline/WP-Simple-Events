@@ -371,6 +371,20 @@ try {
 	await fetchHealthyPage( 'http://localhost:8888/' );
 	const session = await authenticateAdministrator();
 	await ensurePackagedPluginIsActive( session );
+	const siteTimezoneUpdate = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/settings',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { timezone: 'Europe/Brussels' } ),
+		},
+	);
+	requireCondition(
+		siteTimezoneUpdate.response.ok &&
+			siteTimezoneUpdate.data.timezone === 'Europe/Brussels',
+		'The smoke site could not establish its deterministic WordPress timezone.',
+	);
 	await fetchHealthyPage( 'http://localhost:8888/events/' );
 
 	const restRoot = await fetchHealthyJson( 'http://localhost:8888/wp-json/' );
@@ -427,6 +441,17 @@ try {
 	requireCondition(
 		settingsBody.includes( 'name="wpse_structured_data_enabled"' ),
 		'The structured-data setting is unavailable.',
+	);
+	requireCondition(
+		settingsBody.includes( '<code>Europe/Brussels</code>' ) &&
+			settingsBody.includes( 'options-general.php' ) &&
+			settingsBody.includes( 'New events capture this timezone' ),
+		'The settings page does not report or explain the authoritative WordPress timezone.',
+	);
+	requireCondition(
+		settingsBody.includes( 'id="wpse_show_event_timezone"' ) &&
+			! /<input[^>]+id="wpse_show_event_timezone"[^>]+checked=/.test( settingsBody ),
+		'The public timezone setting is unavailable or not disabled by default.',
 	);
 	requireCondition(
 		settingsBody.includes( 'name="wpse_archive_slug"' ) &&
@@ -944,6 +969,10 @@ try {
 		'The native single event article is unavailable.',
 	);
 	const singleArticle = singleBody.slice( singleArticleStart, singleArticleEnd );
+	requireCondition(
+		! singleArticle.includes( 'wpse-event-timezone' ),
+		'The backward-compatible default unexpectedly exposed an event timezone.',
+	);
 	const singleSections = [
 		'Future smoke event',
 		'wpse-event-date',
@@ -1009,6 +1038,44 @@ try {
 		'A protected event leaked Event structured data.',
 	);
 
+	const enableTimezoneDisplay = await fetch(
+		'http://localhost:8888/wp-admin/options.php',
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+				cookie: cookieHeader( session.cookieJar ),
+			},
+			body: new URLSearchParams( {
+				option_page: 'wpse_settings',
+				action: 'update',
+				_wpnonce: settingsNonce,
+				_wp_http_referer: '/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
+				wpse_archive_slug: 'events',
+				wpse_archive_per_page: '10',
+				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '1',
+				wpse_structured_data_enabled: '1',
+				wpse_delete_data_on_uninstall: '0',
+			} ),
+			redirect: 'manual',
+		},
+	);
+	requireCondition(
+		enableTimezoneDisplay.status === 302,
+		'The public timezone setting could not be enabled through the protected settings form.',
+	);
+	const timezoneSingleBody = await fetchHealthyPage( validCreate.data.link );
+	requireCondition(
+		timezoneSingleBody.includes( 'class="wpse-event-timezone"' ) &&
+			timezoneSingleBody.includes( 'Europe/Brussels (UTC+02:00)' ),
+		'Enabled timed event details omitted their captured timezone or event-date offset.',
+	);
+	requireCondition(
+		/"startDate":"[^"]+\+02:00"/.test( timezoneSingleBody ),
+		'The visual timezone setting changed or removed the structured-data machine instant.',
+	);
+
 	const disableStructuredData = await fetch(
 		'http://localhost:8888/wp-admin/options.php',
 		{
@@ -1025,6 +1092,7 @@ try {
 				wpse_archive_slug: 'events',
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -1039,6 +1107,10 @@ try {
 	requireCondition(
 		! disabledSchemaBody.includes( '"@type":"Event"' ),
 		'Disabling structured data did not suppress the Event JSON-LD.',
+	);
+	requireCondition(
+		! disabledSchemaBody.includes( 'wpse-event-timezone' ),
+		'Disabling public timezone presentation did not restore the previous event output.',
 	);
 
 	const shortcodePage = await authenticatedRequest(
@@ -1190,6 +1262,7 @@ try {
 				wpse_archive_slug: 'event-page-conflict',
 				wpse_archive_per_page: '2',
 				wpse_archive_default_period: 'all',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -1227,6 +1300,7 @@ try {
 				wpse_archive_slug: 'community-events',
 				wpse_archive_per_page: '1',
 				wpse_archive_default_period: 'all',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -1280,6 +1354,7 @@ try {
 				wpse_archive_slug: 'events',
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -1318,6 +1393,7 @@ try {
 				wpse_archive_slug: 'events',
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '1',
 			} ),
@@ -1353,6 +1429,7 @@ try {
 				wpse_archive_slug: 'events',
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),

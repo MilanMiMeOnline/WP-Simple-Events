@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
 use MiMe\WPSimpleEvents\Lifecycle\Installer;
 use MiMe\WPSimpleEvents\Lifecycle\SiteDataCleaner;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
@@ -71,6 +72,7 @@ final class SiteDataCleanerTest extends TestCase {
 		WordPressState::set_taxonomy_terms( EventTaxonomies::TAG, array( 7 ) );
 		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
 		WordPressState::set_option( StructuredDataSettings::OPTION, false );
+		WordPressState::set_option( EventTimezoneDisplaySettings::OPTION, true );
 		WordPressState::set_option( EventArchiveSettings::SLUG_OPTION, 'calendar' );
 		WordPressState::set_option( EventArchiveSettings::PER_PAGE_OPTION, 24 );
 		WordPressState::set_option( EventArchiveSettings::DEFAULT_PERIOD_OPTION, 'all' );
@@ -87,6 +89,7 @@ final class SiteDataCleanerTest extends TestCase {
 		self::assertSame( array( 7 ), WordPressState::deleted_terms( EventTaxonomies::TAG ) );
 		self::assertFalse( WordPressState::has_option( Installer::VERSION_OPTION ) );
 		self::assertFalse( WordPressState::has_option( StructuredDataSettings::OPTION ) );
+		self::assertFalse( WordPressState::has_option( EventTimezoneDisplaySettings::OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveSettings::SLUG_OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveSettings::PER_PAGE_OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveSettings::DEFAULT_PERIOD_OPTION ) );

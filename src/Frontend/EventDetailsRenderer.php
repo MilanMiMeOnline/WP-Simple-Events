@@ -30,9 +30,13 @@ final class EventDetailsRenderer {
 	/**
 	 * Create the renderer.
 	 *
-	 * @param EventDateFormatter $date_formatter Public event date formatter.
+	 * @param EventDateFormatter           $date_formatter    Public event date formatter.
+	 * @param EventTimezoneDisplaySettings $timezone_settings Global timezone-display setting.
 	 */
-	public function __construct( private readonly EventDateFormatter $date_formatter = new EventDateFormatter() ) {}
+	public function __construct(
+		private readonly EventDateFormatter $date_formatter = new EventDateFormatter(),
+		private readonly EventTimezoneDisplaySettings $timezone_settings = new EventTimezoneDisplaySettings()
+	) {}
 
 	/**
 	 * Render a complete event in the required presentation order.
@@ -123,7 +127,8 @@ final class EventDetailsRenderer {
 			$this->integer_meta( $event->ID, EventMeta::START_UTC ),
 			$this->integer_meta( $event->ID, EventMeta::END_UTC ),
 			$this->boolean_meta( $event->ID, EventMeta::ALL_DAY ),
-			$this->string_meta( $event->ID, EventMeta::TIMEZONE )
+			$this->string_meta( $event->ID, EventMeta::TIMEZONE ),
+			$this->timezone_settings->enabled()
 		);
 		$status       = EventStatus::tryFrom( $this->string_meta( $event->ID, EventMeta::STATUS ) );
 		$status_label = match ( $status ) {
@@ -146,6 +151,9 @@ final class EventDetailsRenderer {
 				<p class="wpse-event-date">
 					<span class="wpse-event-label"><?php esc_html_e( 'Date and time:', 'wp-simple-events' ); ?></span>
 					<time datetime="<?php echo esc_attr( $presentation->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->end_iso ); ?>"><?php echo esc_html( $presentation->label ); ?></time>
+					<?php if ( '' !== $presentation->timezone_label ) : ?>
+						<span class="wpse-event-timezone"><?php echo esc_html( $presentation->timezone_label ); ?></span>
+					<?php endif; ?>
 				</p>
 			<?php endif; ?>
 

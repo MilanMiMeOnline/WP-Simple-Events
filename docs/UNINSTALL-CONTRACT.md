@@ -13,7 +13,7 @@ After opt-in, WordPress plugin deletion removes:
 - every `wpse_event` post in every publication status;
 - event metadata, revisions, comments and taxonomy relationships removed by WordPress together with each event;
 - every `wpse_event_category` and `wpse_event_tag` term;
-- plugin-owned schema, archive-routing, structured-data, pending-rewrite and uninstall-preference options;
+- plugin-owned schema, archive-routing, structured-data, timezone-display, pending-rewrite and uninstall-preference options;
 - event capabilities previously granted by the plugin to administrator and editor.
 
 It does not remove:

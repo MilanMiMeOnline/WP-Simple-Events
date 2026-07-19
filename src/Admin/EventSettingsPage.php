@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Admin;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
+use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSlugConflictDetector;
@@ -37,10 +38,12 @@ final class EventSettingsPage {
 	 *
 	 * @param EventArchiveSettings             $archive_settings Validated archive settings.
 	 * @param EventArchiveSlugConflictDetector $slug_conflicts   Page conflict detector.
+	 * @param EventTimezoneDisplaySettings     $timezone_display Global timezone-display setting.
 	 */
 	public function __construct(
 		private readonly EventArchiveSettings $archive_settings = new EventArchiveSettings(),
-		private readonly EventArchiveSlugConflictDetector $slug_conflicts = new EventArchiveSlugConflictDetector()
+		private readonly EventArchiveSlugConflictDetector $slug_conflicts = new EventArchiveSlugConflictDetector(),
+		private readonly EventTimezoneDisplaySettings $timezone_display = new EventTimezoneDisplaySettings()
 	) {}
 
 	/**
@@ -160,6 +163,34 @@ final class EventSettingsPage {
 			__( 'Display', 'wp-simple-events' ),
 			array( $this, 'render_section' ),
 			self::PAGE_SLUG
+		);
+
+		add_settings_field(
+			'wpse_site_timezone',
+			__( 'Site timezone', 'wp-simple-events' ),
+			array( $this, 'render_site_timezone_field' ),
+			self::PAGE_SLUG,
+			self::DISPLAY_SECTION
+		);
+
+		register_setting(
+			self::SETTINGS_GROUP,
+			EventTimezoneDisplaySettings::OPTION,
+			array(
+				'type'              => 'boolean',
+				'default'           => false,
+				'sanitize_callback' => array( $this->timezone_display, 'sanitize' ),
+				'show_in_rest'      => false,
+			)
+		);
+
+		add_settings_field(
+			EventTimezoneDisplaySettings::OPTION,
+			__( 'Public event timezone', 'wp-simple-events' ),
+			array( $this, 'render_timezone_display_field' ),
+			self::PAGE_SLUG,
+			self::DISPLAY_SECTION,
+			array( 'label_for' => EventTimezoneDisplaySettings::OPTION )
 		);
 
 		add_settings_field(
@@ -311,6 +342,40 @@ final class EventSettingsPage {
 		echo '<p>'
 			. esc_html__( 'Control plugin output that may overlap with your theme or SEO plugin.', 'wp-simple-events' )
 			. '</p>';
+	}
+
+	/**
+	 * Report the authoritative WordPress timezone without duplicating its control.
+	 */
+	public function render_site_timezone_field(): void {
+		$timezone     = wp_timezone_string();
+		$fixed_offset = 1 === preg_match( '/^[+-]\d{2}:\d{2}$/D', $timezone );
+		?>
+		<p><code><?php echo esc_html( $timezone ); ?></code></p>
+		<p class="description"><?php esc_html_e( 'New events capture this timezone. Existing events keep the timezone saved with them when the WordPress setting changes.', 'wp-simple-events' ); ?></p>
+		<?php if ( $fixed_offset ) : ?>
+			<p class="description"><?php esc_html_e( 'This fixed UTC offset does not adjust for daylight saving time.', 'wp-simple-events' ); ?></p>
+		<?php endif; ?>
+		<?php if ( current_user_can( 'manage_options' ) ) : ?>
+			<p><a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e( 'Change the site timezone in WordPress General Settings', 'wp-simple-events' ); ?></a></p>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Render the backward-compatible public timezone visibility toggle.
+	 */
+	public function render_timezone_display_field(): void {
+		$enabled = $this->timezone_display->enabled();
+		$name    = esc_attr( EventTimezoneDisplaySettings::OPTION );
+		?>
+		<input type="hidden" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="0">
+		<label>
+			<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="checkbox" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="1" <?php echo checked( $enabled, true, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core checked() returns a fixed HTML attribute. ?>>
+			<?php esc_html_e( 'Show the captured timezone and applicable UTC offset with timed event details.', 'wp-simple-events' ); ?>
+		</label>
+		<p class="description"><?php esc_html_e( 'All-day events omit timezone information. This setting changes presentation only, never saved event dates or times.', 'wp-simple-events' ); ?></p>
+		<?php
 	}
 
 	/**

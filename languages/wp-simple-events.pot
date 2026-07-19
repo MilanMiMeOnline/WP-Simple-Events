@@ -123,7 +123,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:104
 #: src/Admin/EventMetaBox.php:228
-#: src/Frontend/EventDetailsRenderer.php:130
+#: src/Frontend/EventDetailsRenderer.php:135
 #: src/Frontend/EventRenderer.php:119
 #: src/Shortcode/CalendarShortcode.php:147
 msgid "Cancelled"
@@ -131,7 +131,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:105
 #: src/Admin/EventMetaBox.php:229
-#: src/Frontend/EventDetailsRenderer.php:131
+#: src/Frontend/EventDetailsRenderer.php:136
 #: src/Frontend/EventRenderer.php:120
 #: src/Shortcode/CalendarShortcode.php:148
 msgid "Postponed"
@@ -264,139 +264,167 @@ msgstr ""
 msgid "The event details were not saved because they need attention."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:68
+#: src/Admin/EventSettingsPage.php:71
 msgid "Event settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:69
+#: src/Admin/EventSettingsPage.php:72
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:115
+#: src/Admin/EventSettingsPage.php:118
 msgid "Event archive"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:122
+#: src/Admin/EventSettingsPage.php:125
 msgid "Archive slug"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:131
+#: src/Admin/EventSettingsPage.php:134
 #: src/Elementor/EventListWidget.php:84
 msgid "Events per page"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:140
+#: src/Admin/EventSettingsPage.php:143
 msgid "Default period"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:160
+#: src/Admin/EventSettingsPage.php:163
 msgid "Display"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:167
+#: src/Admin/EventSettingsPage.php:170
+msgid "Site timezone"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:189
+msgid "Public event timezone"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:198
 msgid "Event structured data"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:187
+#: src/Admin/EventSettingsPage.php:218
 msgid "Data ownership"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:194
+#: src/Admin/EventSettingsPage.php:225
 msgid "Delete plugin data"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:216
+#: src/Admin/EventSettingsPage.php:247
 msgid "You are not allowed to manage event settings."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:238
+#: src/Admin/EventSettingsPage.php:269
 msgid "Configure the native event archive. Visitors can still switch between upcoming, past and all events with the archive filter."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:249
+#: src/Admin/EventSettingsPage.php:280
 msgid "One URL segment without slashes. This also changes individual event URLs; existing links are not redirected. Saving a changed slug rebuilds WordPress permalink rules once."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:260
+#: src/Admin/EventSettingsPage.php:291
 msgid "Between 1 and 50 public events per archive page."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:272
+#: src/Admin/EventSettingsPage.php:303
 msgid "Upcoming and active events"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:273
+#: src/Admin/EventSettingsPage.php:304
 msgid "All events, including past events"
 msgstr ""
 
 #. translators: %s: configured event archive path.
-#: src/Admin/EventSettingsPage.php:300
+#: src/Admin/EventSettingsPage.php:331
 #, php-format
 msgid "The event archive and an existing WordPress page both use /%s/. Keep this slug to use the native event archive at that address, or change it below so the page can use the address."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:312
+#: src/Admin/EventSettingsPage.php:343
 msgid "Control plugin output that may overlap with your theme or SEO plugin."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:321
-msgid "Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below."
-msgstr ""
-
-#: src/Admin/EventSettingsPage.php:336
-msgid "Output JSON-LD on individual public event pages."
-msgstr ""
-
-#: src/Admin/EventSettingsPage.php:339
-msgid "Disable this when another SEO plugin already outputs Event structured data."
-msgstr ""
-
-#: src/Admin/EventSettingsPage.php:354
-msgid "Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted."
+#: src/Admin/EventSettingsPage.php:355
+msgid "New events capture this timezone. Existing events keep the timezone saved with them when the WordPress setting changes."
 msgstr ""
 
 #: src/Admin/EventSettingsPage.php:357
-msgid "This cannot be undone."
+msgid "This fixed UTC offset does not adjust for daylight saving time."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:358
-msgid " Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data."
+#: src/Admin/EventSettingsPage.php:360
+msgid "Change the site timezone in WordPress General Settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:372
-msgid "Maintenance"
-msgstr ""
-
-#: src/Admin/EventSettingsPage.php:373
-msgid "Use these tools only to repair existing event data. They do not change event content or presentation settings."
+#: src/Admin/EventSettingsPage.php:375
+msgid "Show the captured timezone and applicable UTC offset with timed event details."
 msgstr ""
 
 #: src/Admin/EventSettingsPage.php:377
+msgid "All-day events omit timezone information. This setting changes presentation only, never saved event dates or times."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:386
+msgid "Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:401
+msgid "Output JSON-LD on individual public event pages."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:404
+msgid "Disable this when another SEO plugin already outputs Event structured data."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:419
+msgid "Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:422
+msgid "This cannot be undone."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:423
+msgid " Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:437
+msgid "Maintenance"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:438
+msgid "Use these tools only to repair existing event data. They do not change event content or presentation settings."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:442
 msgid "Repair event capabilities"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:379
+#: src/Admin/EventSettingsPage.php:444
 msgid "Restores the documented event permissions for administrators and editors without changing other role permissions."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:392
+#: src/Admin/EventSettingsPage.php:457
 msgid "Continue rebuilding date indexes"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:393
+#: src/Admin/EventSettingsPage.php:458
 msgid "Rebuild event date indexes"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:400
+#: src/Admin/EventSettingsPage.php:465
 msgid "Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:457
+#: src/Admin/EventSettingsPage.php:522
 msgid "Event capabilities were restored for administrators and editors."
 msgstr ""
 
 #. translators: 1: processed events, 2: changed indexes, 3: invalid skipped events, 4: failed writes.
-#: src/Admin/EventSettingsPage.php:468
+#: src/Admin/EventSettingsPage.php:533
 #, php-format
 msgid "Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures."
 msgstr ""
@@ -1013,33 +1041,51 @@ msgstr ""
 msgid "Select one or more."
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:83
+#. translators: %s: Numeric timezone offset such as +02:00.
+#: src/Frontend/EventDateFormatter.php:102
+#, php-format
+msgid "UTC%s"
+msgstr ""
+
+#. translators: 1: IANA timezone identifier, 2: Numeric offset such as +02:00.
+#: src/Frontend/EventDateFormatter.php:107
+#, php-format
+msgid "%1$s (UTC%2$s)"
+msgstr ""
+
+#. translators: 1: IANA timezone identifier, 2: Start offset, 3: End offset.
+#: src/Frontend/EventDateFormatter.php:112
+#, php-format
+msgid "%1$s (UTC%2$s → UTC%3$s)"
+msgstr ""
+
+#: src/Frontend/EventDetailsRenderer.php:87
 #: src/Frontend/EventRenderer.php:59
 msgid "Untitled event"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:147
+#: src/Frontend/EventDetailsRenderer.php:152
 msgid "Date and time:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:159
+#: src/Frontend/EventDetailsRenderer.php:167
 #: src/Frontend/EventRenderer.php:92
 msgid "Location:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:167
+#: src/Frontend/EventDetailsRenderer.php:175
 msgid "View location"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:192
+#: src/Frontend/EventDetailsRenderer.php:200
 msgid "More event information"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:219
+#: src/Frontend/EventDetailsRenderer.php:227
 msgid "Categories:"
 msgstr ""
 
-#: src/Frontend/EventDetailsRenderer.php:225
+#: src/Frontend/EventDetailsRenderer.php:233
 msgid "Tags:"
 msgstr ""
 

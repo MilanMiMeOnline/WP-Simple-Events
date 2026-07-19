@@ -1140,6 +1140,8 @@ wp-simple-events/
 - WordPress-datumformaat of aangepast formaat.
 - WordPress-tijdformaat of aangepast formaat.
 - Standaard lijst of raster.
+- Huidige WordPress-sitetijdzone als alleen-lezen informatie, met link naar de algemene WordPress-instellingen.
+- Opgeslagen eventtijdzone en toepasselijke UTC-offset tonen bij publieke eventdetails, standaard uit.
 - Event structured data aan/uit.
 
 ### Geavanceerd
@@ -1149,7 +1151,7 @@ wp-simple-events/
 - Eventcache leegmaken.
 - UTC-indexmeta herberekenen.
 
-Tijdzone en eerste weekdag worden uit WordPress overgenomen en niet als dubbele plugininstellingen aangeboden.
+Tijdzone en eerste weekdag worden uit WordPress overgenomen en niet als dubbele plugininstellingen aangeboden. Een nieuw event bewaart de dan actieve WordPress-tijdzone; bestaande events behouden hun opgeslagen tijdzone wanneer de site-instelling later wijzigt. De optionele publieke tijdzonelabel is uitsluitend presentatie: ze verschijnt alleen bij events met een uur en wijzigt geen eventdatum, kalenderfeed of machineleesbare data.
 
 ## 29. Teststrategie
 

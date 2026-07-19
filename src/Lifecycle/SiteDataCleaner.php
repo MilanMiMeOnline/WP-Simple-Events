@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Lifecycle;
 use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
 use MiMe\WPSimpleEvents\Seo\StructuredDataSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
@@ -151,6 +152,7 @@ final class SiteDataCleaner {
 			EventArchiveSettings::DEFAULT_PERIOD_OPTION,
 			EventArchiveRewriteManager::PENDING_OPTION,
 			StructuredDataSettings::OPTION,
+			EventTimezoneDisplaySettings::OPTION,
 			UninstallSettings::OPTION,
 		);
 	}

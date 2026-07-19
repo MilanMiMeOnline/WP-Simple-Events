@@ -19,10 +19,12 @@ final readonly class EventDatePresentation {
 	 * @param string $label     Localized visible date label.
 	 * @param string $start_iso Machine-readable local start.
 	 * @param string $end_iso   Machine-readable local end.
+	 * @param string $timezone_label Optional captured-timezone label.
 	 */
 	public function __construct(
 		public string $label,
 		public string $start_iso,
-		public string $end_iso
+		public string $end_iso,
+		public string $timezone_label = ''
 	) {}
 }

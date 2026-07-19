@@ -24,12 +24,14 @@ final class EventDateFormatter {
 	 * @param int    $end_utc   Inclusive UTC end timestamp.
 	 * @param bool   $all_day   Whether visible times are omitted.
 	 * @param string $timezone  Stored event timezone.
+	 * @param bool   $show_timezone Whether to include visible timezone context.
 	 */
 	public function format(
 		int $start_utc,
 		int $end_utc,
 		bool $all_day,
-		string $timezone
+		string $timezone,
+		bool $show_timezone = false
 	): ?EventDatePresentation {
 		if ( $start_utc <= 0 || $end_utc < $start_utc ) {
 			return null;
@@ -78,7 +80,39 @@ final class EventDateFormatter {
 		return new EventDatePresentation(
 			$label,
 			$all_day ? $start->format( 'Y-m-d' ) : $start->format( DATE_ATOM ),
-			$all_day ? $end->format( 'Y-m-d' ) : $end->format( DATE_ATOM )
+			$all_day ? $end->format( 'Y-m-d' ) : $end->format( DATE_ATOM ),
+			$show_timezone && ! $all_day ? $this->timezone_label( $timezone, $start, $end ) : ''
+		);
+	}
+
+	/**
+	 * Format the captured zone with offsets applicable at both event boundaries.
+	 *
+	 * @param string            $timezone Stored timezone identifier.
+	 * @param DateTimeImmutable $start    Local event start.
+	 * @param DateTimeImmutable $end      Local event end.
+	 */
+	private function timezone_label( string $timezone, DateTimeImmutable $start, DateTimeImmutable $end ): string {
+		$start_offset = $start->format( 'P' );
+		$end_offset   = $end->format( 'P' );
+		$fixed_offset = 1 === preg_match( '/^[+-]\d{2}:\d{2}$/D', $timezone );
+
+		if ( $fixed_offset || 'UTC' === $timezone ) {
+			/* translators: %s: Numeric timezone offset such as +02:00. */
+			return sprintf( __( 'UTC%s', 'wp-simple-events' ), $start_offset );
+		}
+
+		if ( $start_offset === $end_offset ) {
+			/* translators: 1: IANA timezone identifier, 2: Numeric offset such as +02:00. */
+			return sprintf( __( '%1$s (UTC%2$s)', 'wp-simple-events' ), $timezone, $start_offset );
+		}
+
+		return sprintf(
+			/* translators: 1: IANA timezone identifier, 2: Start offset, 3: End offset. */
+			__( '%1$s (UTC%2$s → UTC%3$s)', 'wp-simple-events' ),
+			$timezone,
+			$start_offset,
+			$end_offset
 		);
 	}
 

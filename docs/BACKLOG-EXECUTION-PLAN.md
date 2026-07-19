@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0, WP1, WP2 and WP3.1 completed 2026-07-19; WP3.2 is next\
+**Status:** WP0, WP1, WP2 and WP3 completed 2026-07-19; WP4 is next\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -174,6 +174,8 @@ WP1 and WP2 should be completed before starting WP3. WP5 and WP6 may be develope
 5. Omit the zone label for all-day events and when disabled.
 6. Apply the same output to native details and the composite Elementor widget; atomic component overrides wait for WP5/WP6.
 7. Test IANA/fixed zones, winter/summer events, DST transitions, translations, permissions and settings sanitization.
+
+**Completion note (2026-07-19):** Event Settings reports WordPress' authoritative zone, documents capture/retention behaviour, warns about fixed offsets and links administrators to General Settings without adding a competing timezone selector. One strictly sanitized global display option defaults to disabled. When enabled, the shared native/Elementor details formatter adds an escaped event-date IANA/fixed label, represents both offsets across DST transitions, wraps long identifiers and omits all-day labels. Canonical dates, UTC indexes, cards, calendars, feeds, REST and structured-data values remain unchanged.
 
 ### Exit criteria
 

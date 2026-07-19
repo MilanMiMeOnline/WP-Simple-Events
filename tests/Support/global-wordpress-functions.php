@@ -167,7 +167,28 @@ if ( ! function_exists( 'wp_timezone_string' ) ) {
 	 * Return the deterministic site timezone used by unit tests.
 	 */
 	function wp_timezone_string(): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
-		return 'Europe/Brussels';
+		$timezone = WordPressState::has_option( 'timezone_string' )
+			? WordPressState::option( 'timezone_string' )
+			: 'Europe/Brussels';
+
+		if ( is_string( $timezone ) && '' !== $timezone ) {
+			return $timezone;
+		}
+
+		$offset  = WordPressState::has_option( 'gmt_offset' )
+			? WordPressState::option( 'gmt_offset' )
+			: 0;
+		$offset  = is_numeric( $offset ) ? (float) $offset : 0.0;
+		$sign    = $offset < 0 ? '-' : '+';
+		$hours   = (int) floor( abs( $offset ) );
+		$minutes = (int) round( ( abs( $offset ) - $hours ) * 60 );
+
+		if ( 60 === $minutes ) {
+			++$hours;
+			$minutes = 0;
+		}
+
+		return sprintf( '%s%02d:%02d', $sign, $hours, $minutes );
 	}
 }
 

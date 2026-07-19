@@ -213,7 +213,7 @@ The editor now explains that its native time control can look different per brow
 ## WPSE-BL-005 — Editable external-link label per event
 
 - **Type:** Improvement — editorial flexibility and link clarity
-- **State:** Triaged; not scheduled
+- **State:** Resolved in WP3.1 on 2026-07-19
 - **Severity:** Minor
 - **Suggested priority:** P2
 - **Affected surfaces:** Event editor, single-event action link, metadata/REST contract and Elementor single-event rendering
@@ -310,7 +310,7 @@ The smallest likely fix is to avoid measuring while the canvas is hidden and to 
 ## WPSE-BL-007 — Make the active event time zone clear in settings and public output
 
 - **Type:** Improvement — administration clarity, internationalisation and date/time presentation
-- **State:** Triaged; not scheduled
+- **State:** Resolved in WP3.2 on 2026-07-19
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Event settings, event editor guidance, single-event details and Elementor Event Details widget
@@ -348,6 +348,12 @@ This should not become a second, competing site-time-zone setting. The administr
 - Cover winter/summer offsets, DST boundaries, multi-day timed events and all-day events.
 - Test translated output and long IANA identifiers without breaking responsive layouts.
 - Confirm REST/feed and structured-data machine values remain unchanged by the visual setting.
+
+### Resolution
+
+Events Settings now reports WordPress' authoritative IANA zone or numeric offset, explains capture and retention semantics, warns that fixed offsets have no DST behaviour and exposes the General Settings link only to administrators. A strictly sanitized global display option defaults to off.
+
+When enabled, the shared native/Elementor details renderer adds an escaped timezone label for timed events. The formatter uses offsets at the actual event boundaries, shows both across European and North-American DST transitions, supports fixed offsets and long IANA identifiers, and omits all-day labels. Calendar, feed, card and structured-data contracts remain unchanged. Unit tests cover settings sanitization, permissions, site-zone capture/retention, winter/summer/DST/fixed labels and cleanup; real-WordPress smoke coverage verifies settings persistence, native public output and unchanged JSON-LD instants.
 
 ### Planning note
 

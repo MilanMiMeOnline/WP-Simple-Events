@@ -203,3 +203,13 @@ This is presentation only. Canonical local values, derived UTC indexes, captured
 The existing external event URL keeps one optional, revisioned label rather than becoming a repeatable resource-link model. The label is at most 120 characters, accepts scalar input only, is sanitized as plain text at the shared write boundary and is escaped when rendered. Existing events and whitespace-only labels retain the translated `More event information` fallback.
 
 The label may be saved before its URL so an editor does not lose prepared text, but it never renders without a valid external event URL. Event duplication omits both the URL and its label because the destination may be registration- or event-specific. Uninstall needs no separate metadata deletion path because WordPress removes post metadata with the event; UTC-index maintenance deliberately leaves both fields untouched.
+
+## ADR-027: Public timezone context is global, optional and presentation-only
+
+**Status:** Accepted
+
+WordPress remains the sole authority for the site timezone. Event Settings reports that value and links authorized administrators to WordPress General Settings; it does not introduce a competing timezone selector. New events capture the current site zone, while existing events retain the zone saved with them. Fixed numeric offsets remain valid but are explicitly described as having no daylight-saving behaviour.
+
+One strictly validated global option controls visible timezone context and is disabled by default for backward compatibility. When enabled, timed native details and the shared composite Elementor details widget show an IANA identifier with the offset at the event boundary. A range crossing an offset transition shows both boundary offsets; fixed-offset zones use a concise `UTC±HH:MM` label. All-day events omit timezone context. Long identifiers may wrap within the component instead of overflowing it.
+
+The option changes presentation only. Canonical dates, derived UTC indexes, cards, calendar placement and feeds, REST values and structured-data machine values remain unchanged. Per-event timezone editing and atomic component-level overrides are deferred product choices for the shared presentation work rather than hidden extensions of this setting.

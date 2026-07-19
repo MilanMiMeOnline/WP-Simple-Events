@@ -57,4 +57,20 @@ final class EventInputMapperTest extends TestCase {
 			$mapper->from_rest( array( EventMeta::EVENT_URL_LABEL => array( 'unsafe' ) ), 42 )->event_url_label
 		);
 	}
+
+	/**
+	 * New events capture the current site zone while existing events retain theirs.
+	 */
+	public function test_admin_captures_site_timezone_only_for_new_events(): void {
+		$mapper = new EventInputMapper();
+		WordPressState::set_option( 'timezone_string', '' );
+		WordPressState::set_option( 'gmt_offset', 5.5 );
+
+		self::assertSame( '+05:30', $mapper->from_admin( array(), 0 )->timezone );
+
+		WordPressState::update_post_meta( 42, EventMeta::TIMEZONE, 'Europe/Brussels' );
+		WordPressState::set_option( 'timezone_string', 'Asia/Tokyo' );
+
+		self::assertSame( 'Europe/Brussels', $mapper->from_admin( array(), 42 )->timezone );
+	}
 }

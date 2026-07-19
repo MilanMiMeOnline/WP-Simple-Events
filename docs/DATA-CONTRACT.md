@@ -20,6 +20,9 @@ The publication date is never an event date.
 - `_wpse_end_utc` is inclusive. The public calendar validates it against canonical local data, while all-day calendar output converts the canonical inclusive local end to an exclusive date.
 - Public calendar placement and visible-window overlap use `_wpse_start_local` and `_wpse_end_local`; visitor timezone offsets never change those saved wall-time dates.
 - The stored timezone is an IANA identifier where possible. WordPress fixed offsets from `-14:00` through `+14:00` are accepted for sites configured without a named timezone.
+- A new event captures WordPress' current site timezone. An existing event retains its captured timezone when the site setting changes; the plugin does not retroactively reinterpret its local wall time.
+
+The boolean `wpse_show_event_timezone` option is disabled by default. When strictly enabled, timed event-detail presentation appends the captured IANA zone and event-date UTC offset, or a concise `UTC±HH:MM` label for fixed offsets. Ranges crossing a DST transition show both boundary offsets. All-day details omit the label. This option does not change canonical dates, UTC indexes, cards, calendar placement or feeds, REST values, or structured-data machine values.
 
 `EventDateRange` rejects invalid calendar values, reversed ranges, nonexistent local times during a spring DST jump and ambiguous repeated local times during an autumn DST rollback. Ambiguous input is safer to reject because a local value without an offset cannot express which occurrence the editor intended.
 
@@ -72,7 +75,7 @@ Term management and assignment use their own event capabilities. WooCommerce `sh
 
 Activation registers content before flushing rewrite rules, grants capabilities idempotently and stores `wpse_schema_version`. Normal boot reruns installation only when that version changes. Deactivation flushes rewrite rules but does not delete events, metadata, terms, capabilities or options.
 
-Uninstall also preserves all data by default. Destructive cleanup runs only when the per-site `wpse_delete_data_on_uninstall` option is strictly `true`, `1` or `'1'`. That path permanently deletes `wpse_event` posts (including their metadata, revisions, comments and term relationships through WordPress core), all terms in the two event taxonomies, the plugin's three current options and the capabilities granted to administrator/editor. Attachments are deliberately retained because featured media can be shared. Posts and terms are processed in batches of 100 without direct SQL; options are removed last and remain if content cleanup cannot complete. In multisite, every site is visited in batches and its own opt-in is evaluated independently.
+Uninstall also preserves all data by default. Destructive cleanup runs only when the per-site `wpse_delete_data_on_uninstall` option is strictly `true`, `1` or `'1'`. That path permanently deletes `wpse_event` posts (including their metadata, revisions, comments and term relationships through WordPress core), all terms in the two event taxonomies, the explicitly allowlisted plugin-owned options and the capabilities granted to administrator/editor. Attachments are deliberately retained because featured media can be shared. Posts and terms are processed in batches of 100 without direct SQL; options are removed last and remain if content cleanup cannot complete. In multisite, every site is visited in batches and its own opt-in is evaluated independently.
 
 Network-wide multisite activation is explicitly blocked in this version; individual sites can activate the plugin separately. This prevents a partial capability installation that would appear successful across a network.
 

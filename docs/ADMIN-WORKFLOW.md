@@ -6,6 +6,14 @@ The native date and time fields save canonical local values. Browsers and operat
 
 Public event details, cards and calendars follow **Settings → General → Time Format**. WP Simple Events does not add a second global time-format setting. Changing the WordPress format changes presentation only; it does not alter event dates, durations, captured timezones, query indexes or machine-readable output.
 
+## Event timezone
+
+**Events → Settings → Site timezone** reports WordPress' authoritative timezone and links administrators to **Settings → General**. WP Simple Events deliberately does not add a second timezone selector.
+
+New events capture the configured site timezone when they are first saved. Existing events retain their captured timezone if the site setting later changes, keeping the intended local wall time stable. A named IANA zone such as `Europe/Brussels` follows daylight-saving transitions; a numeric fixed offset such as `+02:00` does not.
+
+The optional **Public event timezone** setting is off by default. When enabled, timed native and Elementor event details add the captured zone and the UTC offset applicable on the event date. A range crossing an offset transition shows both offsets. All-day events omit the label. This is presentation only and does not affect cards, calendars, feeds, structured data or stored event values.
+
 ## Events overview
 
 The native **Events → All Events** table keeps WordPress' selection and title columns and adds:
