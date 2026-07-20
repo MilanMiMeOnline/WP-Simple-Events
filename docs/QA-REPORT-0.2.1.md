@@ -6,7 +6,7 @@
 
 **Scope:** external event-link behaviour and Elementor editing support
 
-**Archive SHA-256:** `6eb67dbe4c3af7036926ce8e38049fddbfad3f49c2221c15c54daa682ce89896`
+**Archive SHA-256:** `e9a7077c8bd7b6bd16aec21b6cc6d093917b8cb97a996d457f0d8f75b7a25532`
 
 ## Result
 
