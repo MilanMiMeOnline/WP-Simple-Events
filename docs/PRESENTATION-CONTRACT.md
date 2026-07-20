@@ -1,6 +1,6 @@
 # Event presentation contract
 
-This contract defines the shared presentation boundary used by native templates, composite shortcode output and atomic Elementor widgets. Future Gutenberg blocks must consume the same named fields rather than reading event metadata directly.
+This contract defines the shared presentation boundary used by native templates, composite shortcode output, atomic Elementor widgets and atomic Gutenberg blocks.
 
 ## Event source and access
 
@@ -53,3 +53,5 @@ Event content uses the core `the_content` pipeline. A request-wide guard prevent
 Custom presentation adapters may depend on `EventContextResolver` plus `EventFieldRenderer` and request only the named methods above. They should share those service instances for request-local reuse and enqueue the existing `wpse-frontend` stylesheet only after non-empty output. New public fields, changed semantic classes or additional extension hooks require a documented contract decision; raw-meta renderers are not supported.
 
 Elementor's twelve atomic widgets use one request-local runtime service set even when the host reconstructs separate widget objects. Their optional `event_id` is strictly validated: empty means current context, while any non-empty value must resolve through `resolve_public()` and never falls back. Missing values render only an editor placeholder; public output contains no plugin placeholder or inner wrapper.
+
+Gutenberg's twelve dynamic blocks are registered from dedicated `block.json` metadata and share one request-local PHP adapter. Their integer `eventId` is zero for current context or a positive explicit public source. Current context consumes `postId` and `postType` from `WP_Block`; only when those keys are absent may it use an event queried object. A host wrapper is emitted only for non-empty output and carries native block supports. ServerSideRender owns loading, error and empty placeholders in the editor, so no editor message can enter saved content or public HTML.

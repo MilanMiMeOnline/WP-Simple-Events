@@ -16,6 +16,7 @@ if ( ! is_readable( $wpse_autoloader ) ) {
 require $wpse_autoloader;
 
 require __DIR__ . '/Support/WPPost.php';
+require __DIR__ . '/Support/WPBlock.php';
 require __DIR__ . '/Support/WPTerm.php';
 require __DIR__ . '/Support/WPError.php';
 require __DIR__ . '/Support/WPQuery.php';

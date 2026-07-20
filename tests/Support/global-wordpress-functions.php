@@ -253,6 +253,40 @@ if ( ! function_exists( 'get_post' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_post_type' ) ) {
+	/**
+	 * Return the deterministic post type for an object or identifier.
+	 *
+	 * @param WP_Post|int|null $post Post object or ID.
+	 */
+	function get_post_type( WP_Post|int|null $post = null ): string|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		if ( $post instanceof WP_Post ) {
+			return $post->post_type;
+		}
+
+		$resolved = is_int( $post ) ? get_post( $post ) : null;
+
+		return $resolved instanceof WP_Post ? $resolved->post_type : false;
+	}
+}
+
+if ( ! function_exists( 'get_block_wrapper_attributes' ) ) {
+	/**
+	 * Return deterministic escaped block-support wrapper attributes.
+	 *
+	 * @param array<string, string> $extra_attributes Explicit wrapper attributes.
+	 */
+	function get_block_wrapper_attributes( array $extra_attributes = array() ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$attributes = array();
+
+		foreach ( $extra_attributes as $name => $value ) {
+			$attributes[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+		}
+
+		return implode( ' ', $attributes );
+	}
+}
+
 if ( ! function_exists( 'wp_is_post_autosave' ) ) {
 	/**
 	 * Keep ordinary isolated save tests outside autosave context.

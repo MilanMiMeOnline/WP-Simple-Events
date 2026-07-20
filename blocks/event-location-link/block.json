@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-location-link",
+  "title": "Event Location Link",
+  "category": "wp-simple-events",
+  "icon": "admin-links",
+  "description": "Display the route or location link saved on an event.",
+  "textdomain": "wp-simple-events",
+  "usesContext": ["postId", "postType"],
+  "attributes": {
+    "eventId": { "type": "integer", "default": 0 },
+    "linkText": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "link": true },
+    "spacing": { "margin": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

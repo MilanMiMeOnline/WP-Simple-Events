@@ -70,6 +70,9 @@ All notable changes to WP Simple Events are documented here.
 - Twelve dedicated Elementor widgets for title, featured image, date/time, status, venue, address, location link, content, excerpt, external action, categories and tags, usable with an explicit public event on Elementor Free pages or current context in templates.
 - Field-specific Elementor controls for labels, heading level, links, image size, decorative alt behaviour, typography, color and spacing, with editor-only empty-field guidance and request-shared presentation reuse.
 - A real-host Elementor compatibility inspector covering the complete widget palette, control contracts, optimized DOM and strict public source rendering on the supported 3.x and tested 4.x versions.
+- Twelve metadata-registered dynamic Gutenberg blocks matching the atomic Elementor field palette, with current template/query context and strict explicit public-event selection.
+- Field-specific Gutenberg Inspector controls, server previews, editor-only empty states and native typography, color, spacing and alignment supports.
+- An opt-in single-event block pattern, bounded editor event choices and browser coverage for block registration, serialization, server rendering, recursion safety and frontend asset isolation.
 
 ### Fixed
 

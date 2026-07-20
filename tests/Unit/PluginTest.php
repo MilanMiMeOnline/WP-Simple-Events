@@ -52,7 +52,9 @@ final class PluginTest extends TestCase {
 		$callback();
 
 		self::assertTrue( HookRecorder::was_fired( 'wpse_loaded' ) );
-		self::assertCount( 4, HookRecorder::actions( 'init' ) );
+		self::assertCount( 5, HookRecorder::actions( 'init' ) );
+		self::assertIsCallable( HookRecorder::action( 'enqueue_block_editor_assets' ) );
+		self::assertIsCallable( HookRecorder::action( 'block_categories_all' ) );
 		self::assertIsCallable( HookRecorder::action( 'update_option_wpse_archive_slug' ) );
 		self::assertIsCallable( HookRecorder::action( 'add_option_wpse_archive_slug' ) );
 		self::assertIsCallable( HookRecorder::action( 'add_meta_boxes_wpse_event' ) );

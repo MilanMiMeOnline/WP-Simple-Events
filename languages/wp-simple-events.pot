@@ -16,6 +16,8 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: wp-simple-events.php
+#: src/Blocks/EventFieldBlockRegistry.php:62
+#: src/Blocks/EventFieldBlockRegistry.php:105
 #: src/Elementor/WidgetRegistrar.php:47
 msgid "WP Simple Events"
 msgstr ""
@@ -97,6 +99,7 @@ msgstr ""
 #: src/Content/EventTaxonomies.php:92
 #: src/Content/EventTaxonomies.php:106
 #: src/Elementor/EventCategoriesWidget.php:24
+#: assets/src/js/event-fields-editor.js:157
 msgid "Event Categories"
 msgstr ""
 
@@ -268,6 +271,7 @@ msgid "The event details were not saved because they need attention."
 msgstr ""
 
 #: src/Admin/EventSettingsPage.php:71
+#: assets/src/js/event-fields-editor.js:313
 msgid "Event settings"
 msgstr ""
 
@@ -470,6 +474,14 @@ msgstr ""
 
 #: src/Application/EventValidationMessages.php:32
 msgid "Enter a valid HTTP or HTTPS event URL."
+msgstr ""
+
+#: src/Blocks/EventFieldBlockRegistry.php:67
+msgid "Single Event Fields"
+msgstr ""
+
+#: src/Blocks/EventFieldBlockRegistry.php:68
+msgid "A complete flexible event layout built from individual WP Simple Events blocks."
 msgstr ""
 
 #: src/Content/EventMeta.php:59
@@ -741,6 +753,7 @@ msgstr ""
 #: src/Content/EventTaxonomies.php:117
 #: src/Content/EventTaxonomies.php:133
 #: src/Elementor/EventTagsWidget.php:24
+#: assets/src/js/event-fields-editor.js:171
 msgid "Event Tags"
 msgstr ""
 
@@ -805,10 +818,12 @@ msgid "Back to event tags"
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:113
+#: assets/src/js/event-fields-editor.js:290
 msgid "This event field has no public value for the selected or current event."
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:138
+#: assets/src/js/event-fields-editor.js:251
 msgid "Show label"
 msgstr ""
 
@@ -821,10 +836,12 @@ msgid "Hide"
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:149
+#: assets/src/js/event-fields-editor.js:257
 msgid "Label text"
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:199
+#: assets/src/js/event-fields-editor.js:187
 msgid "Event source"
 msgstr ""
 
@@ -848,6 +865,7 @@ msgid "Bottom spacing"
 msgstr ""
 
 #: src/Elementor/EventAddressWidget.php:23
+#: assets/src/js/event-fields-editor.js:109
 msgid "Event Address"
 msgstr ""
 
@@ -934,14 +952,17 @@ msgstr ""
 
 #: src/Elementor/EventCategoriesWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:268
+#: assets/src/js/event-fields-editor.js:167
 msgid "Categories:"
 msgstr ""
 
 #: src/Elementor/EventContentWidget.php:23
+#: assets/src/js/event-fields-editor.js:129
 msgid "Event Content"
 msgstr ""
 
 #: src/Elementor/EventDateTimeWidget.php:24
+#: assets/src/js/event-fields-editor.js:73
 msgid "Event Date & Time"
 msgstr ""
 
@@ -951,6 +972,7 @@ msgstr ""
 
 #: src/Elementor/EventDateTimeWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:103
+#: assets/src/js/event-fields-editor.js:83
 msgid "Date and time:"
 msgstr ""
 
@@ -976,10 +998,12 @@ msgid "Secondary text color"
 msgstr ""
 
 #: src/Elementor/EventExcerptWidget.php:23
+#: assets/src/js/event-fields-editor.js:137
 msgid "Event Excerpt"
 msgstr ""
 
 #: src/Elementor/EventExternalActionWidget.php:24
+#: assets/src/js/event-fields-editor.js:145
 msgid "External Event Action"
 msgstr ""
 
@@ -988,14 +1012,17 @@ msgid "External action"
 msgstr ""
 
 #: src/Elementor/EventExternalActionWidget.php:53
+#: assets/src/js/event-fields-editor.js:276
 msgid "Override link text"
 msgstr ""
 
 #: src/Elementor/EventExternalActionWidget.php:54
+#: assets/src/js/event-fields-editor.js:277
 msgid "Leave empty to use the label saved on the event."
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:24
+#: assets/src/js/event-fields-editor.js:54
 msgid "Event Featured Image"
 msgstr ""
 
@@ -1004,43 +1031,54 @@ msgid "Image"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:53
+#: assets/src/js/event-fields-editor.js:219
 msgid "Image size"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:56
+#: assets/src/js/event-fields-editor.js:222
 msgid "Thumbnail"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:57
+#: assets/src/js/event-fields-editor.js:223
 msgid "Medium"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:58
+#: assets/src/js/event-fields-editor.js:224
 msgid "Medium large"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:59
+#: assets/src/js/event-fields-editor.js:225
 msgid "Large"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:60
+#: assets/src/js/event-fields-editor.js:226
 msgid "Full size"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:68
+#: assets/src/js/event-fields-editor.js:232
 msgid "Alternative text"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:71
+#: assets/src/js/event-fields-editor.js:235
 msgid "Use Media Library alt text"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:72
+#: assets/src/js/event-fields-editor.js:236
 msgid "Decorative (empty alt)"
 msgstr ""
 
 #: src/Elementor/EventFeaturedImageWidget.php:80
 #: src/Elementor/EventTitleWidget.php:62
+#: assets/src/js/event-fields-editor.js:210
+#: assets/src/js/event-fields-editor.js:242
 msgid "Link to event"
 msgstr ""
 
@@ -1131,6 +1169,7 @@ msgid "Button background color"
 msgstr ""
 
 #: src/Elementor/EventLocationLinkWidget.php:24
+#: assets/src/js/event-fields-editor.js:117
 msgid "Event Location Link"
 msgstr ""
 
@@ -1139,38 +1178,46 @@ msgid "Location link"
 msgstr ""
 
 #: src/Elementor/EventLocationLinkWidget.php:53
+#: assets/src/js/event-fields-editor.js:267
 msgid "Link text"
 msgstr ""
 
 #: src/Elementor/EventLocationLinkWidget.php:55
 #: src/Frontend/EventFieldRenderer.php:178
+#: assets/src/js/event-fields-editor.js:269
 msgid "View location"
 msgstr ""
 
 #: src/Elementor/EventStatusWidget.php:23
+#: assets/src/js/event-fields-editor.js:87
 msgid "Event Status"
 msgstr ""
 
 #: src/Elementor/EventTagsWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:289
+#: assets/src/js/event-fields-editor.js:181
 msgid "Tags:"
 msgstr ""
 
 #: src/Elementor/EventTitleWidget.php:24
+#: assets/src/js/event-fields-editor.js:41
 msgid "Event Title"
 msgstr ""
 
 #: src/Elementor/EventTitleWidget.php:53
+#: assets/src/js/event-fields-editor.js:203
 msgid "HTML tag"
 msgstr ""
 
 #: src/Elementor/EventVenueWidget.php:24
+#: assets/src/js/event-fields-editor.js:95
 msgid "Event Venue"
 msgstr ""
 
 #: src/Elementor/EventVenueWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:151
 #: src/Frontend/EventRenderer.php:92
+#: assets/src/js/event-fields-editor.js:105
 msgid "Location:"
 msgstr ""
 
@@ -1351,4 +1398,68 @@ msgstr ""
 
 #: wp-simple-events.php:40
 msgid "WP Simple Events could not start because its required files are missing. Install a complete release package."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:32
+msgid "Current event context"
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:42
+msgid "Display the title of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:55
+msgid "Display the featured image of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:74
+msgid "Display the localized date, time and optional timezone of an event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:88
+msgid "Display a cancelled or postponed event status."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:96
+msgid "Display the venue of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:110
+msgid "Display the postal address of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:118
+msgid "Display the route or location link saved on an event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:130
+msgid "Display the main content of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:138
+msgid "Display the excerpt of the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:146
+msgid "Display the external information or registration link saved on an event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:158
+msgid "Display linked categories for the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:172
+msgid "Display linked tags for the current or selected event."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:188
+msgid "Select a public event for a static page, or use the current event supplied by a template or query."
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:295
+msgid "Event preview unavailable"
+msgstr ""
+
+#: assets/src/js/event-fields-editor.js:296
+msgid "The server could not render this event field."
 msgstr ""

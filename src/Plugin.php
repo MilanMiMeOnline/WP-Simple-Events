@@ -15,9 +15,12 @@ use MiMe\WPSimpleEvents\Admin\EventListTable;
 use MiMe\WPSimpleEvents\Admin\EventMaintenanceController;
 use MiMe\WPSimpleEvents\Admin\EventSaveController;
 use MiMe\WPSimpleEvents\Admin\EventSettingsPage;
+use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRenderer;
+use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRegistry;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\ContentRegistry;
 use MiMe\WPSimpleEvents\Elementor\ElementorIntegration;
+use MiMe\WPSimpleEvents\Elementor\PreviewEventOptions;
 use MiMe\WPSimpleEvents\Elementor\WidgetRegistrar;
 use MiMe\WPSimpleEvents\Frontend\BlockTemplates;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
@@ -28,6 +31,7 @@ use MiMe\WPSimpleEvents\Frontend\NativeTemplateRenderer;
 use MiMe\WPSimpleEvents\Frontend\TemplateLoader;
 use MiMe\WPSimpleEvents\Lifecycle\Installer;
 use MiMe\WPSimpleEvents\Query\EventArchiveQuery;
+use MiMe\WPSimpleEvents\Query\PublicEventOptions;
 use MiMe\WPSimpleEvents\Rest\CalendarFeedController;
 use MiMe\WPSimpleEvents\Rest\EventRestController;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
@@ -64,15 +68,23 @@ final class Plugin {
 		$calendar_assets   = new CalendarAssets( $frontend_assets );
 		$event_contexts    = new EventContextResolver();
 		$event_fields      = new EventFieldRenderer();
+		$public_events     = new PublicEventOptions();
 		$event_details     = new EventDetailsRenderer( contexts: $event_contexts, fields: $event_fields );
 		$event_lists       = new EventListShortcode( assets: $frontend_assets );
 		$details_shortcode = new EventDetailsShortcode( $event_details, $frontend_assets );
 		$calendar          = new CalendarShortcode( assets: $calendar_assets );
-		$elementor         = new ElementorIntegration( new WidgetRegistrar( $event_contexts, $event_fields ) );
+		$elementor         = new ElementorIntegration(
+			new WidgetRegistrar( $event_contexts, $event_fields, previews: new PreviewEventOptions( $public_events ) )
+		);
 		$calendar_feed     = new CalendarFeedController();
 		$archive_query     = new EventArchiveQuery();
 		$native_templates  = new NativeTemplateRenderer( single: $event_details );
 		$block_templates   = new BlockTemplates( $native_templates );
+		$field_blocks      = new EventFieldBlockRegistry(
+			renderer: new EventFieldBlockRenderer( $event_contexts, $event_fields ),
+			events: $public_events,
+			assets: $frontend_assets
+		);
 		$template_loader   = new TemplateLoader();
 		$structured_data   = new StructuredDataController();
 		$archive_rewrites  = new EventArchiveRewriteManager();
@@ -91,6 +103,7 @@ final class Plugin {
 		$event_rest->register();
 		$calendar_feed->register();
 		$frontend_assets->register();
+		$field_blocks->register_hooks();
 		$event_lists->register();
 		$details_shortcode->register();
 		$calendar->register();

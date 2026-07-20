@@ -227,3 +227,15 @@ Current template context and explicit event selection have different authorizati
 Stored metadata and taxonomy objects remain inside the presentation factory. The host-facing renderer exposes named title, image, date/time/timezone, status, venue, address, location action, content, excerpt, external action, category and tag methods rather than arbitrary metadata access. Stored values are normalized again as untrusted input and escaped at the final HTML context. Empty or corrupt optional values produce no wrapper.
 
 Atomic protected fields return nothing, while the established composite details output returns WordPress' complete password form. Request-wide recursion guards cover both content fields and complete details across separate renderer instances. The existing composite renderer is rebuilt from the named fragments without changing its grouping classes, field order or public access behaviour. Future Elementor and Gutenberg adapters must share these services; host-specific copies of field logic are not accepted.
+
+## ADR-029: Gutenberg atomic fields are metadata-registered dynamic blocks
+
+**Status:** Accepted
+
+The Gutenberg palette consists of twelve dedicated public blocks matching the frozen WP4 field set. Every block is registered from its own `block.json`, but all callbacks delegate to one allowlisted block adapter and the shared event-context and field-rendering services. Blocks never read arbitrary metadata, accept a metadata key or duplicate field markup. Their saved comment contains attributes only; public HTML is generated on the server so event edits, access decisions and WordPress formatting remain current without block migrations.
+
+An empty `eventId` consumes `postId` and `postType` block context and may fall back only to an event queried object when context is unavailable. A non-empty identifier is an actual static-page source, not a preview-only hint: it must resolve to a published, password-free event and never falls back. Draft/private template previews remain available only through authorized current-event context. Missing, protected and corrupt values return no public wrapper; the editor's shared ServerSideRender adapter owns the explanatory empty-state placeholder.
+
+One editor-only script registers the twelve client block interfaces and receives at most fifty published, password-free event choices from the existing bounded repository. It is registered with WordPress dependencies during block registration but the choices are queried and localized only on block-editor screens. Field-specific Inspector controls mirror the Elementor allowlists; typography, color, link color, margin and alignment use native block supports. A thin host wrapper carries those supports only when the named field produces output.
+
+The plugin also registers one opt-in single-event block pattern composed from the atomic blocks. Existing `wpse/native-single` and `wpse/native-archive` fallback bridges and customized templates are not replaced. The Event Content block remains protected by the request-wide shared recursion guard, including when it appears inside the event content it renders.

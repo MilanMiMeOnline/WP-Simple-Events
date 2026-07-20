@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-venue",
+  "title": "Event Venue",
+  "category": "wp-simple-events",
+  "icon": "location-alt",
+  "description": "Display the venue of the current or selected event.",
+  "textdomain": "wp-simple-events",
+  "usesContext": ["postId", "postType"],
+  "attributes": {
+    "eventId": { "type": "integer", "default": 0 },
+    "showLabel": { "type": "boolean", "default": true },
+    "label": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "link": true },
+    "spacing": { "margin": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

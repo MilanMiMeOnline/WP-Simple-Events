@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-status",
+  "title": "Event Status",
+  "category": "wp-simple-events",
+  "icon": "warning",
+  "description": "Display a cancelled or postponed event status.",
+  "textdomain": "wp-simple-events",
+  "usesContext": ["postId", "postType"],
+  "attributes": { "eventId": { "type": "integer", "default": 0 } },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true },
+    "spacing": { "margin": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

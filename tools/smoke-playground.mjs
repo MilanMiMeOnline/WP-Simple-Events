@@ -431,6 +431,44 @@ try {
 			editorBody.includes( 'maxlength="120"' ),
 		'The bounded external event link label control is unavailable.',
 	);
+	requireCondition(
+		editorBody.includes( 'event-fields-editor.min.js' ) &&
+			editorBody.includes( 'wpseEventFieldBlocks' ),
+		'The shared atomic event-field block editor adapter is unavailable.',
+	);
+	const publicHomeBody = await fetchHealthyPage( 'http://localhost:8888/' );
+	requireCondition(
+		! publicHomeBody.includes( 'event-fields-editor.min.js' ),
+		'The block editor adapter leaked onto a public page.',
+	);
+	const registeredBlocks = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/block-types?namespace=wpse&context=edit',
+	);
+	const atomicBlockNames = [
+		'wpse/event-title',
+		'wpse/event-featured-image',
+		'wpse/event-date-time',
+		'wpse/event-status',
+		'wpse/event-venue',
+		'wpse/event-address',
+		'wpse/event-location-link',
+		'wpse/event-content',
+		'wpse/event-excerpt',
+		'wpse/event-external-action',
+		'wpse/event-categories',
+		'wpse/event-tags',
+	];
+	requireCondition(
+		registeredBlocks.response.ok && Array.isArray( registeredBlocks.data ),
+		'The WordPress block-type registry is unavailable.',
+	);
+	for ( const blockName of atomicBlockNames ) {
+		requireCondition(
+			registeredBlocks.data.some( ( block ) => block.name === blockName ),
+			`The atomic block ${ blockName } is not registered.`,
+		);
+	}
 
 	const settingsResponse = await fetch(
 		'http://localhost:8888/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
@@ -511,7 +549,7 @@ try {
 			title: 'Future smoke event',
 			startOffset: 3,
 			endOffset: 3,
-			content: '<p>Single event body marker.</p>[wpse_event_details]',
+			content: '<p>Single event body marker.</p><!-- wp:wpse/event-venue /-->[wpse_event_details]',
 			address: 'Main Square 1',
 			locationUrl: 'https://example.com/location',
 			eventUrl: 'https://example.com/event',
@@ -648,6 +686,109 @@ try {
 		},
 	);
 	requireCondition( categorizedEvent.response.ok, 'The event could not be assigned to its calendar category.' );
+	const blockTag = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/wpse_event_tag',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { name: 'Block smoke tag', slug: 'block-smoke' } ),
+		},
+	);
+	requireCondition( blockTag.response.status === 201, 'The atomic block tag fixture could not be created.' );
+	const blockReadyEvent = await authenticatedRequest(
+		session,
+		`/wp-json/wp/v2/wpse_event/${ eventId }`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				excerpt: 'Atomic event excerpt.',
+				wpse_event_tag: [ blockTag.data.id ],
+			} ),
+		},
+	);
+	requireCondition( blockReadyEvent.response.ok, 'The atomic block event fixture could not be completed.' );
+
+	const serializedAtomicBlocks = atomicBlockNames.map( ( blockName, index ) => {
+		const attributes = index === 0
+			? {
+				eventId,
+				style: {
+					color: { text: '#123456' },
+					spacing: { margin: { bottom: '2rem' } },
+				},
+			}
+			: { eventId };
+
+		return `<!-- wp:${ blockName } ${ JSON.stringify( attributes ) } /-->`;
+	} ).join( '' );
+	const atomicPage = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/pages',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				title: 'Atomic event fields smoke page',
+				slug: 'atomic-event-fields-smoke',
+				status: 'publish',
+				content: serializedAtomicBlocks,
+			} ),
+		},
+	);
+	requireCondition( atomicPage.response.status === 201, 'The explicit-source atomic block page could not be published.' );
+	const atomicPageBody = await fetchHealthyPage( atomicPage.data.link );
+	for ( const marker of [
+		'wpse-single-event-title',
+		'wpse-event-date',
+		'wpse-event-status-postponed',
+		'wpse-event-venue',
+		'wpse-event-address',
+		'wpse-event-location-link',
+		'wpse-single-event-content',
+		'Atomic event excerpt.',
+		'wpse-event-action',
+		'Calendar smoke category',
+		'Block smoke tag',
+	] ) {
+		requireCondition( atomicPageBody.includes( marker ), `The atomic block page omitted ${ marker }.` );
+	}
+	requireCondition(
+		! atomicPageBody.includes( 'wpse-event-field-block-event-featured-image' ),
+		'The empty featured-image block emitted a public wrapper.',
+	);
+	requireCondition(
+		atomicPageBody.includes( 'has-text-color' ) &&
+			atomicPageBody.includes( 'margin-bottom:2rem' ),
+		'Native color or spacing block supports were not applied to atomic output.',
+	);
+	requireCondition(
+		! atomicPageBody.includes( 'event-fields-editor.min.js' ),
+		'The block editor adapter was enqueued on an atomic public page.',
+	);
+
+	const strictSourcePage = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/pages',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				title: 'Strict atomic source smoke page',
+				slug: 'strict-atomic-source-smoke',
+				status: 'publish',
+				content: `<!-- wp:wpse/event-title ${ JSON.stringify( { eventId: draftCreate.data.id } ) } /-->`,
+			} ),
+		},
+	);
+	requireCondition( strictSourcePage.response.status === 201, 'The strict atomic source page could not be published.' );
+	const strictSourceBody = await fetchHealthyPage( strictSourcePage.data.link );
+	requireCondition(
+		! strictSourceBody.includes( 'Incomplete draft smoke event' ) &&
+			! strictSourceBody.includes( 'wpse-event-field-block-event-title' ),
+		'An explicit draft source leaked or fell back on a public atomic block page.',
+	);
 
 	const eventsAdminUrl = 'http://localhost:8888/wp-admin/edit.php?post_type=wpse_event';
 	const eventsAdminBody = await fetchHealthyPage( eventsAdminUrl, {
@@ -969,6 +1110,10 @@ try {
 		'The native single event article is unavailable.',
 	);
 	const singleArticle = singleBody.slice( singleArticleStart, singleArticleEnd );
+	requireCondition(
+		( singleArticle.match( /wpse-event-venue/g ) ?? [] ).length >= 2,
+		'The current-context venue block did not render from event post context.',
+	);
 	requireCondition(
 		! singleArticle.includes( 'wpse-event-timezone' ),
 		'The backward-compatible default unexpectedly exposed an event timezone.',

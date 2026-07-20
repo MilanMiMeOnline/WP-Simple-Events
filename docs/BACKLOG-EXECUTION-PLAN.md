@@ -251,6 +251,8 @@ This foundation must land before host-specific components. Refactor in small ste
 7. Guard the Event Content block against rendering itself recursively when placed inside event content or a containing template.
 8. Test serialization, server rendering, Site Editor context, query-loop context, classic themes, block themes and missing optional values.
 
+**Completion note (2026-07-20):** Twelve dedicated `block.json` blocks now mirror the WP4/Elementor field palette through one server adapter. Empty `eventId` consumes `postId`/`postType` context and falls back only to an event queried object when context is unavailable; positive IDs resolve strictly through the bounded public boundary. The shared editor bundle supplies at most fifty public choices, field-specific Inspector controls and ServerSideRender placeholders, while frontend HTML remains dynamic and editor assets stay off public pages. Native color, link-color, typography, margin and alignment supports wrap only non-empty fields. The existing fallback blocks remain unchanged, and one opt-in pattern demonstrates the complete palette. Unit, real-WordPress smoke and Playwright coverage protect registration, serialization, explicit/current parity, non-public rejection, empty wrappers, recursion, supports and editor/frontend asset isolation.
+
 ### Exit criteria
 
 - A block-theme single-event template and an ordinary page with a selected event can both be composed from the same dynamic blocks.

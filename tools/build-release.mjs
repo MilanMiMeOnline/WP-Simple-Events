@@ -34,6 +34,7 @@ const releaseEntries = [
 	'readme.txt',
 	'uninstall.php',
 	'wp-simple-events.php',
+	'blocks',
 	'src',
 	'templates',
 	'languages',
@@ -137,7 +138,7 @@ const version = await releaseVersion();
 const archiveName = `${ PLUGIN_SLUG }-${ version }.zip`;
 const archivePath = join( distributionDirectory, archiveName );
 
-await run( 'npm', [ 'run', 'build:calendar' ] );
+await run( 'npm', [ 'run', 'build' ] );
 await rm( releaseDirectory, { force: true, recursive: true } );
 await rm( distributionDirectory, { force: true, recursive: true } );
 await mkdir( pluginDirectory, { recursive: true } );

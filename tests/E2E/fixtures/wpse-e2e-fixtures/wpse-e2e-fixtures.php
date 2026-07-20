@@ -52,6 +52,7 @@ function wpse_e2e_seed_calendar_page(): void {
 		'Calendar 12-hour Harness',
 		'[wpse_e2e_calendar_time]'
 	);
+	wpse_e2e_seed_atomic_page();
 
 	if ( ! current_user_can( MiMe\WPSimpleEvents\Access\EventCapabilities::EDIT_POSTS ) ) {
 		return;
@@ -173,6 +174,72 @@ function wpse_e2e_seed_calendar_page(): void {
 	if ( count( $event_slugs ) === count( $published ) ) {
 		update_option( 'wpse_e2e_events_seeded_v2', true, false );
 	}
+
+	wpse_e2e_seed_atomic_page();
+}
+
+/** Seed one public page built from the complete explicit-source block palette. */
+function wpse_e2e_seed_atomic_page(): void {
+	if ( get_page_by_path( 'wpse-e2e-atomic-fields' ) instanceof WP_Post ) {
+		return;
+	}
+
+	$event = get_page_by_path( 'wpse-e2e-same-day', OBJECT, 'wpse_event' );
+
+	if ( ! $event instanceof WP_Post || 'publish' !== $event->post_status ) {
+		return;
+	}
+
+	wp_update_post(
+		array(
+			'ID'           => $event->ID,
+			'post_content' => '<p>E2E atomic event content.</p><!-- wp:wpse/event-venue /-->',
+			'post_excerpt' => 'E2E atomic event excerpt.',
+		)
+	);
+	update_post_meta( $event->ID, '_wpse_venue', 'E2E Atomic Hall' );
+	update_post_meta( $event->ID, '_wpse_address', "Test Street 1\nBrussels" );
+	update_post_meta( $event->ID, '_wpse_location_url', 'https://example.com/route/' );
+	update_post_meta( $event->ID, '_wpse_event_url', 'https://example.com/register/' );
+	update_post_meta( $event->ID, '_wpse_event_url_label', 'Reserve a place' );
+	update_post_meta( $event->ID, '_wpse_event_status', 'postponed' );
+
+	$tag = wpse_e2e_term_id( 'wpse_event_tag', 'E2E Atomic Tag', 'wpse-e2e-atomic-tag' );
+
+	if ( $tag > 0 ) {
+		wp_set_object_terms( $event->ID, array( $tag ), 'wpse_event_tag' );
+	}
+
+	$slugs   = array(
+		'event-title',
+		'event-featured-image',
+		'event-date-time',
+		'event-status',
+		'event-venue',
+		'event-address',
+		'event-location-link',
+		'event-content',
+		'event-excerpt',
+		'event-external-action',
+		'event-categories',
+		'event-tags',
+	);
+	$content = implode(
+		'',
+		array_map(
+			static fn ( string $slug ): string => '<!-- wp:wpse/' . $slug . ' {"eventId":' . $event->ID . '} /-->',
+			$slugs
+		)
+	);
+
+	wpse_e2e_insert_page( 'wpse-e2e-atomic-fields', 'Atomic Event Fields Harness', $content );
+	wpse_e2e_insert_page(
+		'wpse-e2e-atomic-query',
+		'Atomic Event Query Harness',
+		'<!-- wp:query {"query":{"perPage":3,"postType":"wpse_event","order":"asc","orderBy":"title","inherit":false}} -->'
+		. '<div class="wp-block-query"><!-- wp:post-template --><!-- wp:wpse/event-title /--><!-- /wp:post-template --></div>'
+		. '<!-- /wp:query -->'
+	);
 }
 
 /**

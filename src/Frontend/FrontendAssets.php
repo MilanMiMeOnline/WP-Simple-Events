@@ -59,7 +59,7 @@ final class FrontendAssets {
 	/**
 	 * Register the component-scoped stylesheet.
 	 */
-	private function register_style(): void {
+	public function register_style(): void {
 		wp_register_style(
 			self::STYLE_HANDLE,
 			plugin_dir_url( WPSE_PLUGIN_FILE ) . 'assets/src/css/frontend.css',

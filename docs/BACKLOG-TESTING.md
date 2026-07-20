@@ -362,7 +362,7 @@ Decide whether public time-zone visibility is a global display setting, an Eleme
 ## WPSE-BL-008 — Atomic event-field components for Elementor and Gutenberg templates
 
 - **Type:** Feature epic — template building, Elementor integration and Gutenberg blocks
-- **State:** In progress; WP4 foundation and WP5 Elementor widgets completed 2026-07-19, WP6 Gutenberg blocks pending
+- **State:** Completed 2026-07-20 through WP4 shared presentation, WP5 Elementor widgets and WP6 Gutenberg blocks
 - **Severity:** Major product gap
 - **Suggested priority:** P2
 - **Affected surfaces:** Elementor widget library, Gutenberg editor/Site Editor, single-event templates and shared frontend render services
@@ -436,3 +436,7 @@ The shared foundation is complete. Current/template context and explicit public 
 ### WP5 Elementor progress — 2026-07-19
 
 The complete atomic palette is now available as twelve discoverable Elementor widgets alongside the original three. Each widget uses either one explicitly selected published/password-free event or current event context, shares request-local presentation work, has field-appropriate allowlisted controls and omits empty public markup. Elementor Free static-page and template-context semantics are identical because template assignment remains host-owned. Automated source/security/control tests and the real Elementor 3.35.9/4.1.5 inspector pass. The epic remains open only for the equivalent Gutenberg components and final cross-host parity review in WP6.
+
+### WP6 Gutenberg completion — 2026-07-20
+
+The same twelve fields are now discoverable metadata-registered dynamic blocks with shared server rendering, strict block-context/explicit-source semantics and native style supports. A bounded editor-only selector, field-specific Inspector controls, ServerSideRender empty states and an opt-in full-palette pattern cover static pages and host templates without replacing existing fallbacks. Real WordPress and browser tests verify all registrations, dynamic serialization, current and explicit rendering, draft rejection, missing-value omission, recursion protection and absence of the editor bundle on public pages. Elementor and Gutenberg now share semantic field output and access rules; BL-008 is complete.

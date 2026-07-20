@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-content",
+  "title": "Event Content",
+  "category": "wp-simple-events",
+  "icon": "text-page",
+  "description": "Display the main content of the current or selected event.",
+  "textdomain": "wp-simple-events",
+  "usesContext": ["postId", "postType"],
+  "attributes": { "eventId": { "type": "integer", "default": 0 } },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "link": true },
+    "spacing": { "margin": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

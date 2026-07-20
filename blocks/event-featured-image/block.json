@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-featured-image",
+  "title": "Event Featured Image",
+  "category": "wp-simple-events",
+  "icon": "format-image",
+  "description": "Display the featured image of the current or selected event.",
+  "textdomain": "wp-simple-events",
+  "usesContext": ["postId", "postType"],
+  "attributes": {
+    "eventId": { "type": "integer", "default": 0 },
+    "imageSize": { "type": "string", "default": "large" },
+    "altMode": { "type": "string", "default": "attachment" },
+    "link": { "type": "boolean", "default": false }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "spacing": { "margin": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

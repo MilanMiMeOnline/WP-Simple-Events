@@ -7,10 +7,12 @@ const REQUIRED_RELEASE_PATHS = [
 	'readme.txt',
 	'vendor/autoload.php',
 	'languages/wp-simple-events.pot',
+	'blocks/',
 	'src/',
 	'templates/',
 	'assets/src/css/',
 	'assets/dist/js/calendar.min.js',
+	'assets/dist/js/event-fields-editor.min.js',
 ];
 
 const FORBIDDEN_PATH_PARTS = new Set( [
@@ -64,6 +66,7 @@ const ALLOWED_ROOT_FILES = new Set( [
 const ALLOWED_PATH_PREFIXES = [
 	'assets/dist/js/',
 	'assets/src/css/',
+	'blocks/',
 	'languages/',
 	'src/',
 	'templates/',
@@ -146,6 +149,10 @@ function invalidArchive( message ) {
 }
 
 function hasAllowedFileType( relative ) {
+	if ( relative.startsWith( 'blocks/' ) ) {
+		return relative.endsWith( '/block.json' );
+	}
+
 	if ( relative.startsWith( 'src/' ) || relative.startsWith( 'templates/' ) ) {
 		return relative.endsWith( '.php' );
 	}

@@ -24,7 +24,7 @@ Start a quick WordPress environment without Docker:
 npm run env:start
 ```
 
-Run the automated Playground smoke test, which starts WordPress and verifies activation, the editor, REST validation, public visibility, archive filtering and custom routing, page-conflict diagnosis, shortcodes, the calendar feed and fallback, native single/archive templates and password protection before stopping WordPress again:
+Run the automated Playground smoke test, which starts WordPress and verifies activation, the editor, REST validation, public visibility, archive filtering and custom routing, page-conflict diagnosis, shortcodes, the calendar feed and fallback, native single/archive templates, password protection and the complete dynamic Gutenberg block palette before stopping WordPress again:
 
 ```sh
 npm run test:smoke
@@ -57,6 +57,8 @@ npm run test:release
 ```
 
 `composer test:integration` delegates to the real WordPress Playground smoke journey described above; it is deliberately not an empty or WordPress-stubbed PHPUnit suite. `npm run test:e2e:install` installs the pinned Chromium build once, and `npm run test:e2e` first builds the exact staging package and then runs isolated browser regressions against that package in another disposable Playground site. `WPSE_E2E_CORE` and `WPSE_E2E_PLUGIN_PATH` are optional overrides for compatibility work. `composer qa` and `npm run qa` are the normal pre-handoff gates. `npm run test:release` additionally proves archive contents, shipped PHP syntax, the production autoloader, checksum integrity and byte-for-byte reproducibility. The official Plugin Check result is produced in CI against the same staging directory.
+
+The Gutenberg browser journey authenticates the disposable administrator, inspects all twelve client registrations, serializes a dynamic block and requests its authenticated ServerSideRender preview. The public companion page verifies the full explicit-source palette and confirms that editor JavaScript is absent from visitor requests.
 
 For an Elementor matrix run, activate WP Simple Events plus the target official Elementor package in an isolated WordPress site and execute `wp eval-file wp-content/plugins/wp-simple-events/tests/Compatibility/elementor-inspector.php`. The inspector verifies all widget names, categories, dependencies, field controls, optimized DOM and strict explicit-source rendering. Run it against the documented minimum 3.x and current tested 4.x packages before release; it is development tooling and is not included in the release archive.
 
