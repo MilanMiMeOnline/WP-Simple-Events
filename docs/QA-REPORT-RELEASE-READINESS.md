@@ -1,19 +1,19 @@
 # QA report: release readiness and compatibility matrix
 
 **Date:** 2026-07-17\
-**Candidate:** WP Simple Events 0.1.0\
+**Candidate:** Simple Events by MiMe 0.1.0\
 **PHP smoke runtime:** 8.3\
 **Archive SHA-256:** `fee5f9bb42f1f23ddb98ba45395bdb705fdf4fee1432be42be2ccf0947f1fa05`
 
 ## Delivered controls
 
-- A production allowlist builds `.release/wp-simple-events` instead of archiving the working tree.
+- A production allowlist builds `.release/simple-events-by-mime` instead of archiving the working tree.
 - The builder generates a class-authoritative Composer autoloader offline and excludes development packages and manifests.
 - Public versions must match across the plugin header, runtime constant, WordPress stable tag and npm metadata.
 - The archive contract rejects an unexpected root, traversal, duplicate entries, hidden files, development files/directories, unsupported file types and missing runtime files.
 - The verifier binds the checksum to the exact filename, rejects symbolic links, lints every shipped PHP file and loads `MiMe\WPSimpleEvents\Plugin` through the shipped autoloader.
 - Two clean builds must produce the same bytes.
-- The required `/languages/wp-simple-events.pot` is generated deterministically and checked for freshness in CI.
+- The required `/languages/simple-events-by-mime.pot` is generated deterministically and checked for freshness in CI.
 - CI runs strict official WordPress Plugin Check against the staging package and uploads the zip plus checksum.
 - The smoke runner can select a WordPress core version and test the staging package, including normal protected activation when Playground does not auto-activate an external mount.
 
@@ -63,7 +63,7 @@ The journey covers protected activation, the Events admin menu and editor, metad
 
 ## Residual release risks
 
-1. The official `wordpress/plugin-check-action@v1` job is configured correctly against `.release/wp-simple-events`, but its result must still be observed green in GitHub Actions for the release commit. Local Docker is unavailable, and Plugin Check 2.0.0 was too heavy to run reliably inside the WebAssembly Playground; no flaky local substitute was retained.
+1. The official `wordpress/plugin-check-action@v1` job is configured correctly against `.release/simple-events-by-mime`, but its result must still be observed green in GitHub Actions for the release commit. Local Docker is unavailable, and Plugin Check 2.0.0 was too heavy to run reliably inside the WebAssembly Playground; no flaky local substitute was retained.
 2. The final minimum-WordPress matrix covers the complete native package. Elementor 3.35.9, Elementor 4.1.5 and WooCommerce 10.9.4 were previously verified on WordPress 7.0.1; their combined WordPress 6.9 matrix remains advisable before a public stable release.
 3. The catalogue is complete as a source template, but no actual Dutch or other locale translation ships yet. A non-English exploratory journey remains advisable.
 4. The low esbuild advisory exists only in nested WordPress lint-tooling development dependencies, is not shipped, and does not breach the configured high/critical release gate.

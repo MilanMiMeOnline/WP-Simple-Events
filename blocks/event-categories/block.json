@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-categories",
   "title": "Event Categories",
-  "category": "wp-simple-events",
+  "category": "simple-events-by-mime",
   "icon": "category",
   "description": "Display linked categories for the current or selected event.",
-  "textdomain": "wp-simple-events",
+  "textdomain": "simple-events-by-mime",
   "usesContext": ["postId", "postType"],
   "attributes": {
     "eventId": { "type": "integer", "default": 0 },

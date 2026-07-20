@@ -1,6 +1,6 @@
 <?php
 /**
- * WP Simple Events uninstall entry point.
+ * Simple Events by MiMe uninstall entry point.
  *
  * @package MiMe\WPSimpleEvents
  */

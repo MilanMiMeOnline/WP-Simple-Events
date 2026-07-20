@@ -20,7 +20,7 @@ final class EventExcerptWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Excerpt', 'wp-simple-events' );
+		return esc_html__( 'Event Excerpt', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */

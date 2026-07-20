@@ -1,16 +1,16 @@
-# QA report — WP Simple Events 0.2.1
+# QA report — Simple Events by MiMe 0.2.1
 
 **Date:** 2026-07-20
 
-**Candidate:** WP Simple Events 0.2.1
+**Candidate:** Simple Events by MiMe 0.2.1
 
-**Scope:** external event-link behaviour, Elementor editing support and public-release qualification
+**Scope:** final public identity, external event-link behaviour, Elementor editing support and public-release qualification
 
-**Archive SHA-256:** `d07fad4b2a2725224d0e902347cac30c9c04d38d2b5ed6d20bad8ad44d91bdc2`
+**Archive SHA-256:** `aac3f4e19f3daf619df0c5a555e3639ab25cc3c51cae3bbcd17e4d635ff974fb`
 
 ## Result
 
-Version 0.2.1 resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without WP Simple Events changing the user's Elementor option. The production archive also satisfies the code-level official Plugin Review standard after request-boundary, cleanup and packaging hardening.
+Version 0.2.1 adopts **Simple Events by MiMe** with `simple-events-by-mime` as its first public identity and resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without Simple Events by MiMe changing the user's Elementor option. The production archive also satisfies the code-level official Plugin Review standard after request-boundary, cleanup and packaging hardening.
 
 ## Functional evidence
 
@@ -18,6 +18,8 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Native details, shortcodes, Elementor widgets and Gutenberg blocks inherit the same link output from the shared renderer.
 - Internal event title, image and taxonomy links keep their existing same-tab behaviour.
 - `wpse_event` includes `elementor` in its native post-type supports alongside title, editor, excerpt, thumbnail, author, revisions and custom fields.
+- The distribution directory, main plugin file, archive, WordPress readme, translation catalogue and text domain consistently use `simple-events-by-mime`.
+- Existing post type, taxonomy, metadata, option, shortcode, REST, block and Elementor widget identifiers retain their established `wpse` contracts.
 - Real Elementor 3.35.9 and 4.1.5 hosts confirm both `post_type_supports( 'wpse_event', 'elementor' )` and Elementor's own `Utils::is_post_type_support()` result. Both hosts also create an editable Event document whose official edit URL opens Elementor.
 - Elementor edits the event's normal WordPress content/layout. Event date, time, location and status remain managed through the native Event details panel.
 
@@ -26,7 +28,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Focused presentation/content/Elementor/Gutenberg suite: passed — 46 tests, 329 assertions.
 - Complete PHPUnit suite: passed — 264 tests, 1,010 assertions.
 - Composer validation, coding standards and full PHPStan level 8: passed.
-- JavaScript/CSS build and lint plus Node tooling tests: passed.
+- JavaScript/CSS build and lint plus 15 Node tooling tests: passed.
 - Composer and npm dependency audits: passed with no known vulnerabilities.
 - Translation catalogue: regenerated and byte-for-byte current with WP-CLI 2.12.0.
 - Packaged WordPress smoke: passed on WordPress 6.9 and 7.0.1 with PHP 8.3.
@@ -34,6 +36,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Packaged Playwright suite: passed — 15/15 journeys, including exact target/rel assertions for both external actions.
 - Release verification and two-build reproducibility: passed.
 - Official Plugin Review PHPCS ruleset against the exact staged package: passed with no findings.
+- Release identity regression: passed; mismatched plugin names or text domains are rejected before packaging.
 - Clean-checkout CI regressions are covered for optional PHPStan dependency paths, the command-scoped Plugin Check fixture exception and Gutenberg login navigation.
 
 ## Senior developer review
@@ -49,6 +52,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - The production archive retains `composer.json` so WordPress' checker can identify the shipped optimized Composer autoloader; development-only `composer.lock` remains excluded.
 - Third-party licence notices ship as a plain-text runtime document, avoiding an unexpected root Markdown file without removing attribution.
 - Required event meta/taxonomy queries remain bounded and paginated; ADR-031 records the narrow Plugin Check acknowledgements instead of disabling a performance rule.
+- ADR-032 records the user-approved public name and slug. Distribution metadata changed before the first public release; stored content identifiers deliberately did not.
 
 ## Senior QA and security review
 
@@ -59,14 +63,15 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Internal navigation was deliberately not changed to new-tab behaviour.
 - Editor, maintenance and duplication request values are unslashed and sanitized at their explicit input boundaries; mutation paths retain capability and nonce checks.
 - Uninstall cleanup no longer bypasses third-party filters. It validates every returned post and retains plugin options whenever a post-count check proves events remain, preventing false completion and unintended data loss.
+- Earlier private test packages cannot remain active beside the renamed package without duplicate hooks. Installation guidance explicitly requires deactivation and removal with destructive cleanup disabled; retained event data is then reused safely.
 
 ## Residual release conditions
 
-1. Public publication remains conditional on the official strict WordPress Plugin Check job passing against the final 0.2.1 identity. Its remaining trademark validation requires a user-approved display name and WordPress.org slug before the release tag is created.
+1. Public publication remains conditional on the official strict WordPress Plugin Check CI job passing against this final 0.2.1 identity before the release tag is created.
 2. The user should visually confirm the Elementor edit entry point on the target installation because toolbar placement differs between Elementor/WordPress editor versions; both supported host APIs recognize Events as editable in automated testing.
 
 ## Candidate
 
-Installable archive: `dist/wp-simple-events-0.2.1.zip`
+Installable archive: `dist/simple-events-by-mime-0.2.1.zip`
 
-Checksum file: `dist/wp-simple-events-0.2.1.zip.sha256`
+Checksum file: `dist/simple-events-by-mime-0.2.1.zip.sha256`

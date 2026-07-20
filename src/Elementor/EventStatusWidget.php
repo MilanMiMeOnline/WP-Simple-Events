@@ -20,7 +20,7 @@ final class EventStatusWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Status', 'wp-simple-events' );
+		return esc_html__( 'Event Status', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */

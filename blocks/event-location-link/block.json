@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-location-link",
   "title": "Event Location Link",
-  "category": "wp-simple-events",
+  "category": "simple-events-by-mime",
   "icon": "admin-links",
   "description": "Display the route or location link saved on an event.",
-  "textdomain": "wp-simple-events",
+  "textdomain": "simple-events-by-mime",
   "usesContext": ["postId", "postType"],
   "attributes": {
     "eventId": { "type": "integer", "default": 0 },

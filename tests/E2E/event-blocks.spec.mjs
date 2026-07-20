@@ -110,7 +110,7 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	expect( contract.eventCount ).toBeLessThanOrEqual( 50 );
 	for ( const [ index, block ] of contract.blocks.entries() ) {
 		expect( block.name ).toBe( atomicBlockNames[ index ] );
-		expect( block.category ).toBe( 'wp-simple-events' );
+		expect( block.category ).toBe( 'simple-events-by-mime' );
 		expect( block.hasEventId ).toBe( true );
 		expect( block.hasEdit ).toBe( true );
 		expect( block.hasSave ).toBe( true );

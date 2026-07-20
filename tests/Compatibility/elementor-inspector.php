@@ -29,7 +29,7 @@ function wpse_compat_require( bool $condition, string $message ): void {
 /** Execute the complete real-host widget contract. */
 function wpse_run_elementor_compat_inspection(): void {
 	wpse_compat_require( class_exists( Elementor\Plugin::class ), 'Elementor is not active.' );
-	wpse_compat_require( did_action( 'wpse_loaded' ) > 0, 'WP Simple Events did not boot.' );
+	wpse_compat_require( did_action( 'wpse_loaded' ) > 0, 'Simple Events by MiMe did not boot.' );
 	wpse_compat_require( post_type_supports( EventPostType::POST_TYPE, 'elementor' ), 'Events do not expose Elementor editor support.' );
 	wpse_compat_require( Elementor\Utils::is_post_type_support( EventPostType::POST_TYPE ), 'Elementor does not recognize Events as editable.' );
 
@@ -55,7 +55,7 @@ function wpse_run_elementor_compat_inspection(): void {
 
 	foreach ( $names as $name ) {
 		wpse_compat_require( isset( $widgets[ $name ] ), 'Missing Elementor widget: ' . $name );
-		wpse_compat_require( in_array( 'wp-simple-events', $widgets[ $name ]->get_categories(), true ), 'Wrong widget category: ' . $name );
+		wpse_compat_require( in_array( 'simple-events-by-mime', $widgets[ $name ]->get_categories(), true ), 'Wrong widget category: ' . $name );
 		wpse_compat_require( in_array( 'wpse-frontend', $widgets[ $name ]->get_style_depends(), true ), 'Missing style dependency: ' . $name );
 		wpse_compat_require( false === $widgets[ $name ]->has_widget_inner_wrapper(), 'Optimized DOM disabled: ' . $name );
 	}
@@ -151,7 +151,7 @@ function wpse_run_elementor_compat_inspection(): void {
 	wpse_compat_require( '' === $invalid_output, 'Malformed event source leaked or fell back on the frontend.' );
 
 	wp_delete_post( $event_id, true );
-	WP_CLI::success( 'WP Simple Events Elementor compatibility contract passed.' );
+	WP_CLI::success( 'Simple Events by MiMe Elementor compatibility contract passed.' );
 }
 
 wpse_run_elementor_compat_inspection();

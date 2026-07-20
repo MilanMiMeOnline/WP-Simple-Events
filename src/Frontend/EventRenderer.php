@@ -56,7 +56,7 @@ final readonly class EventRenderer {
 		$excerpt      = $options->show_excerpt ? trim( wp_trim_words( get_the_excerpt( $event ), 30 ) ) : '';
 
 		if ( '' === $title ) {
-			$title = __( 'Untitled event', 'wp-simple-events' );
+			$title = __( 'Untitled event', 'simple-events-by-mime' );
 		}
 
 		if ( null !== $status && EventStatus::SCHEDULED !== $status ) {
@@ -89,7 +89,7 @@ final readonly class EventRenderer {
 
 				<?php if ( $options->show_location && '' !== $location ) : ?>
 					<p class="wpse-event-card-location">
-						<span class="screen-reader-text"><?php esc_html_e( 'Location:', 'wp-simple-events' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Location:', 'simple-events-by-mime' ); ?></span>
 						<?php if ( '' !== $location_url ) : ?>
 							<a href="<?php echo esc_url( $location_url ); ?>"><?php echo esc_html( $location ); ?></a>
 						<?php else : ?>
@@ -116,8 +116,8 @@ final readonly class EventRenderer {
 	 */
 	private function status_label( ?EventStatus $status ): string {
 		return match ( $status ) {
-			EventStatus::CANCELLED => __( 'Cancelled', 'wp-simple-events' ),
-			EventStatus::POSTPONED => __( 'Postponed', 'wp-simple-events' ),
+			EventStatus::CANCELLED => __( 'Cancelled', 'simple-events-by-mime' ),
+			EventStatus::POSTPONED => __( 'Postponed', 'simple-events-by-mime' ),
 			default => '',
 		};
 	}

@@ -37,7 +37,7 @@ final class EventDuplicatePlan {
 			'post_status'   => 'draft',
 			'post_password' => '',
 			/* translators: %s: Original event title. */
-			'post_title'    => sprintf( __( '%s — Copy', 'wp-simple-events' ), $source->post_title ),
+			'post_title'    => sprintf( __( '%s — Copy', 'simple-events-by-mime' ), $source->post_title ),
 			'post_excerpt'  => $source->post_excerpt,
 			'post_content'  => $source->post_content,
 		);

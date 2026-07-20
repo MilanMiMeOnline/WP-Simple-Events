@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="WP Simple Events">
-  <description>Project coding standard for WP Simple Events.</description>
+<ruleset name="Simple Events by MiMe">
+  <description>Project coding standard for Simple Events by MiMe.</description>
 
-  <file>wp-simple-events.php</file>
+  <file>simple-events-by-mime.php</file>
   <file>uninstall.php</file>
   <file>src</file>
   <file>templates</file>
@@ -37,7 +37,7 @@
   <rule ref="WordPress.WP.I18n">
     <properties>
       <property name="text_domain" type="array">
-        <element value="wp-simple-events"/>
+        <element value="simple-events-by-mime"/>
       </property>
     </properties>
   </rule>

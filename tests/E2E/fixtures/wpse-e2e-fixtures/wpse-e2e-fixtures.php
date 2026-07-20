@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP Simple Events E2E Fixtures
+ * Plugin Name: Simple Events by MiMe E2E Fixtures
  * Description: Deterministic test-only fixtures for the browser regression suite.
  * Version:     1.0.0
  * Author:      MiMe

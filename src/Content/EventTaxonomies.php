@@ -37,7 +37,7 @@ final class EventTaxonomies {
 	public function category_arguments(): array {
 		return array(
 			'labels'             => $this->category_labels(),
-			'description'        => __( 'Hierarchical categories used only by events.', 'wp-simple-events' ),
+			'description'        => __( 'Hierarchical categories used only by events.', 'simple-events-by-mime' ),
 			'public'             => true,
 			'publicly_queryable' => true,
 			'hierarchical'       => true,
@@ -64,7 +64,7 @@ final class EventTaxonomies {
 	public function tag_arguments(): array {
 		return array(
 			'labels'             => $this->tag_labels(),
-			'description'        => __( 'Non-hierarchical tags used only by events.', 'wp-simple-events' ),
+			'description'        => __( 'Non-hierarchical tags used only by events.', 'simple-events-by-mime' ),
 			'public'             => true,
 			'publicly_queryable' => true,
 			'hierarchical'       => false,
@@ -89,21 +89,21 @@ final class EventTaxonomies {
 	 */
 	private function category_labels(): array {
 		return array(
-			'name'              => __( 'Event Categories', 'wp-simple-events' ),
-			'singular_name'     => __( 'Event Category', 'wp-simple-events' ),
-			'search_items'      => __( 'Search Event Categories', 'wp-simple-events' ),
-			'all_items'         => __( 'All Event Categories', 'wp-simple-events' ),
-			'parent_item'       => __( 'Parent Event Category', 'wp-simple-events' ),
-			'parent_item_colon' => __( 'Parent Event Category:', 'wp-simple-events' ),
-			'edit_item'         => __( 'Edit Event Category', 'wp-simple-events' ),
-			'view_item'         => __( 'View Event Category', 'wp-simple-events' ),
-			'update_item'       => __( 'Update Event Category', 'wp-simple-events' ),
-			'add_new_item'      => __( 'Add New Event Category', 'wp-simple-events' ),
-			'new_item_name'     => __( 'New Event Category Name', 'wp-simple-events' ),
-			'not_found'         => __( 'No event categories found.', 'wp-simple-events' ),
-			'no_terms'          => __( 'No event categories', 'wp-simple-events' ),
-			'back_to_items'     => __( 'Back to event categories', 'wp-simple-events' ),
-			'menu_name'         => __( 'Event Categories', 'wp-simple-events' ),
+			'name'              => __( 'Event Categories', 'simple-events-by-mime' ),
+			'singular_name'     => __( 'Event Category', 'simple-events-by-mime' ),
+			'search_items'      => __( 'Search Event Categories', 'simple-events-by-mime' ),
+			'all_items'         => __( 'All Event Categories', 'simple-events-by-mime' ),
+			'parent_item'       => __( 'Parent Event Category', 'simple-events-by-mime' ),
+			'parent_item_colon' => __( 'Parent Event Category:', 'simple-events-by-mime' ),
+			'edit_item'         => __( 'Edit Event Category', 'simple-events-by-mime' ),
+			'view_item'         => __( 'View Event Category', 'simple-events-by-mime' ),
+			'update_item'       => __( 'Update Event Category', 'simple-events-by-mime' ),
+			'add_new_item'      => __( 'Add New Event Category', 'simple-events-by-mime' ),
+			'new_item_name'     => __( 'New Event Category Name', 'simple-events-by-mime' ),
+			'not_found'         => __( 'No event categories found.', 'simple-events-by-mime' ),
+			'no_terms'          => __( 'No event categories', 'simple-events-by-mime' ),
+			'back_to_items'     => __( 'Back to event categories', 'simple-events-by-mime' ),
+			'menu_name'         => __( 'Event Categories', 'simple-events-by-mime' ),
 		);
 	}
 
@@ -114,23 +114,23 @@ final class EventTaxonomies {
 	 */
 	private function tag_labels(): array {
 		return array(
-			'name'                       => __( 'Event Tags', 'wp-simple-events' ),
-			'singular_name'              => __( 'Event Tag', 'wp-simple-events' ),
-			'search_items'               => __( 'Search Event Tags', 'wp-simple-events' ),
-			'popular_items'              => __( 'Popular Event Tags', 'wp-simple-events' ),
-			'all_items'                  => __( 'All Event Tags', 'wp-simple-events' ),
-			'edit_item'                  => __( 'Edit Event Tag', 'wp-simple-events' ),
-			'view_item'                  => __( 'View Event Tag', 'wp-simple-events' ),
-			'update_item'                => __( 'Update Event Tag', 'wp-simple-events' ),
-			'add_new_item'               => __( 'Add New Event Tag', 'wp-simple-events' ),
-			'new_item_name'              => __( 'New Event Tag Name', 'wp-simple-events' ),
-			'separate_items_with_commas' => __( 'Separate event tags with commas', 'wp-simple-events' ),
-			'add_or_remove_items'        => __( 'Add or remove event tags', 'wp-simple-events' ),
-			'choose_from_most_used'      => __( 'Choose from the most used event tags', 'wp-simple-events' ),
-			'not_found'                  => __( 'No event tags found.', 'wp-simple-events' ),
-			'no_terms'                   => __( 'No event tags', 'wp-simple-events' ),
-			'back_to_items'              => __( 'Back to event tags', 'wp-simple-events' ),
-			'menu_name'                  => __( 'Event Tags', 'wp-simple-events' ),
+			'name'                       => __( 'Event Tags', 'simple-events-by-mime' ),
+			'singular_name'              => __( 'Event Tag', 'simple-events-by-mime' ),
+			'search_items'               => __( 'Search Event Tags', 'simple-events-by-mime' ),
+			'popular_items'              => __( 'Popular Event Tags', 'simple-events-by-mime' ),
+			'all_items'                  => __( 'All Event Tags', 'simple-events-by-mime' ),
+			'edit_item'                  => __( 'Edit Event Tag', 'simple-events-by-mime' ),
+			'view_item'                  => __( 'View Event Tag', 'simple-events-by-mime' ),
+			'update_item'                => __( 'Update Event Tag', 'simple-events-by-mime' ),
+			'add_new_item'               => __( 'Add New Event Tag', 'simple-events-by-mime' ),
+			'new_item_name'              => __( 'New Event Tag Name', 'simple-events-by-mime' ),
+			'separate_items_with_commas' => __( 'Separate event tags with commas', 'simple-events-by-mime' ),
+			'add_or_remove_items'        => __( 'Add or remove event tags', 'simple-events-by-mime' ),
+			'choose_from_most_used'      => __( 'Choose from the most used event tags', 'simple-events-by-mime' ),
+			'not_found'                  => __( 'No event tags found.', 'simple-events-by-mime' ),
+			'no_terms'                   => __( 'No event tags', 'simple-events-by-mime' ),
+			'back_to_items'              => __( 'Back to event tags', 'simple-events-by-mime' ),
+			'menu_name'                  => __( 'Event Tags', 'simple-events-by-mime' ),
 		);
 	}
 }

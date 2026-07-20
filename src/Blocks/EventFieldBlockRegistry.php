@@ -59,13 +59,13 @@ final readonly class EventFieldBlockRegistry {
 
 		register_block_pattern_category(
 			EventFieldBlockDefinitions::CATEGORY,
-			array( 'label' => __( 'WP Simple Events', 'wp-simple-events' ) )
+			array( 'label' => __( 'Simple Events by MiMe', 'simple-events-by-mime' ) )
 		);
 		register_block_pattern(
-			'wp-simple-events/single-event-fields',
+			'simple-events-by-mime/single-event-fields',
 			array(
-				'title'       => __( 'Single Event Fields', 'wp-simple-events' ),
-				'description' => __( 'A complete flexible event layout built from individual WP Simple Events blocks.', 'wp-simple-events' ),
+				'title'       => __( 'Single Event Fields', 'simple-events-by-mime' ),
+				'description' => __( 'A complete flexible event layout built from individual Simple Events by MiMe blocks.', 'simple-events-by-mime' ),
 				'categories'  => array( EventFieldBlockDefinitions::CATEGORY ),
 				'blockTypes'  => array( 'wpse/event-title' ),
 				'content'     => $this->pattern->content(),
@@ -83,7 +83,7 @@ final readonly class EventFieldBlockRegistry {
 				'eventPostType' => EventPostType::POST_TYPE,
 			)
 		);
-		wp_set_script_translations( self::EDITOR_SCRIPT_HANDLE, 'wp-simple-events', WPSE_PLUGIN_DIR . '/languages' );
+		wp_set_script_translations( self::EDITOR_SCRIPT_HANDLE, 'simple-events-by-mime', WPSE_PLUGIN_DIR . '/languages' );
 		wp_enqueue_script( self::EDITOR_SCRIPT_HANDLE );
 	}
 
@@ -102,7 +102,7 @@ final readonly class EventFieldBlockRegistry {
 
 		$categories[] = array(
 			'slug'  => EventFieldBlockDefinitions::CATEGORY,
-			'title' => __( 'WP Simple Events', 'wp-simple-events' ),
+			'title' => __( 'Simple Events by MiMe', 'simple-events-by-mime' ),
 		);
 
 		return $categories;

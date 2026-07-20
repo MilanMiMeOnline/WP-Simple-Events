@@ -11,7 +11,7 @@ namespace MiMe\WPSimpleEvents\Blocks;
 
 /** Keeps registration, rendering and patterns on one allowlisted field palette. */
 final class EventFieldBlockDefinitions {
-	public const CATEGORY = 'wp-simple-events';
+	public const CATEGORY = 'simple-events-by-mime';
 
 	/**
 	 * Human-readable field labels keyed by block slug.

@@ -2,7 +2,7 @@
 
 ## Administrator behaviour
 
-Deactivating WP Simple Events never deletes anything. Deleting the plugin also keeps events, event terms, options and event capabilities unless an administrator first enables **Events → Settings → Delete plugin data**.
+Deactivating Simple Events by MiMe never deletes anything. Deleting the plugin also keeps events, event terms, options and event capabilities unless an administrator first enables **Events → Settings → Delete plugin data**.
 
 The checkbox is off by default and is saved through WordPress' administrator-only Settings API. Its warning names the irreversible data classes. Any missing, malformed or unchecked value means **retain data**.
 

@@ -21,7 +21,7 @@ The phase passes its automated and host-level acceptance checks. Elementor remai
 The official WordPress.org packages for Elementor 3.35.9 and 4.1.5 were loaded separately into the WordPress 7.0.1/PHP 8.3 Playground environment. An authenticated local-only inspector verified:
 
 - all three widget types are registered through the host manager;
-- the dedicated `wp-simple-events` category is present;
+- the dedicated `simple-events-by-mime` category is present;
 - list/grid controls include query, filters, visibility, responsive columns and style groups;
 - calendar controls include both views, filters, style groups and only the `wpse-calendar` script dependency;
 - details controls include a bounded public preview selector and style groups;

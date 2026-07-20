@@ -50,7 +50,7 @@ final readonly class EventArchiveRenderer {
 		$title      = post_type_archive_title( '', false );
 
 		if ( ! is_string( $title ) || '' === trim( $title ) ) {
-			$title = __( 'Events', 'wp-simple-events' );
+			$title = __( 'Events', 'simple-events-by-mime' );
 		}
 
 		$output  = '<section class="wpse-events wpse-event-archive" aria-labelledby="wpse-event-archive-title">';

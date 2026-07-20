@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import {
+	assertReleaseIdentity,
 	assertReleaseEntries,
 	getReleaseVersion,
 	parseChecksumRecord,
@@ -62,9 +63,10 @@ function run( command, argumentsList, { capture = false, cwd } = {} ) {
 async function releaseVersion() {
 	const [ packageSource, pluginSource, readmeSource ] = await Promise.all( [
 		readFile( join( projectDirectory, 'package.json' ), 'utf8' ),
-		readFile( join( projectDirectory, 'wp-simple-events.php' ), 'utf8' ),
+		readFile( join( projectDirectory, 'simple-events-by-mime.php' ), 'utf8' ),
 		readFile( join( projectDirectory, 'readme.txt' ), 'utf8' ),
 	] );
+	assertReleaseIdentity( { pluginSource, readmeSource } );
 
 	return getReleaseVersion( { packageSource, pluginSource, readmeSource } );
 }
@@ -124,12 +126,12 @@ const archiveDetails = await run( 'zipinfo', [ '-l', archivePath ], {
 	capture: true,
 } );
 
-if ( /^l[^\n]*\s+wp-simple-events\//m.test( archiveDetails ) ) {
+if ( /^l[^\n]*\s+simple-events-by-mime\//m.test( archiveDetails ) ) {
 	throw new Error( 'The release archive contains a symbolic link.' );
 }
 
 const temporaryDirectory = await mkdtemp(
-	join( tmpdir(), 'wp-simple-events-release-' ),
+	join( tmpdir(), 'simple-events-by-mime-release-' ),
 );
 
 try {

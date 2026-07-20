@@ -1,6 +1,6 @@
 # QA report — WP5 Elementor atomic widgets
 
-**Date:** 2026-07-19  
+**Date:** 2026-07-19
 **Scope:** `WPSE-BL-008` Elementor field components
 
 ## Result
@@ -38,7 +38,7 @@ WP5 passes its implementation, security and real-host compatibility review. Elem
 - Release verification: passed, including shipped PHP syntax, autoloading, archive allowlist and byte-for-byte reproducibility.
 - Real WordPress 7.0.1 / PHP 8.3 compatibility inspector: passed with Elementor 3.35.9 and Elementor 4.1.5.
 - The inspector verifies all fifteen registrations, categories, style dependencies, optimized DOM, atomic control contracts, selected-public rendering and malformed-source rejection.
-- Candidate archive: `dist/wp-simple-events-0.1.1.zip` with SHA-256 `7903b7ab91b780756fade86f00af90c5b578d728b92d9f5be97c4da0dc51eb9d`.
+- Candidate archive: `dist/simple-events-by-mime-0.1.1.zip` with SHA-256 `7903b7ab91b780756fade86f00af90c5b578d728b92d9f5be97c4da0dc51eb9d`.
 
 ## Senior developer review
 

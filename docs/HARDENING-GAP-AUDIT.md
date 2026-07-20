@@ -17,7 +17,7 @@ This audit compares the current implementation with `ANALYSE-EN-BOUWSPECIFICATIE
 - Administrator-only event-capability repair and validation-backed UTC-index rebuilding in explicit batches of 50, with invalid/failure accounting.
 - Bounded archive slug, page-size and default-period controls, persistent WordPress-page conflict diagnosis and change-driven one-shot rewrite regeneration.
 - A deterministic production-allowlist build with a minimal Composer autoloader, strict archive verification, SHA-256 binding and byte-for-byte reproducibility testing.
-- A generated `/languages/wp-simple-events.pot` catalogue with deterministic CI freshness verification.
+- A generated `/languages/simple-events-by-mime.pot` catalogue with deterministic CI freshness verification.
 - Packaged activation and full smoke journeys on WordPress 6.9 and 7.0.1 with PHP 8.3.
 - Official Plugin Check is configured as a strict CI gate against the exact package staging directory.
 

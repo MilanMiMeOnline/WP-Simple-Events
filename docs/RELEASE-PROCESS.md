@@ -1,6 +1,6 @@
 # Release process
 
-This process produces and verifies the installable WP Simple Events package. `docs/DECISIONS.md` ADR-020 is the architectural contract.
+This process produces and verifies the installable Simple Events by MiMe package. `docs/DECISIONS.md` ADR-020 is the architectural contract.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 
 ## Candidate preparation
 
-1. Make the version identical in `wp-simple-events.php`, `WPSE_VERSION`, `readme.txt` and `package.json`.
+1. Make the version identical in `simple-events-by-mime.php`, `WPSE_VERSION`, `readme.txt` and `package.json`.
 2. Confirm `LICENSE` is present and the public metadata still declares `GPL-2.0-or-later`.
 3. Regenerate translations with `npm run i18n:pot` and verify them with `npm run i18n:check`.
 4. Run `composer validate --strict`, `composer qa` and `npm run qa`.
@@ -21,17 +21,17 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 6. Run the packaged smoke journey on both supported WordPress versions:
 
    ```sh
-   WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PLUGIN_PATH='.release/wp-simple-events' npm run test:smoke
-   WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PLUGIN_PATH='.release/wp-simple-events' npm run test:smoke
+   WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PLUGIN_PATH='.release/simple-events-by-mime' npm run test:smoke
+   WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PLUGIN_PATH='.release/simple-events-by-mime' npm run test:smoke
    ```
 
-7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/wp-simple-events` and uploads the verified zip and checksum as one CI artifact.
+7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/simple-events-by-mime` and uploads the verified zip and checksum as one CI artifact.
 
 ## Outputs
 
-- `.release/wp-simple-events/` is the exact uncompressed staging tree used by Plugin Check and smoke tests.
-- `dist/wp-simple-events-{version}.zip` is the installable WordPress package.
-- `dist/wp-simple-events-{version}.zip.sha256` binds the archive hash to its exact filename.
+- `.release/simple-events-by-mime/` is the exact uncompressed staging tree used by Plugin Check and smoke tests.
+- `dist/simple-events-by-mime-{version}.zip` is the installable WordPress package.
+- `dist/simple-events-by-mime-{version}.zip.sha256` binds the archive hash to its exact filename.
 
 Both output directories are generated and ignored by Git. Do not edit their contents manually. Rebuild from reviewed source instead.
 

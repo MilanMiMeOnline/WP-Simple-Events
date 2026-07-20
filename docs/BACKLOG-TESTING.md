@@ -318,7 +318,7 @@ The smallest likely fix is to avoid measuring while the canvas is hidden and to 
 
 ### Observation
 
-It is not readily apparent which time zone WP Simple Events uses. Administrators may expect a plugin-specific setting, while international visitors cannot currently see which zone applies to a displayed event time. This becomes particularly important when an event audience spans multiple time zones.
+It is not readily apparent which time zone Simple Events by MiMe uses. Administrators may expect a plugin-specific setting, while international visitors cannot currently see which zone applies to a displayed event time. This becomes particularly important when an event audience spans multiple time zones.
 
 ### Preliminary technical analysis
 
@@ -376,7 +376,7 @@ Elementor currently exposes Event List / Grid, Event Calendar and one composite 
 
 This should be implemented as one shared field-presentation layer with thin Elementor and Gutenberg adapters. Copying metadata reads, permissions, date formatting and markup into every host would create inconsistent behaviour and a large security/test surface. Both hosts should use the same access-aware resolver for either current-event context or a bounded explicit public-event selection; Gutenberg remains dynamically rendered on the server.
 
-The screenshot also indicates Elementor Free: its Single/Theme Builder functionality is marked as a Pro upgrade. That does not require a different widget implementation. The same atomic component can render the current queried event in a template context or an explicitly selected public event on a static page. Template assignment/routing belongs to the host and is not a responsibility WP Simple Events needs to reproduce. For Gutenberg, the same distinction applies: block context can supply the current event in a Site Editor template, while an explicit public event selection makes the component usable on an ordinary page.
+The screenshot also indicates Elementor Free: its Single/Theme Builder functionality is marked as a Pro upgrade. That does not require a different widget implementation. The same atomic component can render the current queried event in a template context or an explicitly selected public event on a static page. Template assignment/routing belongs to the host and is not a responsibility Simple Events by MiMe needs to reproduce. For Gutenberg, the same distinction applies: block context can supply the current event in a Site Editor template, while an explicit public event selection makes the component usable on an ordinary page.
 
 ### Proposed component set
 
@@ -423,7 +423,7 @@ Empty optional fields should render nothing on the frontend and an explicit, non
 
 ### Evidence
 
-- `codex-clipboard-98a40ec1-23ba-4b84-9254-6c020a291ba0.png` — only the three composite WP Simple Events widgets are available; Elementor Single template functionality is shown as a Pro upgrade.
+- `codex-clipboard-98a40ec1-23ba-4b84-9254-6c020a291ba0.png` — only the three composite Simple Events by MiMe widgets are available; Elementor Single template functionality is shown as a Pro upgrade.
 
 ### Planning note
 

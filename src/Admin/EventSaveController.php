@@ -189,7 +189,7 @@ final class EventSaveController {
 		}
 		?>
 		<div class="notice notice-error">
-			<p><strong><?php esc_html_e( 'The event details were not saved because they need attention.', 'wp-simple-events' ); ?></strong></p>
+			<p><strong><?php esc_html_e( 'The event details were not saved because they need attention.', 'simple-events-by-mime' ); ?></strong></p>
 			<ul>
 				<?php foreach ( $this->messages->messages( $errors ) as $message ) : ?>
 					<li><?php echo esc_html( $message ); ?></li>

@@ -27,7 +27,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Calendar', 'wp-simple-events' );
+		return esc_html__( 'Event Calendar', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -58,14 +58,14 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_content',
 			array(
-				'label' => esc_html__( 'Calendar', 'wp-simple-events' ),
+				'label' => esc_html__( 'Calendar', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'initial_view',
 			array(
-				'label'   => esc_html__( 'Desktop view', 'wp-simple-events' ),
+				'label'   => esc_html__( 'Desktop view', 'simple-events-by-mime' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'month',
 				'options' => $this->view_options(),
@@ -74,7 +74,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'mobile_view',
 			array(
-				'label'   => esc_html__( 'Mobile view', 'wp-simple-events' ),
+				'label'   => esc_html__( 'Mobile view', 'simple-events-by-mime' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'list',
 				'options' => $this->view_options(),
@@ -83,33 +83,33 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'category',
 			array(
-				'label'       => esc_html__( 'Initial categories', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Initial categories', 'simple-events-by-mime' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
 				'options'     => $this->term_options( EventTaxonomies::CATEGORY ),
-				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change categories when visitor filters are shown.', 'wp-simple-events' ),
+				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change categories when visitor filters are shown.', 'simple-events-by-mime' ),
 			)
 		);
 		$this->add_control(
 			'tag',
 			array(
-				'label'       => esc_html__( 'Initial tags', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Initial tags', 'simple-events-by-mime' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
 				'options'     => $this->term_options( EventTaxonomies::TAG ),
-				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change tags when visitor filters are shown.', 'wp-simple-events' ),
+				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change tags when visitor filters are shown.', 'simple-events-by-mime' ),
 			)
 		);
 		$this->add_control(
 			'filters',
 			array(
-				'label'        => esc_html__( 'Show visitor filters', 'wp-simple-events' ),
+				'label'        => esc_html__( 'Show visitor filters', 'simple-events-by-mime' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
 				'default'      => 'yes',
-				'description'  => esc_html__( 'Let visitors filter by available event categories and tags. Hidden when no choices are available.', 'wp-simple-events' ),
+				'description'  => esc_html__( 'Let visitors filter by available event categories and tags. Hidden when no choices are available.', 'simple-events-by-mime' ),
 			)
 		);
 		$this->end_controls_section();
@@ -136,8 +136,8 @@ final class EventCalendarWidget extends AbstractEventWidget {
 	 */
 	private function view_options(): array {
 		return array(
-			'month' => esc_html__( 'Month', 'wp-simple-events' ),
-			'list'  => esc_html__( 'List', 'wp-simple-events' ),
+			'month' => esc_html__( 'Month', 'simple-events-by-mime' ),
+			'list'  => esc_html__( 'List', 'simple-events-by-mime' ),
 		);
 	}
 
@@ -146,14 +146,14 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_style',
 			array(
-				'label' => esc_html__( 'Calendar', 'wp-simple-events' ),
+				'label' => esc_html__( 'Calendar', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			)
 		);
 		$this->add_control(
 			'text_color',
 			array(
-				'label'     => esc_html__( 'Text color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Text color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => 'color: {{VALUE}};' ),
 			)
@@ -161,7 +161,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'accent_color',
 			array(
-				'label'     => esc_html__( 'Accent color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Accent color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-accent: {{VALUE}};' ),
 			)
@@ -169,7 +169,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'accent_text_color',
 			array(
-				'label'     => esc_html__( 'Accent text color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Accent text color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-on-accent: {{VALUE}};' ),
 			)
@@ -177,7 +177,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		$this->add_control(
 			'border_color',
 			array(
-				'label'     => esc_html__( 'Border color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Border color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-color-border: {{VALUE}};' ),
 			)
@@ -186,7 +186,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'calendar_typography',
-				'label'    => esc_html__( 'Calendar typography', 'wp-simple-events' ),
+				'label'    => esc_html__( 'Calendar typography', 'simple-events-by-mime' ),
 				'selector' => '{{WRAPPER}} .wpse-calendar',
 			)
 		);
@@ -194,7 +194,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
-				'label'    => esc_html__( 'Button typography', 'wp-simple-events' ),
+				'label'    => esc_html__( 'Button typography', 'simple-events-by-mime' ),
 				'selector' => '{{WRAPPER}} .wpse-calendar button',
 			)
 		);

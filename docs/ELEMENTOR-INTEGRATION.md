@@ -1,14 +1,14 @@
 # Elementor integration contract
 
-Elementor is an optional presentation host. WP Simple Events registers no Elementor class until the public `elementor/loaded` action has fired and the detected version is 3.35.0 or newer. Missing or older Elementor versions never disable event management, native templates, REST endpoints, feeds or shortcodes.
+Elementor is an optional presentation host. Simple Events by MiMe registers no Elementor class until the public `elementor/loaded` action has fired and the detected version is 3.35.0 or newer. Missing or older Elementor versions never disable event management, native templates, REST endpoints, feeds or shortcodes.
 
-The event post type declares WordPress' public `elementor` feature support. A compatible Elementor installation therefore exposes **Edit with Elementor** for individual Events without WP Simple Events modifying the user's `elementor_cpt_support` option. Event dates, locations and other native Event details remain managed by the WordPress Event details panel; Elementor edits the event's normal content and layout.
+The event post type declares WordPress' public `elementor` feature support. A compatible Elementor installation therefore exposes **Edit with Elementor** for individual Events without Simple Events by MiMe modifying the user's `elementor_cpt_support` option. Event dates, locations and other native Event details remain managed by the WordPress Event details panel; Elementor edits the event's normal content and layout.
 
 The initial compatibility matrix is Elementor 3.35.9 and 4.1.5 on WordPress 7.0.1 with PHP 8.3. The main plugin header records the current tested Elementor release. The matrix must be rerun and the header updated before a release; a passing minimum-version comparison alone is not release evidence for a future major version.
 
 ## Widget category and widgets
 
-All widgets appear under **WP Simple Events**:
+All widgets appear under **Simple Events by MiMe**:
 
 - **Event List / Grid** (`wpse-event-list`) controls layout, period, results per page, responsive columns, categories, tags, visitor filters, pagination, image, excerpt and location. Style controls cover text, secondary text, spacing, card borders/radius, title and button typography, and button colors/borders.
 - **Event Calendar** (`wpse-event-calendar`) controls desktop/mobile month or list view, initial categories/tags and visitor filters. `Initial categories` and `Initial tags` constrain both the server fallback and interactive feed even when visitor controls are hidden. `Show visitor filters` remains enabled by default for compatibility, but the complete form is omitted when no non-empty public category or tag can be selected. It exposes text, accent, on-accent and border colors plus distinctly labelled calendar/button typography controls, and declares the local `wpse-calendar` script dependency. Accent/on-accent colors deterministically control hover, focus, pressed and selected toolbar states; all stable saved control identifiers remain backward compatible.
@@ -16,11 +16,11 @@ All widgets appear under **WP Simple Events**:
 
 The original three widget names, settings and render contracts remain stable. In addition, twelve atomic widgets expose the complete named presentation palette: Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. They are dedicated, discoverable widgets rather than a generic metadata widget.
 
-Every atomic widget has the same optional **Event source** selector. Selecting an event uses that published, password-free event as the actual source, which makes the widgets usable on ordinary Elementor Free pages. Leaving it empty consumes the current event context supplied by the page or by a host such as Elementor Pro Theme Builder. Template assignment remains Elementor's responsibility; WP Simple Events does not require Pro and does not change widget output based on the Elementor edition.
+Every atomic widget has the same optional **Event source** selector. Selecting an event uses that published, password-free event as the actual source, which makes the widgets usable on ordinary Elementor Free pages. Leaving it empty consumes the current event context supplied by the page or by a host such as Elementor Pro Theme Builder. Template assignment remains Elementor's responsibility; Simple Events by MiMe does not require Pro and does not change widget output based on the Elementor edition.
 
 Field-specific controls stay intentionally small. Meaningful labels can be shown, hidden or customized. The title has an allowlisted heading and optional permalink. The image has an allowlisted WordPress image size, attachment-alt/decorative behaviour and optional permalink. Location and external actions can override their visible link text without changing their destination; both external destinations open in a new tab with `noopener noreferrer` isolation. Date and time continue to inherit WordPress' `date_format` and `time_format`, plus the plugin's global timezone-label choice; a duplicate widget-level clock-format setting is not introduced. Scoped typography, color and spacing controls inherit the theme until explicitly set.
 
-Every widget declares the shared `wpse-frontend` style. Style selectors use Elementor's `{{WRAPPER}}` token and WP Simple Events component classes. They do not rely on `.elementor-widget-container`; `has_widget_inner_wrapper()` returns false for Elementor's optimized markup.
+Every widget declares the shared `wpse-frontend` style. Style selectors use Elementor's `{{WRAPPER}}` token and Simple Events by MiMe component classes. They do not rely on `.elementor-widget-container`; `has_widget_inner_wrapper()` returns false for Elementor's optimized markup.
 
 ## Rendering and security boundary
 

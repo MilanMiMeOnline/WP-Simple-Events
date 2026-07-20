@@ -8,15 +8,15 @@ const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
 const checkedCatalogue = join(
 	projectDirectory,
 	'languages',
-	'wp-simple-events.pot',
+	'simple-events-by-mime.pot',
 );
 const checkMode = process.argv.includes( '--check' );
 const wpCliExecutable = process.env.WP_CLI_BIN ?? 'wp';
 const temporaryDirectory = checkMode
-	? await mkdtemp( join( tmpdir(), 'wp-simple-events-i18n-' ) )
+	? await mkdtemp( join( tmpdir(), 'simple-events-by-mime-i18n-' ) )
 	: null;
 const outputPath = temporaryDirectory
-	? join( temporaryDirectory, 'wp-simple-events.pot' )
+	? join( temporaryDirectory, 'simple-events-by-mime.pot' )
 	: checkedCatalogue;
 
 function generateCatalogue() {
@@ -28,9 +28,9 @@ function generateCatalogue() {
 				'make-pot',
 				'.',
 				outputPath,
-				'--slug=wp-simple-events',
-				'--domain=wp-simple-events',
-				'--include=wp-simple-events.php,src,templates',
+				'--slug=simple-events-by-mime',
+				'--domain=simple-events-by-mime',
+				'--include=simple-events-by-mime.php,src,templates',
 				'--headers={"POT-Creation-Date":""}',
 				'--file-comment=Copyright (C) 2026 MiMe\nThis file is distributed under the GPLv2 or later.',
 			],

@@ -1,8 +1,8 @@
 {
-  "name": "wp-simple-events",
+  "name": "simple-events-by-mime",
   "version": "0.2.1",
   "private": true,
-  "description": "Development tooling for WP Simple Events.",
+  "description": "Development tooling for Simple Events by MiMe.",
   "engines": {
     "node": ">=20",
     "npm": ">=10"

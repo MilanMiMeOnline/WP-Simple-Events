@@ -15,8 +15,10 @@ import { basename, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
+	assertReleaseIdentity,
 	assertReleaseEntries,
 	getReleaseVersion,
+	PLUGIN_FILE,
 	PLUGIN_SLUG,
 } from './release-contract.mjs';
 
@@ -34,7 +36,7 @@ const releaseEntries = [
 	'THIRD-PARTY-NOTICES.txt',
 	'readme.txt',
 	'uninstall.php',
-	'wp-simple-events.php',
+	PLUGIN_FILE,
 	'blocks',
 	'src',
 	'templates',
@@ -128,9 +130,10 @@ async function listFiles( directory ) {
 async function releaseVersion() {
 	const [ packageSource, pluginSource, readmeSource ] = await Promise.all( [
 		readFile( join( projectDirectory, 'package.json' ), 'utf8' ),
-		readFile( join( projectDirectory, 'wp-simple-events.php' ), 'utf8' ),
+		readFile( join( projectDirectory, 'simple-events-by-mime.php' ), 'utf8' ),
 		readFile( join( projectDirectory, 'readme.txt' ), 'utf8' ),
 	] );
+	assertReleaseIdentity( { pluginSource, readmeSource } );
 
 	return getReleaseVersion( { packageSource, pluginSource, readmeSource } );
 }

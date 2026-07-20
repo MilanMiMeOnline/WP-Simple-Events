@@ -1,13 +1,13 @@
-# QA report — WP Simple Events 0.2.0
+# QA report — Simple Events by MiMe 0.2.0
 
-**Date:** 2026-07-20  
-**Candidate:** WP Simple Events 0.2.0  
-**Branch:** `codex/release-0.2.0`  
+**Date:** 2026-07-20
+**Candidate:** Simple Events by MiMe 0.2.0
+**Branch:** `codex/release-0.2.0`
 **Archive SHA-256:** `ab7984251afd1d36ca144176e47f9ddac4f7d9c49588ddd4b88b35bd02c8c927`
 
 ## Result
 
-WP Simple Events 0.2.0 is a locally qualified installable release candidate. The plugin header, runtime constant, WordPress stable tag, npm package metadata, lockfile and translation catalogue all identify the release as 0.2.0. The packaged archive was built from the production allowlist, verified and reproduced byte-for-byte.
+Simple Events by MiMe 0.2.0 is a locally qualified installable release candidate. The plugin header, runtime constant, WordPress stable tag, npm package metadata, lockfile and translation catalogue all identify the release as 0.2.0. The packaged archive was built from the production allowlist, verified and reproduced byte-for-byte.
 
 Public publication remains conditional on the official strict WordPress Plugin Check job passing against the release commit in CI.
 
@@ -66,5 +66,5 @@ The first WordPress 6.9 attempt encountered a temporary Playground administrator
 
 ## Candidate
 
-Installable archive: `dist/wp-simple-events-0.2.0.zip`  
-Checksum file: `dist/wp-simple-events-0.2.0.zip.sha256`
+Installable archive: `dist/simple-events-by-mime-0.2.0.zip`
+Checksum file: `dist/simple-events-by-mime-0.2.0.zip.sha256`

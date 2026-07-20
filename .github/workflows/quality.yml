@@ -106,12 +106,12 @@ jobs:
       - run: npm run test:release
       - uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: .release/wp-simple-events
-          slug: wp-simple-events
+          build-dir: .release/simple-events-by-mime
+          slug: simple-events-by-mime
           strict: true
       - uses: actions/upload-artifact@v4
         with:
-          name: wp-simple-events-release
+          name: simple-events-by-mime-release
           path: |
             dist/*.zip
             dist/*.sha256
@@ -145,4 +145,4 @@ jobs:
       - run: npm run test:smoke
         env:
           WPSE_SMOKE_CORE: ${{ matrix.core }}
-          WPSE_SMOKE_PLUGIN_PATH: .release/wp-simple-events
+          WPSE_SMOKE_PLUGIN_PATH: .release/simple-events-by-mime

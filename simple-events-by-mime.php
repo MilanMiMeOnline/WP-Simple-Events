@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       WP Simple Events
+ * Plugin Name:       Simple Events by MiMe
  * Description:       A lightweight, native events plugin for WordPress.
  * Version:           0.2.1
  * Requires at least: 6.9
@@ -8,7 +8,7 @@
  * Author:            MiMe
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       wp-simple-events
+ * Text Domain:       simple-events-by-mime
  * Domain Path:       /languages
  * Elementor tested up to: 4.1.5
  *
@@ -37,7 +37,7 @@ if ( ! is_readable( $wpse_autoloader ) ) {
 
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
-				esc_html__( 'WP Simple Events could not start because its required files are missing. Install a complete release package.', 'wp-simple-events' )
+				esc_html__( 'Simple Events by MiMe could not start because its required files are missing. Install a complete release package.', 'simple-events-by-mime' )
 			);
 		}
 	);

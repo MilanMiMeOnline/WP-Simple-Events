@@ -1,11 +1,11 @@
-# WP Simple Events - development guardrails
+# Simple Events by MiMe - development guardrails
 
 These instructions apply to the entire repository. They are mandatory for human and AI contributors.
 
 ## Product contract
 
 - `ANALYSE-EN-BOUWSPECIFICATIE.md` is the functional and technical source of truth.
-- Plugin name: WP Simple Events. Author: MiMe. Text domain and slug: `wp-simple-events`.
+- Plugin name: Simple Events by MiMe. Author: MiMe. Text domain and slug: `simple-events-by-mime`.
 - Minimum versions: WordPress 6.9 and PHP 8.3.
 - WooCommerce and Elementor are optional integrations, never core dependencies.
 - Version 1 deliberately excludes recurrence, interactive maps, geocoding, ticketing and a custom database table.
@@ -34,7 +34,7 @@ Never weaken a rule, add an ignore, introduce a baseline, or skip a failing test
 - Do not access the database directly unless a documented requirement cannot be met through WordPress APIs.
 - Do not add production dependencies without documenting purpose, maintenance status, licence and removal cost.
 - Maintain backward compatibility within a stable major version. Deprecate before removal.
-- All user-facing strings must be translatable with text domain `wp-simple-events`.
+- All user-facing strings must be translatable with text domain `simple-events-by-mime`.
 - Front-end markup must be semantic and accessible. Keyboard use and visible focus are requirements.
 - CSS must be minimal, component-scoped and inherit theme typography, colours and spacing by default.
 

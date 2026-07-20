@@ -1,15 +1,18 @@
 import { posix } from 'node:path';
 
-export const PLUGIN_SLUG = 'wp-simple-events';
+export const PLUGIN_NAME = 'Simple Events by MiMe';
+export const PLUGIN_SLUG = 'simple-events-by-mime';
+export const PLUGIN_FILE = `${ PLUGIN_SLUG }.php`;
+export const TEXT_DOMAIN = PLUGIN_SLUG;
 
 const REQUIRED_RELEASE_PATHS = [
-	'wp-simple-events.php',
+	PLUGIN_FILE,
 	'LICENSE',
 	'readme.txt',
 	'composer.json',
 	'THIRD-PARTY-NOTICES.txt',
 	'vendor/autoload.php',
-	'languages/wp-simple-events.pot',
+	'languages/simple-events-by-mime.pot',
 	'blocks/',
 	'src/',
 	'templates/',
@@ -64,7 +67,7 @@ const ALLOWED_ROOT_FILES = new Set( [
 	'THIRD-PARTY-NOTICES.txt',
 	'readme.txt',
 	'uninstall.php',
-	'wp-simple-events.php',
+	PLUGIN_FILE,
 ] );
 
 const ALLOWED_PATH_PREFIXES = [
@@ -136,6 +139,36 @@ export function getReleaseVersion( {
 	}
 
 	return packageVersion;
+}
+
+export function assertReleaseIdentity( { pluginSource, readmeSource } ) {
+	const identity = {
+		name: extractMatch(
+			pluginSource,
+			/^\s*\*\s*Plugin Name:\s*(.+?)\s*$/m,
+			'plugin header name',
+		),
+		readme: extractMatch(
+			readmeSource,
+			/^===\s*(.+?)\s*===$/m,
+			'readme plugin name',
+		),
+		textDomain: extractMatch(
+			pluginSource,
+			/^\s*\*\s*Text Domain:\s*([^\s]+)\s*$/m,
+			'plugin text domain',
+		),
+	};
+
+	if (
+		identity.name !== PLUGIN_NAME ||
+		identity.readme !== PLUGIN_NAME ||
+		identity.textDomain !== TEXT_DOMAIN
+	) {
+		throw new Error(
+			`Inconsistent release identity: ${ JSON.stringify( identity ) }`,
+		);
+	}
 }
 
 export function parseChecksumRecord( source, archiveName ) {

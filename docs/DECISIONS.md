@@ -90,7 +90,7 @@ The original list, calendar and composite details widgets translate allowlisted 
 
 An explicit event selection is the real source on an ordinary Elementor Free page and a safe preview/source override in a template. With no selection, the widget consumes the current queried event. The field semantics and saved control identifiers do not change between those contexts. Missing or inaccessible fields emit only an editor placeholder; public rendering emits no plugin wrapper. Elementor Pro Theme Builder remains host-owned and optional rather than a plugin dependency.
 
-Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target WP Simple Events markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
+Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target Simple Events by MiMe markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
 
 Elementor Pro dynamic tags remain an optional, separate increment. Field widgets work without dynamic tags in both Elementor Free static layouts and host-provided dynamic templates, so deferring dynamic tags does not reduce the supported component palette or make Elementor Pro a dependency.
 
@@ -148,7 +148,7 @@ Saving an equivalent normalized slug performs no rewrite work. A real successful
 
 **Status:** Accepted
 
-The installable plugin is never an archive of the working tree. A release builder copies an explicit set of runtime files into `.release/wp-simple-events`, generates a class-authoritative Composer autoloader without development dependencies or network access, normalizes file permissions and timestamps, and creates `dist/wp-simple-events-{version}.zip` plus a SHA-256 file. The plugin header, runtime constant, WordPress stable tag and npm package version must match before the build starts.
+The installable plugin is never an archive of the working tree. A release builder copies an explicit set of runtime files into `.release/simple-events-by-mime`, generates a class-authoritative Composer autoloader without development dependencies or network access, normalizes file permissions and timestamps, and creates `dist/simple-events-by-mime-{version}.zip` plus a SHA-256 file. The plugin header, runtime constant, WordPress stable tag and npm package version must match before the build starts.
 
 The archive contract rejects wrong roots, traversal, hidden files, development paths, unexpected file types, symlinks and missing runtime files. Verification reopens the archive, validates the complete checksum record, lints every shipped PHP file and loads the main plugin class through the shipped autoloader. The production package retains `composer.json` beside the generated Composer autoloader and ships third-party licence notices as a WordPress.org-compatible text file; the development lockfile and dependencies remain excluded. Two consecutive builds must be byte-for-byte identical. Adding a production dependency or a new shipped file type therefore requires an intentional contract and test change rather than silently expanding the package.
 
@@ -194,7 +194,7 @@ Calendar requests are day-aligned wall-time windows with an explicit client offs
 
 **Status:** Accepted
 
-Public event details, cards and calendars inherit the site's WordPress `time_format`. WP Simple Events does not introduce a duplicate global setting in this package. A future atomic date/time component may offer an explicit presentation-only override, but inheritance remains the default.
+Public event details, cards and calendars inherit the site's WordPress `time_format`. Simple Events by MiMe does not introduce a duplicate global setting in this package. A future atomic date/time component may offer an explicit presentation-only override, but inheritance remains the default.
 
 Server-rendered output continues through localized `wp_date()`. A bounded adapter maps only the relevant unescaped PHP tokens (`H`, `G`, `h`, `g`, `i`, `a` and `A`) to FullCalendar options. Explicit `h23` and `h12` hour cycles prevent the visitor locale from silently changing WordPress' 12/24-hour choice; uppercase meridiems remain browser-localized rather than being hard-coded in English. Invalid formats fall back to zero-padded `H:i` presentation.
 
@@ -244,7 +244,7 @@ The plugin also registers one opt-in single-event block pattern composed from th
 
 **Status:** Accepted
 
-Official Plugin Check 2.0 runtime performance checks publish one generic fixture for every viewable post type and provide no extension point for required custom metadata. WP Simple Events normally and intentionally downgrades such an incomplete event to draft, which prevents Plugin Check from retrieving the temporary URL and aborts the checker before it can report on the package.
+Official Plugin Check 2.0 runtime performance checks publish one generic fixture for every viewable post type and provide no extension point for required custom metadata. Simple Events by MiMe normally and intentionally downgrades such an incomplete event to draft, which prevents Plugin Check from retrieving the temporary URL and aborts the checker before it can report on the package.
 
 The native publication guard therefore yields only while the Plugin Check plugin is loaded inside the exact contiguous WP-CLI `plugin check` command. The exception does not apply to the WordPress editor, REST, cron, frontend requests or any other WP-CLI command. Plugin Check deletes its fixture in the same preparation lifecycle, and the exception changes no stored user event or public product behaviour. CI continues to run every stable Plugin Check category in strict mode; no check, warning or error is excluded.
 
@@ -255,3 +255,11 @@ The native publication guard therefore yields only while the Plugin Check plugin
 Version 1 deliberately stores events as a custom post type with registered metadata and taxonomies. Its public lists, calendar windows and Events admin views therefore require `meta_key`, `meta_query` and optional `tax_query` arguments to order and select events by date, status, category and tag. Replacing these queries with a custom table would violate the accepted version-1 product and migration contract.
 
 Every public query is bounded and paginated, exposes published password-free events only, and uses allowlisted criteria. Admin queries run only inside WordPress' paginated Events list. Narrow inline Plugin Check acknowledgements document these intentional query keys; no database or performance check is disabled globally. The decision must be reassessed if production scale requirements demonstrate that WordPress metadata storage is no longer adequate.
+
+## ADR-032: The first public identity is Simple Events by MiMe
+
+**Status:** Accepted
+
+Before the first public release, the product name becomes **Simple Events by MiMe** and the canonical WordPress.org slug and text domain become `simple-events-by-mime`. The production directory, main plugin filename, translation catalogue and release archive use that slug. This avoids reserving a first-release identity that fails WordPress.org trademark validation and is the final public identity chosen by the product owner.
+
+The rename is presentation and distribution metadata only. The `MiMe\WPSimpleEvents` PHP namespace, `WPSE_` constants, `wpse_` global identifiers, event post type, taxonomies, metadata, shortcodes, REST namespace, block names and Elementor widget identifiers remain unchanged so tester data and composed content stay compatible. Because the previous slug was never publicly released, no automatic-update migration is provided. Test installations must deactivate and remove the old plugin directory before installing the renamed package; retained event data will be recognized by the unchanged storage identifiers.

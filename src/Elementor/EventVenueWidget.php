@@ -21,7 +21,7 @@ final class EventVenueWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Venue', 'wp-simple-events' );
+		return esc_html__( 'Event Venue', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,11 +43,11 @@ final class EventVenueWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Venue', 'wp-simple-events' ),
+				'label' => esc_html__( 'Venue', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
-		$this->add_label_controls( esc_html__( 'Location:', 'wp-simple-events' ) );
+		$this->add_label_controls( esc_html__( 'Location:', 'simple-events-by-mime' ) );
 		$this->end_controls_section();
 	}
 

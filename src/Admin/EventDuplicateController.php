@@ -56,7 +56,7 @@ final class EventDuplicateController {
 		$actions['wpse_duplicate'] = sprintf(
 			'<a href="%1$s">%2$s</a>',
 			esc_url( $url ),
-			esc_html__( 'Duplicate event', 'wp-simple-events' )
+			esc_html__( 'Duplicate event', 'simple-events-by-mime' )
 		);
 
 		return $actions;
@@ -71,8 +71,8 @@ final class EventDuplicateController {
 
 		if ( ! $source instanceof WP_Post || ! $this->can_duplicate( $source ) ) {
 			wp_die(
-				esc_html__( 'You are not allowed to duplicate this event.', 'wp-simple-events' ),
-				esc_html__( 'Event duplication denied', 'wp-simple-events' ),
+				esc_html__( 'You are not allowed to duplicate this event.', 'simple-events-by-mime' ),
+				esc_html__( 'Event duplication denied', 'simple-events-by-mime' ),
 				array( 'response' => 403 )
 			);
 		}
@@ -83,7 +83,7 @@ final class EventDuplicateController {
 		if ( is_wp_error( $new_id ) ) {
 			wp_die(
 				esc_html( $new_id->get_error_message() ),
-				esc_html__( 'Event duplication failed', 'wp-simple-events' ),
+				esc_html__( 'Event duplication failed', 'simple-events-by-mime' ),
 				array( 'response' => 500 )
 			);
 		}
@@ -92,8 +92,8 @@ final class EventDuplicateController {
 
 		if ( ! is_string( $edit_link ) || '' === $edit_link ) {
 			wp_die(
-				esc_html__( 'The event was copied, but its editor URL is unavailable.', 'wp-simple-events' ),
-				esc_html__( 'Event duplication incomplete', 'wp-simple-events' ),
+				esc_html__( 'The event was copied, but its editor URL is unavailable.', 'simple-events-by-mime' ),
+				esc_html__( 'Event duplication incomplete', 'simple-events-by-mime' ),
 				array( 'response' => 500 )
 			);
 		}
@@ -125,7 +125,7 @@ final class EventDuplicateController {
 		}
 		?>
 		<div class="notice notice-success is-dismissible">
-			<p><?php esc_html_e( 'Event duplicated as a draft. Review the copied dates before publishing; the external event link and its label were not copied.', 'wp-simple-events' ); ?></p>
+			<p><?php esc_html_e( 'Event duplicated as a draft. Review the copied dates before publishing; the external event link and its label were not copied.', 'simple-events-by-mime' ); ?></p>
 		</div>
 		<?php
 	}

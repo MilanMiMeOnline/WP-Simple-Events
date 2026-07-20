@@ -53,7 +53,7 @@ final readonly class EventListRenderer {
 			return sprintf(
 				'<div id="%1$s" class="wpse-events-empty" role="status"><p>%2$s</p></div>',
 				esc_attr( $results_id ),
-				esc_html__( 'No events match your selection.', 'wp-simple-events' )
+				esc_html__( 'No events match your selection.', 'simple-events-by-mime' )
 			);
 		}
 

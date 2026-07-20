@@ -2,7 +2,7 @@
 
 ## Design principles
 
-WP Simple Events stays small by favouring native WordPress concepts: a custom post type, taxonomies, metadata, capabilities, REST schemas, templates and bounded `WP_Query` objects. Abstractions must remove real duplication or isolate a genuine boundary; speculative frameworks are out of scope.
+Simple Events by MiMe stays small by favouring native WordPress concepts: a custom post type, taxonomies, metadata, capabilities, REST schemas, templates and bounded `WP_Query` objects. Abstractions must remove real duplication or isolate a genuine boundary; speculative frameworks are out of scope.
 
 The core must remain usable without WooCommerce and Elementor. Optional integrations live behind availability and version checks and must fail silently when their host plugin is absent.
 

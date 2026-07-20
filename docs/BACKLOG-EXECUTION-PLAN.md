@@ -220,7 +220,7 @@ This foundation must land before host-specific components. Refactor in small ste
 ## 9. WP5 — Elementor atomic widgets
 
 1. Amend ADR-014 and `docs/ELEMENTOR-INTEGRATION.md` before expanding beyond the original three widgets.
-2. Register dedicated WP Simple Events widgets for the WP4 field set, using shared abstract behaviour only where responsibilities remain clear.
+2. Register dedicated Simple Events by MiMe widgets for the WP4 field set, using shared abstract behaviour only where responsibilities remain clear.
 3. Reuse the bounded public event selector and current-event resolution. The selected event is the real source on a static page and an editor preview source in a dynamic template; empty fields show editor-only placeholders and no frontend wrapper.
 4. Provide controls appropriate to the field rather than one generic control set:
    - label visibility/text where meaningful;

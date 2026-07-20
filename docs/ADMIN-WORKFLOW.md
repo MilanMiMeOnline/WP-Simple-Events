@@ -4,11 +4,11 @@
 
 The native date and time fields save canonical local values. Browsers and operating systems may present an HTML time picker differently, including a 12-hour or 24-hour control, but that appearance does not change the saved value.
 
-Public event details, cards and calendars follow **Settings → General → Time Format**. WP Simple Events does not add a second global time-format setting. Changing the WordPress format changes presentation only; it does not alter event dates, durations, captured timezones, query indexes or machine-readable output.
+Public event details, cards and calendars follow **Settings → General → Time Format**. Simple Events by MiMe does not add a second global time-format setting. Changing the WordPress format changes presentation only; it does not alter event dates, durations, captured timezones, query indexes or machine-readable output.
 
 ## Event timezone
 
-**Events → Settings → Site timezone** reports WordPress' authoritative timezone and links administrators to **Settings → General**. WP Simple Events deliberately does not add a second timezone selector.
+**Events → Settings → Site timezone** reports WordPress' authoritative timezone and links administrators to **Settings → General**. Simple Events by MiMe deliberately does not add a second timezone selector.
 
 New events capture the configured site timezone when they are first saved. Existing events retain their captured timezone if the site setting later changes, keeping the intended local wall time stable. A named IANA zone such as `Europe/Brussels` follows daylight-saving transitions; a numeric fixed offset such as `+02:00` does not.
 

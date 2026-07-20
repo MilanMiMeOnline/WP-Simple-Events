@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest released version of WP Simple Events. Until the first stable release, the current development branch is the only supported line.
+Security fixes are applied to the latest released version of Simple Events by MiMe. Until the first stable release, the current development branch is the only supported line.
 
 ## Reporting a vulnerability
 

@@ -2,8 +2,8 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Simple Events 0.2.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-simple-events\n"
+"Project-Id-Version: Simple Events by MiMe 0.2.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-events-by-mime\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,24 +12,28 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: wp-simple-events\n"
+"X-Domain: simple-events-by-mime\n"
 
 #. Plugin Name of the plugin
-#: wp-simple-events.php
+#: simple-events-by-mime.php
 #: src/Blocks/EventFieldBlockRegistry.php:62
 #: src/Blocks/EventFieldBlockRegistry.php:105
 #: src/Elementor/WidgetRegistrar.php:47
-msgid "WP Simple Events"
+msgid "Simple Events by MiMe"
 msgstr ""
 
 #. Description of the plugin
-#: wp-simple-events.php
+#: simple-events-by-mime.php
 msgid "A lightweight, native events plugin for WordPress."
 msgstr ""
 
 #. Author of the plugin
-#: wp-simple-events.php
+#: simple-events-by-mime.php
 msgid "MiMe"
+msgstr ""
+
+#: simple-events-by-mime.php:40
+msgid "Simple Events by MiMe could not start because its required files are missing. Install a complete release package."
 msgstr ""
 
 #: src/Admin/EventDuplicateController.php:59
@@ -481,7 +485,7 @@ msgid "Single Event Fields"
 msgstr ""
 
 #: src/Blocks/EventFieldBlockRegistry.php:68
-msgid "A complete flexible event layout built from individual WP Simple Events blocks."
+msgid "A complete flexible event layout built from individual Simple Events by MiMe blocks."
 msgstr ""
 
 #: src/Content/EventMeta.php:59
@@ -1226,7 +1230,7 @@ msgid "Single Event"
 msgstr ""
 
 #: src/Frontend/BlockTemplates.php:58
-msgid "Native single-event fallback from WP Simple Events."
+msgid "Native single-event fallback from Simple Events by MiMe."
 msgstr ""
 
 #: src/Frontend/BlockTemplates.php:68
@@ -1234,7 +1238,7 @@ msgid "Event Archive"
 msgstr ""
 
 #: src/Frontend/BlockTemplates.php:69
-msgid "Native event-archive fallback from WP Simple Events."
+msgid "Native event-archive fallback from Simple Events by MiMe."
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:34
@@ -1304,7 +1308,7 @@ msgid "Untitled event"
 msgstr ""
 
 #: src/Lifecycle/Activator.php:26
-msgid "WP Simple Events must currently be activated separately on each site in a multisite network."
+msgid "Simple Events by MiMe must currently be activated separately on each site in a multisite network."
 msgstr ""
 
 #: src/Rest/CalendarFeedController.php:86
@@ -1394,10 +1398,6 @@ msgstr ""
 #: src/Shortcode/CalendarShortcode.php:146
 #, php-format
 msgid "%s view"
-msgstr ""
-
-#: wp-simple-events.php:40
-msgid "WP Simple Events could not start because its required files are missing. Install a complete release package."
 msgstr ""
 
 #: assets/src/js/event-fields-editor.js:32

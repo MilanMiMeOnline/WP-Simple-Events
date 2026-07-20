@@ -1,6 +1,6 @@
 # QA report — Gutenberg Event details save fix
 
-**Candidate:** WP Simple Events 0.1.1\
+**Candidate:** Simple Events by MiMe 0.1.1\
 **Date:** 2026-07-18\
 **Scope:** Event details entered in the native metabox must be part of Gutenberg's authoritative publication request.
 

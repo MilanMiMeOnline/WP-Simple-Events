@@ -3,7 +3,7 @@ parameters:
   scanFiles:
     - stubs/elementor.php
   paths:
-    - wp-simple-events.php
+    - simple-events-by-mime.php
     - uninstall.php
     - src
     - templates

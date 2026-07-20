@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-date-time",
   "title": "Event Date & Time",
-  "category": "wp-simple-events",
+  "category": "simple-events-by-mime",
   "icon": "calendar-alt",
   "description": "Display the localized date, time and optional timezone of an event.",
-  "textdomain": "wp-simple-events",
+  "textdomain": "simple-events-by-mime",
   "usesContext": ["postId", "postType"],
   "attributes": {
     "eventId": { "type": "integer", "default": 0 },

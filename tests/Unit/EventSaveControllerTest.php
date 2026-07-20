@@ -208,7 +208,7 @@ final class EventSaveControllerTest extends TestCase {
 
 		self::assertSame( 'draft', $event_command['post_status'] );
 
-		$_SERVER['argv'] = array( 'wp', '--quiet', 'plugin', 'check', 'wp-simple-events' );
+		$_SERVER['argv'] = array( 'wp', '--quiet', 'plugin', 'check', 'simple-events-by-mime' );
 
 		$plugin_check = $controller->guard_publication(
 			array(

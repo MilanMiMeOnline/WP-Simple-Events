@@ -1,6 +1,6 @@
 # Gutenberg integration contract
 
-WP Simple Events registers twelve public dynamic blocks under **WP Simple Events**: Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. Each block has dedicated `block.json` metadata and is discoverable independently; there is no raw-meta block.
+Simple Events by MiMe registers twelve public dynamic blocks under **Simple Events by MiMe**: Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. Each block has dedicated `block.json` metadata and is discoverable independently; there is no raw-meta block.
 
 ## Sources and rendering
 

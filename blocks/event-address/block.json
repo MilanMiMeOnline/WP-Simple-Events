@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-address",
   "title": "Event Address",
-  "category": "wp-simple-events",
+  "category": "simple-events-by-mime",
   "icon": "admin-home",
   "description": "Display the postal address of the current or selected event.",
-  "textdomain": "wp-simple-events",
+  "textdomain": "simple-events-by-mime",
   "usesContext": ["postId", "postType"],
   "attributes": { "eventId": { "type": "integer", "default": 0 } },
   "supports": {

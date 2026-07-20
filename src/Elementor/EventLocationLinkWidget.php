@@ -21,7 +21,7 @@ final class EventLocationLinkWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Location Link', 'wp-simple-events' );
+		return esc_html__( 'Event Location Link', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,16 +43,16 @@ final class EventLocationLinkWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Location link', 'wp-simple-events' ),
+				'label' => esc_html__( 'Location link', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'link_text',
 			array(
-				'label'       => esc_html__( 'Link text', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Link text', 'simple-events-by-mime' ),
 				'type'        => Controls_Manager::TEXT,
-				'placeholder' => esc_html__( 'View location', 'wp-simple-events' ),
+				'placeholder' => esc_html__( 'View location', 'simple-events-by-mime' ),
 			)
 		);
 		$this->end_controls_section();

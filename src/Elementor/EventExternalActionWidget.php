@@ -21,7 +21,7 @@ final class EventExternalActionWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'External Event Action', 'wp-simple-events' );
+		return esc_html__( 'External Event Action', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,15 +43,15 @@ final class EventExternalActionWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'External action', 'wp-simple-events' ),
+				'label' => esc_html__( 'External action', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'link_text',
 			array(
-				'label'       => esc_html__( 'Override link text', 'wp-simple-events' ),
-				'description' => esc_html__( 'Leave empty to use the label saved on the event.', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Override link text', 'simple-events-by-mime' ),
+				'description' => esc_html__( 'Leave empty to use the label saved on the event.', 'simple-events-by-mime' ),
 				'type'        => Controls_Manager::TEXT,
 			)
 		);

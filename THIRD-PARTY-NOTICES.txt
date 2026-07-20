@@ -1,7 +1,7 @@
 Third-party notices
 ===================
 
-WP Simple Events bundles compiled code from these build-time dependencies in
+Simple Events by MiMe bundles compiled code from these build-time dependencies in
 `assets/dist/js/calendar.min.js`:
 
 - `@fullcalendar/core` 6.1.21 — MIT licence

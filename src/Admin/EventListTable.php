@@ -50,15 +50,15 @@ final class EventListTable {
 	public function columns( array $columns ): array {
 		return array(
 			'cb'                                    => $columns['cb'] ?? '<input type="checkbox">',
-			'title'                                 => $columns['title'] ?? __( 'Title', 'wp-simple-events' ),
-			'wpse_start'                            => __( 'Start', 'wp-simple-events' ),
-			'wpse_end'                              => __( 'End', 'wp-simple-events' ),
-			'wpse_all_day'                          => __( 'All day', 'wp-simple-events' ),
-			'wpse_location'                         => __( 'Location', 'wp-simple-events' ),
+			'title'                                 => $columns['title'] ?? __( 'Title', 'simple-events-by-mime' ),
+			'wpse_start'                            => __( 'Start', 'simple-events-by-mime' ),
+			'wpse_end'                              => __( 'End', 'simple-events-by-mime' ),
+			'wpse_all_day'                          => __( 'All day', 'simple-events-by-mime' ),
+			'wpse_location'                         => __( 'Location', 'simple-events-by-mime' ),
 			'taxonomy-' . EventTaxonomies::CATEGORY => $columns[ 'taxonomy-' . EventTaxonomies::CATEGORY ]
-				?? __( 'Event Categories', 'wp-simple-events' ),
-			'wpse_event_status'                     => __( 'Event status', 'wp-simple-events' ),
-			'wpse_publication_status'               => __( 'Publication', 'wp-simple-events' ),
+				?? __( 'Event Categories', 'simple-events-by-mime' ),
+			'wpse_event_status'                     => __( 'Event status', 'simple-events-by-mime' ),
+			'wpse_publication_status'               => __( 'Publication', 'simple-events-by-mime' ),
 		);
 	}
 
@@ -76,8 +76,8 @@ final class EventListTable {
 
 		if ( 'wpse_all_day' === $column ) {
 			echo $this->boolean_meta( $post_id, EventMeta::ALL_DAY )
-				? esc_html__( 'Yes', 'wp-simple-events' )
-				: esc_html__( 'No', 'wp-simple-events' );
+				? esc_html__( 'Yes', 'simple-events-by-mime' )
+				: esc_html__( 'No', 'simple-events-by-mime' );
 			return;
 		}
 
@@ -100,9 +100,9 @@ final class EventListTable {
 		if ( 'wpse_event_status' === $column ) {
 			$status = EventStatus::tryFrom( $this->string_meta( $post_id, EventMeta::STATUS ) );
 			$label  = match ( $status ) {
-				EventStatus::SCHEDULED => __( 'Scheduled', 'wp-simple-events' ),
-				EventStatus::CANCELLED => __( 'Cancelled', 'wp-simple-events' ),
-				EventStatus::POSTPONED => __( 'Postponed', 'wp-simple-events' ),
+				EventStatus::SCHEDULED => __( 'Scheduled', 'simple-events-by-mime' ),
+				EventStatus::CANCELLED => __( 'Cancelled', 'simple-events-by-mime' ),
+				EventStatus::POSTPONED => __( 'Postponed', 'simple-events-by-mime' ),
 				default => '—',
 			};
 			echo esc_html( $label );
@@ -145,13 +145,13 @@ final class EventListTable {
 			? $current_view
 			: 'all';
 		?>
-		<label class="screen-reader-text" for="wpse-admin-view"><?php esc_html_e( 'Filter events by timing or status', 'wp-simple-events' ); ?></label>
+		<label class="screen-reader-text" for="wpse-admin-view"><?php esc_html_e( 'Filter events by timing or status', 'simple-events-by-mime' ); ?></label>
 		<select name="wpse_admin_view" id="wpse-admin-view">
-			<option value="all" <?php selected( $current_view, 'all' ); ?>><?php esc_html_e( 'All events', 'wp-simple-events' ); ?></option>
-			<option value="upcoming" <?php selected( $current_view, 'upcoming' ); ?>><?php esc_html_e( 'Upcoming and active', 'wp-simple-events' ); ?></option>
-			<option value="past" <?php selected( $current_view, 'past' ); ?>><?php esc_html_e( 'Past events', 'wp-simple-events' ); ?></option>
-			<option value="cancelled" <?php selected( $current_view, 'cancelled' ); ?>><?php esc_html_e( 'Cancelled events', 'wp-simple-events' ); ?></option>
-			<option value="postponed" <?php selected( $current_view, 'postponed' ); ?>><?php esc_html_e( 'Postponed events', 'wp-simple-events' ); ?></option>
+			<option value="all" <?php selected( $current_view, 'all' ); ?>><?php esc_html_e( 'All events', 'simple-events-by-mime' ); ?></option>
+			<option value="upcoming" <?php selected( $current_view, 'upcoming' ); ?>><?php esc_html_e( 'Upcoming and active', 'simple-events-by-mime' ); ?></option>
+			<option value="past" <?php selected( $current_view, 'past' ); ?>><?php esc_html_e( 'Past events', 'simple-events-by-mime' ); ?></option>
+			<option value="cancelled" <?php selected( $current_view, 'cancelled' ); ?>><?php esc_html_e( 'Cancelled events', 'simple-events-by-mime' ); ?></option>
+			<option value="postponed" <?php selected( $current_view, 'postponed' ); ?>><?php esc_html_e( 'Postponed events', 'simple-events-by-mime' ); ?></option>
 		</select>
 		<?php
 		wp_dropdown_categories(
@@ -159,7 +159,7 @@ final class EventListTable {
 				'taxonomy'          => EventTaxonomies::CATEGORY,
 				'name'              => EventTaxonomies::CATEGORY,
 				'id'                => 'wpse-event-category-filter',
-				'show_option_all'   => __( 'All event categories', 'wp-simple-events' ),
+				'show_option_all'   => __( 'All event categories', 'simple-events-by-mime' ),
 				'hide_empty'        => false,
 				'hierarchical'      => true,
 				'value_field'       => 'slug',
@@ -230,7 +230,7 @@ final class EventListTable {
 	 */
 	private function empty_value(): string {
 		return '<span aria-hidden="true">—</span><span class="screen-reader-text">'
-			. esc_html__( 'Not set', 'wp-simple-events' )
+			. esc_html__( 'Not set', 'simple-events-by-mime' )
 			. '</span>';
 	}
 

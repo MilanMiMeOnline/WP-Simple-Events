@@ -37,28 +37,28 @@ final class EventListControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'wp-simple-events' ); ?>">
+		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'simple-events-by-mime' ); ?>">
 			<?php echo $this->preserved_instance_fields( $request, $prefix ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Method escapes every hidden value and attribute. ?>
 
 			<p class="wpse-events-filter-field">
-				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php esc_html_e( 'Period', 'wp-simple-events' ); ?></label>
+				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php esc_html_e( 'Period', 'simple-events-by-mime' ); ?></label>
 				<select id="<?php echo esc_attr( $prefix . '-period' ); ?>" name="<?php echo esc_attr( $prefix . '_period' ); ?>">
-					<option value="upcoming" <?php selected( $attributes->period->value, EventPeriod::UPCOMING->value ); ?>><?php esc_html_e( 'Upcoming and active', 'wp-simple-events' ); ?></option>
-					<option value="past" <?php selected( $attributes->period->value, EventPeriod::PAST->value ); ?>><?php esc_html_e( 'Past', 'wp-simple-events' ); ?></option>
-					<option value="all" <?php selected( $attributes->period->value, EventPeriod::ALL->value ); ?>><?php esc_html_e( 'All', 'wp-simple-events' ); ?></option>
+					<option value="upcoming" <?php selected( $attributes->period->value, EventPeriod::UPCOMING->value ); ?>><?php esc_html_e( 'Upcoming and active', 'simple-events-by-mime' ); ?></option>
+					<option value="past" <?php selected( $attributes->period->value, EventPeriod::PAST->value ); ?>><?php esc_html_e( 'Past', 'simple-events-by-mime' ); ?></option>
+					<option value="all" <?php selected( $attributes->period->value, EventPeriod::ALL->value ); ?>><?php esc_html_e( 'All', 'simple-events-by-mime' ); ?></option>
 				</select>
 			</p>
 
 			<?php if ( array() !== $categories ) : ?>
-				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'wp-simple-events' ), $attributes->category_slugs ); ?>
+				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'simple-events-by-mime' ), $attributes->category_slugs ); ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>
-				<?php $this->term_select( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'wp-simple-events' ), $attributes->tag_slugs ); ?>
+				<?php $this->term_select( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'simple-events-by-mime' ), $attributes->tag_slugs ); ?>
 			<?php endif; ?>
 
 			<p class="wpse-events-filter-submit">
-				<button type="submit" aria-controls="<?php echo esc_attr( $results_id ); ?>"><?php esc_html_e( 'Apply filters', 'wp-simple-events' ); ?></button>
+				<button type="submit" aria-controls="<?php echo esc_attr( $results_id ); ?>"><?php esc_html_e( 'Apply filters', 'simple-events-by-mime' ); ?></button>
 			</p>
 		</form>
 		<?php
@@ -88,8 +88,8 @@ final class EventListControls {
 				'current'   => $current_page,
 				'total'     => $total_pages,
 				'type'      => 'list',
-				'prev_text' => __( 'Previous', 'wp-simple-events' ),
-				'next_text' => __( 'Next', 'wp-simple-events' ),
+				'prev_text' => __( 'Previous', 'simple-events-by-mime' ),
+				'next_text' => __( 'Next', 'simple-events-by-mime' ),
 			)
 		);
 
@@ -98,7 +98,7 @@ final class EventListControls {
 		}
 
 		return '<nav class="wpse-events-pagination" aria-label="'
-			. esc_attr__( 'Events pagination', 'wp-simple-events' )
+			. esc_attr__( 'Events pagination', 'simple-events-by-mime' )
 			. '">' . wp_kses_post( $links ) . '</nav>';
 	}
 
@@ -139,7 +139,7 @@ final class EventListControls {
 		?>
 		<p class="wpse-events-filter-field">
 			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'wp-simple-events' ); ?></span>
+			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'simple-events-by-mime' ); ?></span>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>">
 				<?php foreach ( $terms as $term ) : ?>
 					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>

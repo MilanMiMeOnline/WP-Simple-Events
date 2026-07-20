@@ -102,7 +102,7 @@ final class ElementorIntegrationTest extends TestCase {
 			),
 			array_map( static fn ( object $widget ): string => $widget->get_name(), array_slice( $widgets->registered, 3 ) )
 		);
-		self::assertSame( 'WP Simple Events', $elements->categories[ WidgetRegistrar::CATEGORY ]['title'] );
+		self::assertSame( 'Simple Events by MiMe', $elements->categories[ WidgetRegistrar::CATEGORY ]['title'] );
 	}
 
 	/** Create a registrar with the same shared service shape as production. */

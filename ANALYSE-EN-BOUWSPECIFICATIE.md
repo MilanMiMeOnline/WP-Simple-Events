@@ -1,10 +1,10 @@
-# WP Simple Events
+# Simple Events by MiMe
 
 ## Geconsolideerde functionele en technische analyse
 
 **Status:** definitieve analyse voor de eerste bouwversie\
 **Laatste update:** 13 juli 2026\
-**Pluginnaam:** WP Simple Events\
+**Pluginnaam:** Simple Events by MiMe\
 **Auteur:** MiMe\
 **Doelplatform:** WordPress-webshop met WooCommerce en Elementor
 
@@ -96,11 +96,11 @@ WordPress raadt aan Custom Post Types in een plugin te registreren, zodat de inh
 
 | Onderdeel | Waarde |
 |---|---|
-| Pluginnaam | WP Simple Events |
+| Pluginnaam | Simple Events by MiMe |
 | Auteur | MiMe |
-| Pluginmap | `wp-simple-events` |
-| Hoofdbestand | `wp-simple-events.php` |
-| Text domain | `wp-simple-events` |
+| Pluginmap | `simple-events-by-mime` |
+| Hoofdbestand | `simple-events-by-mime.php` |
+| Text domain | `simple-events-by-mime` |
 | PHP-namespace | `MiMe\WPSimpleEvents` |
 | Prefix | `wpse_` |
 | Post type | `wpse_event` |
@@ -108,7 +108,7 @@ WordPress raadt aan Custom Post Types in een plugin te registreren, zodat de inh
 | Tagtaxonomie | `wpse_event_tag` |
 | Metaprefix | `_wpse_` |
 | REST-namespace | `wpse/v1` |
-| Thema-overridefolder | `wp-simple-events` |
+| Thema-overridefolder | `simple-events-by-mime` |
 
 De post-typekey en taxonomiekeys blijven binnen de WordPress-limieten. [WordPress `register_post_type`](https://developer.wordpress.org/reference/functions/register_post_type/)
 
@@ -136,12 +136,12 @@ De post-typekey en taxonomiekeys blijven binnen de WordPress-limieten. [WordPres
 ### Pluginheaders bij versie 1.0
 
 ```text
-Plugin Name: WP Simple Events
+Plugin Name: Simple Events by MiMe
 Author: MiMe
 Version: 1.0.0
 Requires at least: 6.9
 Requires PHP: 8.3
-Text Domain: wp-simple-events
+Text Domain: simple-events-by-mime
 License: GPL-2.0-or-later
 ```
 
@@ -391,8 +391,8 @@ Voorbije events blijven gepubliceerd en via hun permalink bereikbaar. Automatisc
 
 1. Elementor Theme Builder-template indien actief en van toepassing.
 2. Theme override:
-   - `your-theme/wp-simple-events/single-wpse_event.php`
-   - `your-theme/wp-simple-events/archive-wpse_event.php`
+   - `your-theme/simple-events-by-mime/single-wpse_event.php`
+   - `your-theme/simple-events-by-mime/archive-wpse_event.php`
 3. Plugintemplate als fallback.
 
 Template-parts:
@@ -1054,8 +1054,8 @@ Progressive enhancement is belangrijker dan animaties of popups.
 ## 27. Aanbevolen codearchitectuur
 
 ```text
-wp-simple-events/
-├── wp-simple-events.php
+simple-events-by-mime/
+├── simple-events-by-mime.php
 ├── uninstall.php
 ├── readme.txt
 ├── composer.json

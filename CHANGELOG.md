@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to WP Simple Events are documented here.
+All notable changes to Simple Events by MiMe are documented here.
 
 ## [Unreleased]
 
@@ -8,6 +8,7 @@ All notable changes to WP Simple Events are documented here.
 
 ### Changed
 
+- Adopt **Simple Events by MiMe** and `simple-events-by-mime` as the first public plugin identity while preserving all event storage and content identifiers.
 - Open the public location and external event actions in isolated new browser tabs.
 - Include the complete GPL-2.0-or-later licence in source and production archives.
 - Ship the Composer production manifest and plain-text third-party notices with the optimized release autoloader.

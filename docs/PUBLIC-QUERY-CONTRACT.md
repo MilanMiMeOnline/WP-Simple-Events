@@ -51,7 +51,7 @@ Default attributes are:
 
 Unknown attributes are ignored. Invalid enum, integer and boolean values use documented safe defaults; no raw meta query, SQL, callback or post-status argument is accepted.
 
-Each rendered shortcode receives a deterministic request namespace based on render order, such as `wpse_1_period` and `wpse_1_page`. Filter forms preserve only allowlisted state belonging to other WP Simple Events instances. This prevents one list from reading or overwriting another list's filters or pagination.
+Each rendered shortcode receives a deterministic request namespace based on render order, such as `wpse_1_period` and `wpse_1_page`. Filter forms preserve only allowlisted state belonging to other Simple Events by MiMe instances. This prevents one list from reading or overwriting another list's filters or pagination.
 
 The shortcode returns HTML and does not mutate the global WordPress loop. It uses the shared repository, date formatter and card renderer also consumed by native templates and Elementor adapters.
 

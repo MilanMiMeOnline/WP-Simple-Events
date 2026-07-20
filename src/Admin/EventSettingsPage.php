@@ -68,8 +68,8 @@ final class EventSettingsPage {
 	public function register_menu(): void {
 		add_submenu_page(
 			'edit.php?post_type=' . EventPostType::POST_TYPE,
-			__( 'Event settings', 'wp-simple-events' ),
-			__( 'Settings', 'wp-simple-events' ),
+			__( 'Event settings', 'simple-events-by-mime' ),
+			__( 'Settings', 'simple-events-by-mime' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -115,14 +115,14 @@ final class EventSettingsPage {
 
 		add_settings_section(
 			self::ARCHIVE_SECTION,
-			__( 'Event archive', 'wp-simple-events' ),
+			__( 'Event archive', 'simple-events-by-mime' ),
 			array( $this, 'render_archive_section' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			EventArchiveSettings::SLUG_OPTION,
-			__( 'Archive slug', 'wp-simple-events' ),
+			__( 'Archive slug', 'simple-events-by-mime' ),
 			array( $this, 'render_archive_slug_field' ),
 			self::PAGE_SLUG,
 			self::ARCHIVE_SECTION,
@@ -131,7 +131,7 @@ final class EventSettingsPage {
 
 		add_settings_field(
 			EventArchiveSettings::PER_PAGE_OPTION,
-			__( 'Events per page', 'wp-simple-events' ),
+			__( 'Events per page', 'simple-events-by-mime' ),
 			array( $this, 'render_archive_per_page_field' ),
 			self::PAGE_SLUG,
 			self::ARCHIVE_SECTION,
@@ -140,7 +140,7 @@ final class EventSettingsPage {
 
 		add_settings_field(
 			EventArchiveSettings::DEFAULT_PERIOD_OPTION,
-			__( 'Default period', 'wp-simple-events' ),
+			__( 'Default period', 'simple-events-by-mime' ),
 			array( $this, 'render_archive_period_field' ),
 			self::PAGE_SLUG,
 			self::ARCHIVE_SECTION,
@@ -160,14 +160,14 @@ final class EventSettingsPage {
 
 		add_settings_section(
 			self::DISPLAY_SECTION,
-			__( 'Display', 'wp-simple-events' ),
+			__( 'Display', 'simple-events-by-mime' ),
 			array( $this, 'render_section' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			'wpse_site_timezone',
-			__( 'Site timezone', 'wp-simple-events' ),
+			__( 'Site timezone', 'simple-events-by-mime' ),
 			array( $this, 'render_site_timezone_field' ),
 			self::PAGE_SLUG,
 			self::DISPLAY_SECTION
@@ -186,7 +186,7 @@ final class EventSettingsPage {
 
 		add_settings_field(
 			EventTimezoneDisplaySettings::OPTION,
-			__( 'Public event timezone', 'wp-simple-events' ),
+			__( 'Public event timezone', 'simple-events-by-mime' ),
 			array( $this, 'render_timezone_display_field' ),
 			self::PAGE_SLUG,
 			self::DISPLAY_SECTION,
@@ -195,7 +195,7 @@ final class EventSettingsPage {
 
 		add_settings_field(
 			StructuredDataSettings::OPTION,
-			__( 'Event structured data', 'wp-simple-events' ),
+			__( 'Event structured data', 'simple-events-by-mime' ),
 			array( $this, 'render_structured_data_field' ),
 			self::PAGE_SLUG,
 			self::DISPLAY_SECTION,
@@ -215,14 +215,14 @@ final class EventSettingsPage {
 
 		add_settings_section(
 			self::ADVANCED_SECTION,
-			__( 'Data ownership', 'wp-simple-events' ),
+			__( 'Data ownership', 'simple-events-by-mime' ),
 			array( $this, 'render_data_section' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			UninstallSettings::OPTION,
-			__( 'Delete plugin data', 'wp-simple-events' ),
+			__( 'Delete plugin data', 'simple-events-by-mime' ),
 			array( $this, 'render_uninstall_field' ),
 			self::PAGE_SLUG,
 			self::ADVANCED_SECTION,
@@ -244,7 +244,7 @@ final class EventSettingsPage {
 	 */
 	public function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage event settings.', 'wp-simple-events' ) );
+			wp_die( esc_html__( 'You are not allowed to manage event settings.', 'simple-events-by-mime' ) );
 		}
 		?>
 		<div class="wrap">
@@ -266,7 +266,7 @@ final class EventSettingsPage {
 	 */
 	public function render_archive_section(): void {
 		echo '<p>'
-			. esc_html__( 'Configure the native event archive. Visitors can still switch between upcoming, past and all events with the archive filter.', 'wp-simple-events' )
+			. esc_html__( 'Configure the native event archive. Visitors can still switch between upcoming, past and all events with the archive filter.', 'simple-events-by-mime' )
 			. '</p>';
 	}
 
@@ -277,7 +277,7 @@ final class EventSettingsPage {
 		$name = esc_attr( EventArchiveSettings::SLUG_OPTION );
 		?>
 		<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="text" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="<?php echo esc_attr( $this->archive_settings->slug() ); ?>" maxlength="<?php echo esc_attr( (string) EventArchiveSettings::MAX_SLUG_LENGTH ); ?>" class="regular-text" autocomplete="off">
-		<p class="description"><?php esc_html_e( 'One URL segment without slashes. This also changes individual event URLs; existing links are not redirected. Saving a changed slug rebuilds WordPress permalink rules once.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'One URL segment without slashes. This also changes individual event URLs; existing links are not redirected. Saving a changed slug rebuilds WordPress permalink rules once.', 'simple-events-by-mime' ); ?></p>
 		<?php
 	}
 
@@ -288,7 +288,7 @@ final class EventSettingsPage {
 		$name = esc_attr( EventArchiveSettings::PER_PAGE_OPTION );
 		?>
 		<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="number" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="<?php echo esc_attr( (string) $this->archive_settings->per_page() ); ?>" min="1" max="50" step="1" class="small-text">
-		<p class="description"><?php esc_html_e( 'Between 1 and 50 public events per archive page.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Between 1 and 50 public events per archive page.', 'simple-events-by-mime' ); ?></p>
 		<?php
 	}
 
@@ -300,8 +300,8 @@ final class EventSettingsPage {
 		$period = $this->archive_settings->default_period();
 		?>
 		<select id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>">
-			<option value="upcoming" <?php selected( $period->value, EventPeriod::UPCOMING->value ); ?>><?php esc_html_e( 'Upcoming and active events', 'wp-simple-events' ); ?></option>
-			<option value="all" <?php selected( $period->value, EventPeriod::ALL->value ); ?>><?php esc_html_e( 'All events, including past events', 'wp-simple-events' ); ?></option>
+			<option value="upcoming" <?php selected( $period->value, EventPeriod::UPCOMING->value ); ?>><?php esc_html_e( 'Upcoming and active events', 'simple-events-by-mime' ); ?></option>
+			<option value="all" <?php selected( $period->value, EventPeriod::ALL->value ); ?>><?php esc_html_e( 'All events, including past events', 'simple-events-by-mime' ); ?></option>
 		</select>
 		<?php
 	}
@@ -328,7 +328,7 @@ final class EventSettingsPage {
 
 		$message = sprintf(
 			/* translators: %s: configured event archive path. */
-			__( 'The event archive and an existing WordPress page both use /%s/. Keep this slug to use the native event archive at that address, or change it below so the page can use the address.', 'wp-simple-events' ),
+			__( 'The event archive and an existing WordPress page both use /%s/. Keep this slug to use the native event archive at that address, or change it below so the page can use the address.', 'simple-events-by-mime' ),
 			$slug
 		);
 
@@ -340,7 +340,7 @@ final class EventSettingsPage {
 	 */
 	public function render_section(): void {
 		echo '<p>'
-			. esc_html__( 'Control plugin output that may overlap with your theme or SEO plugin.', 'wp-simple-events' )
+			. esc_html__( 'Control plugin output that may overlap with your theme or SEO plugin.', 'simple-events-by-mime' )
 			. '</p>';
 	}
 
@@ -352,12 +352,12 @@ final class EventSettingsPage {
 		$fixed_offset = 1 === preg_match( '/^[+-]\d{2}:\d{2}$/D', $timezone );
 		?>
 		<p><code><?php echo esc_html( $timezone ); ?></code></p>
-		<p class="description"><?php esc_html_e( 'New events capture this timezone. Existing events keep the timezone saved with them when the WordPress setting changes.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'New events capture this timezone. Existing events keep the timezone saved with them when the WordPress setting changes.', 'simple-events-by-mime' ); ?></p>
 		<?php if ( $fixed_offset ) : ?>
-			<p class="description"><?php esc_html_e( 'This fixed UTC offset does not adjust for daylight saving time.', 'wp-simple-events' ); ?></p>
+			<p class="description"><?php esc_html_e( 'This fixed UTC offset does not adjust for daylight saving time.', 'simple-events-by-mime' ); ?></p>
 		<?php endif; ?>
 		<?php if ( current_user_can( 'manage_options' ) ) : ?>
-			<p><a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e( 'Change the site timezone in WordPress General Settings', 'wp-simple-events' ); ?></a></p>
+			<p><a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e( 'Change the site timezone in WordPress General Settings', 'simple-events-by-mime' ); ?></a></p>
 		<?php endif; ?>
 		<?php
 	}
@@ -372,9 +372,9 @@ final class EventSettingsPage {
 		<input type="hidden" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="0">
 		<label>
 			<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="checkbox" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="1" <?php echo checked( $enabled, true, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core checked() returns a fixed HTML attribute. ?>>
-			<?php esc_html_e( 'Show the captured timezone and applicable UTC offset with timed event details.', 'wp-simple-events' ); ?>
+			<?php esc_html_e( 'Show the captured timezone and applicable UTC offset with timed event details.', 'simple-events-by-mime' ); ?>
 		</label>
-		<p class="description"><?php esc_html_e( 'All-day events omit timezone information. This setting changes presentation only, never saved event dates or times.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'All-day events omit timezone information. This setting changes presentation only, never saved event dates or times.', 'simple-events-by-mime' ); ?></p>
 		<?php
 	}
 
@@ -383,7 +383,7 @@ final class EventSettingsPage {
 	 */
 	public function render_data_section(): void {
 		echo '<p>'
-			. esc_html__( 'Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below.', 'wp-simple-events' )
+			. esc_html__( 'Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below.', 'simple-events-by-mime' )
 			. '</p>';
 	}
 
@@ -398,10 +398,10 @@ final class EventSettingsPage {
 		<input type="hidden" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="0">
 		<label>
 			<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="checkbox" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="1" <?php echo checked( $enabled, true, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core checked() returns a fixed HTML attribute. ?>>
-			<?php esc_html_e( 'Output JSON-LD on individual public event pages.', 'wp-simple-events' ); ?>
+			<?php esc_html_e( 'Output JSON-LD on individual public event pages.', 'simple-events-by-mime' ); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e( 'Disable this when another SEO plugin already outputs Event structured data.', 'wp-simple-events' ); ?>
+			<?php esc_html_e( 'Disable this when another SEO plugin already outputs Event structured data.', 'simple-events-by-mime' ); ?>
 		</p>
 		<?php
 	}
@@ -416,11 +416,11 @@ final class EventSettingsPage {
 		<input type="hidden" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="0">
 		<label>
 			<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="checkbox" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="1" <?php echo checked( $enabled, true, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core checked() returns a fixed HTML attribute. ?>>
-			<?php esc_html_e( 'Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted.', 'wp-simple-events' ); ?>
+			<?php esc_html_e( 'Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted.', 'simple-events-by-mime' ); ?>
 		</label>
 		<p class="description">
-			<strong><?php esc_html_e( 'This cannot be undone.', 'wp-simple-events' ); ?></strong>
-			<?php esc_html_e( ' Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data.', 'wp-simple-events' ); ?>
+			<strong><?php esc_html_e( 'This cannot be undone.', 'simple-events-by-mime' ); ?></strong>
+			<?php esc_html_e( ' Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data.', 'simple-events-by-mime' ); ?>
 		</p>
 		<?php
 	}
@@ -434,14 +434,14 @@ final class EventSettingsPage {
 		$this->render_maintenance_notice( $state );
 		?>
 		<hr>
-		<h2><?php esc_html_e( 'Maintenance', 'wp-simple-events' ); ?></h2>
-		<p><?php esc_html_e( 'Use these tools only to repair existing event data. They do not change event content or presentation settings.', 'wp-simple-events' ); ?></p>
+		<h2><?php esc_html_e( 'Maintenance', 'simple-events-by-mime' ); ?></h2>
+		<p><?php esc_html_e( 'Use these tools only to repair existing event data. They do not change event content or presentation settings.', 'simple-events-by-mime' ); ?></p>
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 			<input type="hidden" name="action" value="<?php echo esc_attr( EventMaintenanceController::REPAIR_CAPABILITIES_ACTION ); ?>">
 			<?php wp_nonce_field( EventMaintenanceController::REPAIR_CAPABILITIES_ACTION ); ?>
-			<?php submit_button( __( 'Repair event capabilities', 'wp-simple-events' ), 'secondary', 'submit', false ); ?>
+			<?php submit_button( __( 'Repair event capabilities', 'simple-events-by-mime' ), 'secondary', 'submit', false ); ?>
 		</form>
-		<p class="description"><?php esc_html_e( 'Restores the documented event permissions for administrators and editors without changing other role permissions.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Restores the documented event permissions for administrators and editors without changing other role permissions.', 'simple-events-by-mime' ); ?></p>
 
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 			<input type="hidden" name="action" value="<?php echo esc_attr( EventMaintenanceController::REINDEX_ACTION ); ?>">
@@ -454,15 +454,15 @@ final class EventSettingsPage {
 			<?php
 			submit_button(
 				'reindex_progress' === $state['status']
-					? __( 'Continue rebuilding date indexes', 'wp-simple-events' )
-					: __( 'Rebuild event date indexes', 'wp-simple-events' ),
+					? __( 'Continue rebuilding date indexes', 'simple-events-by-mime' )
+					: __( 'Rebuild event date indexes', 'simple-events-by-mime' ),
 				'secondary',
 				'submit',
 				false
 			);
 			?>
 		</form>
-		<p class="description"><?php esc_html_e( 'Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review.', 'wp-simple-events' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review.', 'simple-events-by-mime' ); ?></p>
 		<?php
 	}
 
@@ -531,7 +531,7 @@ final class EventSettingsPage {
 	private function render_maintenance_notice( array $state ): void {
 		if ( 'capabilities_repaired' === $state['status'] ) {
 			echo '<div class="notice notice-success inline"><p>'
-				. esc_html__( 'Event capabilities were restored for administrators and editors.', 'wp-simple-events' )
+				. esc_html__( 'Event capabilities were restored for administrators and editors.', 'simple-events-by-mime' )
 				. '</p></div>';
 			return;
 		}
@@ -542,7 +542,7 @@ final class EventSettingsPage {
 
 		$message = sprintf(
 			/* translators: 1: processed events, 2: changed indexes, 3: invalid skipped events, 4: failed writes. */
-			__( 'Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures.', 'wp-simple-events' ),
+			__( 'Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures.', 'simple-events-by-mime' ),
 			$state['processed'],
 			$state['changed'],
 			$state['skipped'],

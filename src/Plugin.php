@@ -115,7 +115,7 @@ final class Plugin {
 		$archive_rewrites->register();
 
 		/**
-		 * Fires after WP Simple Events has booted.
+		 * Fires after Simple Events by MiMe has booted.
 		 *
 		 * @since 0.1.0
 		 */

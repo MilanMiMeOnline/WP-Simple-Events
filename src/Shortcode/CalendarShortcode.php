@@ -82,12 +82,12 @@ final class CalendarShortcode implements ShortcodeRenderer {
 
 		$output .= '<p class="wpse-calendar-status" role="status" aria-live="polite" data-wpse-calendar-status></p>';
 		$output .= '<div id="' . esc_attr( $canvas_id ) . '" class="wpse-calendar-canvas" aria-label="'
-			. esc_attr__( 'Events calendar', 'wp-simple-events' ) . '" data-wpse-calendar-canvas hidden></div>';
+			. esc_attr__( 'Events calendar', 'simple-events-by-mime' ) . '" data-wpse-calendar-canvas hidden></div>';
 		$output .= '<p class="wpse-calendar-empty-action" data-wpse-calendar-empty-action hidden><button type="button">'
-			. esc_html__( 'Reset filters', 'wp-simple-events' ) . '</button></p>';
+			. esc_html__( 'Reset filters', 'simple-events-by-mime' ) . '</button></p>';
 		$output .= '<div class="wpse-calendar-fallback" aria-labelledby="' . esc_attr( $instance_id . '-fallback-title' ) . '">';
 		$output .= '<h3 id="' . esc_attr( $instance_id . '-fallback-title' ) . '">'
-			. esc_html__( 'Upcoming events', 'wp-simple-events' ) . '</h3>';
+			. esc_html__( 'Upcoming events', 'simple-events-by-mime' ) . '</h3>';
 		$output .= $this->renderer->render(
 			$posts,
 			EventListView::LIST,
@@ -127,25 +127,25 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			'tags'            => $attributes->tag_slugs,
 			'filtersEnabled'  => $attributes->filters,
 			'strings'         => array(
-				'previous'   => __( 'Previous', 'wp-simple-events' ),
-				'next'       => __( 'Next', 'wp-simple-events' ),
-				'today'      => __( 'Today', 'wp-simple-events' ),
-				'month'      => __( 'Month', 'wp-simple-events' ),
-				'list'       => __( 'List', 'wp-simple-events' ),
-				'loading'    => __( 'Loading events…', 'wp-simple-events' ),
-				'noEvents'   => __( 'No events match your selection.', 'wp-simple-events' ),
-				'oneEvent'   => __( '1 event loaded.', 'wp-simple-events' ),
+				'previous'   => __( 'Previous', 'simple-events-by-mime' ),
+				'next'       => __( 'Next', 'simple-events-by-mime' ),
+				'today'      => __( 'Today', 'simple-events-by-mime' ),
+				'month'      => __( 'Month', 'simple-events-by-mime' ),
+				'list'       => __( 'List', 'simple-events-by-mime' ),
+				'loading'    => __( 'Loading events…', 'simple-events-by-mime' ),
+				'noEvents'   => __( 'No events match your selection.', 'simple-events-by-mime' ),
+				'oneEvent'   => __( '1 event loaded.', 'simple-events-by-mime' ),
 				// Translators: %d is the number of loaded events.
-				'manyEvents' => __( '%d events loaded.', 'wp-simple-events' ),
-				'loadError'  => __( 'The calendar could not be loaded. The event list remains available below.', 'wp-simple-events' ),
+				'manyEvents' => __( '%d events loaded.', 'simple-events-by-mime' ),
+				'loadError'  => __( 'The calendar could not be loaded. The event list remains available below.', 'simple-events-by-mime' ),
 				// Translators: %d is the maximum number of events currently shown.
-				'tooMany'    => __( 'Only the first %d events are shown. Narrow the calendar period or filters.', 'wp-simple-events' ),
+				'tooMany'    => __( 'Only the first %d events are shown. Narrow the calendar period or filters.', 'simple-events-by-mime' ),
 				// Translators: %d is the number of additional events on a calendar day.
-				'more'       => __( '%d more', 'wp-simple-events' ),
+				'more'       => __( '%d more', 'simple-events-by-mime' ),
 				// Translators: %s is the translated name of the calendar view.
-				'viewHint'   => __( '%s view', 'wp-simple-events' ),
-				'cancelled'  => __( 'Cancelled', 'wp-simple-events' ),
-				'postponed'  => __( 'Postponed', 'wp-simple-events' ),
+				'viewHint'   => __( '%s view', 'simple-events-by-mime' ),
+				'cancelled'  => __( 'Cancelled', 'simple-events-by-mime' ),
+				'postponed'  => __( 'Postponed', 'simple-events-by-mime' ),
 			),
 		);
 	}

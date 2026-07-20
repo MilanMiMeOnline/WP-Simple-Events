@@ -7,14 +7,14 @@ This document freezes the presentation boundary used by classic themes, block th
 Event requests receive a fallback candidate through `template_include` at priority `0`. This deliberately leaves later builder filters free to replace it. The selected fallback hierarchy is:
 
 1. an applicable Elementor Pro `single` or `archive` Theme Builder location;
-2. an active theme or child-theme override at `wp-simple-events/single-wpse_event.php` or `wp-simple-events/archive-wpse_event.php`;
+2. an active theme or child-theme override at `simple-events-by-mime/single-wpse_event.php` or `simple-events-by-mime/archive-wpse_event.php`;
 3. a matching block template customized by the active block theme or Site Editor;
 4. the plugin-owned block template for block themes;
 5. the bundled PHP template for classic themes.
 
 The PHP and block fallbacks both delegate to `NativeTemplateRenderer`. The controller checks Elementor through its public theme-location function before rendering native output. Theme files contain no event business logic.
 
-Block templates are registered with the WordPress block-template registry under `wp-simple-events//single-wpse_event` and `wp-simple-events//archive-wpse_event`. Their dynamic `wpse/native-single` and `wpse/native-archive` blocks are internal presentation bridges, not editor widgets. They use the same renderers as the PHP fallbacks and do not issue their own archive query.
+Block templates are registered with the WordPress block-template registry under `simple-events-by-mime//single-wpse_event` and `simple-events-by-mime//archive-wpse_event`. Their dynamic `wpse/native-single` and `wpse/native-archive` blocks are internal presentation bridges, not editor widgets. They use the same renderers as the PHP fallbacks and do not issue their own archive query.
 
 ## Single event output
 

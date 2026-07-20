@@ -62,7 +62,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Details', 'wp-simple-events' );
+		return esc_html__( 'Event Details', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -84,15 +84,15 @@ final class EventDetailsWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_content',
 			array(
-				'label' => esc_html__( 'Event', 'wp-simple-events' ),
+				'label' => esc_html__( 'Event', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'event_id',
 			array(
-				'label'       => esc_html__( 'Preview event', 'wp-simple-events' ),
-				'description' => esc_html__( 'Optional. On an event template, leave empty to use the current event.', 'wp-simple-events' ),
+				'label'       => esc_html__( 'Preview event', 'simple-events-by-mime' ),
+				'description' => esc_html__( 'Optional. On an event template, leave empty to use the current event.', 'simple-events-by-mime' ),
 				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'options'     => $this->previews->options(),
@@ -116,7 +116,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 
 		if ( $this->editor->is_editing() ) {
 			echo '<div class="wpse-elementor-placeholder" role="status">'
-				. esc_html__( 'Select a public event for this preview, or use the widget in an Event template.', 'wp-simple-events' )
+				. esc_html__( 'Select a public event for this preview, or use the widget in an Event template.', 'simple-events-by-mime' )
 				. '</div>';
 		}
 	}
@@ -131,14 +131,14 @@ final class EventDetailsWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_style',
 			array(
-				'label' => esc_html__( 'Event details', 'wp-simple-events' ),
+				'label' => esc_html__( 'Event details', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			)
 		);
 		$this->add_control(
 			'text_color',
 			array(
-				'label'     => esc_html__( 'Text color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Text color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-single-event' => 'color: {{VALUE}};' ),
 			)
@@ -146,7 +146,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 		$this->add_control(
 			'muted_color',
 			array(
-				'label'     => esc_html__( 'Secondary text color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Secondary text color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-single-event' => '--wpse-color-muted: {{VALUE}};' ),
 			)
@@ -154,7 +154,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 		$this->add_control(
 			'border_color',
 			array(
-				'label'     => esc_html__( 'Border color', 'wp-simple-events' ),
+				'label'     => esc_html__( 'Border color', 'simple-events-by-mime' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-single-event' => '--wpse-color-border: {{VALUE}};' ),
 			)

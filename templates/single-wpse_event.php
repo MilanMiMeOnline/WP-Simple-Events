@@ -2,7 +2,7 @@
 /**
  * Native classic-theme single-event fallback.
  *
- * Copy to wp-simple-events/single-wpse_event.php in a theme to override.
+ * Copy to simple-events-by-mime/single-wpse_event.php in a theme to override.
  *
  * @package MiMe\WPSimpleEvents
  */

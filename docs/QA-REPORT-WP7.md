@@ -1,13 +1,13 @@
 # QA report — WP7 final release qualification
 
-**Date:** 2026-07-20  
-**Candidate:** WP Simple Events 0.1.1  
-**Scope:** all eight acceptance-testing findings and WP0–WP6 deliverables  
+**Date:** 2026-07-20
+**Candidate:** Simple Events by MiMe 0.1.1
+**Scope:** all eight acceptance-testing findings and WP0–WP6 deliverables
 **Archive SHA-256:** `70a980d3b8f9ccb706c8aa2bd7412d8605668a6016d2f43d3070b2626931839a`
 
 ## Result
 
-WP7 accepts WP Simple Events 0.1.1 as a locally qualified installable candidate. The exact staged package, not only the source tree, passed the supported WordPress matrix, browser regression suite and deterministic release checks. All eight findings in `docs/BACKLOG-TESTING.md` now have implementation and release-qualification evidence.
+WP7 accepts Simple Events by MiMe 0.1.1 as a locally qualified installable candidate. The exact staged package, not only the source tree, passed the supported WordPress matrix, browser regression suite and deterministic release checks. All eight findings in `docs/BACKLOG-TESTING.md` now have implementation and release-qualification evidence.
 
 This is not approval for public publication by itself. Publication remains conditional on the official strict WordPress Plugin Check job passing for the release commit in CI.
 
@@ -65,11 +65,11 @@ This is not approval for public publication by itself. Publication remains condi
 
 ## Residual release conditions
 
-1. The configured `wordpress/plugin-check-action@v1` job must be observed green against `.release/wp-simple-events` for the WP7 release commit before public publication.
+1. The configured `wordpress/plugin-check-action@v1` job must be observed green against `.release/simple-events-by-mime` for the WP7 release commit before public publication.
 2. Automated semantic and host-contract coverage replaces a full manual visual tour of every Elementor, Gutenberg and Site Editor composition. A final stakeholder visual acceptance pass is advisable but is not a code/security blocker.
 3. The translatable source catalogue is complete, but the plugin does not yet ship a human-authored Dutch or other locale translation.
 
 ## Candidate
 
-Installable archive: `dist/wp-simple-events-0.1.1.zip`  
-Checksum file: `dist/wp-simple-events-0.1.1.zip.sha256`
+Installable archive: `dist/simple-events-by-mime-0.1.1.zip`
+Checksum file: `dist/simple-events-by-mime-0.1.1.zip.sha256`

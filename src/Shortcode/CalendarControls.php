@@ -45,21 +45,21 @@ final readonly class CalendarControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'wp-simple-events' ); ?>" data-wpse-calendar-filters>
+		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'simple-events-by-mime' ); ?>" data-wpse-calendar-filters>
 			<?php echo $this->preserved_instance_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The method escapes every hidden value and attribute. ?>
 
 			<?php if ( array() !== $categories ) : ?>
-				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'wp-simple-events' ), $attributes->category_slugs, 'category' ); ?>
+				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'simple-events-by-mime' ), $attributes->category_slugs, 'category' ); ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>
-				<?php $this->term_select( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'wp-simple-events' ), $attributes->tag_slugs, 'tag' ); ?>
+				<?php $this->term_select( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'simple-events-by-mime' ), $attributes->tag_slugs, 'tag' ); ?>
 			<?php endif; ?>
 
 			<p class="wpse-events-filter-submit">
-				<button type="submit" aria-controls="<?php echo esc_attr( $canvas_id ); ?>"><?php esc_html_e( 'Apply filters', 'wp-simple-events' ); ?></button>
+				<button type="submit" aria-controls="<?php echo esc_attr( $canvas_id ); ?>"><?php esc_html_e( 'Apply filters', 'simple-events-by-mime' ); ?></button>
 				<?php if ( $selected ) : ?>
-					<a href="<?php echo esc_url( $reset_url ); ?>"><?php esc_html_e( 'Reset filters', 'wp-simple-events' ); ?></a>
+					<a href="<?php echo esc_url( $reset_url ); ?>"><?php esc_html_e( 'Reset filters', 'simple-events-by-mime' ); ?></a>
 				<?php endif; ?>
 			</p>
 		</form>
@@ -110,7 +110,7 @@ final readonly class CalendarControls {
 		?>
 		<p class="wpse-events-filter-field">
 			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'wp-simple-events' ); ?></span>
+			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'simple-events-by-mime' ); ?></span>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>" data-wpse-calendar-filter="<?php echo esc_attr( $filter_type ); ?>">
 				<?php foreach ( $terms as $term ) : ?>
 					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>

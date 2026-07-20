@@ -1,4 +1,4 @@
-# Contributing to WP Simple Events
+# Contributing to Simple Events by MiMe
 
 The project is developed in small, reviewable increments. The complete product contract is in `ANALYSE-EN-BOUWSPECIFICATIE.md`; repository-wide engineering rules are in `AGENTS.md`.
 
@@ -60,7 +60,7 @@ npm run test:release
 
 The Gutenberg browser journey authenticates the disposable administrator, inspects all twelve client registrations, serializes a dynamic block and requests its authenticated ServerSideRender preview. The public companion page verifies the full explicit-source palette and confirms that editor JavaScript is absent from visitor requests.
 
-For an Elementor matrix run, activate WP Simple Events plus the target official Elementor package in an isolated WordPress site and execute `wp eval-file wp-content/plugins/wp-simple-events/tests/Compatibility/elementor-inspector.php`. The inspector verifies all widget names, categories, dependencies, field controls, optimized DOM and strict explicit-source rendering. Run it against the documented minimum 3.x and current tested 4.x packages before release; it is development tooling and is not included in the release archive.
+For an Elementor matrix run, activate Simple Events by MiMe plus the target official Elementor package in an isolated WordPress site and execute `wp eval-file wp-content/plugins/simple-events-by-mime/tests/Compatibility/elementor-inspector.php`. The inspector verifies all widget names, categories, dependencies, field controls, optimized DOM and strict explicit-source rendering. Run it against the documented minimum 3.x and current tested 4.x packages before release; it is development tooling and is not included in the release archive.
 
 ## Change workflow
 

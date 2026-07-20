@@ -1,4 +1,4 @@
-=== WP Simple Events ===
+=== Simple Events by MiMe ===
 Contributors: mime
 Tags: events, calendar, elementor
 Requires at least: 6.9
@@ -12,18 +12,21 @@ A lightweight, native event plugin for WordPress.
 
 == Description ==
 
-WP Simple Events provides a focused event content model for WordPress without recurrence, interactive maps or ticketing in its first version.
+Simple Events by MiMe provides a focused event content model for WordPress without recurrence, interactive maps or ticketing in its first version.
 
 The plugin is under active development. The native Events menu includes useful event columns, filters, sortable dates and a protected “Duplicate event” action that creates a draft and marks copied dates for review. Native and REST writes share strict validation, incomplete publication is blocked and UTC query indexes are derived automatically. Classic/block-theme fallbacks and bounded `[wpse_events]`, `[wpse_event_details]` and `[wpse_calendar]` shortcodes are present. The calendar uses a bounded public feed, local assets and a no-JavaScript event-list fallback. Individual public events include safe, timezone-aware Event JSON-LD that administrators can disable under Events → Settings. Administrators can configure the native archive URL, page size and default period; a colliding WordPress page is diagnosed before they choose another path. They can also repair event capabilities and rebuild validated derived UTC indexes in bounded batches. Plugin deletion preserves events by default; complete cleanup requires an explicit warned administrator opt-in and retains shared media. Elementor 3.35 or newer optionally adds three composite widgets plus twelve atomic event-field widgets. Gutenberg provides the same twelve fields as dynamic blocks with native style controls and a single-event pattern. Static pages can select a public event, while templates use their current event context.
 
 == Installation ==
 
 1. Install the packaged plugin through the WordPress Plugins screen.
-2. Activate WP Simple Events.
+2. Activate Simple Events by MiMe.
+
+Earlier private test packages used a different plugin directory. Before installing this first public package, confirm destructive uninstall cleanup is disabled, then deactivate and remove the earlier test package. Existing events remain available because their storage identifiers are unchanged.
 
 == Changelog ==
 
 = 0.2.1 =
+* Adopt the final first-release name and slug: Simple Events by MiMe and simple-events-by-mime.
 * Open location and external event actions safely in a new tab.
 * Expose Edit with Elementor for individual Events on compatible Elementor installations.
 

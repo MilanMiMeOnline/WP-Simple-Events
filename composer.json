@@ -1,5 +1,5 @@
 {
-  "name": "mime/wp-simple-events",
+  "name": "mime/simple-events-by-mime",
   "description": "A lightweight native events plugin for WordPress.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",

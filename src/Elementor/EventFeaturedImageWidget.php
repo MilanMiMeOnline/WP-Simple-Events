@@ -21,7 +21,7 @@ final class EventFeaturedImageWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Featured Image', 'wp-simple-events' );
+		return esc_html__( 'Event Featured Image', 'simple-events-by-mime' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,21 +43,21 @@ final class EventFeaturedImageWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Image', 'wp-simple-events' ),
+				'label' => esc_html__( 'Image', 'simple-events-by-mime' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'image_size',
 			array(
-				'label'   => esc_html__( 'Image size', 'wp-simple-events' ),
+				'label'   => esc_html__( 'Image size', 'simple-events-by-mime' ),
 				'type'    => Controls_Manager::SELECT,
 				'options' => array(
-					'thumbnail'    => esc_html__( 'Thumbnail', 'wp-simple-events' ),
-					'medium'       => esc_html__( 'Medium', 'wp-simple-events' ),
-					'medium_large' => esc_html__( 'Medium large', 'wp-simple-events' ),
-					'large'        => esc_html__( 'Large', 'wp-simple-events' ),
-					'full'         => esc_html__( 'Full size', 'wp-simple-events' ),
+					'thumbnail'    => esc_html__( 'Thumbnail', 'simple-events-by-mime' ),
+					'medium'       => esc_html__( 'Medium', 'simple-events-by-mime' ),
+					'medium_large' => esc_html__( 'Medium large', 'simple-events-by-mime' ),
+					'large'        => esc_html__( 'Large', 'simple-events-by-mime' ),
+					'full'         => esc_html__( 'Full size', 'simple-events-by-mime' ),
 				),
 				'default' => 'large',
 			)
@@ -65,11 +65,11 @@ final class EventFeaturedImageWidget extends AbstractEventFieldWidget {
 		$this->add_control(
 			'alt_mode',
 			array(
-				'label'   => esc_html__( 'Alternative text', 'wp-simple-events' ),
+				'label'   => esc_html__( 'Alternative text', 'simple-events-by-mime' ),
 				'type'    => Controls_Manager::SELECT,
 				'options' => array(
-					'attachment' => esc_html__( 'Use Media Library alt text', 'wp-simple-events' ),
-					'decorative' => esc_html__( 'Decorative (empty alt)', 'wp-simple-events' ),
+					'attachment' => esc_html__( 'Use Media Library alt text', 'simple-events-by-mime' ),
+					'decorative' => esc_html__( 'Decorative (empty alt)', 'simple-events-by-mime' ),
 				),
 				'default' => 'attachment',
 			)
@@ -77,7 +77,7 @@ final class EventFeaturedImageWidget extends AbstractEventFieldWidget {
 		$this->add_control(
 			'link',
 			array(
-				'label'        => esc_html__( 'Link to event', 'wp-simple-events' ),
+				'label'        => esc_html__( 'Link to event', 'simple-events-by-mime' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
 				'default'      => '',

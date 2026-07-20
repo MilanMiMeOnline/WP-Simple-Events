@@ -18,7 +18,7 @@ use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
  * Registers thin widgets with shared request-wide render services.
  */
 final readonly class WidgetRegistrar {
-	public const CATEGORY = 'wp-simple-events';
+	public const CATEGORY = 'simple-events-by-mime';
 
 	/**
 	 * Create one request-shared atomic widget service set.
@@ -36,7 +36,7 @@ final readonly class WidgetRegistrar {
 	) {}
 
 	/**
-	 * Register the dedicated WP Simple Events category.
+	 * Register the dedicated Simple Events by MiMe category.
 	 *
 	 * @param Elements_Manager $manager Elementor elements manager.
 	 */
@@ -44,7 +44,7 @@ final readonly class WidgetRegistrar {
 		$manager->add_category(
 			self::CATEGORY,
 			array(
-				'title' => esc_html__( 'WP Simple Events', 'wp-simple-events' ),
+				'title' => esc_html__( 'Simple Events by MiMe', 'simple-events-by-mime' ),
 				'icon'  => 'eicon-calendar',
 			)
 		);

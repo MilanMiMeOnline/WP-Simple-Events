@@ -29,7 +29,7 @@ const textSupports = () => ( {
 	typography: { fontSize: true, lineHeight: true },
 } );
 const eventOptions = [
-	{ label: __( 'Current event context', 'wp-simple-events' ), value: '0' },
+	{ label: __( 'Current event context', 'simple-events-by-mime' ), value: '0' },
 	...Object.entries( wpseEventFieldBlocks.events || {} ).map(
 		( [ value, label ] ) => ( { label, value: String( value ) } ),
 	),
@@ -38,8 +38,8 @@ const eventOptions = [
 const definitions = [
 	{
 		name: 'wpse/event-title',
-		title: __( 'Event Title', 'wp-simple-events' ),
-		description: __( 'Display the title of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Title', 'simple-events-by-mime' ),
+		description: __( 'Display the title of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'heading',
 		attributes: {
 			...commonAttributes(),
@@ -51,8 +51,8 @@ const definitions = [
 	},
 	{
 		name: 'wpse/event-featured-image',
-		title: __( 'Event Featured Image', 'wp-simple-events' ),
-		description: __( 'Display the featured image of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Featured Image', 'simple-events-by-mime' ),
+		description: __( 'Display the featured image of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'format-image',
 		attributes: {
 			...commonAttributes(),
@@ -70,8 +70,8 @@ const definitions = [
 	},
 	{
 		name: 'wpse/event-date-time',
-		title: __( 'Event Date & Time', 'wp-simple-events' ),
-		description: __( 'Display the localized date, time and optional timezone of an event.', 'wp-simple-events' ),
+		title: __( 'Event Date & Time', 'simple-events-by-mime' ),
+		description: __( 'Display the localized date, time and optional timezone of an event.', 'simple-events-by-mime' ),
 		icon: 'calendar-alt',
 		attributes: {
 			...commonAttributes(),
@@ -80,20 +80,20 @@ const definitions = [
 		},
 		supports: textSupports(),
 		controls: 'label',
-		labelPlaceholder: __( 'Date and time:', 'wp-simple-events' ),
+		labelPlaceholder: __( 'Date and time:', 'simple-events-by-mime' ),
 	},
 	{
 		name: 'wpse/event-status',
-		title: __( 'Event Status', 'wp-simple-events' ),
-		description: __( 'Display a cancelled or postponed event status.', 'wp-simple-events' ),
+		title: __( 'Event Status', 'simple-events-by-mime' ),
+		description: __( 'Display a cancelled or postponed event status.', 'simple-events-by-mime' ),
 		icon: 'warning',
 		attributes: commonAttributes(),
 		supports: textSupports(),
 	},
 	{
 		name: 'wpse/event-venue',
-		title: __( 'Event Venue', 'wp-simple-events' ),
-		description: __( 'Display the venue of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Venue', 'simple-events-by-mime' ),
+		description: __( 'Display the venue of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'location-alt',
 		attributes: {
 			...commonAttributes(),
@@ -102,20 +102,20 @@ const definitions = [
 		},
 		supports: textSupports(),
 		controls: 'label',
-		labelPlaceholder: __( 'Location:', 'wp-simple-events' ),
+		labelPlaceholder: __( 'Location:', 'simple-events-by-mime' ),
 	},
 	{
 		name: 'wpse/event-address',
-		title: __( 'Event Address', 'wp-simple-events' ),
-		description: __( 'Display the postal address of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Address', 'simple-events-by-mime' ),
+		description: __( 'Display the postal address of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'admin-home',
 		attributes: commonAttributes(),
 		supports: textSupports(),
 	},
 	{
 		name: 'wpse/event-location-link',
-		title: __( 'Event Location Link', 'wp-simple-events' ),
-		description: __( 'Display the route or location link saved on an event.', 'wp-simple-events' ),
+		title: __( 'Event Location Link', 'simple-events-by-mime' ),
+		description: __( 'Display the route or location link saved on an event.', 'simple-events-by-mime' ),
 		icon: 'admin-links',
 		attributes: {
 			...commonAttributes(),
@@ -126,24 +126,24 @@ const definitions = [
 	},
 	{
 		name: 'wpse/event-content',
-		title: __( 'Event Content', 'wp-simple-events' ),
-		description: __( 'Display the main content of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Content', 'simple-events-by-mime' ),
+		description: __( 'Display the main content of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'text-page',
 		attributes: commonAttributes(),
 		supports: textSupports(),
 	},
 	{
 		name: 'wpse/event-excerpt',
-		title: __( 'Event Excerpt', 'wp-simple-events' ),
-		description: __( 'Display the excerpt of the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Excerpt', 'simple-events-by-mime' ),
+		description: __( 'Display the excerpt of the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'excerpt-view',
 		attributes: commonAttributes(),
 		supports: textSupports(),
 	},
 	{
 		name: 'wpse/event-external-action',
-		title: __( 'External Event Action', 'wp-simple-events' ),
-		description: __( 'Display the external information or registration link saved on an event.', 'wp-simple-events' ),
+		title: __( 'External Event Action', 'simple-events-by-mime' ),
+		description: __( 'Display the external information or registration link saved on an event.', 'simple-events-by-mime' ),
 		icon: 'external',
 		attributes: {
 			...commonAttributes(),
@@ -154,8 +154,8 @@ const definitions = [
 	},
 	{
 		name: 'wpse/event-categories',
-		title: __( 'Event Categories', 'wp-simple-events' ),
-		description: __( 'Display linked categories for the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Categories', 'simple-events-by-mime' ),
+		description: __( 'Display linked categories for the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'category',
 		attributes: {
 			...commonAttributes(),
@@ -164,12 +164,12 @@ const definitions = [
 		},
 		supports: textSupports(),
 		controls: 'label',
-		labelPlaceholder: __( 'Categories:', 'wp-simple-events' ),
+		labelPlaceholder: __( 'Categories:', 'simple-events-by-mime' ),
 	},
 	{
 		name: 'wpse/event-tags',
-		title: __( 'Event Tags', 'wp-simple-events' ),
-		description: __( 'Display linked tags for the current or selected event.', 'wp-simple-events' ),
+		title: __( 'Event Tags', 'simple-events-by-mime' ),
+		description: __( 'Display linked tags for the current or selected event.', 'simple-events-by-mime' ),
 		icon: 'tag',
 		attributes: {
 			...commonAttributes(),
@@ -178,14 +178,14 @@ const definitions = [
 		},
 		supports: textSupports(),
 		controls: 'label',
-		labelPlaceholder: __( 'Tags:', 'wp-simple-events' ),
+		labelPlaceholder: __( 'Tags:', 'simple-events-by-mime' ),
 	},
 ];
 
 const sourceControls = ( attributes, setAttributes ) =>
 	el( SelectControl, {
-		label: __( 'Event source', 'wp-simple-events' ),
-		help: __( 'Select a public event for a static page, or use the current event supplied by a template or query.', 'wp-simple-events' ),
+		label: __( 'Event source', 'simple-events-by-mime' ),
+		help: __( 'Select a public event for a static page, or use the current event supplied by a template or query.', 'simple-events-by-mime' ),
 		value: String( attributes.eventId || 0 ),
 		options: eventOptions,
 		onChange: ( value ) => {
@@ -200,14 +200,14 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 			return [
 				el( SelectControl, {
 					key: 'heading',
-					label: __( 'HTML tag', 'wp-simple-events' ),
+					label: __( 'HTML tag', 'simple-events-by-mime' ),
 					value: attributes.heading,
 					options: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].map( ( value ) => ( { label: value.toUpperCase(), value } ) ),
 					onChange: ( heading ) => setAttributes( { heading } ),
 				} ),
 				el( ToggleControl, {
 					key: 'link',
-					label: __( 'Link to event', 'wp-simple-events' ),
+					label: __( 'Link to event', 'simple-events-by-mime' ),
 					checked: attributes.link,
 					onChange: ( link ) => setAttributes( { link } ),
 				} ),
@@ -216,30 +216,30 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 			return [
 				el( SelectControl, {
 					key: 'imageSize',
-					label: __( 'Image size', 'wp-simple-events' ),
+					label: __( 'Image size', 'simple-events-by-mime' ),
 					value: attributes.imageSize,
 					options: [
-						{ label: __( 'Thumbnail', 'wp-simple-events' ), value: 'thumbnail' },
-						{ label: __( 'Medium', 'wp-simple-events' ), value: 'medium' },
-						{ label: __( 'Medium large', 'wp-simple-events' ), value: 'medium_large' },
-						{ label: __( 'Large', 'wp-simple-events' ), value: 'large' },
-						{ label: __( 'Full size', 'wp-simple-events' ), value: 'full' },
+						{ label: __( 'Thumbnail', 'simple-events-by-mime' ), value: 'thumbnail' },
+						{ label: __( 'Medium', 'simple-events-by-mime' ), value: 'medium' },
+						{ label: __( 'Medium large', 'simple-events-by-mime' ), value: 'medium_large' },
+						{ label: __( 'Large', 'simple-events-by-mime' ), value: 'large' },
+						{ label: __( 'Full size', 'simple-events-by-mime' ), value: 'full' },
 					],
 					onChange: ( imageSize ) => setAttributes( { imageSize } ),
 				} ),
 				el( SelectControl, {
 					key: 'altMode',
-					label: __( 'Alternative text', 'wp-simple-events' ),
+					label: __( 'Alternative text', 'simple-events-by-mime' ),
 					value: attributes.altMode,
 					options: [
-						{ label: __( 'Use Media Library alt text', 'wp-simple-events' ), value: 'attachment' },
-						{ label: __( 'Decorative (empty alt)', 'wp-simple-events' ), value: 'decorative' },
+						{ label: __( 'Use Media Library alt text', 'simple-events-by-mime' ), value: 'attachment' },
+						{ label: __( 'Decorative (empty alt)', 'simple-events-by-mime' ), value: 'decorative' },
 					],
 					onChange: ( altMode ) => setAttributes( { altMode } ),
 				} ),
 				el( ToggleControl, {
 					key: 'link',
-					label: __( 'Link to event', 'wp-simple-events' ),
+					label: __( 'Link to event', 'simple-events-by-mime' ),
 					checked: attributes.link,
 					onChange: ( link ) => setAttributes( { link } ),
 				} ),
@@ -248,13 +248,13 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 			return [
 				el( ToggleControl, {
 					key: 'showLabel',
-					label: __( 'Show label', 'wp-simple-events' ),
+					label: __( 'Show label', 'simple-events-by-mime' ),
 					checked: attributes.showLabel,
 					onChange: ( showLabel ) => setAttributes( { showLabel } ),
 				} ),
 				attributes.showLabel && el( TextControl, {
 					key: 'label',
-					label: __( 'Label text', 'wp-simple-events' ),
+					label: __( 'Label text', 'simple-events-by-mime' ),
 					value: attributes.label,
 					placeholder: definition.labelPlaceholder,
 					maxLength: 120,
@@ -264,17 +264,17 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 		case 'locationLink':
 			return [ el( TextControl, {
 				key: 'linkText',
-				label: __( 'Link text', 'wp-simple-events' ),
+				label: __( 'Link text', 'simple-events-by-mime' ),
 				value: attributes.linkText,
-				placeholder: __( 'View location', 'wp-simple-events' ),
+				placeholder: __( 'View location', 'simple-events-by-mime' ),
 				maxLength: 120,
 				onChange: ( linkText ) => setAttributes( { linkText } ),
 			} ) ];
 		case 'externalAction':
 			return [ el( TextControl, {
 				key: 'linkText',
-				label: __( 'Override link text', 'wp-simple-events' ),
-				help: __( 'Leave empty to use the label saved on the event.', 'wp-simple-events' ),
+				label: __( 'Override link text', 'simple-events-by-mime' ),
+				help: __( 'Leave empty to use the label saved on the event.', 'simple-events-by-mime' ),
 				value: attributes.linkText,
 				maxLength: 120,
 				onChange: ( linkText ) => setAttributes( { linkText } ),
@@ -287,13 +287,13 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 const emptyPreview = ( title ) => () => el( Placeholder, {
 	icon: 'calendar-alt',
 	label: title,
-	instructions: __( 'This event field has no public value for the selected or current event.', 'wp-simple-events' ),
+	instructions: __( 'This event field has no public value for the selected or current event.', 'simple-events-by-mime' ),
 } );
 const loadingPreview = () => el( Placeholder, {}, el( Spinner ) );
 const errorPreview = ( response ) => el( Placeholder, {
 	icon: 'warning',
-	label: __( 'Event preview unavailable', 'wp-simple-events' ),
-	instructions: response?.message || __( 'The server could not render this event field.', 'wp-simple-events' ),
+	label: __( 'Event preview unavailable', 'simple-events-by-mime' ),
+	instructions: response?.message || __( 'The server could not render this event field.', 'simple-events-by-mime' ),
 } );
 
 definitions.forEach( ( definition ) => {
@@ -310,7 +310,7 @@ definitions.forEach( ( definition ) => {
 				{},
 				el(
 					PanelBody,
-					{ title: __( 'Event settings', 'wp-simple-events' ), initialOpen: true },
+					{ title: __( 'Event settings', 'simple-events-by-mime' ), initialOpen: true },
 					sourceControls( attributes, setAttributes ),
 					...fieldControls( definition, attributes, setAttributes ),
 				),
@@ -335,7 +335,7 @@ definitions.forEach( ( definition ) => {
 		apiVersion: 3,
 		title: definition.title,
 		description: definition.description,
-		category: 'wp-simple-events',
+		category: 'simple-events-by-mime',
 		icon: definition.icon,
 		attributes: definition.attributes,
 		supports: definition.supports,
