@@ -9,6 +9,6 @@ parameters:
     - templates
   excludePaths:
     - vendor
-    - node_modules
+    - node_modules (?)
     - assets/dist (?)
   tmpDir: .cache/phpstan

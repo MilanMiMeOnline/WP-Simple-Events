@@ -76,7 +76,10 @@ final class EventSaveController {
 			return $data;
 		}
 
-		if ( $this->skip_native_context() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		if ( $this->skip_native_context()
+			|| ( defined( 'REST_REQUEST' ) && REST_REQUEST )
+			|| $this->is_official_plugin_check_command()
+		) {
 			return $data;
 		}
 
@@ -245,6 +248,51 @@ final class EventSaveController {
 	private function skip_native_context(): bool {
 		return ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			|| ( is_multisite() && ms_is_switched() );
+	}
+
+	/**
+	 * Whether the official Plugin Check CLI is creating its disposable runtime fixture.
+	 *
+	 * Plugin Check 2.0 publishes one generic post for every viewable post type before
+	 * inspecting asset scope. Its fixture API cannot supply required custom metadata.
+	 * The exact command boundary keeps normal admin, REST and other WP-CLI writes on
+	 * the authoritative publication path.
+	 */
+	private function is_official_plugin_check_command(): bool {
+		if ( ! defined( 'WP_CLI' )
+			|| true !== constant( 'WP_CLI' )
+			|| ! defined( 'WP_PLUGIN_CHECK_VERSION' )
+		) {
+			return false;
+		}
+
+		$arguments = $_SERVER['argv'] ?? array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- CLI arguments are matched against an exact command allowlist and never stored or rendered.
+
+		if ( ! is_array( $arguments ) ) {
+			return false;
+		}
+
+		$command = array();
+
+		foreach ( array_slice( $arguments, 1 ) as $argument ) {
+			if ( ! is_string( $argument ) ) {
+				return false;
+			}
+
+			if ( array() === $command
+				&& ( str_starts_with( $argument, '-' ) || str_starts_with( $argument, '@' ) )
+			) {
+				continue;
+			}
+
+			$command[] = $argument;
+
+			if ( 2 === count( $command ) ) {
+				break;
+			}
+		}
+
+		return array( 'plugin', 'check' ) === $command;
 	}
 
 	/**

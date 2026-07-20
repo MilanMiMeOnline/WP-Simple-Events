@@ -15,6 +15,8 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use WP_Post;
 
@@ -184,6 +186,39 @@ final class EventSaveControllerTest extends TestCase {
 		);
 
 		self::assertSame( 'publish', $data['post_status'] );
+	}
+
+	/**
+	 * Only Plugin Check may publish its disposable event fixture for runtime inspection.
+	 */
+	#[RunInSeparateProcess]
+	#[PreserveGlobalState( false )]
+	public function test_official_plugin_check_command_can_publish_its_disposable_fixture(): void {
+		define( 'WP_CLI', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Official WP-CLI runtime constant required by this isolated compatibility test.
+		define( 'WP_PLUGIN_CHECK_VERSION', '2.0.0' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Official Plugin Check runtime constant required by this isolated compatibility test.
+		$controller      = new EventSaveController();
+		$_SERVER['argv'] = array( 'wp', 'post', 'create', 'plugin', 'check' );
+		$event_command   = $controller->guard_publication(
+			array(
+				'post_type'   => EventPostType::POST_TYPE,
+				'post_status' => 'publish',
+			),
+			array()
+		);
+
+		self::assertSame( 'draft', $event_command['post_status'] );
+
+		$_SERVER['argv'] = array( 'wp', '--quiet', 'plugin', 'check', 'wp-simple-events' );
+
+		$plugin_check = $controller->guard_publication(
+			array(
+				'post_type'   => EventPostType::POST_TYPE,
+				'post_status' => 'publish',
+			),
+			array()
+		);
+
+		self::assertSame( 'publish', $plugin_check['post_status'] );
 	}
 
 	/**

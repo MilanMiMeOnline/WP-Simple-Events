@@ -14,6 +14,7 @@ All notable changes to WP Simple Events are documented here.
 ### Fixed
 
 - Declare native Elementor support for Events so compatible installations expose **Edit with Elementor** without mutating Elementor settings.
+- Keep strict official Plugin Check compatible with the required-date publication invariant, and stabilize clean-CI PHPStan and Gutenberg browser execution.
 
 ## [0.2.0] - 2026-07-20
 

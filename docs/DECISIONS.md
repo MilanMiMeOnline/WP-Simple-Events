@@ -239,3 +239,11 @@ An empty `eventId` consumes `postId` and `postType` block context and may fall b
 One editor-only script registers the twelve client block interfaces and receives at most fifty published, password-free event choices from the existing bounded repository. It is registered with WordPress dependencies during block registration but the choices are queried and localized only on block-editor screens. Field-specific Inspector controls mirror the Elementor allowlists; typography, color, link color, margin and alignment use native block supports. A thin host wrapper carries those supports only when the named field produces output.
 
 The plugin also registers one opt-in single-event block pattern composed from the atomic blocks. Existing `wpse/native-single` and `wpse/native-archive` fallback bridges and customized templates are not replaced. The Event Content block remains protected by the request-wide shared recursion guard, including when it appears inside the event content it renders.
+
+## ADR-030: Official Plugin Check receives a command-scoped disposable fixture exception
+
+**Status:** Accepted
+
+Official Plugin Check 2.0 runtime performance checks publish one generic fixture for every viewable post type and provide no extension point for required custom metadata. WP Simple Events normally and intentionally downgrades such an incomplete event to draft, which prevents Plugin Check from retrieving the temporary URL and aborts the checker before it can report on the package.
+
+The native publication guard therefore yields only while the Plugin Check plugin is loaded inside the exact contiguous WP-CLI `plugin check` command. The exception does not apply to the WordPress editor, REST, cron, frontend requests or any other WP-CLI command. Plugin Check deletes its fixture in the same preparation lifecycle, and the exception changes no stored user event or public product behaviour. CI continues to run every stable Plugin Check category in strict mode; no check, warning or error is excluded.

@@ -25,7 +25,7 @@ const login = async ( page ) => {
 	await page.locator( '#user_login' ).fill( 'admin' );
 	await page.locator( '#user_pass' ).fill( 'password' );
 	await Promise.all( [
-		page.waitForURL( /\/wp-admin\// ),
+		page.waitForURL( /\/wp-admin\//, { waitUntil: 'domcontentloaded' } ),
 		page.locator( '#wp-submit' ).click(),
 	] );
 };

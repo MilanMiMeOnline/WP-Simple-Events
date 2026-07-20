@@ -6,7 +6,7 @@
 
 **Scope:** external event-link behaviour and Elementor editing support
 
-**Archive SHA-256:** `e76ea188acebc037f17605dba9abd5707661b1e4a49d673c20a36b9e92eaaa0e`
+**Archive SHA-256:** `6eb67dbe4c3af7036926ce8e38049fddbfad3f49c2221c15c54daa682ce89896`
 
 ## Result
 
@@ -24,7 +24,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 ## Automated evidence
 
 - Focused presentation/content/Elementor/Gutenberg suite: passed — 46 tests, 329 assertions.
-- Complete PHPUnit suite: passed — 262 tests, 1,004 assertions.
+- Complete PHPUnit suite: passed — 263 tests, 1,006 assertions.
 - Composer validation, coding standards and full PHPStan level 8: passed.
 - JavaScript/CSS build and lint plus Node tooling tests: passed.
 - Composer and npm dependency audits: passed with no known vulnerabilities.
@@ -33,6 +33,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Real Elementor compatibility: passed on 3.35.9 and 4.1.5 with WordPress 7.0.1 / PHP 8.3.
 - Packaged Playwright suite: passed — 15/15 journeys, including exact target/rel assertions for both external actions.
 - Release verification and two-build reproducibility: passed.
+- Clean-checkout CI regressions are covered for optional PHPStan dependency paths, the command-scoped Plugin Check fixture exception and Gutenberg login navigation.
 
 ## Senior developer review
 
@@ -42,6 +43,8 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - The smoke harness now tolerates a bounded 1-second Playground REST-nonce startup race but still fails after five invalid responses; it never logs the nonce.
 - Version sources, stable tag, lockfile and POT project identifier are synchronized to 0.2.1.
 - Source and production archives include the complete GPL-2.0-or-later licence; the release contract rejects its omission.
+- The official Plugin Check compatibility path recognizes only the loaded checker inside the leading WP-CLI `plugin check` command; other CLI commands retain the event publication invariant.
+- Browser journeys retain a 30-second per-test timeout while allowing a bounded six-minute total for cold Playground startup plus all 15 tests.
 
 ## Senior QA and security review
 
@@ -53,7 +56,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 
 ## Residual release conditions
 
-1. Public publication remains conditional on the official strict WordPress Plugin Check job passing against the 0.2.1 release commit.
+1. Public publication remains conditional on the corrected official strict WordPress Plugin Check job passing against the 0.2.1 release commit. The first public CI run exposed the checker-fixture incompatibility now covered by ADR-030 and an isolated regression test.
 2. The user should visually confirm the Elementor edit entry point on the target installation because toolbar placement differs between Elementor/WordPress editor versions; both supported host APIs recognize Events as editable in automated testing.
 
 ## Candidate

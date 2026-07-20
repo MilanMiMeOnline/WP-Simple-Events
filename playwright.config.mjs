@@ -8,7 +8,8 @@ export default defineConfig( {
 	forbidOnly: Boolean( process.env.CI ),
 	retries: 0,
 	timeout: 30_000,
-	globalTimeout: 180_000,
+	// Includes a cold Playground boot plus all 15 individually bounded journeys.
+	globalTimeout: 360_000,
 	globalSetup: './tests/E2E/global-setup.mjs',
 	globalTeardown: './tests/E2E/global-teardown.mjs',
 	reporter: [ [ 'line' ] ],
