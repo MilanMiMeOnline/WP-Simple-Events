@@ -9,6 +9,7 @@ All notable changes to WP Simple Events are documented here.
 ### Changed
 
 - Open the public location and external event actions in isolated new browser tabs.
+- Include the complete GPL-2.0-or-later licence in source and production archives.
 
 ### Fixed
 

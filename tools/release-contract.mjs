@@ -4,6 +4,7 @@ export const PLUGIN_SLUG = 'wp-simple-events';
 
 const REQUIRED_RELEASE_PATHS = [
 	'wp-simple-events.php',
+	'LICENSE',
 	'readme.txt',
 	'vendor/autoload.php',
 	'languages/wp-simple-events.pot',
@@ -55,6 +56,7 @@ const FORBIDDEN_SOURCE_FILES = new Set( [
 
 const ALLOWED_ROOT_FILES = new Set( [
 	'CHANGELOG.md',
+	'LICENSE',
 	'README.md',
 	'SECURITY.md',
 	'THIRD-PARTY-NOTICES.md',

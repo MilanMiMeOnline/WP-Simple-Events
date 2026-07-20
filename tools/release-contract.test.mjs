@@ -35,6 +35,7 @@ test( 'accepts a minimal, rooted production archive', () => {
 	assert.doesNotThrow( () =>
 		assertReleaseEntries( [
 			'wp-simple-events/wp-simple-events.php',
+			'wp-simple-events/LICENSE',
 			'wp-simple-events/readme.txt',
 			'wp-simple-events/vendor/autoload.php',
 			'wp-simple-events/languages/wp-simple-events.pot',
@@ -65,6 +66,7 @@ test( 'rejects development files, wrong roots and path traversal', () => {
 			() =>
 				assertReleaseEntries( [
 					'wp-simple-events/wp-simple-events.php',
+					'wp-simple-events/LICENSE',
 					'wp-simple-events/readme.txt',
 					'wp-simple-events/vendor/autoload.php',
 					'wp-simple-events/languages/wp-simple-events.pot',
@@ -87,6 +89,7 @@ test( 'rejects an archive with a required production file missing', () => {
 		() =>
 			assertReleaseEntries( [
 				'wp-simple-events/wp-simple-events.php',
+				'wp-simple-events/LICENSE',
 				'wp-simple-events/readme.txt',
 				'wp-simple-events/vendor/autoload.php',
 				'wp-simple-events/blocks/event-title/block.json',
@@ -97,6 +100,25 @@ test( 'rejects an archive with a required production file missing', () => {
 				'wp-simple-events/assets/dist/js/event-fields-editor.min.js',
 			] ),
 		/Missing required release path.*languages\/wp-simple-events\.pot/,
+	);
+} );
+
+test( 'rejects an archive without its complete project license', () => {
+	assert.throws(
+		() =>
+			assertReleaseEntries( [
+				'wp-simple-events/wp-simple-events.php',
+				'wp-simple-events/readme.txt',
+				'wp-simple-events/vendor/autoload.php',
+				'wp-simple-events/languages/wp-simple-events.pot',
+				'wp-simple-events/blocks/event-title/block.json',
+				'wp-simple-events/src/Plugin.php',
+				'wp-simple-events/templates/single-event.php',
+				'wp-simple-events/assets/src/css/frontend.css',
+				'wp-simple-events/assets/dist/js/calendar.min.js',
+				'wp-simple-events/assets/dist/js/event-fields-editor.min.js',
+			] ),
+		/Missing required release path.*LICENSE/,
 	);
 } );
 

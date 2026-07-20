@@ -6,7 +6,7 @@
 
 **Scope:** external event-link behaviour and Elementor editing support
 
-**Archive SHA-256:** `32f9c5da0113aec98ad450a16ae1a173e221fd7786aa1d98fbb241513536803b`
+**Archive SHA-256:** `e76ea188acebc037f17605dba9abd5707661b1e4a49d673c20a36b9e92eaaa0e`
 
 ## Result
 
@@ -41,6 +41,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - No Elementor option is created or overwritten, and existing event metadata, content and template contracts remain unchanged.
 - The smoke harness now tolerates a bounded 1-second Playground REST-nonce startup race but still fails after five invalid responses; it never logs the nonce.
 - Version sources, stable tag, lockfile and POT project identifier are synchronized to 0.2.1.
+- Source and production archives include the complete GPL-2.0-or-later licence; the release contract rejects its omission.
 
 ## Senior QA and security review
 

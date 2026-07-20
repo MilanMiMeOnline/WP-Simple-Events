@@ -19,4 +19,4 @@ Read `AGENTS.md` before making changes and use `CONTRIBUTING.md` for setup and q
 
 ## Licence
 
-GPL-2.0-or-later.
+[GPL-2.0-or-later](LICENSE).

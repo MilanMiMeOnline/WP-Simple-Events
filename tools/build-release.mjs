@@ -28,6 +28,7 @@ const stableTimestamp = new Date( '2000-01-01T00:00:00.000Z' );
 
 const releaseEntries = [
 	'CHANGELOG.md',
+	'LICENSE',
 	'README.md',
 	'SECURITY.md',
 	'THIRD-PARTY-NOTICES.md',

@@ -14,17 +14,18 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 ## Candidate preparation
 
 1. Make the version identical in `wp-simple-events.php`, `WPSE_VERSION`, `readme.txt` and `package.json`.
-2. Regenerate translations with `npm run i18n:pot` and verify them with `npm run i18n:check`.
-3. Run `composer validate --strict`, `composer qa` and `npm run qa`.
-4. Run `npm run test:release`. This builds and verifies the candidate twice and fails when the two SHA-256 values differ.
-5. Run the packaged smoke journey on both supported WordPress versions:
+2. Confirm `LICENSE` is present and the public metadata still declares `GPL-2.0-or-later`.
+3. Regenerate translations with `npm run i18n:pot` and verify them with `npm run i18n:check`.
+4. Run `composer validate --strict`, `composer qa` and `npm run qa`.
+5. Run `npm run test:release`. This builds and verifies the candidate twice and fails when the two SHA-256 values differ.
+6. Run the packaged smoke journey on both supported WordPress versions:
 
    ```sh
    WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PLUGIN_PATH='.release/wp-simple-events' npm run test:smoke
    WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PLUGIN_PATH='.release/wp-simple-events' npm run test:smoke
    ```
 
-6. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/wp-simple-events` and uploads the verified zip and checksum as one CI artifact.
+7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/wp-simple-events` and uploads the verified zip and checksum as one CI artifact.
 
 ## Outputs
 
