@@ -266,7 +266,7 @@ msgstr ""
 msgid "Optional link text. The default is “More event information”."
 msgstr ""
 
-#: src/Admin/EventSaveController.php:189
+#: src/Admin/EventSaveController.php:192
 msgid "The event details were not saved because they need attention."
 msgstr ""
 
