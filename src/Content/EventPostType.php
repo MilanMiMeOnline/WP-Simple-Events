@@ -78,6 +78,7 @@ final class EventPostType {
 				'author',
 				'revisions',
 				'custom-fields',
+				'elementor',
 			),
 		);
 	}

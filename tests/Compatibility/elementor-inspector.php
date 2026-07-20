@@ -30,6 +30,8 @@ function wpse_compat_require( bool $condition, string $message ): void {
 function wpse_run_elementor_compat_inspection(): void {
 	wpse_compat_require( class_exists( Elementor\Plugin::class ), 'Elementor is not active.' );
 	wpse_compat_require( did_action( 'wpse_loaded' ) > 0, 'WP Simple Events did not boot.' );
+	wpse_compat_require( post_type_supports( EventPostType::POST_TYPE, 'elementor' ), 'Events do not expose Elementor editor support.' );
+	wpse_compat_require( Elementor\Utils::is_post_type_support( EventPostType::POST_TYPE ), 'Elementor does not recognize Events as editable.' );
 
 	$manager = Elementor\Plugin::$instance->widgets_manager;
 	$widgets = $manager->get_widget_types();
@@ -109,6 +111,11 @@ function wpse_run_elementor_compat_inspection(): void {
 		)
 	);
 	wpse_compat_require( 'publish' === get_post_status( $event_id ), 'Compatibility event could not be published.' );
+
+	$document = Elementor\Plugin::$instance->documents->get( $event_id );
+	wpse_compat_require( null !== $document && false !== $document, 'Elementor did not create an Event document.' );
+	wpse_compat_require( $document->is_editable_by_current_user(), 'The Event document is not editable by the administrator.' );
+	wpse_compat_require( str_contains( html_entity_decode( $document->get_edit_url() ), 'action=elementor' ), 'Elementor did not create an Event editor URL.' );
 
 	$venue_class  = get_class( $widgets['wpse-event-venue'] );
 	$venue_widget = new $venue_class(

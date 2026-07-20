@@ -2,6 +2,8 @@
 
 Elementor is an optional presentation host. WP Simple Events registers no Elementor class until the public `elementor/loaded` action has fired and the detected version is 3.35.0 or newer. Missing or older Elementor versions never disable event management, native templates, REST endpoints, feeds or shortcodes.
 
+The event post type declares WordPress' public `elementor` feature support. A compatible Elementor installation therefore exposes **Edit with Elementor** for individual Events without WP Simple Events modifying the user's `elementor_cpt_support` option. Event dates, locations and other native Event details remain managed by the WordPress Event details panel; Elementor edits the event's normal content and layout.
+
 The initial compatibility matrix is Elementor 3.35.9 and 4.1.5 on WordPress 7.0.1 with PHP 8.3. The main plugin header records the current tested Elementor release. The matrix must be rerun and the header updated before a release; a passing minimum-version comparison alone is not release evidence for a future major version.
 
 ## Widget category and widgets
@@ -16,7 +18,7 @@ The original three widget names, settings and render contracts remain stable. In
 
 Every atomic widget has the same optional **Event source** selector. Selecting an event uses that published, password-free event as the actual source, which makes the widgets usable on ordinary Elementor Free pages. Leaving it empty consumes the current event context supplied by the page or by a host such as Elementor Pro Theme Builder. Template assignment remains Elementor's responsibility; WP Simple Events does not require Pro and does not change widget output based on the Elementor edition.
 
-Field-specific controls stay intentionally small. Meaningful labels can be shown, hidden or customized. The title has an allowlisted heading and optional permalink. The image has an allowlisted WordPress image size, attachment-alt/decorative behaviour and optional permalink. Location and external actions can override their visible link text without changing their destination. Date and time continue to inherit WordPress' `date_format` and `time_format`, plus the plugin's global timezone-label choice; a duplicate widget-level clock-format setting is not introduced. Scoped typography, color and spacing controls inherit the theme until explicitly set.
+Field-specific controls stay intentionally small. Meaningful labels can be shown, hidden or customized. The title has an allowlisted heading and optional permalink. The image has an allowlisted WordPress image size, attachment-alt/decorative behaviour and optional permalink. Location and external actions can override their visible link text without changing their destination; both external destinations open in a new tab with `noopener noreferrer` isolation. Date and time continue to inherit WordPress' `date_format` and `time_format`, plus the plugin's global timezone-label choice; a duplicate widget-level clock-format setting is not introduced. Scoped typography, color and spacing controls inherit the theme until explicitly set.
 
 Every widget declares the shared `wpse-frontend` style. Style selectors use Elementor's `{{WRAPPER}}` token and WP Simple Events component classes. They do not rely on `.elementor-widget-container`; `has_widget_inner_wrapper()` returns false for Elementor's optimized markup.
 

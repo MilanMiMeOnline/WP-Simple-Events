@@ -231,18 +231,23 @@ async function authenticateAdministrator() {
 		'The smoke test could not authenticate the WordPress administrator.',
 	);
 
-	const nonceResponse = await fetch(
-		'http://localhost:8888/wp-admin/admin-ajax.php?action=rest-nonce',
-		{ headers: { cookie: cookieHeader( cookieJar ) } },
-	);
-	const nonce = await nonceResponse.text();
+	for ( let attempt = 0; attempt < 5; attempt += 1 ) {
+		const nonceResponse = await fetch(
+			'http://localhost:8888/wp-admin/admin-ajax.php?action=rest-nonce',
+			{ headers: { cookie: cookieHeader( cookieJar ) } },
+		);
+		const nonce = await nonceResponse.text();
 
-	requireCondition(
-		nonceResponse.ok && nonce.length >= 10,
-		'The smoke test could not obtain a REST nonce.',
-	);
+		if ( nonceResponse.ok && nonce.length >= 10 ) {
+			return { cookieJar, nonce };
+		}
 
-	return { cookieJar, nonce };
+		if ( attempt < 4 ) {
+			await new Promise( ( resolve ) => setTimeout( resolve, 250 ) );
+		}
+	}
+
+	throw new Error( 'The smoke test could not obtain a REST nonce.' );
 }
 
 async function ensurePackagedPluginIsActive( session ) {

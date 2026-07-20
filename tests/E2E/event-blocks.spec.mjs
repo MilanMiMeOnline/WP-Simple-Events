@@ -44,6 +44,10 @@ test( 'renders the complete explicit-source block palette without editor assets'
 	await expect( page.locator( '.wpse-event-field-block-event-content' ) ).toContainText( 'E2E atomic event content.' );
 	await expect( page.locator( '.wpse-event-field-block-event-excerpt' ) ).toContainText( 'E2E atomic event excerpt.' );
 	await expect( page.locator( '.wpse-event-field-block-event-external-action' ) ).toContainText( 'Reserve a place' );
+	await expect( page.locator( '.wpse-event-field-block-event-location-link a' ) ).toHaveAttribute( 'target', '_blank' );
+	await expect( page.locator( '.wpse-event-field-block-event-location-link a' ) ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+	await expect( page.locator( '.wpse-event-field-block-event-external-action a' ) ).toHaveAttribute( 'target', '_blank' );
+	await expect( page.locator( '.wpse-event-field-block-event-external-action a' ) ).toHaveAttribute( 'rel', 'noopener noreferrer' );
 	await expect( page.locator( '.wpse-event-field-block-event-categories' ) ).toContainText( 'E2E Category' );
 	await expect( page.locator( '.wpse-event-field-block-event-tags' ) ).toContainText( 'E2E Atomic Tag' );
 	await expect( page.locator( '.wpse-event-field-block-event-featured-image' ) ).toHaveCount( 0 );

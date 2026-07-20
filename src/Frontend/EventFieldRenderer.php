@@ -178,7 +178,8 @@ final class EventFieldRenderer {
 		$visible_label = '' !== $label ? $label : __( 'View location', 'wp-simple-events' );
 
 		return $this->fields_visible( $presentation ) && '' !== $presentation->location_url
-			? '<p class="wpse-event-location-link"><a href="' . esc_url( $presentation->location_url ) . '">'
+			? '<p class="wpse-event-location-link"><a href="' . esc_url( $presentation->location_url )
+				. '" target="_blank" rel="noopener noreferrer">'
 				. esc_html( $visible_label ) . '</a></p>'
 			: '';
 	}
@@ -246,7 +247,8 @@ final class EventFieldRenderer {
 				: __( 'More event information', 'wp-simple-events' ) );
 
 		return '<p class="wpse-event-action"><a class="wpse-event-action-link" href="'
-			. esc_url( $presentation->event_url ) . '">' . esc_html( $label ) . '</a></p>';
+			. esc_url( $presentation->event_url ) . '" target="_blank" rel="noopener noreferrer">'
+			. esc_html( $label ) . '</a></p>';
 	}
 
 	/**

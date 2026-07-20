@@ -4,6 +4,16 @@ All notable changes to WP Simple Events are documented here.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-20
+
+### Changed
+
+- Open the public location and external event actions in isolated new browser tabs.
+
+### Fixed
+
+- Declare native Elementor support for Events so compatible installations expose **Edit with Elementor** without mutating Elementor settings.
+
 ## [0.2.0] - 2026-07-20
 
 ### Added

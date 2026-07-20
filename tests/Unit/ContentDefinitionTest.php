@@ -44,6 +44,7 @@ final class ContentDefinitionTest extends TestCase {
 		self::assertTrue( $arguments['map_meta_cap'] );
 		self::assertSame( 'events', $arguments['has_archive'] );
 		self::assertContains( 'custom-fields', $arguments['supports'] );
+		self::assertContains( 'elementor', $arguments['supports'] );
 		self::assertContains( EventTaxonomies::CATEGORY, $arguments['taxonomies'] );
 		self::assertContains( EventTaxonomies::TAG, $arguments['taxonomies'] );
 	}

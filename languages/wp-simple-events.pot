@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Simple Events 0.2.0\n"
+"Project-Id-Version: WP Simple Events 0.2.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-simple-events\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -564,129 +564,129 @@ msgstr ""
 msgid "Events with a date, status and optional location."
 msgstr ""
 
-#: src/Content/EventPostType.php:92
-#: src/Content/EventPostType.php:94
+#: src/Content/EventPostType.php:93
+#: src/Content/EventPostType.php:95
 #: src/Elementor/EventListWidget.php:52
 #: src/Frontend/EventArchiveRenderer.php:53
 msgid "Events"
 msgstr ""
 
-#: src/Content/EventPostType.php:93
-#: src/Content/EventPostType.php:95
+#: src/Content/EventPostType.php:94
+#: src/Content/EventPostType.php:96
 #: src/Elementor/AbstractEventFieldWidget.php:206
 #: src/Elementor/EventDetailsWidget.php:87
 msgid "Event"
 msgstr ""
 
-#: src/Content/EventPostType.php:96
+#: src/Content/EventPostType.php:97
 msgid "Add New"
 msgstr ""
 
-#: src/Content/EventPostType.php:97
+#: src/Content/EventPostType.php:98
 msgid "Add New Event"
 msgstr ""
 
-#: src/Content/EventPostType.php:98
+#: src/Content/EventPostType.php:99
 msgid "New Event"
 msgstr ""
 
-#: src/Content/EventPostType.php:99
+#: src/Content/EventPostType.php:100
 msgid "Edit Event"
 msgstr ""
 
-#: src/Content/EventPostType.php:100
+#: src/Content/EventPostType.php:101
 msgid "View Event"
 msgstr ""
 
-#: src/Content/EventPostType.php:101
+#: src/Content/EventPostType.php:102
 msgid "All Events"
 msgstr ""
 
-#: src/Content/EventPostType.php:102
+#: src/Content/EventPostType.php:103
 msgid "Search Events"
 msgstr ""
 
-#: src/Content/EventPostType.php:103
+#: src/Content/EventPostType.php:104
 msgid "Parent Events:"
 msgstr ""
 
-#: src/Content/EventPostType.php:104
+#: src/Content/EventPostType.php:105
 msgid "No events found."
 msgstr ""
 
-#: src/Content/EventPostType.php:105
+#: src/Content/EventPostType.php:106
 msgid "No events found in Trash."
 msgstr ""
 
-#: src/Content/EventPostType.php:106
+#: src/Content/EventPostType.php:107
 msgid "Event Archives"
 msgstr ""
 
-#: src/Content/EventPostType.php:107
+#: src/Content/EventPostType.php:108
 msgid "Event Attributes"
 msgstr ""
 
-#: src/Content/EventPostType.php:108
+#: src/Content/EventPostType.php:109
 msgid "Insert into event"
 msgstr ""
 
-#: src/Content/EventPostType.php:109
+#: src/Content/EventPostType.php:110
 msgid "Uploaded to this event"
 msgstr ""
 
-#: src/Content/EventPostType.php:110
+#: src/Content/EventPostType.php:111
 msgid "Event image"
 msgstr ""
 
-#: src/Content/EventPostType.php:111
+#: src/Content/EventPostType.php:112
 msgid "Set event image"
 msgstr ""
 
-#: src/Content/EventPostType.php:112
+#: src/Content/EventPostType.php:113
 msgid "Remove event image"
 msgstr ""
 
-#: src/Content/EventPostType.php:113
+#: src/Content/EventPostType.php:114
 msgid "Use as event image"
 msgstr ""
 
-#: src/Content/EventPostType.php:114
+#: src/Content/EventPostType.php:115
 msgid "Filter events list"
 msgstr ""
 
-#: src/Content/EventPostType.php:115
+#: src/Content/EventPostType.php:116
 msgid "Events list navigation"
 msgstr ""
 
-#: src/Content/EventPostType.php:116
+#: src/Content/EventPostType.php:117
 msgid "Events list"
 msgstr ""
 
-#: src/Content/EventPostType.php:117
+#: src/Content/EventPostType.php:118
 msgid "Event published."
 msgstr ""
 
-#: src/Content/EventPostType.php:118
+#: src/Content/EventPostType.php:119
 msgid "Event published privately."
 msgstr ""
 
-#: src/Content/EventPostType.php:119
+#: src/Content/EventPostType.php:120
 msgid "Event reverted to draft."
 msgstr ""
 
-#: src/Content/EventPostType.php:120
+#: src/Content/EventPostType.php:121
 msgid "Event scheduled."
 msgstr ""
 
-#: src/Content/EventPostType.php:121
+#: src/Content/EventPostType.php:122
 msgid "Event updated."
 msgstr ""
 
-#: src/Content/EventPostType.php:122
+#: src/Content/EventPostType.php:123
 msgid "Event Link"
 msgstr ""
 
-#: src/Content/EventPostType.php:123
+#: src/Content/EventPostType.php:124
 msgid "A link to an event."
 msgstr ""
 
@@ -951,7 +951,7 @@ msgid "Categories"
 msgstr ""
 
 #: src/Elementor/EventCategoriesWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:268
+#: src/Frontend/EventFieldRenderer.php:270
 #: assets/src/js/event-fields-editor.js:167
 msgid "Categories:"
 msgstr ""
@@ -1194,7 +1194,7 @@ msgid "Event Status"
 msgstr ""
 
 #: src/Elementor/EventTagsWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:289
+#: src/Frontend/EventFieldRenderer.php:291
 #: assets/src/js/event-fields-editor.js:181
 msgid "Tags:"
 msgstr ""
@@ -1289,7 +1289,7 @@ msgstr ""
 msgid "%1$s (UTC%2$s → UTC%3$s)"
 msgstr ""
 
-#: src/Frontend/EventFieldRenderer.php:246
+#: src/Frontend/EventFieldRenderer.php:247
 msgid "More event information"
 msgstr ""
 

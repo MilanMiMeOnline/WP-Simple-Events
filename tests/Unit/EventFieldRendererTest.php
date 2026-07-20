@@ -95,11 +95,17 @@ final class EventFieldRendererTest extends TestCase {
 		self::assertStringContainsString( 'Main Hall', $fields->venue( $presentation ) );
 		self::assertStringContainsString( 'Place:', $fields->venue( $presentation, true, 'Place:' ) );
 		self::assertStringContainsString( "High Street 1<br />\nBrussels", $fields->address( $presentation ) );
-		self::assertStringContainsString( 'View location', $fields->location_action( $presentation ) );
+		self::assertStringContainsString(
+			'<a href="https://example.com/route/" target="_blank" rel="noopener noreferrer">View location</a>',
+			$fields->location_action( $presentation )
+		);
 		self::assertStringContainsString( 'Route plan', $fields->location_action( $presentation, 'Route plan' ) );
 		self::assertSame( '<div class="wpse-single-event-content"><p>Full <strong>details</strong></p></div>', $fields->content( $presentation ) );
 		self::assertStringContainsString( 'Short <strong>summary</strong>', $fields->excerpt( $presentation ) );
-		self::assertStringContainsString( '>Register now</a>', $fields->external_action( $presentation ) );
+		self::assertStringContainsString(
+			'<a class="wpse-event-action-link" href="https://example.com/register/" target="_blank" rel="noopener noreferrer">Register now</a>',
+			$fields->external_action( $presentation )
+		);
 		self::assertStringContainsString( '>Programme</a>', $fields->external_action( $presentation, 'Programme' ) );
 		self::assertStringContainsString( 'Music &amp; Arts', $fields->categories( $presentation ) );
 		self::assertStringNotContainsString( 'wpse-event-label', $fields->categories( $presentation, false ) );

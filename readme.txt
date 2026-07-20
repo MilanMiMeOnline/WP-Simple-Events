@@ -4,7 +4,7 @@ Tags: events, calendar, elementor
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.3
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,6 +22,10 @@ The plugin is under active development. The native Events menu includes useful e
 2. Activate WP Simple Events.
 
 == Changelog ==
+
+= 0.2.1 =
+* Open location and external event actions safely in a new tab.
+* Expose Edit with Elementor for individual Events on compatible Elementor installations.
 
 = 0.2.0 =
 * Stabilize calendar filtering, first-load geometry and accessible button interaction states.
