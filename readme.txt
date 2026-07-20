@@ -4,7 +4,7 @@ Tags: events, calendar, elementor
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.3
-Stable tag: 0.1.1
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,14 @@ The plugin is under active development. The native Events menu includes useful e
 
 == Changelog ==
 
+= 0.2.0 =
+* Stabilize calendar filtering, first-load geometry and accessible button interaction states.
+* Preserve captured event wall time across visitor time zones and inherit WordPress 12/24-hour formatting.
+* Add editable external-action labels and optional public event timezone visibility.
+* Add twelve atomic Elementor event-field widgets with safe explicit and current-event sources.
+* Add twelve matching dynamic Gutenberg blocks, server previews, native style supports and a single-event pattern.
+* Complete supported WordPress, Elementor, browser, security and reproducible-package qualification.
+
 = 0.1.1 =
 * Fix Gutenberg publication so Event details are included in the authoritative REST save.
 * Show the first actionable event validation message in the editor.
@@ -35,8 +43,6 @@ The plugin is under active development. The native Events menu includes useful e
 * Add secure event-details rendering and native single/archive fallbacks for classic and block themes.
 * Add a bounded public calendar feed with month/list views, filters and a no-JavaScript fallback.
 * Add optional Elementor list/grid, calendar and event-details widgets with responsive and theme-inheriting style controls.
-* Add dedicated Elementor widgets for every public event field, with safe explicit/current event sources and field-specific controls.
-* Add dedicated dynamic Gutenberg blocks for every public event field, with native style supports, server previews and an opt-in single-event pattern.
 * Add singular Event JSON-LD with a native administrator opt-out setting.
 * Add event admin columns, filters, sortable dates and a safe duplicate-to-draft workflow.
 * Add default-safe event retention and explicit batched uninstall cleanup.

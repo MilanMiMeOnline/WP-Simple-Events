@@ -4,6 +4,8 @@ All notable changes to WP Simple Events are documented here.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-20
+
 ### Added
 
 - Development, security and senior-QA guardrails.
