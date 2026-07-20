@@ -67,6 +67,9 @@ All notable changes to WP Simple Events are documented here.
 - An optional, revisioned external event link label with a translated fallback, bounded plain-text validation and atomic native/Gutenberg persistence.
 - Administrator visibility of WordPress' authoritative event timezone plus an optional, disabled-by-default timed-event label with event-date and DST-transition offsets.
 - An access-aware, request-local event presentation layer with named renderers for every atomic event field and a backward-compatible composite details renderer.
+- Twelve dedicated Elementor widgets for title, featured image, date/time, status, venue, address, location link, content, excerpt, external action, categories and tags, usable with an explicit public event on Elementor Free pages or current context in templates.
+- Field-specific Elementor controls for labels, heading level, links, image size, decorative alt behaviour, typography, color and spacing, with editor-only empty-field guidance and request-shared presentation reuse.
+- A real-host Elementor compatibility inspector covering the complete widget palette, control contracts, optimized DOM and strict public source rendering on the supported 3.x and tested 4.x versions.
 
 ### Fixed
 

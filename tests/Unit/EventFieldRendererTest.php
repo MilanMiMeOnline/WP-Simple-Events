@@ -87,15 +87,22 @@ final class EventFieldRendererTest extends TestCase {
 		self::assertStringContainsString( '<h1 class="wpse-single-event-title" id="event-title">Summer &lt;Event&gt;</h1>', $fields->title( $presentation, 'h1', 'event-title' ) );
 		self::assertStringContainsString( 'alt="Poster &lt;wide&gt;"', $fields->featured_image( $presentation ) );
 		self::assertStringContainsString( 'wpse-event-image-link', $fields->featured_image( $presentation, 'large', true ) );
+		self::assertStringContainsString( 'alt=""', $fields->featured_image( $presentation, 'thumbnail', false, 'decorative' ) );
 		self::assertStringContainsString( 'Europe/Brussels (UTC+02:00)', $fields->date_time( $presentation ) );
+		self::assertStringNotContainsString( 'wpse-event-label', $fields->date_time( $presentation, false ) );
+		self::assertStringContainsString( 'When:', $fields->date_time( $presentation, true, 'When:' ) );
 		self::assertStringContainsString( 'wpse-event-status-cancelled', $fields->status( $presentation ) );
 		self::assertStringContainsString( 'Main Hall', $fields->venue( $presentation ) );
+		self::assertStringContainsString( 'Place:', $fields->venue( $presentation, true, 'Place:' ) );
 		self::assertStringContainsString( "High Street 1<br />\nBrussels", $fields->address( $presentation ) );
 		self::assertStringContainsString( 'View location', $fields->location_action( $presentation ) );
+		self::assertStringContainsString( 'Route plan', $fields->location_action( $presentation, 'Route plan' ) );
 		self::assertSame( '<div class="wpse-single-event-content"><p>Full <strong>details</strong></p></div>', $fields->content( $presentation ) );
 		self::assertStringContainsString( 'Short <strong>summary</strong>', $fields->excerpt( $presentation ) );
 		self::assertStringContainsString( '>Register now</a>', $fields->external_action( $presentation ) );
+		self::assertStringContainsString( '>Programme</a>', $fields->external_action( $presentation, 'Programme' ) );
 		self::assertStringContainsString( 'Music &amp; Arts', $fields->categories( $presentation ) );
+		self::assertStringNotContainsString( 'wpse-event-label', $fields->categories( $presentation, false ) );
 		self::assertStringContainsString( '&lt;Live&gt;', $fields->tags( $presentation ) );
 		self::assertSame( EventStatus::CANCELLED, $presentation->status );
 	}

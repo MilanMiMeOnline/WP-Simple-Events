@@ -52,6 +52,7 @@ final class Controls_Manager {
 	public const SELECT2     = 'select2';
 	public const NUMBER      = 'number';
 	public const SWITCHER    = 'switcher';
+	public const TEXT        = 'text';
 	public const COLOR       = 'color';
 	public const SLIDER      = 'slider';
 }

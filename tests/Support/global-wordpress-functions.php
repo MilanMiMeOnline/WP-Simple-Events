@@ -674,12 +674,13 @@ if ( ! function_exists( 'get_the_post_thumbnail' ) ) {
 
 		$size_name = is_string( $size ) ? $size : 'custom';
 		$class     = is_string( $attr['class'] ?? null ) ? $attr['class'] : 'attachment-' . $size_name . ' size-' . $size_name;
+		$alt       = is_string( $attr['alt'] ?? null ) ? $attr['alt'] : WordPressState::image_alt( $post_id );
 
 		return sprintf(
 			'<img src="%1$s" class="%2$s" alt="%3$s">',
 			esc_url( $url ),
 			esc_attr( $class ),
-			esc_attr( WordPressState::image_alt( $post_id ) )
+			esc_attr( $alt )
 		);
 	}
 }
@@ -971,9 +972,10 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 	 * @param string $value Raw value.
 	 */
 	function sanitize_text_field( string $value ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$value = preg_replace( '@<(script|style)[^>]*?>.*?</\1>@si', '', $value ) ?? '';
 		$value = preg_replace( '/<[^>]*>/', '', $value ) ?? '';
 
-		return trim( preg_replace( '/[\r\n\t]+/', ' ', $value ) ?? '' );
+		return trim( preg_replace( '/[\r\n\t ]+/', ' ', $value ) ?? '' );
 	}
 }
 
@@ -998,7 +1000,11 @@ if ( ! function_exists( 'sanitize_textarea_field' ) ) {
 	 * @param string $value Raw value.
 	 */
 	function sanitize_textarea_field( string $value ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
-		return trim( preg_replace( '/<[^>]*>/', '', $value ) ?? '' );
+		$value = preg_replace( '@<(script|style)[^>]*?>.*?</\1>@si', '', $value ) ?? '';
+
+		$value = preg_replace( '/<[^>]*>/', '', $value ) ?? '';
+
+		return trim( preg_replace( '/[\t ]+/', ' ', $value ) ?? '' );
 	}
 }
 

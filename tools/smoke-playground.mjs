@@ -528,8 +528,8 @@ try {
 		'The valid REST event start was not canonicalized.',
 	);
 	requireCondition(
-		validCreate.data.meta._wpse_event_url_label === 'Register alert(1) now',
-		'The external event link label was not sanitized through REST.',
+		validCreate.data.meta._wpse_event_url_label === 'Register now',
+		`The external event link label was not sanitized through REST: ${ JSON.stringify( validCreate.data.meta._wpse_event_url_label ) }`,
 	);
 
 	const unauthorizedLabelUpdate = await requestJson(
@@ -979,7 +979,7 @@ try {
 		'Postponed',
 		'Town Hall',
 		'Single event body marker.',
-		'Register alert(1) now',
+		'Register now',
 	];
 	for ( const section of singleSections ) {
 		requireCondition( singleArticle.includes( section ), `The native single event omitted ${ section }.` );

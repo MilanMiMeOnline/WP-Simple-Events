@@ -84,11 +84,15 @@ FullCalendar 7.0.0 was released immediately before this implementation and its s
 
 **Status:** Accepted
 
-The optional integration requires Elementor 3.35 or newer and is tested initially against Elementor 3.35.9 and 4.1.5. It registers three classic `Widget_Base` widgets through the current `elementor/widgets/register` hook only after `elementor/loaded` has fired. Sites without Elementor, or with an older version, keep the complete native plugin without loading any Elementor class.
+The optional integration requires Elementor 3.35 or newer and is tested initially against Elementor 3.35.9 and 4.1.5. It registers classic `Widget_Base` widgets through the current `elementor/widgets/register` hook only after `elementor/loaded` has fired. Sites without Elementor, or with an older version, keep the complete native plugin without loading any Elementor class.
 
-Widgets translate allowlisted controls into the existing shortcode render contracts. They do not query posts, read event metadata or reproduce event markup. Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target WP Simple Events markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
+The original list, calendar and composite details widgets translate allowlisted controls into the existing shortcode render contracts. The atomic field widgets added after the shared WP4 presentation contract resolve either one explicitly selected published, password-free event or the current event context and then request one named field from `EventFieldRenderer`. No Elementor widget queries posts directly, reads raw event metadata or reproduces event markup. One request-scoped service set is shared across atomic widget objects so repeated fields for the same event reuse the normalized presentation snapshot.
 
-Elementor Pro dynamic tags remain an optional, separate increment. Deferring them does not reduce the three required Free widgets and avoids making Elementor Pro a dependency of the initial integration.
+An explicit event selection is the real source on an ordinary Elementor Free page and a safe preview/source override in a template. With no selection, the widget consumes the current queried event. The field semantics and saved control identifiers do not change between those contexts. Missing or inaccessible fields emit only an editor placeholder; public rendering emits no plugin wrapper. Elementor Pro Theme Builder remains host-owned and optional rather than a plugin dependency.
+
+Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target WP Simple Events markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
+
+Elementor Pro dynamic tags remain an optional, separate increment. Field widgets work without dynamic tags in both Elementor Free static layouts and host-provided dynamic templates, so deferring dynamic tags does not reduce the supported component palette or make Elementor Pro a dependency.
 
 ## ADR-015: Structured data is derived at render time from public event data
 

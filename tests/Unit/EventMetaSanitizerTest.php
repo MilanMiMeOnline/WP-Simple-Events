@@ -84,7 +84,7 @@ final class EventMetaSanitizerTest extends TestCase {
 	 */
 	public function test_event_url_label_is_plain_bounded_scalar_text(): void {
 		self::assertSame(
-			'Register alert(1) now',
+			'Register now',
 			$this->sanitizer->event_url_label( '<b>Register</b> <script>alert(1)</script> now' )
 		);
 		self::assertSame(

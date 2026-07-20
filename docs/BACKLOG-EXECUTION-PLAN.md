@@ -231,6 +231,8 @@ This foundation must land before host-specific components. Refactor in small ste
 6. Verify supported Elementor 3.x and current 4.x, editor/frontend parity, multiple widgets and optimized DOM.
 7. Verify that the same saved widget configuration behaves consistently when sourced from a selected event on a static page or the current event in a template.
 
+**Completion note (2026-07-19):** Twelve dedicated widgets now cover the frozen WP4 field palette. All use one bounded public selector/current-context boundary and request-shared resolver/renderer set, validate stored settings through field-specific allowlists and render only shared semantic fragments. Explicit and current sources preserve markup and styling; missing/inaccessible values are empty publicly and explanatory only in the editor. Controls cover labels, title/link, image size/link/alt behaviour, action text, typography, color and spacing while date/time continues to inherit WordPress and the global timezone-label choice. The original three widgets remain registered first with unchanged identifiers. Unit regressions and a real-host inspector pass on Elementor 3.35.9 and 4.1.5.
+
 ### Exit criteria
 
 - A complete event layout can be assembled from atomic widgets on an Elementor Free static page and in Elementor Pro Theme Builder.

@@ -168,7 +168,7 @@ final class EventValidatorTest extends TestCase {
 		);
 
 		self::assertSame( 'Town Hall', $result->data()?->venue );
-		self::assertSame( "Main bad Street\nBrussels", $result->data()?->address );
+		self::assertSame( "Main Street\nBrussels", $result->data()?->address );
 		self::assertSame( EventStatus::SCHEDULED, $result->data()?->status );
 	}
 

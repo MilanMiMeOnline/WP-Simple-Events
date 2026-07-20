@@ -179,6 +179,12 @@
 
 .wpse-event-card a:focus-visible,
 .wpse-single-event a:focus-visible,
+.wpse-single-event-title a:focus-visible,
+.wpse-event-image-link:focus-visible,
+.wpse-event-location-link a:focus-visible,
+.wpse-event-action-link:focus-visible,
+.wpse-event-categories a:focus-visible,
+.wpse-event-tags a:focus-visible,
 .wpse-events-filters select:focus-visible,
 .wpse-events-filters button:focus-visible,
 .wpse-events-pagination a:focus-visible {

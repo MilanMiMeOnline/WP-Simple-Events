@@ -1,6 +1,6 @@
 # Event presentation contract
 
-This contract defines the shared WP4 boundary used by native templates and the existing composite shortcode/Elementor output. Future Elementor widgets and Gutenberg blocks must consume the same named fields rather than reading event metadata directly.
+This contract defines the shared presentation boundary used by native templates, composite shortcode output and atomic Elementor widgets. Future Gutenberg blocks must consume the same named fields rather than reading event metadata directly.
 
 ## Event source and access
 
@@ -36,6 +36,8 @@ Resolution never falls back to another event. A resolver stores positive and neg
 
 `.wpse-event-label` remains the shared visible-label class. Optional linked images use `.wpse-event-image-link`. The composite renderer retains `.wpse-single-event`, `.wpse-single-event-header`, `.wpse-event-summary`, `.wpse-event-location` and `.wpse-event-taxonomies` as grouping classes.
 
+Optional renderer arguments remain presentation-only: title heading/link, featured-image size/link/attachment-alt versus decorative alt, visible/custom labels for date, venue and terms, and visible text overrides for the two actions. Their defaults preserve composite markup. Date and time continue to inherit WordPress formatting and the global timezone-label choice; presentation controls never alter canonical dates, UTC indexes, feeds or structured data.
+
 Missing or corrupt optional values produce an empty string and therefore no frontend wrapper or spacing. Scheduled status is the normal state and remains visually omitted; cancelled and postponed render explicit status markup. All returned URLs are restricted to normalized HTTP(S) values and escaped at output. Text and attributes are escaped for context, while featured-image, content and excerpt HTML pass through WordPress' public rendering and KSES pipelines.
 
 ## Passwords and recursion
@@ -49,3 +51,5 @@ Event content uses the core `the_content` pipeline. A request-wide guard prevent
 `EventDetailsRenderer::render()` composes a current-context event and `render_public()` composes an explicit public event. Both use the named field renderer. The existing native template, `[wpse_event_details]` shortcode and Elementor Event Details widget therefore keep one markup and access contract.
 
 Custom presentation adapters may depend on `EventContextResolver` plus `EventFieldRenderer` and request only the named methods above. They should share those service instances for request-local reuse and enqueue the existing `wpse-frontend` stylesheet only after non-empty output. New public fields, changed semantic classes or additional extension hooks require a documented contract decision; raw-meta renderers are not supported.
+
+Elementor's twelve atomic widgets use one request-local runtime service set even when the host reconstructs separate widget objects. Their optional `event_id` is strictly validated: empty means current context, while any non-empty value must resolve through `resolve_public()` and never falls back. Missing values render only an editor placeholder; public output contains no plugin placeholder or inner wrapper.

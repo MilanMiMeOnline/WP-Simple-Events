@@ -68,7 +68,7 @@ final class Plugin {
 		$event_lists       = new EventListShortcode( assets: $frontend_assets );
 		$details_shortcode = new EventDetailsShortcode( $event_details, $frontend_assets );
 		$calendar          = new CalendarShortcode( assets: $calendar_assets );
-		$elementor         = new ElementorIntegration( new WidgetRegistrar() );
+		$elementor         = new ElementorIntegration( new WidgetRegistrar( $event_contexts, $event_fields ) );
 		$calendar_feed     = new CalendarFeedController();
 		$archive_query     = new EventArchiveQuery();
 		$native_templates  = new NativeTemplateRenderer( single: $event_details );

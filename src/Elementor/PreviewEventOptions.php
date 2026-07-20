@@ -17,13 +17,20 @@ use WP_Post;
 /**
  * Supplies published, password-free events through the shared repository.
  */
-final readonly class PreviewEventOptions {
+final class PreviewEventOptions {
+	/**
+	 * Request-local cached choices.
+	 *
+	 * @var array<int, string>|null
+	 */
+	private ?array $options = null;
+
 	/**
 	 * Create the bounded preview provider.
 	 *
 	 * @param EventRepository $events Shared permission-safe event repository.
 	 */
-	public function __construct( private EventRepository $events = new EventRepository() ) {}
+	public function __construct( private readonly EventRepository $events = new EventRepository() ) {}
 
 	/**
 	 * Return select-control options keyed by event ID.
@@ -31,6 +38,10 @@ final readonly class PreviewEventOptions {
 	 * @return array<int, string>
 	 */
 	public function options(): array {
+		if ( null !== $this->options ) {
+			return $this->options;
+		}
+
 		$query   = $this->events->query(
 			new EventQueryCriteria( EventPeriod::ALL, EventQueryCriteria::MAX_LIMIT, 1, array(), array(), time() )
 		);
@@ -44,6 +55,8 @@ final readonly class PreviewEventOptions {
 			$options[ $post->ID ] = get_the_title( $post );
 		}
 
-		return $options;
+		$this->options = $options;
+
+		return $this->options;
 	}
 }

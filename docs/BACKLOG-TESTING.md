@@ -362,7 +362,7 @@ Decide whether public time-zone visibility is a global display setting, an Eleme
 ## WPSE-BL-008 — Atomic event-field components for Elementor and Gutenberg templates
 
 - **Type:** Feature epic — template building, Elementor integration and Gutenberg blocks
-- **State:** In progress; WP4 foundation completed 2026-07-19, WP5/WP6 pending
+- **State:** In progress; WP4 foundation and WP5 Elementor widgets completed 2026-07-19, WP6 Gutenberg blocks pending
 - **Severity:** Major product gap
 - **Suggested priority:** P2
 - **Affected surfaces:** Elementor widget library, Gutenberg editor/Site Editor, single-event templates and shared frontend render services
@@ -432,3 +432,7 @@ Treat this as an epic and deliver it in phases: first define/test shared event-c
 ### WP4 foundation progress — 2026-07-19
 
 The shared foundation is complete. Current/template context and explicit public selection now use one resolver with request-local presentation reuse. Named field methods cover the complete proposed palette, keep metadata keys private, omit missing/corrupt output and centralize escaping, password protection and recursion handling. The existing composite native/shortcode/Elementor details output is rebuilt from this layer. The BL-008 epic remains open until the dedicated Elementor widgets and Gutenberg blocks in WP5/WP6 are delivered.
+
+### WP5 Elementor progress — 2026-07-19
+
+The complete atomic palette is now available as twelve discoverable Elementor widgets alongside the original three. Each widget uses either one explicitly selected published/password-free event or current event context, shares request-local presentation work, has field-appropriate allowlisted controls and omits empty public markup. Elementor Free static-page and template-context semantics are identical because template assignment remains host-owned. Automated source/security/control tests and the real Elementor 3.35.9/4.1.5 inspector pass. The epic remains open only for the equivalent Gutenberg components and final cross-host parity review in WP6.

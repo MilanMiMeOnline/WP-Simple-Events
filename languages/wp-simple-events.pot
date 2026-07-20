@@ -16,7 +16,7 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: wp-simple-events.php
-#: src/Elementor/WidgetRegistrar.php:30
+#: src/Elementor/WidgetRegistrar.php:47
 msgid "WP Simple Events"
 msgstr ""
 
@@ -73,6 +73,7 @@ msgid "The event copy could not be completed safely."
 msgstr ""
 
 #: src/Admin/EventListTable.php:53
+#: src/Elementor/EventTitleWidget.php:46
 msgid "Title"
 msgstr ""
 
@@ -95,6 +96,7 @@ msgstr ""
 #: src/Admin/EventListTable.php:59
 #: src/Content/EventTaxonomies.php:92
 #: src/Content/EventTaxonomies.php:106
+#: src/Elementor/EventCategoriesWidget.php:24
 msgid "Event Categories"
 msgstr ""
 
@@ -123,7 +125,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:104
 #: src/Admin/EventMetaBox.php:228
-#: src/Frontend/EventFieldRenderer.php:118
+#: src/Frontend/EventFieldRenderer.php:128
 #: src/Frontend/EventRenderer.php:119
 #: src/Shortcode/CalendarShortcode.php:147
 msgid "Cancelled"
@@ -131,7 +133,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:105
 #: src/Admin/EventMetaBox.php:229
-#: src/Frontend/EventFieldRenderer.php:119
+#: src/Frontend/EventFieldRenderer.php:129
 #: src/Frontend/EventRenderer.php:120
 #: src/Shortcode/CalendarShortcode.php:148
 msgid "Postponed"
@@ -225,6 +227,7 @@ msgstr ""
 
 #: src/Admin/EventMetaBox.php:104
 #: src/Content/EventMeta.php:107
+#: src/Elementor/EventVenueWidget.php:46
 msgid "Venue"
 msgstr ""
 
@@ -558,6 +561,7 @@ msgstr ""
 
 #: src/Content/EventPostType.php:93
 #: src/Content/EventPostType.php:95
+#: src/Elementor/AbstractEventFieldWidget.php:206
 #: src/Elementor/EventDetailsWidget.php:87
 msgid "Event"
 msgstr ""
@@ -736,6 +740,7 @@ msgstr ""
 
 #: src/Content/EventTaxonomies.php:117
 #: src/Content/EventTaxonomies.php:133
+#: src/Elementor/EventTagsWidget.php:24
 msgid "Event Tags"
 msgstr ""
 
@@ -799,6 +804,53 @@ msgstr ""
 msgid "Back to event tags"
 msgstr ""
 
+#: src/Elementor/AbstractEventFieldWidget.php:113
+msgid "This event field has no public value for the selected or current event."
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:138
+msgid "Show label"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:140
+msgid "Show"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:141
+msgid "Hide"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:149
+msgid "Label text"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:199
+msgid "Event source"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:207
+msgid "Select a public event for a static page, or leave empty to use the current event."
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:242
+msgid "Style"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:251
+#: src/Elementor/EventCalendarWidget.php:156
+#: src/Elementor/EventDetailsWidget.php:141
+#: src/Elementor/EventListWidget.php:193
+msgid "Text color"
+msgstr ""
+
+#: src/Elementor/AbstractEventFieldWidget.php:268
+msgid "Bottom spacing"
+msgstr ""
+
+#: src/Elementor/EventAddressWidget.php:23
+msgid "Event Address"
+msgstr ""
+
 #: src/Elementor/EventCalendarWidget.php:30
 msgid "Event Calendar"
 msgstr ""
@@ -851,12 +903,6 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:156
-#: src/Elementor/EventDetailsWidget.php:141
-#: src/Elementor/EventListWidget.php:193
-msgid "Text color"
-msgstr ""
-
 #: src/Elementor/EventCalendarWidget.php:164
 msgid "Accent color"
 msgstr ""
@@ -878,6 +924,36 @@ msgstr ""
 msgid "Button typography"
 msgstr ""
 
+#: src/Elementor/EventCategoriesWidget.php:46
+#: src/Elementor/EventListWidget.php:111
+#: src/Frontend/EventArchiveControls.php:45
+#: src/Shortcode/CalendarControls.php:52
+#: src/Shortcode/EventListControls.php:53
+msgid "Categories"
+msgstr ""
+
+#: src/Elementor/EventCategoriesWidget.php:50
+#: src/Frontend/EventFieldRenderer.php:268
+msgid "Categories:"
+msgstr ""
+
+#: src/Elementor/EventContentWidget.php:23
+msgid "Event Content"
+msgstr ""
+
+#: src/Elementor/EventDateTimeWidget.php:24
+msgid "Event Date & Time"
+msgstr ""
+
+#: src/Elementor/EventDateTimeWidget.php:46
+msgid "Date and time"
+msgstr ""
+
+#: src/Elementor/EventDateTimeWidget.php:50
+#: src/Frontend/EventFieldRenderer.php:103
+msgid "Date and time:"
+msgstr ""
+
 #: src/Elementor/EventDetailsWidget.php:65
 msgid "Event Details"
 msgstr ""
@@ -897,6 +973,75 @@ msgstr ""
 #: src/Elementor/EventDetailsWidget.php:149
 #: src/Elementor/EventListWidget.php:201
 msgid "Secondary text color"
+msgstr ""
+
+#: src/Elementor/EventExcerptWidget.php:23
+msgid "Event Excerpt"
+msgstr ""
+
+#: src/Elementor/EventExternalActionWidget.php:24
+msgid "External Event Action"
+msgstr ""
+
+#: src/Elementor/EventExternalActionWidget.php:46
+msgid "External action"
+msgstr ""
+
+#: src/Elementor/EventExternalActionWidget.php:53
+msgid "Override link text"
+msgstr ""
+
+#: src/Elementor/EventExternalActionWidget.php:54
+msgid "Leave empty to use the label saved on the event."
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:24
+msgid "Event Featured Image"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:46
+msgid "Image"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:53
+msgid "Image size"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:56
+msgid "Thumbnail"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:57
+msgid "Medium"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:58
+msgid "Medium large"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:59
+msgid "Large"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:60
+msgid "Full size"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:68
+msgid "Alternative text"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:71
+msgid "Use Media Library alt text"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:72
+msgid "Decorative (empty alt)"
+msgstr ""
+
+#: src/Elementor/EventFeaturedImageWidget.php:80
+#: src/Elementor/EventTitleWidget.php:62
+msgid "Link to event"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:30
@@ -937,14 +1082,8 @@ msgstr ""
 msgid "Columns"
 msgstr ""
 
-#: src/Elementor/EventListWidget.php:111
-#: src/Frontend/EventArchiveControls.php:45
-#: src/Shortcode/CalendarControls.php:52
-#: src/Shortcode/EventListControls.php:53
-msgid "Categories"
-msgstr ""
-
 #: src/Elementor/EventListWidget.php:121
+#: src/Elementor/EventTagsWidget.php:46
 #: src/Frontend/EventArchiveControls.php:49
 #: src/Shortcode/CalendarControls.php:56
 #: src/Shortcode/EventListControls.php:57
@@ -989,6 +1128,50 @@ msgstr ""
 
 #: src/Elementor/EventListWidget.php:269
 msgid "Button background color"
+msgstr ""
+
+#: src/Elementor/EventLocationLinkWidget.php:24
+msgid "Event Location Link"
+msgstr ""
+
+#: src/Elementor/EventLocationLinkWidget.php:46
+msgid "Location link"
+msgstr ""
+
+#: src/Elementor/EventLocationLinkWidget.php:53
+msgid "Link text"
+msgstr ""
+
+#: src/Elementor/EventLocationLinkWidget.php:55
+#: src/Frontend/EventFieldRenderer.php:178
+msgid "View location"
+msgstr ""
+
+#: src/Elementor/EventStatusWidget.php:23
+msgid "Event Status"
+msgstr ""
+
+#: src/Elementor/EventTagsWidget.php:50
+#: src/Frontend/EventFieldRenderer.php:289
+msgid "Tags:"
+msgstr ""
+
+#: src/Elementor/EventTitleWidget.php:24
+msgid "Event Title"
+msgstr ""
+
+#: src/Elementor/EventTitleWidget.php:53
+msgid "HTML tag"
+msgstr ""
+
+#: src/Elementor/EventVenueWidget.php:24
+msgid "Event Venue"
+msgstr ""
+
+#: src/Elementor/EventVenueWidget.php:50
+#: src/Frontend/EventFieldRenderer.php:151
+#: src/Frontend/EventRenderer.php:92
+msgid "Location:"
 msgstr ""
 
 #: src/Frontend/BlockTemplates.php:57
@@ -1059,29 +1242,8 @@ msgstr ""
 msgid "%1$s (UTC%2$s → UTC%3$s)"
 msgstr ""
 
-#: src/Frontend/EventFieldRenderer.php:95
-msgid "Date and time:"
-msgstr ""
-
-#: src/Frontend/EventFieldRenderer.php:137
-#: src/Frontend/EventRenderer.php:92
-msgid "Location:"
-msgstr ""
-
-#: src/Frontend/EventFieldRenderer.php:161
-msgid "View location"
-msgstr ""
-
-#: src/Frontend/EventFieldRenderer.php:222
+#: src/Frontend/EventFieldRenderer.php:246
 msgid "More event information"
-msgstr ""
-
-#: src/Frontend/EventFieldRenderer.php:238
-msgid "Categories:"
-msgstr ""
-
-#: src/Frontend/EventFieldRenderer.php:252
-msgid "Tags:"
 msgstr ""
 
 #: src/Frontend/EventListRenderer.php:56

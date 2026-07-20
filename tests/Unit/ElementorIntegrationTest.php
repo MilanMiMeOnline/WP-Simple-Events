@@ -71,7 +71,7 @@ final class ElementorIntegrationTest extends TestCase {
 	}
 
 	/**
-	 * All three widgets and their category are handed to Elementor.
+	 * The three compatible widgets and complete atomic palette are registered.
 	 */
 	public function test_registrar_registers_the_required_widgets_and_category(): void {
 		$registrar = $this->registrar();
@@ -81,10 +81,27 @@ final class ElementorIntegrationTest extends TestCase {
 		$registrar->register_widgets( $widgets );
 		$registrar->register_category( $elements );
 
-		self::assertCount( 3, $widgets->registered );
+		self::assertCount( 15, $widgets->registered );
 		self::assertInstanceOf( EventListWidget::class, $widgets->registered[0] );
 		self::assertInstanceOf( EventCalendarWidget::class, $widgets->registered[1] );
 		self::assertInstanceOf( EventDetailsWidget::class, $widgets->registered[2] );
+		self::assertSame(
+			array(
+				'wpse-event-title',
+				'wpse-event-featured-image',
+				'wpse-event-date-time',
+				'wpse-event-status',
+				'wpse-event-venue',
+				'wpse-event-address',
+				'wpse-event-location-link',
+				'wpse-event-content',
+				'wpse-event-excerpt',
+				'wpse-event-external-action',
+				'wpse-event-categories',
+				'wpse-event-tags',
+			),
+			array_map( static fn ( object $widget ): string => $widget->get_name(), array_slice( $widgets->registered, 3 ) )
+		);
 		self::assertSame( 'WP Simple Events', $elements->categories[ WidgetRegistrar::CATEGORY ]['title'] );
 	}
 

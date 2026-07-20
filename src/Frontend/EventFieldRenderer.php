@@ -57,18 +57,21 @@ final class EventFieldRenderer {
 	 * @param EventPresentation $presentation Resolved event presentation.
 	 * @param string            $size         Registered WordPress image size.
 	 * @param bool              $link         Link the image to the event.
+	 * @param string            $alt_mode     Attachment alt text or decorative output.
 	 */
 	public function featured_image(
 		EventPresentation $presentation,
 		string $size = 'large',
-		bool $link = false
+		bool $link = false,
+		string $alt_mode = 'attachment'
 	): string {
 		if ( ! $this->fields_visible( $presentation ) || ! $presentation->has_featured_image ) {
 			return '';
 		}
 
-		$size  = 1 === preg_match( '/^[a-z0-9_-]{1,64}$/D', $size ) ? $size : 'large';
-		$image = wp_kses_post( get_the_post_thumbnail( $presentation->event, $size ) );
+		$size       = 1 === preg_match( '/^[a-z0-9_-]{1,64}$/D', $size ) ? $size : 'large';
+		$attributes = 'decorative' === $alt_mode ? array( 'alt' => '' ) : array();
+		$image      = wp_kses_post( get_the_post_thumbnail( $presentation->event, $size, $attributes ) );
 
 		if ( '' === $image ) {
 			return '';
@@ -85,14 +88,21 @@ final class EventFieldRenderer {
 	 * Render the localized date range and optional captured timezone.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param bool              $show_label   Whether to render the visible field label.
+	 * @param string            $label        Optional plain-text label override.
 	 */
-	public function date_time( EventPresentation $presentation ): string {
+	public function date_time(
+		EventPresentation $presentation,
+		bool $show_label = true,
+		string $label = ''
+	): string {
 		if ( ! $this->fields_visible( $presentation ) || null === $presentation->date ) {
 			return '';
 		}
 
-		$date = '<p class="wpse-event-date"><span class="wpse-event-label">'
-			. esc_html__( 'Date and time:', 'wp-simple-events' ) . '</span> '
+		$visible_label = '' !== $label ? $label : __( 'Date and time:', 'wp-simple-events' );
+		$date          = '<p class="wpse-event-date">'
+			. ( $show_label ? '<span class="wpse-event-label">' . esc_html( $visible_label ) . '</span> ' : '' )
 			. '<time datetime="' . esc_attr( $presentation->date->start_iso )
 			. '" data-wpse-end="' . esc_attr( $presentation->date->end_iso ) . '">'
 			. esc_html( $presentation->date->label ) . '</time>';
@@ -130,11 +140,19 @@ final class EventFieldRenderer {
 	 * Render the named venue.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param bool              $show_label   Whether to render the visible field label.
+	 * @param string            $label        Optional plain-text label override.
 	 */
-	public function venue( EventPresentation $presentation ): string {
+	public function venue(
+		EventPresentation $presentation,
+		bool $show_label = true,
+		string $label = ''
+	): string {
+		$visible_label = '' !== $label ? $label : __( 'Location:', 'wp-simple-events' );
+
 		return $this->fields_visible( $presentation ) && '' !== $presentation->venue
-			? '<p class="wpse-event-venue"><span class="wpse-event-label">'
-				. esc_html__( 'Location:', 'wp-simple-events' ) . '</span> '
+			? '<p class="wpse-event-venue">'
+				. ( $show_label ? '<span class="wpse-event-label">' . esc_html( $visible_label ) . '</span> ' : '' )
 				. esc_html( $presentation->venue ) . '</p>'
 			: '';
 	}
@@ -154,11 +172,14 @@ final class EventFieldRenderer {
 	 * Render the location/route action.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param string            $label        Optional plain-text action label override.
 	 */
-	public function location_action( EventPresentation $presentation ): string {
+	public function location_action( EventPresentation $presentation, string $label = '' ): string {
+		$visible_label = '' !== $label ? $label : __( 'View location', 'wp-simple-events' );
+
 		return $this->fields_visible( $presentation ) && '' !== $presentation->location_url
 			? '<p class="wpse-event-location-link"><a href="' . esc_url( $presentation->location_url ) . '">'
-				. esc_html__( 'View location', 'wp-simple-events' ) . '</a></p>'
+				. esc_html( $visible_label ) . '</a></p>'
 			: '';
 	}
 
@@ -211,15 +232,18 @@ final class EventFieldRenderer {
 	 * Render the externally configured event action.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param string            $label        Optional plain-text action label override.
 	 */
-	public function external_action( EventPresentation $presentation ): string {
+	public function external_action( EventPresentation $presentation, string $label = '' ): string {
 		if ( ! $this->fields_visible( $presentation ) || '' === $presentation->event_url ) {
 			return '';
 		}
 
-		$label = '' !== $presentation->event_url_label
-			? $presentation->event_url_label
-			: __( 'More event information', 'wp-simple-events' );
+		$label = '' !== $label
+			? $label
+			: ( '' !== $presentation->event_url_label
+				? $presentation->event_url_label
+				: __( 'More event information', 'wp-simple-events' ) );
 
 		return '<p class="wpse-event-action"><a class="wpse-event-action-link" href="'
 			. esc_url( $presentation->event_url ) . '">' . esc_html( $label ) . '</a></p>';
@@ -229,13 +253,20 @@ final class EventFieldRenderer {
 	 * Render linked event categories.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param bool              $show_label   Whether to render the visible field label.
+	 * @param string            $label        Optional plain-text label override.
 	 */
-	public function categories( EventPresentation $presentation ): string {
+	public function categories(
+		EventPresentation $presentation,
+		bool $show_label = true,
+		string $label = ''
+	): string {
 		return $this->terms(
 			$presentation,
 			$presentation->categories,
 			'wpse-event-categories',
-			__( 'Categories:', 'wp-simple-events' )
+			'' !== $label ? $label : __( 'Categories:', 'wp-simple-events' ),
+			$show_label
 		);
 	}
 
@@ -243,13 +274,20 @@ final class EventFieldRenderer {
 	 * Render linked event tags.
 	 *
 	 * @param EventPresentation $presentation Resolved event presentation.
+	 * @param bool              $show_label   Whether to render the visible field label.
+	 * @param string            $label        Optional plain-text label override.
 	 */
-	public function tags( EventPresentation $presentation ): string {
+	public function tags(
+		EventPresentation $presentation,
+		bool $show_label = true,
+		string $label = ''
+	): string {
 		return $this->terms(
 			$presentation,
 			$presentation->tags,
 			'wpse-event-tags',
-			__( 'Tags:', 'wp-simple-events' )
+			'' !== $label ? $label : __( 'Tags:', 'wp-simple-events' ),
+			$show_label
 		);
 	}
 
@@ -260,12 +298,14 @@ final class EventFieldRenderer {
 	 * @param EventTermPresentation[] $terms        Public term destinations.
 	 * @param string                  $css_class    Stable component class.
 	 * @param string                  $label        Translated visible label.
+	 * @param bool                    $show_label   Whether to render the visible label.
 	 */
 	private function terms(
 		EventPresentation $presentation,
 		array $terms,
 		string $css_class,
-		string $label
+		string $label,
+		bool $show_label
 	): string {
 		if ( ! $this->fields_visible( $presentation ) || array() === $terms ) {
 			return '';
@@ -277,8 +317,8 @@ final class EventFieldRenderer {
 			$terms
 		);
 
-		return '<p class="' . esc_attr( $css_class ) . '"><span class="wpse-event-label">'
-			. esc_html( $label ) . '</span> '
+		return '<p class="' . esc_attr( $css_class ) . '">'
+			. ( $show_label ? '<span class="wpse-event-label">' . esc_html( $label ) . '</span> ' : '' )
 			. implode( '<span aria-hidden="true">, </span>', $links ) . '</p>';
 	}
 
