@@ -1,6 +1,6 @@
 # Backlog execution plan
 
-**Status:** WP0 through WP4 completed 2026-07-19; WP5 is next\
+**Status:** WP0 through WP7 completed and locally release-qualified 2026-07-20\
 **Inventory closed:** 2026-07-18\
 **Source backlog:** `docs/BACKLOG-TESTING.md`
 
@@ -299,6 +299,8 @@ Run the new browser suite for calendar and component changes. For a release cand
 The browser suite is a required gate for calendar and component work rather than an informal manual step.
 
 No installable ZIP is handed off until the package, not only the working tree, passes the complete release qualification.
+
+**Completion note (2026-07-20):** The final 0.1.1 staging package passed strict Composer validation, coding standards, full PHPStan, 262 PHPUnit tests with 1,003 assertions, production dependency audits, frontend builds and lint, translation freshness, release allowlist/autoloader/PHP/checksum verification and byte-for-byte reproducibility. The exact package passed the complete smoke journey on WordPress 6.9 and 7.0.1 with PHP 8.3. Fifteen packaged Playwright journeys cover the calendar and Gutenberg blocks, while the real-host Elementor inspector passes on 3.35.9 and 4.1.5. All eight testing-backlog findings are locally qualified. Public publication remains conditional on the strict official Plugin Check job for the release commit.
 
 ## 12. Recommended execution cadence
 

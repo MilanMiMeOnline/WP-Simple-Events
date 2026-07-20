@@ -1,11 +1,11 @@
 # Testing backlog
 
-This backlog records findings from manual acceptance testing. The tester closed the inventory on **2026-07-18**. Items remain **Triaged** until their work package starts; implementation follows `docs/BACKLOG-EXECUTION-PLAN.md` after that plan is approved.
+This backlog records findings from manual acceptance testing. The tester closed the inventory on **2026-07-18**. All eight findings completed local release qualification on **2026-07-20**; implementation and evidence follow `docs/BACKLOG-EXECUTION-PLAN.md` and the WP0–WP7 QA reports.
 
 ## WPSE-BL-001 — Calendar buttons lose readable state styling
 
 - **Type:** Bug — visual styling, accessibility and Elementor integration
-- **State:** Resolved in development on 2026-07-18; pending release qualification
+- **State:** Resolved and locally release-qualified on 2026-07-20
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Native calendar shortcode, Elementor Event Calendar widget, keyboard and pointer interaction
@@ -60,7 +60,7 @@ Decide during backlog planning whether one accent/on-accent pair is sufficient f
 ## WPSE-BL-002 — Empty calendar filter action and unclear opt-in behaviour
 
 - **Type:** Bug and usability improvement — calendar filtering and Elementor configuration
-- **State:** Resolved in WP1.3 on 2026-07-18
+- **State:** Resolved in WP1.3 and locally release-qualified on 2026-07-20
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Calendar shortcode and Elementor Event Calendar widget
@@ -109,7 +109,7 @@ The existing enabled default was retained for backward compatibility. The render
 ## WPSE-BL-003 — Same-day timed event incorrectly spans two calendar days
 
 - **Type:** Bug — date/time correctness and time-zone handling
-- **State:** Resolved in WP2.1 on 2026-07-19
+- **State:** Resolved in WP2.1 and locally release-qualified on 2026-07-20
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Calendar month/list views, calendar event feed and consistency with the single-event page
@@ -162,7 +162,7 @@ ADR-024 makes captured event wall time authoritative for calendar placement. The
 ## WPSE-BL-004 — Make 12/24-hour time presentation consistent and configurable
 
 - **Type:** Improvement — formatting, localisation and configuration
-- **State:** Resolved in WP2.2 on 2026-07-19
+- **State:** Resolved in WP2.2 and locally release-qualified on 2026-07-20
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Single-event details, event lists/cards, calendar month/list views, Elementor widgets and editor guidance
@@ -213,7 +213,7 @@ The editor now explains that its native time control can look different per brow
 ## WPSE-BL-005 — Editable external-link label per event
 
 - **Type:** Improvement — editorial flexibility and link clarity
-- **State:** Resolved in WP3.1 on 2026-07-19
+- **State:** Resolved in WP3.1 and locally release-qualified on 2026-07-20
 - **Severity:** Minor
 - **Suggested priority:** P2
 - **Affected surfaces:** Event editor, single-event action link, metadata/REST contract and Elementor single-event rendering
@@ -259,7 +259,7 @@ Keep this item scoped to one customizable label for the existing single external
 ## WPSE-BL-006 — Calendar is malformed on initial page load until its view changes
 
 - **Type:** Bug — frontend initialization, responsive layout and Elementor integration
-- **State:** Resolved in development on 2026-07-18; pending release qualification
+- **State:** Resolved and locally release-qualified on 2026-07-20
 - **Severity:** Major
 - **Suggested priority:** P1
 - **Affected surfaces:** Calendar shortcode and Elementor Event Calendar widget on initial frontend load
@@ -310,7 +310,7 @@ The smallest likely fix is to avoid measuring while the canvas is hidden and to 
 ## WPSE-BL-007 — Make the active event time zone clear in settings and public output
 
 - **Type:** Improvement — administration clarity, internationalisation and date/time presentation
-- **State:** Resolved in WP3.2 on 2026-07-19
+- **State:** Resolved in WP3.2 and locally release-qualified on 2026-07-20
 - **Severity:** Moderate
 - **Suggested priority:** P2
 - **Affected surfaces:** Event settings, event editor guidance, single-event details and Elementor Event Details widget
@@ -362,7 +362,7 @@ Decide whether public time-zone visibility is a global display setting, an Eleme
 ## WPSE-BL-008 — Atomic event-field components for Elementor and Gutenberg templates
 
 - **Type:** Feature epic — template building, Elementor integration and Gutenberg blocks
-- **State:** Completed 2026-07-20 through WP4 shared presentation, WP5 Elementor widgets and WP6 Gutenberg blocks
+- **State:** Completed through WP4–WP6 and locally release-qualified on 2026-07-20
 - **Severity:** Major product gap
 - **Suggested priority:** P2
 - **Affected surfaces:** Elementor widget library, Gutenberg editor/Site Editor, single-event templates and shared frontend render services
