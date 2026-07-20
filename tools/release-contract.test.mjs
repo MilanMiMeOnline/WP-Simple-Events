@@ -37,6 +37,8 @@ test( 'accepts a minimal, rooted production archive', () => {
 			'wp-simple-events/wp-simple-events.php',
 			'wp-simple-events/LICENSE',
 			'wp-simple-events/readme.txt',
+			'wp-simple-events/composer.json',
+			'wp-simple-events/THIRD-PARTY-NOTICES.txt',
 			'wp-simple-events/vendor/autoload.php',
 			'wp-simple-events/languages/wp-simple-events.pot',
 			'wp-simple-events/blocks/event-title/block.json',
@@ -52,7 +54,7 @@ test( 'accepts a minimal, rooted production archive', () => {
 test( 'rejects development files, wrong roots and path traversal', () => {
 	for ( const invalidEntry of [
 		'wp-simple-events/tests/Unit/Test.php',
-		'wp-simple-events/composer.json',
+		'wp-simple-events/composer.lock',
 		'wp-simple-events/assets/src/js/calendar.js',
 		'wp-simple-events/languages/payload.php',
 		'wp-simple-events/src/.hidden.php',
@@ -68,6 +70,8 @@ test( 'rejects development files, wrong roots and path traversal', () => {
 					'wp-simple-events/wp-simple-events.php',
 					'wp-simple-events/LICENSE',
 					'wp-simple-events/readme.txt',
+					'wp-simple-events/composer.json',
+					'wp-simple-events/THIRD-PARTY-NOTICES.txt',
 					'wp-simple-events/vendor/autoload.php',
 					'wp-simple-events/languages/wp-simple-events.pot',
 					'wp-simple-events/blocks/event-title/block.json',
@@ -91,6 +95,8 @@ test( 'rejects an archive with a required production file missing', () => {
 				'wp-simple-events/wp-simple-events.php',
 				'wp-simple-events/LICENSE',
 				'wp-simple-events/readme.txt',
+				'wp-simple-events/composer.json',
+				'wp-simple-events/THIRD-PARTY-NOTICES.txt',
 				'wp-simple-events/vendor/autoload.php',
 				'wp-simple-events/blocks/event-title/block.json',
 				'wp-simple-events/src/Plugin.php',
@@ -109,6 +115,8 @@ test( 'rejects an archive without its complete project license', () => {
 			assertReleaseEntries( [
 				'wp-simple-events/wp-simple-events.php',
 				'wp-simple-events/readme.txt',
+				'wp-simple-events/composer.json',
+				'wp-simple-events/THIRD-PARTY-NOTICES.txt',
 				'wp-simple-events/vendor/autoload.php',
 				'wp-simple-events/languages/wp-simple-events.pot',
 				'wp-simple-events/blocks/event-title/block.json',
@@ -119,6 +127,27 @@ test( 'rejects an archive without its complete project license', () => {
 				'wp-simple-events/assets/dist/js/event-fields-editor.min.js',
 			] ),
 		/Missing required release path.*LICENSE/,
+	);
+} );
+
+test( 'rejects an archive without its third-party licence notices', () => {
+	assert.throws(
+		() =>
+			assertReleaseEntries( [
+				'wp-simple-events/wp-simple-events.php',
+				'wp-simple-events/LICENSE',
+				'wp-simple-events/readme.txt',
+				'wp-simple-events/composer.json',
+				'wp-simple-events/vendor/autoload.php',
+				'wp-simple-events/languages/wp-simple-events.pot',
+				'wp-simple-events/blocks/event-title/block.json',
+				'wp-simple-events/src/Plugin.php',
+				'wp-simple-events/templates/single-event.php',
+				'wp-simple-events/assets/src/css/frontend.css',
+				'wp-simple-events/assets/dist/js/calendar.min.js',
+				'wp-simple-events/assets/dist/js/event-fields-editor.min.js',
+			] ),
+		/Missing required release path.*THIRD-PARTY-NOTICES\.txt/,
 	);
 } );
 

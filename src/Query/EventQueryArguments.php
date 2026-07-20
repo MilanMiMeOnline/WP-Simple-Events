@@ -35,6 +35,7 @@ final class EventQueryArguments {
 			'no_found_rows'          => false,
 			'update_post_meta_cache' => true,
 			'update_post_term_cache' => true,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Public event queries are bounded and intentionally ordered by registered date metadata.
 			'meta_key'               => EventMeta::START_UTC,
 			'orderby'                => 'meta_value_num',
 			'order'                  => EventPeriod::PAST === $criteria->period ? 'DESC' : 'ASC',
@@ -43,12 +44,14 @@ final class EventQueryArguments {
 		$meta_query = $this->meta_query( $criteria );
 
 		if ( array() !== $meta_query ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded public queries require the selected event date period.
 			$arguments['meta_query'] = $meta_query;
 		}
 
 		$tax_query = $this->tax_query( $criteria->category_slugs, $criteria->tag_slugs );
 
 		if ( array() !== $tax_query ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Optional category and tag filters use the registered event taxonomies.
 			$arguments['tax_query'] = $tax_query;
 		}
 
@@ -72,9 +75,11 @@ final class EventQueryArguments {
 			'no_found_rows'          => false,
 			'update_post_meta_cache' => true,
 			'update_post_term_cache' => true,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Calendar feeds are bounded and intentionally ordered by registered local date metadata.
 			'meta_key'               => EventMeta::START_LOCAL,
 			'orderby'                => 'meta_value',
 			'order'                  => 'ASC',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- The bounded calendar feed must select events overlapping its requested window.
 			'meta_query'             => array(
 				'relation' => 'AND',
 				array(
@@ -94,6 +99,7 @@ final class EventQueryArguments {
 		$tax_query = $this->tax_query( $criteria->category_slugs, $criteria->tag_slugs );
 
 		if ( array() !== $tax_query ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Optional calendar filters use the registered event taxonomies.
 			$arguments['tax_query'] = $tax_query;
 		}
 

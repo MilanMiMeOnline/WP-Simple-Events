@@ -497,14 +497,26 @@ final class EventSettingsPage {
 	 * @param int    $maximum  Inclusive maximum.
 	 */
 	private function query_counter( string $key, int $fallback, int $maximum ): int {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only continuation value; mutation requires a separate verified POST nonce.
-		$value = $_GET[ $key ] ?? null;
-
-		if ( ! is_string( $value ) ) {
-			return $fallback;
-		}
-
-		$value = sanitize_text_field( wp_unslash( $value ) );
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display-only continuation values; mutation requires a separate verified POST nonce.
+		$value = match ( $key ) {
+			'wpse_page' => isset( $_GET['wpse_page'] ) && is_string( $_GET['wpse_page'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_page'] ) )
+				: '',
+			'wpse_processed' => isset( $_GET['wpse_processed'] ) && is_string( $_GET['wpse_processed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_processed'] ) )
+				: '',
+			'wpse_changed' => isset( $_GET['wpse_changed'] ) && is_string( $_GET['wpse_changed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_changed'] ) )
+				: '',
+			'wpse_skipped' => isset( $_GET['wpse_skipped'] ) && is_string( $_GET['wpse_skipped'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_skipped'] ) )
+				: '',
+			'wpse_failed' => isset( $_GET['wpse_failed'] ) && is_string( $_GET['wpse_failed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_failed'] ) )
+				: '',
+			default => '',
+		};
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return '' !== $value && ctype_digit( $value )
 			? max( $fallback, min( $maximum, (int) $value ) )

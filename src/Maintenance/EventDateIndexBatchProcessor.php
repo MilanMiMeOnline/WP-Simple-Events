@@ -42,7 +42,7 @@ final readonly class EventDateIndexBatchProcessor {
 				'orderby'                => 'ID',
 				'order'                  => 'ASC',
 				'no_found_rows'          => true,
-				'suppress_filters'       => true,
+				'suppress_filters'       => false,
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 			)

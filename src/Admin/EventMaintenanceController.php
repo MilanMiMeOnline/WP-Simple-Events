@@ -99,14 +99,11 @@ final readonly class EventMaintenanceController {
 	 * @param int    $maximum  Inclusive maximum.
 	 */
 	private function request_integer( string $key, int $fallback, int $maximum ): int {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- The caller verifies the action nonce before parsing continuation state.
-		$value = $_POST[ $key ] ?? null;
-
-		if ( ! is_string( $value ) ) {
+		if ( ! isset( $_POST[ $key ] ) || ! is_string( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The caller verifies the action nonce before parsing continuation state.
 			return $fallback;
 		}
 
-		$value = sanitize_text_field( wp_unslash( $value ) );
+		$value = sanitize_text_field( wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- The caller verifies the action nonce before parsing continuation state.
 
 		if ( '' === $value || ! ctype_digit( $value ) ) {
 			return $fallback;

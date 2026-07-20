@@ -71,19 +71,25 @@ final class SiteDataCleaner {
 					'orderby'                => 'ID',
 					'order'                  => 'ASC',
 					'no_found_rows'          => true,
-					'suppress_filters'       => true,
+					'suppress_filters'       => false,
 					'update_post_meta_cache' => false,
 					'update_post_term_cache' => false,
 				)
 			);
 
 			if ( array() === $post_ids ) {
-				return true;
+				return ! $this->has_events_remaining();
 			}
 
 			$deleted_in_batch = 0;
 
 			foreach ( $post_ids as $post_id ) {
+				$post = get_post( $post_id );
+
+				if ( ! $post instanceof \WP_Post || EventPostType::POST_TYPE !== $post->post_type ) {
+					continue;
+				}
+
 				$deleted = wp_delete_post( $post_id, true );
 
 				if ( false !== $deleted && null !== $deleted ) {
@@ -95,6 +101,19 @@ final class SiteDataCleaner {
 				return false;
 			}
 		}
+	}
+
+	/**
+	 * Confirm through WordPress' unfiltered status counts that no events remain.
+	 */
+	private function has_events_remaining(): bool {
+		foreach ( (array) wp_count_posts( EventPostType::POST_TYPE ) as $count ) {
+			if ( is_numeric( $count ) && (int) $count > 0 ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -56,7 +56,7 @@ msgstr ""
 msgid "Event duplication incomplete"
 msgstr ""
 
-#: src/Admin/EventDuplicateController.php:124
+#: src/Admin/EventDuplicateController.php:128
 msgid "Event duplicated as a draft. Review the copied dates before publishing; the external event link and its label were not copied."
 msgstr ""
 
@@ -426,12 +426,12 @@ msgstr ""
 msgid "Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:522
+#: src/Admin/EventSettingsPage.php:534
 msgid "Event capabilities were restored for administrators and editors."
 msgstr ""
 
 #. translators: 1: processed events, 2: changed indexes, 3: invalid skipped events, 4: failed writes.
-#: src/Admin/EventSettingsPage.php:533
+#: src/Admin/EventSettingsPage.php:545
 #, php-format
 msgid "Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures."
 msgstr ""

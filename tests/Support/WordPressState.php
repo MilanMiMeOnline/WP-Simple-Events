@@ -328,6 +328,24 @@ final class WordPressState {
 	}
 
 	/**
+	 * Count configured posts by status for one post type.
+	 *
+	 * @param string $post_type Requested post type.
+	 * @return array<string, int>
+	 */
+	public static function post_status_counts( string $post_type ): array {
+		$counts = array();
+
+		foreach ( self::$posts as $post ) {
+			if ( $post_type === $post->post_type ) {
+				$counts[ $post->post_status ] = ( $counts[ $post->post_status ] ?? 0 ) + 1;
+			}
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Store taxonomy term IDs for a post.
 	 *
 	 * @param int    $post_id  Post ID.

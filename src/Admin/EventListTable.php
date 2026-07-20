@@ -264,9 +264,10 @@ final class EventListTable {
 	 * @param string $key Query-string key.
 	 */
 	private function request_value( string $key ): string {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display/query controls do not change state and are allowlisted by their consumers.
-		$value = $_GET[ $key ] ?? '';
+		if ( ! isset( $_GET[ $key ] ) || ! is_string( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display/query controls do not change state and are allowlisted by their consumers.
+			return '';
+		}
 
-		return is_string( $value ) ? sanitize_text_field( wp_unslash( $value ) ) : '';
+		return sanitize_text_field( wp_unslash( $_GET[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display/query controls do not change state and are allowlisted by their consumers.
 	}
 }

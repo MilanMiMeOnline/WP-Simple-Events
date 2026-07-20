@@ -1,4 +1,5 @@
-# Third-party notices
+Third-party notices
+===================
 
 WP Simple Events bundles compiled code from these build-time dependencies in
 `assets/dist/js/calendar.min.js`:
@@ -8,7 +9,8 @@ WP Simple Events bundles compiled code from these build-time dependencies in
 - `@fullcalendar/list` 6.1.21 — MIT licence
 - `preact` (transitive dependency of FullCalendar) — MIT licence
 
-## FullCalendar MIT licence
+FullCalendar MIT licence
+------------------------
 
 Copyright (c) 2021 Adam Shaw
 
@@ -30,7 +32,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Preact MIT licence
+Preact MIT licence
+------------------
 
 Copyright (c) 2015-present Jason Miller
 

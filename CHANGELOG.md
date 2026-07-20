@@ -10,11 +10,15 @@ All notable changes to WP Simple Events are documented here.
 
 - Open the public location and external event actions in isolated new browser tabs.
 - Include the complete GPL-2.0-or-later licence in source and production archives.
+- Ship the Composer production manifest and plain-text third-party notices with the optimized release autoloader.
 
 ### Fixed
 
 - Declare native Elementor support for Events so compatible installations expose **Edit with Elementor** without mutating Elementor settings.
 - Keep strict official Plugin Check compatible with the required-date publication invariant, and stabilize clean-CI PHPStan and Gutenberg browser execution.
+- Sanitize editor, maintenance and duplication request values directly at their input boundaries.
+- Keep destructive cleanup fail-safe when third-party query filters hide event posts.
+- Document the bounded WordPress metadata queries required by event ordering, periods and taxonomy filters.
 
 ## [0.2.0] - 2026-07-20
 

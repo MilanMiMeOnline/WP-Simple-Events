@@ -230,7 +230,7 @@ final class EventSaveController {
 			return null;
 		}
 
-		$raw_payload = wp_unslash( $_POST['wpse_event'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce was verified above.
+		$raw_payload = map_deep( wp_unslash( $_POST['wpse_event'] ), 'sanitize_textarea_field' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce was verified above; field-specific validation follows this safe scalar boundary.
 		$payload     = array();
 
 		foreach ( $raw_payload as $key => $value ) {
@@ -266,7 +266,9 @@ final class EventSaveController {
 			return false;
 		}
 
-		$arguments = $_SERVER['argv'] ?? array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- CLI arguments are matched against an exact command allowlist and never stored or rendered.
+		$arguments = isset( $_SERVER['argv'] )
+			? map_deep( wp_unslash( $_SERVER['argv'] ), 'sanitize_text_field' )
+			: array();
 
 		if ( ! is_array( $arguments ) ) {
 			return false;

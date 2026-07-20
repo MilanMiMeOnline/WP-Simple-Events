@@ -29,6 +29,7 @@ final class AdminEventListQuery {
 			'upcoming' => $this->period_arguments( '>=', 'ASC', $now_utc ),
 			'past' => $this->period_arguments( '<', 'DESC', $now_utc ),
 			'cancelled', 'postponed' => array(
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- The bounded Events admin list must filter its registered status metadata.
 				'meta_query' => array(
 					array(
 						'key'     => EventMeta::STATUS,
@@ -47,6 +48,7 @@ final class AdminEventListQuery {
 		};
 
 		if ( '' !== $sort_meta_key ) {
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Sorting the paginated Events admin list by its derived date metadata is intentional.
 			$arguments['meta_key'] = $sort_meta_key;
 			$arguments['orderby']  = 'meta_value_num';
 			$arguments['order']    = 'DESC' === strtoupper( $order ) ? 'DESC' : 'ASC';
@@ -65,9 +67,11 @@ final class AdminEventListQuery {
 	 */
 	private function period_arguments( string $comparison, string $order, int $now_utc ): array {
 		return array(
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- The paginated Events admin list is intentionally ordered by its indexed date metadata.
 			'meta_key'   => EventMeta::START_UTC,
 			'orderby'    => 'meta_value_num',
 			'order'      => $order,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- The Events admin view must select its requested date period from registered metadata.
 			'meta_query' => array(
 				array(
 					'key'     => EventMeta::END_UTC,

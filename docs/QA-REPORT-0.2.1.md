@@ -4,13 +4,13 @@
 
 **Candidate:** WP Simple Events 0.2.1
 
-**Scope:** external event-link behaviour and Elementor editing support
+**Scope:** external event-link behaviour, Elementor editing support and public-release qualification
 
-**Archive SHA-256:** `e9a7077c8bd7b6bd16aec21b6cc6d093917b8cb97a996d457f0d8f75b7a25532`
+**Archive SHA-256:** `d07fad4b2a2725224d0e902347cac30c9c04d38d2b5ed6d20bad8ad44d91bdc2`
 
 ## Result
 
-Version 0.2.1 resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without WP Simple Events changing the user's Elementor option.
+Version 0.2.1 resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without WP Simple Events changing the user's Elementor option. The production archive also satisfies the code-level official Plugin Review standard after request-boundary, cleanup and packaging hardening.
 
 ## Functional evidence
 
@@ -24,7 +24,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 ## Automated evidence
 
 - Focused presentation/content/Elementor/Gutenberg suite: passed — 46 tests, 329 assertions.
-- Complete PHPUnit suite: passed — 263 tests, 1,006 assertions.
+- Complete PHPUnit suite: passed — 264 tests, 1,010 assertions.
 - Composer validation, coding standards and full PHPStan level 8: passed.
 - JavaScript/CSS build and lint plus Node tooling tests: passed.
 - Composer and npm dependency audits: passed with no known vulnerabilities.
@@ -33,6 +33,7 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Real Elementor compatibility: passed on 3.35.9 and 4.1.5 with WordPress 7.0.1 / PHP 8.3.
 - Packaged Playwright suite: passed — 15/15 journeys, including exact target/rel assertions for both external actions.
 - Release verification and two-build reproducibility: passed.
+- Official Plugin Review PHPCS ruleset against the exact staged package: passed with no findings.
 - Clean-checkout CI regressions are covered for optional PHPStan dependency paths, the command-scoped Plugin Check fixture exception and Gutenberg login navigation.
 
 ## Senior developer review
@@ -45,6 +46,9 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Source and production archives include the complete GPL-2.0-or-later licence; the release contract rejects its omission.
 - The official Plugin Check compatibility path recognizes only the loaded checker inside the leading WP-CLI `plugin check` command; other CLI commands retain the event publication invariant.
 - Browser journeys retain a 30-second per-test timeout while allowing a bounded six-minute total for cold Playground startup plus all 15 tests.
+- The production archive retains `composer.json` so WordPress' checker can identify the shipped optimized Composer autoloader; development-only `composer.lock` remains excluded.
+- Third-party licence notices ship as a plain-text runtime document, avoiding an unexpected root Markdown file without removing attribution.
+- Required event meta/taxonomy queries remain bounded and paginated; ADR-031 records the narrow Plugin Check acknowledgements instead of disabling a performance rule.
 
 ## Senior QA and security review
 
@@ -53,10 +57,12 @@ Version 0.2.1 resolves both reported issues. Public location and external event 
 - Malformed or absent URLs continue to render no action or empty wrapper.
 - Elementor support does not grant WordPress capabilities. Existing event edit permissions remain authoritative.
 - Internal navigation was deliberately not changed to new-tab behaviour.
+- Editor, maintenance and duplication request values are unslashed and sanitized at their explicit input boundaries; mutation paths retain capability and nonce checks.
+- Uninstall cleanup no longer bypasses third-party filters. It validates every returned post and retains plugin options whenever a post-count check proves events remain, preventing false completion and unintended data loss.
 
 ## Residual release conditions
 
-1. Public publication remains conditional on the corrected official strict WordPress Plugin Check job passing against the 0.2.1 release commit. The first public CI run exposed the checker-fixture incompatibility now covered by ADR-030 and an isolated regression test.
+1. Public publication remains conditional on the official strict WordPress Plugin Check job passing against the final 0.2.1 identity. Its remaining trademark validation requires a user-approved display name and WordPress.org slug before the release tag is created.
 2. The user should visually confirm the Elementor edit entry point on the target installation because toolbar placement differs between Elementor/WordPress editor versions; both supported host APIs recognize Events as editable in automated testing.
 
 ## Candidate

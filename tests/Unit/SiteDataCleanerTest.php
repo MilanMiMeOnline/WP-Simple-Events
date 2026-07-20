@@ -113,4 +113,28 @@ final class SiteDataCleanerTest extends TestCase {
 		self::assertTrue( WordPressState::has_option( Installer::VERSION_OPTION ) );
 		self::assertTrue( WordPressState::has_option( UninstallSettings::OPTION ) );
 	}
+
+	/**
+	 * Filtered or otherwise unqueryable events keep settings as interrupted-cleanup evidence.
+	 */
+	public function test_retains_options_when_unfiltered_counts_still_find_an_event(): void {
+		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
+		WordPressState::set_option( UninstallSettings::OPTION, true );
+		WordPressState::add_post(
+			new WP_Post(
+				array(
+					'ID'          => 31,
+					'post_type'   => EventPostType::POST_TYPE,
+					'post_status' => 'custom-hidden',
+				)
+			)
+		);
+
+		$result = ( new SiteDataCleaner() )->clean();
+
+		self::assertFalse( $result );
+		self::assertTrue( WordPressState::has_option( Installer::VERSION_OPTION ) );
+		self::assertTrue( WordPressState::has_option( UninstallSettings::OPTION ) );
+		self::assertInstanceOf( WP_Post::class, WordPressState::post( 31 ) );
+	}
 }

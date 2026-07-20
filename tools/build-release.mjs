@@ -31,7 +31,7 @@ const releaseEntries = [
 	'LICENSE',
 	'README.md',
 	'SECURITY.md',
-	'THIRD-PARTY-NOTICES.md',
+	'THIRD-PARTY-NOTICES.txt',
 	'readme.txt',
 	'uninstall.php',
 	'wp-simple-events.php',
@@ -180,11 +180,7 @@ await run(
 	},
 );
 
-await Promise.all(
-	[ 'composer.json', 'composer.lock' ].map( ( file ) =>
-		rm( join( pluginDirectory, file ), { force: true } ),
-	),
-);
+await rm( join( pluginDirectory, 'composer.lock' ), { force: true } );
 
 const stagedFiles = ( await listFiles( pluginDirectory ) ).sort();
 const archiveEntries = stagedFiles.map( ( file ) =>

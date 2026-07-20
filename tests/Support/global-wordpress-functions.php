@@ -384,6 +384,17 @@ if ( ! function_exists( 'get_post_stati' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_count_posts' ) ) {
+	/**
+	 * Return deterministic unfiltered post counts by status.
+	 *
+	 * @param string $post_type Requested post type.
+	 */
+	function wp_count_posts( string $post_type = 'post' ): object { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return (object) WordPressState::post_status_counts( $post_type );
+	}
+}
+
 if ( ! function_exists( 'wp_insert_post' ) ) {
 	/**
 	 * Insert one deterministic post.
@@ -1091,6 +1102,26 @@ if ( ! function_exists( 'wp_unslash' ) ) {
 		}
 
 		return is_string( $value ) ? stripslashes( $value ) : $value;
+	}
+}
+
+if ( ! function_exists( 'map_deep' ) ) {
+	/**
+	 * Recursively apply a scalar callback to deterministic request data.
+	 *
+	 * @param mixed    $value    Value to map.
+	 * @param callable $callback Scalar callback.
+	 * @return mixed
+	 */
+	function map_deep( mixed $value, callable $callback ): mixed { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		if ( is_array( $value ) ) {
+			return array_map(
+				static fn ( mixed $item ): mixed => map_deep( $item, $callback ),
+				$value
+			);
+		}
+
+		return is_scalar( $value ) ? $callback( (string) $value ) : $value;
 	}
 }
 

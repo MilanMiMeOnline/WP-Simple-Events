@@ -107,12 +107,16 @@ final class EventDuplicateController {
 	 * Render success guidance only on the copied event editor.
 	 */
 	public function render_notice(): void {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only success marker after the protected duplication redirect.
-		$notice = $_GET[ self::NOTICE_QUERY ] ?? '';
-
-		if ( ! is_string( $notice ) || '1' !== sanitize_text_field( wp_unslash( $notice ) ) ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only success marker after the protected duplication redirect.
+		if (
+			! isset( $_GET[ self::NOTICE_QUERY ] )
+			|| ! is_string( $_GET[ self::NOTICE_QUERY ] )
+			|| '1' !== sanitize_text_field( wp_unslash( $_GET[ self::NOTICE_QUERY ] ) )
+		) {
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 			return;
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$screen = get_current_screen();
 
@@ -143,10 +147,13 @@ final class EventDuplicateController {
 	 * Parse the source ID without accepting arrays or mixed input.
 	 */
 	private function request_post_id(): int {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The parsed ID selects the nonce action verified before mutation.
-		$value = $_GET['post'] ?? '';
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- The parsed ID selects the nonce action verified before mutation.
+		$post_id = isset( $_GET['post'] ) && is_string( $_GET['post'] )
+			? absint( wp_unslash( $_GET['post'] ) )
+			: 0;
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-		return is_string( $value ) ? absint( wp_unslash( $value ) ) : 0;
+		return $post_id;
 	}
 
 	/**
