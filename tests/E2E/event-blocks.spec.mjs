@@ -21,13 +21,28 @@ const atomicBlockNames = [
  * @param {import('@playwright/test').Page} page Browser page.
  */
 const login = async ( page ) => {
-	await page.goto( '/wp-login.php' );
-	await page.locator( '#user_login' ).fill( 'admin' );
-	await page.locator( '#user_pass' ).fill( 'password' );
-	await Promise.all( [
-		page.waitForURL( /\/wp-admin\//, { waitUntil: 'domcontentloaded' } ),
-		page.locator( '#wp-submit' ).click(),
-	] );
+	await page.goto( '/wp-admin/', { waitUntil: 'domcontentloaded' } );
+	const loginRedirect = new URL( page.url() );
+	const redirectTarget = loginRedirect.searchParams.get( 'redirect_to' );
+	const adminUrl = redirectTarget
+		? new URL( redirectTarget ).href
+		: new URL( '/wp-admin/', page.url() ).href;
+	const loginUrl = new URL( '/wp-login.php', adminUrl ).href;
+
+	await page.goto( loginUrl, { waitUntil: 'domcontentloaded' } );
+	const response = await page.context().request.post( loginUrl, {
+		form: {
+			log: 'admin',
+			pwd: 'password',
+			redirect_to: adminUrl,
+			testcookie: '1',
+		},
+	} );
+
+	expect( response.ok() ).toBe( true );
+	expect( response.url() ).toMatch( /\/wp-admin\// );
+	await page.goto( adminUrl, { waitUntil: 'domcontentloaded' } );
+	await expect( page.locator( '#wpadminbar' ) ).toBeVisible();
 };
 
 test( 'renders the complete explicit-source block palette without editor assets', async ( {
