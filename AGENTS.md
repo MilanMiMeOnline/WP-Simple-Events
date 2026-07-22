@@ -4,7 +4,7 @@ These instructions apply to the entire repository. They are mandatory for human 
 
 ## Product contract
 
-- `ANALYSE-EN-BOUWSPECIFICATIE.md` is the functional and technical source of truth.
+- `docs/PRODUCT-SPECIFICATION.md` is the functional and technical source of truth.
 - Plugin name: Simple Events by MiMe. Author: MiMe. Text domain and slug: `simple-events-by-mime`.
 - Minimum versions: WordPress 6.9 and PHP 8.3.
 - WooCommerce and Elementor are optional integrations, never core dependencies.

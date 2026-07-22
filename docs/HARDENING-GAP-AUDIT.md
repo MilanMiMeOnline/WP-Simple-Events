@@ -1,41 +1,46 @@
 # Hardening gap audit
 
-This audit compares the current implementation with `ANALYSE-EN-BOUWSPECIFICATIE.md`. It is a prioritization aid; the specification remains the product contract.
+This document tracks remaining product and release hardening against `PRODUCT-SPECIFICATION.md`. The specification remains the product contract. The detailed security and privacy review is in `SECURITY-PRIVACY-AUDIT.md`.
 
-## Completed hardening increments
+## Completed hardening
 
-- Native event content, validation, permissions and UTC indexing.
-- Bounded list, archive and calendar queries with public visibility rules.
-- Classic and block-theme fallbacks plus shortcodes.
-- Local FullCalendar bundle and accessible no-JavaScript fallback.
-- Optional Elementor Free integration over native render contracts.
-- Singular Event JSON-LD with safe encoding, public visibility checks, correct all-day/timed values, an administrator setting and a stable per-event filter.
-- Event admin columns for dates, all-day state, location, categories, event status and publication status, with timing/status/category filters and sortable UTC date indexes.
-- A capability- and nonce-protected duplicate action that creates a draft, copies only agreed content/location/taxonomy data, omits the external event URL and requires explicit date review.
-- A deliberately small settings page with working structured-data and uninstall-retention controls.
-- Default-safe uninstall behaviour with explicit per-site opt-in, bounded WordPress API cleanup, shared-media retention and multisite batching.
-- Administrator-only event-capability repair and validation-backed UTC-index rebuilding in explicit batches of 50, with invalid/failure accounting.
-- Bounded archive slug, page-size and default-period controls, persistent WordPress-page conflict diagnosis and change-driven one-shot rewrite regeneration.
-- A deterministic production-allowlist build with a minimal Composer autoloader, strict archive verification, SHA-256 binding and byte-for-byte reproducibility testing.
-- A generated `/languages/simple-events-by-mime.pot` catalogue with deterministic CI freshness verification.
-- Packaged activation and full smoke journeys on WordPress 6.9 and 7.0.1 with PHP 8.3.
-- Official Plugin Check is configured as a strict CI gate against the exact package staging directory.
+- Native event content, validation, explicit capabilities and derived UTC indexing.
+- Bounded public list, archive and calendar queries limited to published, password-free events.
+- Native classic/block-theme fallbacks, shortcodes, Gutenberg blocks and optional Elementor widgets over shared presentation services.
+- Local FullCalendar assets and an accessible no-JavaScript fallback; no runtime CDN or remote service dependency.
+- Safe Event JSON-LD with public-visibility checks and an administrator opt-out.
+- Capability- and nonce-protected duplication and maintenance actions.
+- Default-safe uninstall retention with explicit warned cleanup, bounded WordPress API deletion and shared-media retention.
+- Deterministic production-allowlist builds, minimal production autoloading, SHA-256 verification and byte-for-byte reproducibility tests.
+- WordPress 6.9 and 7.0.1 packaged smoke coverage, Elementor 3.35.9 and 4.1.5 compatibility checks, WooCommerce 10.9.4 joint activation, browser journeys and strict official Plugin Check for release 0.2.1.
+- Git history and tracked-file scans showing only the configured GitHub `noreply` identity and no high-confidence secrets or local workstation paths.
+- GitHub secret scanning and push protection enabled on the public repository.
+- GitHub Private Vulnerability Reporting enabled with a direct private disclosure route in `SECURITY.md`.
+- GitHub Actions restricted to read-only repository contents and pinned to immutable reviewed commits.
+- Public core REST protection for registered metadata belonging to password-protected events, with anonymous and authorized-editor regression coverage.
 
-## Release-blocking functional gaps
+## Release-readiness actions
 
-1. **External release gate:** the official GitHub Actions Plugin Check job must be observed green for the release commit. It cannot be claimed from local configuration alone.
-2. **Broader integration matrix:** Docker-backed WordPress integration tests and a WordPress 6.9 matrix including the supported Elementor/WooCommerce versions remain desirable before a public stable release. The native packaged smoke matrix is complete.
+1. Run every release gate against the versioned 0.2.2 candidate before publishing or submitting it.
+2. Require the strict official Plugin Check CI job to pass on that exact release commit.
+3. Submit the plugin to WordPress.org and address any manual-review feedback without weakening validation, permissions or tests.
+4. Copy the reviewed `.wordpress-org/` files to the WordPress.org SVN `assets/` directory after approval.
 
-## Hardening work that should follow the missing core workflows
+## Recommended repository hardening
 
-- Add cache versioning only around measured repeated collection/feed work, with invalidation tests for event, status and taxonomy changes. Singular JSON-LD intentionally remains uncached.
-- Add actual locale translations and verify the main editor and visitor journeys in a non-English locale.
-- Repeat compatibility checks with supported Elementor and current WooCommerce across the final release matrix.
-- Add Site Health repair/diagnostic actions where they materially improve recovery.
-- Consider a passive Site Health summary for aggregate invalid/missing event data. The existing maintenance result already reports skipped invalid records, so this must add diagnostic value without becoming another mutation path.
+- Enable Dependabot security updates. Dependency audits already block release locally and in CI, so this adds earlier notification and automated patch proposals rather than replacing review.
+- Keep GitHub account two-factor authentication and recovery methods current; prefer a passkey or hardware-backed second factor. This is an account setting and is not verifiable from the repository.
+- Keep branch protection and required release checks under review once contribution volume grows.
 
-## Deferred without blocking version 1.0
+## Post-release hardening
 
-- A single-event `.ics` download is useful but is classified as optional/should-have in the specification. Operational recovery and release evidence still take priority.
-- Elementor Pro dynamic tags are optional; existing Theme Builder precedence remains supported.
+- Add actual locale translations and manually verify key editor and visitor journeys in at least one non-English locale.
+- Reassess the pinned FullCalendar 6.1 line during every dependency review and before a stable 1.0 release.
+- Add cache versioning only if production measurements show repeated collection/feed work warrants it, with invalidation tests for event, status and taxonomy changes.
+- Consider passive Site Health diagnostics only when they add recovery value beyond the existing bounded maintenance tools.
+
+## Deferred without blocking version 1
+
+- A single-event `.ics` download remains optional.
+- Elementor Pro dynamic tags remain optional; the existing widgets work on Elementor Free pages and in host-provided current-event templates.
 - Recurrence, interactive maps, geocoding, ticketing and external calendar synchronization remain explicit non-goals.

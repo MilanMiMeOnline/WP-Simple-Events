@@ -88,6 +88,7 @@ test( 'accepts a minimal, rooted production archive', () => {
 
 test( 'rejects development files, wrong roots and path traversal', () => {
 	for ( const invalidEntry of [
+		'simple-events-by-mime/.wordpress-org/banner-772x250.png',
 		'simple-events-by-mime/tests/Unit/Test.php',
 		'simple-events-by-mime/composer.lock',
 		'simple-events-by-mime/assets/src/js/calendar.js',

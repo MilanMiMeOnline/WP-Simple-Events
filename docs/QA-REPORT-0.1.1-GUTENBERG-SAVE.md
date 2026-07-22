@@ -10,7 +10,7 @@ Gutenberg published the post through REST while WordPress saved the legacy metab
 
 The editor script now mirrors the editable Event details into Gutenberg's registered post-meta state. The post status and complete event record travel in one REST request. The classic-editor nonce/capability path remains intact, the REST validator remains authoritative, unrelated registered metadata is preserved and internal UTC indexes remain server-owned.
 
-The REST error response now uses the first allowlisted validation message as its public message. The screenshot payload's scheme-less `mime-online.be` value will therefore produce `Enter a valid HTTP or HTTPS event URL.` after the date payload reaches the server.
+The REST error response now uses the first allowlisted validation message as its public message. A scheme-less example URL will therefore produce `Enter a valid HTTP or HTTPS event URL.` after the date payload reaches the server.
 
 ## Senior developer review
 
@@ -36,4 +36,4 @@ The REST error response now uses the first allowlisted validation message as its
 
 ## Residual verification
 
-The user's `simpleevents.local` administrator session was not available to the automated in-app browser, so that exact installation was not mutated. The package is intended for the user's final visual confirmation in their existing Gutenberg session. Official WordPress Plugin Check remains the CI publication gate; this candidate is supplied for local acceptance testing rather than public release.
+The user's local administrator session was not available to the automated in-app browser, so that installation was not mutated. The package was intended for final visual confirmation in the existing Gutenberg session. Official WordPress Plugin Check remained the CI publication gate; that candidate was supplied for local acceptance testing rather than public release.

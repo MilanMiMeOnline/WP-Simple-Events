@@ -112,7 +112,7 @@ test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
 	controls[ '#wpse-address' ].value = 'Grote Markt 3, 2850 Boom';
 	controls[ '#wpse-location-url' ].value =
 		'https://maps.example.test/casa-milan';
-	controls[ '#wpse-event-url' ].value = 'https://mime-online.be';
+	controls[ '#wpse-event-url' ].value = 'https://example.com/event';
 	controls[ '#wpse-event-url-label' ].value = 'Bekijk het parkingplan';
 	controls[ '#wpse-start-date' ].fire( 'input' );
 
@@ -123,7 +123,7 @@ test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
 			_wpse_all_day: false,
 			_wpse_end_local: '2026-07-19T21:24',
 			_wpse_event_status: 'scheduled',
-			_wpse_event_url: 'https://mime-online.be',
+			_wpse_event_url: 'https://example.com/event',
 			_wpse_event_url_label: 'Bekijk het parkingplan',
 			_wpse_location_url: 'https://maps.example.test/casa-milan',
 			_wpse_start_local: '2026-07-19T16:23',

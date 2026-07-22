@@ -1,6 +1,6 @@
 # Contributing to Simple Events by MiMe
 
-The project is developed in small, reviewable increments. The complete product contract is in `ANALYSE-EN-BOUWSPECIFICATIE.md`; repository-wide engineering rules are in `AGENTS.md`.
+The project is developed in small, reviewable increments. The complete product contract is in `docs/PRODUCT-SPECIFICATION.md`; repository-wide engineering rules are in `AGENTS.md`.
 
 ## Local prerequisites
 

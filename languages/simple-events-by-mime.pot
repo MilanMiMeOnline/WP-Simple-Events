@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Simple Events by MiMe 0.2.1\n"
+"Project-Id-Version: Simple Events by MiMe 0.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/simple-events-by-mime\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,11 @@ msgstr ""
 msgid "Simple Events by MiMe"
 msgstr ""
 
+#. Plugin URI of the plugin
+#: simple-events-by-mime.php
+msgid "https://github.com/MilanMiMeOnline/WP-Simple-Events"
+msgstr ""
+
 #. Description of the plugin
 #: simple-events-by-mime.php
 msgid "A lightweight, native events plugin for WordPress."
@@ -32,7 +37,7 @@ msgstr ""
 msgid "MiMe"
 msgstr ""
 
-#: simple-events-by-mime.php:40
+#: simple-events-by-mime.php:41
 msgid "Simple Events by MiMe could not start because its required files are missing. Install a complete release package."
 msgstr ""
 
@@ -1339,7 +1344,7 @@ msgstr ""
 msgid "Maximum events per result page."
 msgstr ""
 
-#: src/Rest/EventRestController.php:104
+#: src/Rest/EventRestController.php:139
 msgid "The event could not be saved because its details are invalid."
 msgstr ""
 

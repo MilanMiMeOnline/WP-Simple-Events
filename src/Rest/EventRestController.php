@@ -20,6 +20,7 @@ use stdClass;
 use WP_Error;
 use WP_Post;
 use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Applies the same validation and derived metadata rules to REST writes.
@@ -54,7 +55,41 @@ final class EventRestController {
 	 */
 	public function register(): void {
 		add_filter( 'rest_pre_insert_' . EventPostType::POST_TYPE, array( $this, 'validate' ), 10, 2 );
+		add_filter( 'rest_prepare_' . EventPostType::POST_TYPE, array( $this, 'protect_meta' ), 10, 3 );
 		add_action( 'rest_after_insert_' . EventPostType::POST_TYPE, array( $this, 'persist' ), 10, 3 );
+	}
+
+	/**
+	 * Hide event details from public core REST responses while a post password is required.
+	 *
+	 * Registered post meta is otherwise added to core REST responses independently of
+	 * WordPress' protected-content handling. Editors retain access in edit context.
+	 *
+	 * @param WP_REST_Response $response Prepared REST response.
+	 * @param WP_Post          $post     Event represented by the response.
+	 * @param WP_REST_Request  $request  Current REST request.
+	 */
+	public function protect_meta(
+		WP_REST_Response $response,
+		WP_Post $post,
+		WP_REST_Request $request
+	): WP_REST_Response {
+		if ( '' === $post->post_password || ! post_password_required( $post ) ) {
+			return $response;
+		}
+
+		if ( 'edit' === $request->get_param( 'context' ) && current_user_can( 'edit_post', $post->ID ) ) {
+			return $response;
+		}
+
+		$data = $response->get_data();
+
+		if ( is_array( $data ) ) {
+			unset( $data['meta'] );
+			$response->set_data( $data );
+		}
+
+		return $response;
 	}
 
 	/**

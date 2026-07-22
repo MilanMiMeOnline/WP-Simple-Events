@@ -110,6 +110,24 @@ async function fetchHealthyPage( url, options = {} ) {
 	return body;
 }
 
+async function waitForHealthyPage( url, options = {} ) {
+	let lastError;
+
+	for ( let attempt = 0; attempt < 20; attempt += 1 ) {
+		try {
+			return await fetchHealthyPage( url, options );
+		} catch ( error ) {
+			lastError = error;
+		}
+
+		if ( attempt < 19 ) {
+			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+		}
+	}
+
+	throw lastError;
+}
+
 async function fetchHealthyJson( url, options = {} ) {
 	const body = await fetchHealthyPage( url, options );
 
@@ -198,9 +216,40 @@ function cookieHeader( cookieJar ) {
 		.join( '; ' );
 }
 
+async function editorRestNonce( cookieJar ) {
+	const response = await fetch(
+		'http://localhost:8888/wp-admin/post-new.php?post_type=post',
+		{
+			headers: { cookie: cookieHeader( cookieJar ) },
+			redirect: 'manual',
+		},
+	);
+
+	if ( ! response.ok ) {
+		return '';
+	}
+
+	const body = await response.text();
+	const settings = body.match( /var wpApiSettings = (\{[^;]+\});/ );
+
+	if ( ! settings ) {
+		return '';
+	}
+
+	try {
+		const nonce = JSON.parse( settings[ 1 ] ).nonce;
+
+		return typeof nonce === 'string' ? nonce : '';
+	} catch {
+		return '';
+	}
+}
+
 async function authenticateAdministrator() {
 	const cookieJar = new Map();
 	const loginUrl = 'http://localhost:8888/wp-login.php';
+	let lastNonceBody = '';
+	let lastNonceStatus = 0;
 	let response = await fetch( loginUrl, { redirect: 'manual' } );
 
 	storeResponseCookies( cookieJar, response );
@@ -230,24 +279,33 @@ async function authenticateAdministrator() {
 		),
 		'The smoke test could not authenticate the WordPress administrator.',
 	);
+	const editorNonce = await editorRestNonce( cookieJar );
 
-	for ( let attempt = 0; attempt < 5; attempt += 1 ) {
+	if ( editorNonce.length >= 10 ) {
+		return { cookieJar, nonce: editorNonce };
+	}
+
+	for ( let attempt = 0; attempt < 10; attempt += 1 ) {
 		const nonceResponse = await fetch(
 			'http://localhost:8888/wp-admin/admin-ajax.php?action=rest-nonce',
 			{ headers: { cookie: cookieHeader( cookieJar ) } },
 		);
 		const nonce = await nonceResponse.text();
+		lastNonceBody = nonce;
+		lastNonceStatus = nonceResponse.status;
 
 		if ( nonceResponse.ok && nonce.length >= 10 ) {
 			return { cookieJar, nonce };
 		}
 
-		if ( attempt < 4 ) {
-			await new Promise( ( resolve ) => setTimeout( resolve, 250 ) );
+		if ( attempt < 9 ) {
+			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 		}
 	}
 
-	throw new Error( 'The smoke test could not obtain a REST nonce.' );
+	throw new Error(
+		`The smoke test could not obtain a REST nonce (HTTP ${ lastNonceStatus }, body ${ JSON.stringify( lastNonceBody ) }).`,
+	);
 }
 
 async function ensurePackagedPluginIsActive( session ) {
@@ -373,7 +431,7 @@ try {
 	} );
 	await rm( smokeWpEnvHome, { force: true, recursive: true } );
 	await runWpEnv( [ 'start', '--runtime=playground' ] );
-	await fetchHealthyPage( 'http://localhost:8888/' );
+	await waitForHealthyPage( 'http://localhost:8888/' );
 	const session = await authenticateAdministrator();
 	await ensurePackagedPluginIsActive( session );
 	const siteTimezoneUpdate = await authenticatedRequest(
@@ -650,6 +708,23 @@ try {
 	for ( const created of [ ongoingCreate, pastCreate, protectedCreate ] ) {
 		requireCondition( created.response.status === 201, 'A query fixture event could not be published.' );
 	}
+
+	const protectedCoreRest = await requestJson(
+		`http://localhost:8888/wp-json/wp/v2/wpse_event/${ protectedCreate.data.id }`,
+	);
+	requireCondition(
+		protectedCoreRest.response.ok && ! ( 'meta' in protectedCoreRest.data ),
+		'The public core REST response exposed event metadata for a password-protected event.',
+	);
+	const protectedEditorRest = await authenticatedRequest(
+		session,
+		`/wp-json/wp/v2/wpse_event/${ protectedCreate.data.id }?context=edit`,
+	);
+	requireCondition(
+		protectedEditorRest.response.ok &&
+			protectedEditorRest.data.meta._wpse_venue === 'Town Hall',
+		'An authorized editor could not read protected event metadata in edit context.',
+	);
 
 	const draftCreate = await authenticatedRequest(
 		session,

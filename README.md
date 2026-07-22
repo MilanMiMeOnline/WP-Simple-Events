@@ -1,26 +1,84 @@
 # Simple Events by MiMe
 
-Simple Events by MiMe is a lightweight, native event plugin for WordPress. It is designed for a WooCommerce website built with Elementor, while keeping both plugins optional and keeping the event core independent.
+![Simple Events by MiMe](.wordpress-org/banner-1544x500.png)
 
-The secure development foundation, native event data model, editor workflow, native presentation layer, progressively enhanced calendar, optional Elementor integration and singular Event JSON-LD are implemented. The Events overview includes practical date/location/status columns and filters, while “Duplicate event” creates a safe draft and marks copied dates for review. WordPress centrally validates writes, maintains UTC query indexes, renders classic/block-theme single and archive fallbacks, and exposes bounded `[wpse_events]`, `[wpse_event_details]` and `[wpse_calendar]` shortcodes. The calendar uses a bounded public REST feed, a local minimal FullCalendar bundle and an event-list fallback when JavaScript is unavailable. Elementor 3.35 or newer adds the three composite widgets plus twelve atomic event-field widgets without becoming a core dependency. Gutenberg exposes the same twelve fields as server-rendered blocks with native style supports and an opt-in single-event pattern. Both hosts support an explicit public event on static pages and current event context in templates. Events → Settings provides bounded archive URL/page/default-period controls, diagnoses a colliding WordPress page and includes administrator maintenance for capabilities and derived UTC indexes. Plugin deletion preserves all event data by default and requires an explicit destructive opt-in for cleanup.
+Simple Events by MiMe is a focused, native event plugin for WordPress. It provides one-off event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
 
-The agreed scope and build specification are documented in `ANALYSE-EN-BOUWSPECIFICATIE.md`. Frozen storage, archive routing, public-query, calendar, presentation, Elementor, Gutenberg, SEO, maintenance and data-retention contracts are documented under `docs/`, including `DATA-CONTRACT.md`, `ARCHIVE-SETTINGS-CONTRACT.md`, `PUBLIC-QUERY-CONTRACT.md`, `TEMPLATE-CONTRACT.md`, `ELEMENTOR-INTEGRATION.md`, `GUTENBERG-INTEGRATION.md`, `STRUCTURED-DATA.md`, `MAINTENANCE-CONTRACT.md` and `UNINSTALL-CONTRACT.md`.
+The plugin is free software licensed under GPL-2.0-or-later. Its public WordPress.org identity is `simple-events-by-mime`; established internal `wpse_*` storage and content identifiers remain stable.
 
-Release candidates are built from a strict production allowlist, include a minimal production autoloader and translation template, and are checked for content, checksum integrity and reproducibility. See `docs/RELEASE-PROCESS.md`.
+## What it includes
+
+- A dedicated Events area using the familiar WordPress editor.
+- Timed, all-day, same-day and multi-day events with captured timezones.
+- Event-specific categories, tags and scheduled, postponed or cancelled states.
+- Venue, address, location link and customizable external action link.
+- Native single and archive templates for classic and block themes.
+- A responsive list/grid and month/list calendar with bounded filters.
+- A no-JavaScript upcoming-event fallback.
+- Twelve dynamic Gutenberg event-field blocks and a single-event pattern.
+- Optional Elementor 3.35+ composite and atomic widgets.
+- Safe Event JSON-LD for eligible individual events.
+- Default-safe data retention and explicit administrator maintenance tools.
+
+Recurrence, interactive maps, geocoding, ticketing and external calendar synchronization are deliberate non-goals for version 1.
 
 ## Requirements
 
 - WordPress 6.9 or newer
 - PHP 8.3 or newer
+- Elementor 3.35 or newer only when using the optional Elementor integration
 
-## Installing over a private test build
+WooCommerce and Elementor are optional and never core dependencies.
 
-Earlier private packages used a different plugin directory. Confirm that destructive uninstall cleanup is disabled, then deactivate and remove the earlier package before installing `simple-events-by-mime`. The event post type, taxonomies, metadata, shortcodes, blocks and Elementor widget identifiers are unchanged, so retained event content remains compatible.
+## Quick start
+
+1. Install and activate an official release package.
+2. Open **Events > Add New**.
+3. Add normal WordPress content and complete the Event details panel. A valid start is required before publication.
+4. Publish the event.
+5. Add one of these shortcodes to a page, or use the matching Gutenberg or Elementor component:
+
+```text
+[wpse_calendar]
+[wpse_events]
+[wpse_event_details]
+```
+
+`[wpse_calendar]` defaults to a desktop month view, a mobile list view and visible category/tag filters. `[wpse_events]` defaults to an upcoming three-column grid with pagination. Both shortcodes accept only documented, bounded attributes; invalid values fall back safely.
+
+## Editors and page builders
+
+Gutenberg provides twelve server-rendered blocks for event title, featured image, date and time, status, venue, address, location link, content, excerpt, external action, categories and tags. Static pages can select one published event; dynamic templates can use the current event context.
+
+Elementor 3.35+ provides the same twelve fields plus Event List / Grid, Event Calendar and Event Details widgets. The widgets work on ordinary Elementor Free pages. Elementor Pro is only relevant when a site owner chooses to build dynamic templates with Elementor Theme Builder.
+
+## Privacy and security
+
+The runtime plugin:
+
+- creates no visitor cookies;
+- collects no analytics or telemetry;
+- loads no remote scripts, fonts, images or tracking pixels;
+- sends no information to MiMe or another external service;
+- uses no custom database table;
+- keeps calendar requests on the same WordPress installation.
+
+Event content entered by editors is stored as native WordPress content and metadata. Published event details can be exposed through front-end HTML, Event JSON-LD, core REST and the bounded calendar feed. Drafts, private events and protected event details are excluded from public plugin queries. The core REST response also removes registered event metadata while a post password is required.
+
+External location and event links open in an isolated new tab with `noopener noreferrer`. Deactivation never deletes data, and uninstall cleanup is disabled by default. See [SECURITY.md](SECURITY.md), [the public-query contract](docs/PUBLIC-QUERY-CONTRACT.md) and [the uninstall contract](docs/UNINSTALL-CONTRACT.md) for the reviewed boundaries.
 
 ## Development
 
-Read `AGENTS.md` before making changes and use `CONTRIBUTING.md` for setup and quality commands. Security and testing are release gates from the first increment.
+Read [AGENTS.md](AGENTS.md) before changing the project and use [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing and review commands. The functional source of truth is [docs/PRODUCT-SPECIFICATION.md](docs/PRODUCT-SPECIFICATION.md); the documentation index links the supporting architectural, security, QA and release contracts.
+
+Release archives are built from an explicit production allowlist, contain local production assets and a minimal optimized autoloader, and are verified for contents, PHP syntax, checksum integrity and byte-for-byte reproducibility. The full process is in [docs/RELEASE-PROCESS.md](docs/RELEASE-PROCESS.md).
+
+The [documentation index](docs/README.md) links the WordPress.org handoff and visual-asset requirements.
+
+## Support and security reports
+
+Use [GitHub Issues](https://github.com/MilanMiMeOnline/WP-Simple-Events/issues) for ordinary defects and reproducible feature requests. Never place exploit details, credentials, nonces or personal data in a public issue; use the process in [SECURITY.md](SECURITY.md).
 
 ## Licence
 
-[GPL-2.0-or-later](LICENSE).
+[GPL-2.0-or-later](LICENSE). Bundled third-party notices are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).

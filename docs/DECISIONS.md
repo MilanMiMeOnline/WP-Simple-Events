@@ -263,3 +263,13 @@ Every public query is bounded and paginated, exposes published password-free eve
 Before the first public release, the product name becomes **Simple Events by MiMe** and the canonical WordPress.org slug and text domain become `simple-events-by-mime`. The production directory, main plugin filename, translation catalogue and release archive use that slug. This avoids reserving a first-release identity that fails WordPress.org trademark validation and is the final public identity chosen by the product owner.
 
 The rename is presentation and distribution metadata only. The `MiMe\WPSimpleEvents` PHP namespace, `WPSE_` constants, `wpse_` global identifiers, event post type, taxonomies, metadata, shortcodes, REST namespace, block names and Elementor widget identifiers remain unchanged so tester data and composed content stay compatible. Because the previous slug was never publicly released, no automatic-update migration is provided. Test installations must deactivate and remove the old plugin directory before installing the renamed package; retained event data will be recognized by the unchanged storage identifiers.
+
+## ADR-033: Password protection also covers registered event metadata in core REST
+
+**Status:** Accepted
+
+WordPress core protects post content in its REST response but still adds registered `show_in_rest` post metadata to a published password-protected event. Those fields can contain an address, venue, schedule and external URLs and therefore belong to the protected event-detail boundary.
+
+The `rest_prepare_wpse_event` adapter removes the complete `meta` member while WordPress still requires the event password. An authorized user requesting edit context retains metadata access so Gutenberg and other authenticated editors continue to work. Password-free published events keep their existing public core REST contract, while the plugin's calendar feed and public collections continue to exclude password-protected events entirely.
+
+This response-time protection complements rather than replaces the central metadata authorization callback: that callback controls writes, while this decision controls disclosure. A real WordPress regression test covers both anonymous denial and authorized edit-context access.

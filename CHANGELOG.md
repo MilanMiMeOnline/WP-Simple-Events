@@ -4,6 +4,27 @@ All notable changes to Simple Events by MiMe are documented here.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-22
+
+### Security
+
+- Remove registered event metadata from anonymous core REST responses while a password-protected event remains locked, without blocking authorized editor access.
+- Pin every third-party GitHub Action to an immutable reviewed commit and enforce that policy with a tooling regression test.
+
+### Documentation
+
+- Replace the public readmes with user-focused installation, feature, privacy, support and builder guidance for WordPress.org preparation.
+- Document the final security/privacy audit and WordPress.org visual-asset plan, and publish the direct GitHub Private Vulnerability Reporting route.
+- Add a step-by-step WordPress.org submission and SVN handoff checklist.
+- Replace the original Dutch analysis document with a concise English product specification and documentation index.
+- Add reviewed WordPress.org icons, banners and seven product screenshots from fictional demo content.
+
+### Tooling
+
+- Verify the exact WordPress.org visual filenames, PNG dimensions and screenshot-caption count in automated quality checks.
+- Make the disposable WordPress smoke environment resilient to bounded startup and nonce-readiness delays.
+- Update vulnerable transitive development dependencies to patched versions.
+
 ## [0.2.1] - 2026-07-20
 
 ### Changed

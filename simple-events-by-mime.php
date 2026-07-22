@@ -1,8 +1,9 @@
 <?php
 /**
  * Plugin Name:       Simple Events by MiMe
+ * Plugin URI:        https://github.com/MilanMiMeOnline/WP-Simple-Events
  * Description:       A lightweight, native events plugin for WordPress.
- * Version:           0.2.1
+ * Version:           0.2.2
  * Requires at least: 6.9
  * Requires PHP:      8.3
  * Author:            MiMe
@@ -21,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPSE_VERSION', '0.2.1' );
+define( 'WPSE_VERSION', '0.2.2' );
 define( 'WPSE_PLUGIN_FILE', __FILE__ );
 define( 'WPSE_PLUGIN_DIR', __DIR__ );
 

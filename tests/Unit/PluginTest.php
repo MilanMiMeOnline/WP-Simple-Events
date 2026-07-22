@@ -69,6 +69,7 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'admin_init' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_insert_post_data' ) );
 		self::assertIsCallable( HookRecorder::action( 'rest_pre_insert_wpse_event' ) );
+		self::assertIsCallable( HookRecorder::action( 'rest_prepare_wpse_event' ) );
 		self::assertIsCallable( HookRecorder::action( 'rest_after_insert_wpse_event' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_events' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_event_details' ) );

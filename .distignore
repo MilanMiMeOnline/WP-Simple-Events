@@ -11,6 +11,7 @@
 /tests
 /tools
 /.release
+/.wordpress-org
 /.distignore
 /.editorconfig
 /eslint.config.mjs
@@ -18,7 +19,6 @@
 /.gitignore
 /.wp-env.json
 /AGENTS.md
-/ANALYSE-EN-BOUWSPECIFICATIE.md
 /CONTRIBUTING.md
 /composer.json
 /composer.lock
