@@ -43,7 +43,7 @@
     "@wordpress/eslint-plugin": "25.6.0",
     "@wordpress/stylelint-config": "23.42.0",
     "esbuild": "0.28.1",
-    "eslint": "9.39.5",
+    "eslint": "10.7.0",
     "prettier": "^3.0.0",
     "stylelint": "^16.8.2",
     "stylelint-scss": "^6.4.0",
