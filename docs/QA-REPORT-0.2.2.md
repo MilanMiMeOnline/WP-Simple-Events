@@ -1,7 +1,7 @@
-# QA report — Simple Events by MiMe 0.2.2
+# QA report — MiMe Simple Events and Calendar 0.2.2
 
 **Date:** 2026-07-22
-**Candidate:** Simple Events by MiMe 0.2.2
+**Candidate:** MiMe Simple Events and Calendar 0.2.2
 **Purpose:** security/privacy hardening, public documentation and WordPress.org
 release preparation
 
@@ -72,7 +72,7 @@ public readmes.
 
 ## Release artifact
 
-- Archive: `dist/simple-events-by-mime-0.2.2.zip`
+- Archive: `dist/mime-simple-events-calendar-0.2.2.zip`
 - SHA-256:
   `816dec2199f7fef8483371bdea0785c8d008ba92a3a0f519c8f201be94b3cc32`
 - WordPress.org display set: two icons, two banners and seven screenshots under

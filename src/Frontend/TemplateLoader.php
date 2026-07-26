@@ -15,7 +15,7 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
  * Supplies low-priority plugin fallbacks while preserving higher presentation layers.
  */
 final readonly class TemplateLoader {
-	private const THEME_DIRECTORY = 'simple-events-by-mime/';
+	private const THEME_DIRECTORY = 'mime-simple-events-calendar/';
 
 	/**
 	 * Register template discovery before normal builder filters run.

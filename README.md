@@ -1,10 +1,10 @@
-# Simple Events by MiMe
+# MiMe Simple Events and Calendar
 
-![Simple Events by MiMe](.wordpress-org/banner-1544x500.png)
+![MiMe Simple Events and Calendar](.wordpress-org/banner-1544x500.png)
 
-Simple Events by MiMe is a focused, native event plugin for WordPress. It provides one-off event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
+MiMe Simple Events and Calendar is a focused, native event plugin for WordPress. It provides one-off event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
 
-The plugin is free software licensed under GPL-2.0-or-later. Its public WordPress.org identity is `simple-events-by-mime`; established internal `wpse_*` storage and content identifiers remain stable.
+The plugin is free software licensed under GPL-2.0-or-later. Its public WordPress.org identity is `mime-simple-events-calendar`; established internal `wpse_*` storage and content identifiers remain stable.
 
 ## What it includes
 

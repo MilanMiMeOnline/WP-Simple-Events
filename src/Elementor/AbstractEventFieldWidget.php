@@ -110,7 +110,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 
 		if ( $this->editor->is_editing() ) {
 			echo '<div class="wpse-elementor-placeholder" role="status">'
-				. esc_html__( 'This event field has no public value for the selected or current event.', 'simple-events-by-mime' )
+				. esc_html__( 'This event field has no public value for the selected or current event.', 'mime-simple-events-calendar' )
 				. '</div>';
 		}
 	}
@@ -135,10 +135,10 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$this->add_control(
 			'show_label',
 			array(
-				'label'        => esc_html__( 'Show label', 'simple-events-by-mime' ),
+				'label'        => esc_html__( 'Show label', 'mime-simple-events-calendar' ),
 				'type'         => Controls_Manager::SWITCHER,
-				'label_on'     => esc_html__( 'Show', 'simple-events-by-mime' ),
-				'label_off'    => esc_html__( 'Hide', 'simple-events-by-mime' ),
+				'label_on'     => esc_html__( 'Show', 'mime-simple-events-calendar' ),
+				'label_off'    => esc_html__( 'Hide', 'mime-simple-events-calendar' ),
 				'return_value' => 'yes',
 				'default'      => 'yes',
 			)
@@ -146,7 +146,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$this->add_control(
 			'label',
 			array(
-				'label'       => esc_html__( 'Label text', 'simple-events-by-mime' ),
+				'label'       => esc_html__( 'Label text', 'mime-simple-events-calendar' ),
 				'type'        => Controls_Manager::TEXT,
 				'placeholder' => $default_label,
 				'condition'   => array( 'show_label' => 'yes' ),
@@ -196,15 +196,15 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$this->start_controls_section(
 			'wpse_source',
 			array(
-				'label' => esc_html__( 'Event source', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Event source', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'event_id',
 			array(
-				'label'       => esc_html__( 'Event', 'simple-events-by-mime' ),
-				'description' => esc_html__( 'Select a public event for a static page, or leave empty to use the current event.', 'simple-events-by-mime' ),
+				'label'       => esc_html__( 'Event', 'mime-simple-events-calendar' ),
+				'description' => esc_html__( 'Select a public event for a static page, or leave empty to use the current event.', 'mime-simple-events-calendar' ),
 				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
 				'options'     => $this->previews->options(),
@@ -239,7 +239,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$this->start_controls_section(
 			'wpse_style',
 			array(
-				'label' => esc_html__( 'Style', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Style', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			)
 		);
@@ -248,7 +248,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 			$this->add_control(
 				'text_color',
 				array(
-					'label'     => esc_html__( 'Text color', 'simple-events-by-mime' ),
+					'label'     => esc_html__( 'Text color', 'mime-simple-events-calendar' ),
 					'type'      => Controls_Manager::COLOR,
 					'selectors' => array( $text_selector => 'color: {{VALUE}};' ),
 				)
@@ -265,7 +265,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$this->add_control(
 			'spacing',
 			array(
-				'label'      => esc_html__( 'Bottom spacing', 'simple-events-by-mime' ),
+				'label'      => esc_html__( 'Bottom spacing', 'mime-simple-events-calendar' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array( 'px', 'em', 'rem' ),
 				'range'      => array(

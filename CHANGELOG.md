@@ -1,8 +1,20 @@
 # Changelog
 
-All notable changes to Simple Events by MiMe are documented here.
+All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
+
+## [0.2.3] - 2026-07-26
+
+### Changed
+
+- Adopt **MiMe Simple Events and Calendar** and `mime-simple-events-calendar` as the pre-approval public identity requested after WordPress.org prereview.
+- Keep all `wpse_` storage, content, REST, shortcode, block and Elementor identifiers stable so existing private-test data remains compatible.
+- Replace the WordPress.org banners with the owner-approved MiMe-first artwork and synchronize public documentation, translations and release tooling.
+
+### Tooling
+
+- Refresh vulnerable transitive development dependencies while keeping the production plugin dependency-free from Node.js packages.
 
 ## [0.2.2] - 2026-07-22
 
@@ -29,7 +41,7 @@ All notable changes to Simple Events by MiMe are documented here.
 
 ### Changed
 
-- Adopt **Simple Events by MiMe** and `simple-events-by-mime` as the first public plugin identity while preserving all event storage and content identifiers.
+- Establish the initial pre-approval distribution identity while preserving all event storage and content identifiers.
 - Open the public location and external event actions in isolated new browser tabs.
 - Include the complete GPL-2.0-or-later licence in source and production archives.
 - Ship the Composer production manifest and plain-text third-party notices with the optimized release autoloader.

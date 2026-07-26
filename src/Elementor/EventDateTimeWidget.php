@@ -21,7 +21,7 @@ final class EventDateTimeWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Date & Time', 'simple-events-by-mime' );
+		return esc_html__( 'Event Date & Time', 'mime-simple-events-calendar' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,11 +43,11 @@ final class EventDateTimeWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Date and time', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Date and time', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
-		$this->add_label_controls( esc_html__( 'Date and time:', 'simple-events-by-mime' ) );
+		$this->add_label_controls( esc_html__( 'Date and time:', 'mime-simple-events-calendar' ) );
 		$this->end_controls_section();
 	}
 

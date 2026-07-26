@@ -13,7 +13,7 @@ export function pluginFileFromPath( pluginPath ) {
 		throw new TypeError( 'A plugin directory is required.' );
 	}
 
-	return `${ directory }/simple-events-by-mime.php`;
+	return `${ directory }/mime-simple-events-calendar.php`;
 }
 
 /**

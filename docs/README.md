@@ -1,7 +1,7 @@
 # Documentation
 
 This directory contains the product, engineering, security and release contracts
-for Simple Events by MiMe.
+for MiMe Simple Events and Calendar.
 
 ## Start here
 
@@ -35,6 +35,8 @@ for Simple Events by MiMe.
 Versioned and phase-specific `QA-REPORT-*` documents are retained as historical
 release evidence. They are not user documentation and are excluded from the
 installable plugin package.
+
+The current release evidence is [QA report 0.2.3](QA-REPORT-0.2.3.md).
 
 ## Releases and WordPress.org
 

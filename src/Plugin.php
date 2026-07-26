@@ -115,7 +115,7 @@ final class Plugin {
 		$archive_rewrites->register();
 
 		/**
-		 * Fires after Simple Events by MiMe has booted.
+		 * Fires after MiMe Simple Events and Calendar has booted.
 		 *
 		 * @since 0.1.0
 		 */

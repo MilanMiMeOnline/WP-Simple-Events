@@ -18,8 +18,7 @@ runtime `assets/` directory in this repository.
 | `screenshot-3.png` | Public calendar and list | 1200 x 1280 |
 | `screenshot-4.png` | Public single event | 1200 x 999 |
 | `screenshot-5.png` | Event settings | 1440 x 917 |
-| `screenshot-6.png` | Elementor widget collection | 295 x 1000 |
-| `screenshot-7.png` | Elementor calendar configuration | 1600 x 1012 |
+| `screenshot-6.png` | Elementor calendar configuration | 1600 x 1012 |
 
 The source screenshots use fictional event content. The prepared editor
 screenshot ends before external URL values, and the public calendar crop excludes
@@ -57,9 +56,7 @@ files must remain below WordPress.org's 4 MB limit.
 4. `screenshot-4.png` — Individual event page with date, venue, location link,
    external action and terms.
 5. `screenshot-5.png` — Archive, display, timezone and data-retention settings.
-6. `screenshot-6.png` — Optional Simple Events by MiMe widget collection in
-   Elementor.
-7. `screenshot-7.png` — Calendar and event-list configuration in the Elementor
+6. `screenshot-6.png` — Calendar and event-list configuration in the Elementor
    editor.
 
 The matching captions live under `== Screenshots ==` in `readme.txt`. Renumber

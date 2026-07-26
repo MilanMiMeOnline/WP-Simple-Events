@@ -21,7 +21,7 @@ final class EventTagsWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Tags', 'simple-events-by-mime' );
+		return esc_html__( 'Event Tags', 'mime-simple-events-calendar' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,11 +43,11 @@ final class EventTagsWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Tags', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Tags', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
-		$this->add_label_controls( esc_html__( 'Tags:', 'simple-events-by-mime' ) );
+		$this->add_label_controls( esc_html__( 'Tags:', 'mime-simple-events-calendar' ) );
 		$this->end_controls_section();
 	}
 

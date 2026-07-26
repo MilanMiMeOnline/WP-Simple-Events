@@ -24,14 +24,14 @@ const identifier = ( requestedCore ?? 'configured' ).replace(
 	/[^a-z0-9.-]+/gi,
 	'-',
 );
-const wpEnvHome = join( tmpdir(), `simple-events-by-mime-e2e-wp-env-${ identifier }` );
+const wpEnvHome = join( tmpdir(), `mime-simple-events-calendar-e2e-wp-env-${ identifier }` );
 const configDirectory = join(
 	tmpdir(),
-	`simple-events-by-mime-e2e-config-${ identifier }`,
+	`mime-simple-events-calendar-e2e-config-${ identifier }`,
 );
 const pluginPath = resolvePath(
 	projectDirectory,
-	process.env.WPSE_E2E_PLUGIN_PATH ?? '.release/simple-events-by-mime',
+	process.env.WPSE_E2E_PLUGIN_PATH ?? '.release/mime-simple-events-calendar',
 );
 const fixturePluginPath = join(
 	projectDirectory,

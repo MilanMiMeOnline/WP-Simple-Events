@@ -3,7 +3,7 @@ parameters:
   scanFiles:
     - stubs/elementor.php
   paths:
-    - simple-events-by-mime.php
+    - mime-simple-events-calendar.php
     - uninstall.php
     - src
     - templates

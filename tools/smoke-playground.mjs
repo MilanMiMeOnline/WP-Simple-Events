@@ -17,11 +17,11 @@ const smokeIdentifier = ( requestedCore ?? 'configured' ).replace(
 );
 const smokeWpEnvHome = join(
 	tmpdir(),
-	`simple-events-by-mime-smoke-wp-env-${ smokeIdentifier }`,
+	`mime-simple-events-calendar-smoke-wp-env-${ smokeIdentifier }`,
 );
 const smokeConfigDirectory = join(
 	tmpdir(),
-	`simple-events-by-mime-smoke-config-${ smokeIdentifier }`,
+	`mime-simple-events-calendar-smoke-config-${ smokeIdentifier }`,
 );
 const smokePluginPath = resolvePath(
 	projectDirectory,

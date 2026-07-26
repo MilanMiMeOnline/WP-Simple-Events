@@ -19,10 +19,10 @@ define( 'WPSE_VERSION', '0.1.0' );
 
 const validIdentitySources = {
 	pluginSource: `
- * Plugin Name: Simple Events by MiMe
- * Text Domain: simple-events-by-mime
+ * Plugin Name: MiMe Simple Events and Calendar
+ * Text Domain: mime-simple-events-calendar
 `,
-	readmeSource: '=== Simple Events by MiMe ===',
+	readmeSource: '=== MiMe Simple Events and Calendar ===',
 };
 
 test( 'returns the shared release version when all public versions match', () => {
@@ -47,7 +47,7 @@ test( 'accepts only the chosen public plugin identity', () => {
 			assertReleaseIdentity( {
 				...validIdentitySources,
 				pluginSource: validIdentitySources.pluginSource.replace(
-					'Simple Events by MiMe',
+					'MiMe Simple Events and Calendar',
 					'Unapproved Events Name',
 				),
 			} ),
@@ -58,7 +58,7 @@ test( 'accepts only the chosen public plugin identity', () => {
 			assertReleaseIdentity( {
 				...validIdentitySources,
 				pluginSource: validIdentitySources.pluginSource.replace(
-					'simple-events-by-mime',
+					'mime-simple-events-calendar',
 					'wrong-text-domain',
 				),
 			} ),
@@ -69,53 +69,53 @@ test( 'accepts only the chosen public plugin identity', () => {
 test( 'accepts a minimal, rooted production archive', () => {
 	assert.doesNotThrow( () =>
 		assertReleaseEntries( [
-			'simple-events-by-mime/simple-events-by-mime.php',
-			'simple-events-by-mime/LICENSE',
-			'simple-events-by-mime/readme.txt',
-			'simple-events-by-mime/composer.json',
-			'simple-events-by-mime/THIRD-PARTY-NOTICES.txt',
-			'simple-events-by-mime/vendor/autoload.php',
-			'simple-events-by-mime/languages/simple-events-by-mime.pot',
-			'simple-events-by-mime/blocks/event-title/block.json',
-			'simple-events-by-mime/src/Plugin.php',
-			'simple-events-by-mime/templates/single-event.php',
-			'simple-events-by-mime/assets/src/css/frontend.css',
-			'simple-events-by-mime/assets/dist/js/calendar.min.js',
-			'simple-events-by-mime/assets/dist/js/event-fields-editor.min.js',
+			'mime-simple-events-calendar/mime-simple-events-calendar.php',
+			'mime-simple-events-calendar/LICENSE',
+			'mime-simple-events-calendar/readme.txt',
+			'mime-simple-events-calendar/composer.json',
+			'mime-simple-events-calendar/THIRD-PARTY-NOTICES.txt',
+			'mime-simple-events-calendar/vendor/autoload.php',
+			'mime-simple-events-calendar/languages/mime-simple-events-calendar.pot',
+			'mime-simple-events-calendar/blocks/event-title/block.json',
+			'mime-simple-events-calendar/src/Plugin.php',
+			'mime-simple-events-calendar/templates/single-event.php',
+			'mime-simple-events-calendar/assets/src/css/frontend.css',
+			'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
+			'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
 		] ),
 	);
 } );
 
 test( 'rejects development files, wrong roots and path traversal', () => {
 	for ( const invalidEntry of [
-		'simple-events-by-mime/.wordpress-org/banner-772x250.png',
-		'simple-events-by-mime/tests/Unit/Test.php',
-		'simple-events-by-mime/composer.lock',
-		'simple-events-by-mime/assets/src/js/calendar.js',
-		'simple-events-by-mime/languages/payload.php',
-		'simple-events-by-mime/src/.hidden.php',
-		'simple-events-by-mime/src/payload.txt',
-		'simple-events-by-mime/secret.txt',
-		'simple-events-by-mime/vendor/phpunit/phpunit.php',
-		'other-plugin/simple-events-by-mime.php',
-		'simple-events-by-mime/../secret.txt',
+		'mime-simple-events-calendar/.wordpress-org/banner-772x250.png',
+		'mime-simple-events-calendar/tests/Unit/Test.php',
+		'mime-simple-events-calendar/composer.lock',
+		'mime-simple-events-calendar/assets/src/js/calendar.js',
+		'mime-simple-events-calendar/languages/payload.php',
+		'mime-simple-events-calendar/src/.hidden.php',
+		'mime-simple-events-calendar/src/payload.txt',
+		'mime-simple-events-calendar/secret.txt',
+		'mime-simple-events-calendar/vendor/phpunit/phpunit.php',
+		'other-plugin/mime-simple-events-calendar.php',
+		'mime-simple-events-calendar/../secret.txt',
 	] ) {
 		assert.throws(
 			() =>
 				assertReleaseEntries( [
-					'simple-events-by-mime/simple-events-by-mime.php',
-					'simple-events-by-mime/LICENSE',
-					'simple-events-by-mime/readme.txt',
-					'simple-events-by-mime/composer.json',
-					'simple-events-by-mime/THIRD-PARTY-NOTICES.txt',
-					'simple-events-by-mime/vendor/autoload.php',
-					'simple-events-by-mime/languages/simple-events-by-mime.pot',
-					'simple-events-by-mime/blocks/event-title/block.json',
-					'simple-events-by-mime/src/Plugin.php',
-					'simple-events-by-mime/templates/single-event.php',
-					'simple-events-by-mime/assets/src/css/frontend.css',
-					'simple-events-by-mime/assets/dist/js/calendar.min.js',
-					'simple-events-by-mime/assets/dist/js/event-fields-editor.min.js',
+					'mime-simple-events-calendar/mime-simple-events-calendar.php',
+					'mime-simple-events-calendar/LICENSE',
+					'mime-simple-events-calendar/readme.txt',
+					'mime-simple-events-calendar/composer.json',
+					'mime-simple-events-calendar/THIRD-PARTY-NOTICES.txt',
+					'mime-simple-events-calendar/vendor/autoload.php',
+					'mime-simple-events-calendar/languages/mime-simple-events-calendar.pot',
+					'mime-simple-events-calendar/blocks/event-title/block.json',
+					'mime-simple-events-calendar/src/Plugin.php',
+					'mime-simple-events-calendar/templates/single-event.php',
+					'mime-simple-events-calendar/assets/src/css/frontend.css',
+					'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
+					'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
 					invalidEntry,
 				] ),
 			/Invalid release archive/,
@@ -128,20 +128,20 @@ test( 'rejects an archive with a required production file missing', () => {
 	assert.throws(
 		() =>
 			assertReleaseEntries( [
-				'simple-events-by-mime/simple-events-by-mime.php',
-				'simple-events-by-mime/LICENSE',
-				'simple-events-by-mime/readme.txt',
-				'simple-events-by-mime/composer.json',
-				'simple-events-by-mime/THIRD-PARTY-NOTICES.txt',
-				'simple-events-by-mime/vendor/autoload.php',
-				'simple-events-by-mime/blocks/event-title/block.json',
-				'simple-events-by-mime/src/Plugin.php',
-				'simple-events-by-mime/templates/single-event.php',
-				'simple-events-by-mime/assets/src/css/frontend.css',
-				'simple-events-by-mime/assets/dist/js/calendar.min.js',
-				'simple-events-by-mime/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/mime-simple-events-calendar.php',
+				'mime-simple-events-calendar/LICENSE',
+				'mime-simple-events-calendar/readme.txt',
+				'mime-simple-events-calendar/composer.json',
+				'mime-simple-events-calendar/THIRD-PARTY-NOTICES.txt',
+				'mime-simple-events-calendar/vendor/autoload.php',
+				'mime-simple-events-calendar/blocks/event-title/block.json',
+				'mime-simple-events-calendar/src/Plugin.php',
+				'mime-simple-events-calendar/templates/single-event.php',
+				'mime-simple-events-calendar/assets/src/css/frontend.css',
+				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
+				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
 			] ),
-		/Missing required release path.*languages\/simple-events-by-mime\.pot/,
+		/Missing required release path.*languages\/mime-simple-events-calendar\.pot/,
 	);
 } );
 
@@ -149,18 +149,18 @@ test( 'rejects an archive without its complete project license', () => {
 	assert.throws(
 		() =>
 			assertReleaseEntries( [
-				'simple-events-by-mime/simple-events-by-mime.php',
-				'simple-events-by-mime/readme.txt',
-				'simple-events-by-mime/composer.json',
-				'simple-events-by-mime/THIRD-PARTY-NOTICES.txt',
-				'simple-events-by-mime/vendor/autoload.php',
-				'simple-events-by-mime/languages/simple-events-by-mime.pot',
-				'simple-events-by-mime/blocks/event-title/block.json',
-				'simple-events-by-mime/src/Plugin.php',
-				'simple-events-by-mime/templates/single-event.php',
-				'simple-events-by-mime/assets/src/css/frontend.css',
-				'simple-events-by-mime/assets/dist/js/calendar.min.js',
-				'simple-events-by-mime/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/mime-simple-events-calendar.php',
+				'mime-simple-events-calendar/readme.txt',
+				'mime-simple-events-calendar/composer.json',
+				'mime-simple-events-calendar/THIRD-PARTY-NOTICES.txt',
+				'mime-simple-events-calendar/vendor/autoload.php',
+				'mime-simple-events-calendar/languages/mime-simple-events-calendar.pot',
+				'mime-simple-events-calendar/blocks/event-title/block.json',
+				'mime-simple-events-calendar/src/Plugin.php',
+				'mime-simple-events-calendar/templates/single-event.php',
+				'mime-simple-events-calendar/assets/src/css/frontend.css',
+				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
+				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
 			] ),
 		/Missing required release path.*LICENSE/,
 	);
@@ -170,18 +170,18 @@ test( 'rejects an archive without its third-party licence notices', () => {
 	assert.throws(
 		() =>
 			assertReleaseEntries( [
-				'simple-events-by-mime/simple-events-by-mime.php',
-				'simple-events-by-mime/LICENSE',
-				'simple-events-by-mime/readme.txt',
-				'simple-events-by-mime/composer.json',
-				'simple-events-by-mime/vendor/autoload.php',
-				'simple-events-by-mime/languages/simple-events-by-mime.pot',
-				'simple-events-by-mime/blocks/event-title/block.json',
-				'simple-events-by-mime/src/Plugin.php',
-				'simple-events-by-mime/templates/single-event.php',
-				'simple-events-by-mime/assets/src/css/frontend.css',
-				'simple-events-by-mime/assets/dist/js/calendar.min.js',
-				'simple-events-by-mime/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/mime-simple-events-calendar.php',
+				'mime-simple-events-calendar/LICENSE',
+				'mime-simple-events-calendar/readme.txt',
+				'mime-simple-events-calendar/composer.json',
+				'mime-simple-events-calendar/vendor/autoload.php',
+				'mime-simple-events-calendar/languages/mime-simple-events-calendar.pot',
+				'mime-simple-events-calendar/blocks/event-title/block.json',
+				'mime-simple-events-calendar/src/Plugin.php',
+				'mime-simple-events-calendar/templates/single-event.php',
+				'mime-simple-events-calendar/assets/src/css/frontend.css',
+				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
+				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
 			] ),
 		/Missing required release path.*THIRD-PARTY-NOTICES\.txt/,
 	);
@@ -192,8 +192,8 @@ test( 'binds a SHA-256 checksum to the exact archive filename', () => {
 
 	assert.equal(
 		parseChecksumRecord(
-			`${ checksum }  simple-events-by-mime-0.1.0.zip\n`,
-			'simple-events-by-mime-0.1.0.zip',
+			`${ checksum }  mime-simple-events-calendar-0.1.0.zip\n`,
+			'mime-simple-events-calendar-0.1.0.zip',
 		),
 		checksum,
 	);
@@ -201,15 +201,15 @@ test( 'binds a SHA-256 checksum to the exact archive filename', () => {
 		() =>
 			parseChecksumRecord(
 				`${ checksum }  different.zip\n`,
-				'simple-events-by-mime-0.1.0.zip',
+				'mime-simple-events-calendar-0.1.0.zip',
 			),
 		/invalid format/,
 	);
 	assert.throws(
 		() =>
 			parseChecksumRecord(
-				`${ checksum } simple-events-by-mime-0.1.0.zip\ntrailing`,
-				'simple-events-by-mime-0.1.0.zip',
+				`${ checksum } mime-simple-events-calendar-0.1.0.zip\ntrailing`,
+				'mime-simple-events-calendar-0.1.0.zip',
 			),
 		/invalid format/,
 	);

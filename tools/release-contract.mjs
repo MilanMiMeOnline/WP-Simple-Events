@@ -1,7 +1,7 @@
 import { posix } from 'node:path';
 
-export const PLUGIN_NAME = 'Simple Events by MiMe';
-export const PLUGIN_SLUG = 'simple-events-by-mime';
+export const PLUGIN_NAME = 'MiMe Simple Events and Calendar';
+export const PLUGIN_SLUG = 'mime-simple-events-calendar';
 export const PLUGIN_FILE = `${ PLUGIN_SLUG }.php`;
 export const TEXT_DOMAIN = PLUGIN_SLUG;
 
@@ -12,7 +12,7 @@ const REQUIRED_RELEASE_PATHS = [
 	'composer.json',
 	'THIRD-PARTY-NOTICES.txt',
 	'vendor/autoload.php',
-	'languages/simple-events-by-mime.pot',
+	'languages/mime-simple-events-calendar.pot',
 	'blocks/',
 	'src/',
 	'templates/',

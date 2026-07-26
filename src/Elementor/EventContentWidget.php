@@ -20,7 +20,7 @@ final class EventContentWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Content', 'simple-events-by-mime' );
+		return esc_html__( 'Event Content', 'mime-simple-events-calendar' );
 	}
 
 	/** Return the Elementor panel icon. */

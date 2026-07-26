@@ -21,7 +21,7 @@ final class EventTitleWidget extends AbstractEventFieldWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event Title', 'simple-events-by-mime' );
+		return esc_html__( 'Event Title', 'mime-simple-events-calendar' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -43,14 +43,14 @@ final class EventTitleWidget extends AbstractEventFieldWidget {
 		$this->start_controls_section(
 			'wpse_presentation',
 			array(
-				'label' => esc_html__( 'Title', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Title', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'heading',
 			array(
-				'label'   => esc_html__( 'HTML tag', 'simple-events-by-mime' ),
+				'label'   => esc_html__( 'HTML tag', 'mime-simple-events-calendar' ),
 				'type'    => Controls_Manager::SELECT,
 				'options' => array_combine( array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), array( 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' ) ),
 				'default' => 'h2',
@@ -59,7 +59,7 @@ final class EventTitleWidget extends AbstractEventFieldWidget {
 		$this->add_control(
 			'link',
 			array(
-				'label'        => esc_html__( 'Link to event', 'simple-events-by-mime' ),
+				'label'        => esc_html__( 'Link to event', 'mime-simple-events-calendar' ),
 				'type'         => Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
 				'default'      => '',

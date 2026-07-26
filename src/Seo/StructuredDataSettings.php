@@ -25,7 +25,7 @@ final class StructuredDataSettings {
 		$enabled = true === $option || 1 === $option || '1' === $option;
 
 		/**
-		 * Filters whether Simple Events by MiMe outputs JSON-LD for an event.
+		 * Filters whether MiMe Simple Events and Calendar outputs JSON-LD for an event.
 		 *
 		 * Return false when another SEO integration owns Event schema output.
 		 *

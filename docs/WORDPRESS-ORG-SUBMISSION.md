@@ -4,8 +4,8 @@ This checklist separates source hosting on GitHub from distribution through the 
 
 ## Before submission
 
-- [x] Public plugin name: **Simple Events by MiMe**.
-- [x] Requested slug and text domain: `simple-events-by-mime`.
+- [x] Public plugin name: **MiMe Simple Events and Calendar**.
+- [x] Requested slug and text domain: `mime-simple-events-calendar`.
 - [x] WordPress.org contributor username: `mimeonline`.
 - [x] GPL-2.0-or-later metadata and complete GPLv2 licence text.
 - [x] Public source and build instructions available on GitHub.
@@ -14,10 +14,12 @@ This checklist separates source hosting on GitHub from distribution through the 
 - [x] Security/privacy audit and password-protected REST regression completed.
 - [x] Deterministic production allowlist, checksum and reproducible archive.
 - [x] Enable GitHub Private Vulnerability Reporting and publish its direct private-reporting route in `SECURITY.md`.
-- [x] Version the security and documentation candidate as 0.2.2.
-- [ ] Run the final versioned package through every local gate and the strict GitHub Actions Plugin Check job.
+- [x] Version the prereview response candidate as 0.2.3.
+- [ ] Explicitly request the new `mime-simple-events-calendar` permalink in the existing review email thread.
+- [x] Run the final versioned package through every local gate and the official Plugin Check runtime.
+- [ ] Push the reviewed commit and require the pinned GitHub Actions matrix, including strict Plugin Check, to pass.
 - [ ] Confirm the WordPress.org account email is current and protected with strong two-factor authentication/passkey recovery.
-- [x] Prepare and review the final icon, banner and seven screenshots according to `WORDPRESS-ORG-ASSETS.md`.
+- [x] Prepare and review the final icon, banner and six screenshots according to `WORDPRESS-ORG-ASSETS.md`.
 
 ## Submit for review
 

@@ -1,7 +1,7 @@
 # Security and privacy audit
 
 **Audit date:** 2026-07-21
-**Reviewed baseline:** Simple Events by MiMe 0.2.2 release candidate
+**Reviewed baseline:** MiMe Simple Events and Calendar 0.2.2 release candidate
 **Repository:** `MilanMiMeOnline/WP-Simple-Events`
 
 ## Executive result

@@ -82,8 +82,8 @@ final readonly class EventMaintenanceController {
 	private function authorize( string $action ): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die(
-				esc_html__( 'You are not allowed to run event maintenance.', 'simple-events-by-mime' ),
-				esc_html__( 'Event maintenance denied', 'simple-events-by-mime' ),
+				esc_html__( 'You are not allowed to run event maintenance.', 'mime-simple-events-calendar' ),
+				esc_html__( 'Event maintenance denied', 'mime-simple-events-calendar' ),
 				array( 'response' => 403 )
 			);
 		}

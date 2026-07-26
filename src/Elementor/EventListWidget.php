@@ -27,7 +27,7 @@ final class EventListWidget extends AbstractEventWidget {
 
 	/** Return the translated editor title. */
 	public function get_title(): string {
-		return esc_html__( 'Event List / Grid', 'simple-events-by-mime' );
+		return esc_html__( 'Event List / Grid', 'mime-simple-events-calendar' );
 	}
 
 	/** Return the Elementor panel icon. */
@@ -49,39 +49,39 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_content',
 			array(
-				'label' => esc_html__( 'Events', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Events', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
 		$this->add_control(
 			'view',
 			array(
-				'label'   => esc_html__( 'Layout', 'simple-events-by-mime' ),
+				'label'   => esc_html__( 'Layout', 'mime-simple-events-calendar' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'grid',
 				'options' => array(
-					'grid' => esc_html__( 'Grid', 'simple-events-by-mime' ),
-					'list' => esc_html__( 'List', 'simple-events-by-mime' ),
+					'grid' => esc_html__( 'Grid', 'mime-simple-events-calendar' ),
+					'list' => esc_html__( 'List', 'mime-simple-events-calendar' ),
 				),
 			)
 		);
 		$this->add_control(
 			'period',
 			array(
-				'label'   => esc_html__( 'Period', 'simple-events-by-mime' ),
+				'label'   => esc_html__( 'Period', 'mime-simple-events-calendar' ),
 				'type'    => Controls_Manager::SELECT,
 				'default' => 'upcoming',
 				'options' => array(
-					'upcoming' => esc_html__( 'Upcoming', 'simple-events-by-mime' ),
-					'past'     => esc_html__( 'Past', 'simple-events-by-mime' ),
-					'all'      => esc_html__( 'All', 'simple-events-by-mime' ),
+					'upcoming' => esc_html__( 'Upcoming', 'mime-simple-events-calendar' ),
+					'past'     => esc_html__( 'Past', 'mime-simple-events-calendar' ),
+					'all'      => esc_html__( 'All', 'mime-simple-events-calendar' ),
 				),
 			)
 		);
 		$this->add_control(
 			'limit',
 			array(
-				'label'   => esc_html__( 'Events per page', 'simple-events-by-mime' ),
+				'label'   => esc_html__( 'Events per page', 'mime-simple-events-calendar' ),
 				'type'    => Controls_Manager::NUMBER,
 				'default' => 12,
 				'min'     => 1,
@@ -92,7 +92,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_responsive_control(
 			'columns',
 			array(
-				'label'          => esc_html__( 'Columns', 'simple-events-by-mime' ),
+				'label'          => esc_html__( 'Columns', 'mime-simple-events-calendar' ),
 				'type'           => Controls_Manager::NUMBER,
 				'default'        => 3,
 				'tablet_default' => 2,
@@ -108,7 +108,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'category',
 			array(
-				'label'       => esc_html__( 'Categories', 'simple-events-by-mime' ),
+				'label'       => esc_html__( 'Categories', 'mime-simple-events-calendar' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
@@ -118,7 +118,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'tag',
 			array(
-				'label'       => esc_html__( 'Tags', 'simple-events-by-mime' ),
+				'label'       => esc_html__( 'Tags', 'mime-simple-events-calendar' ),
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
@@ -154,11 +154,11 @@ final class EventListWidget extends AbstractEventWidget {
 	 */
 	private function switcher_controls(): array {
 		return array(
-			'filters'       => $this->switcher( esc_html__( 'Show filters', 'simple-events-by-mime' ), false ),
-			'pagination'    => $this->switcher( esc_html__( 'Show pagination', 'simple-events-by-mime' ), true ),
-			'show_image'    => $this->switcher( esc_html__( 'Show image', 'simple-events-by-mime' ), true ),
-			'show_excerpt'  => $this->switcher( esc_html__( 'Show excerpt', 'simple-events-by-mime' ), true ),
-			'show_location' => $this->switcher( esc_html__( 'Show location', 'simple-events-by-mime' ), true ),
+			'filters'       => $this->switcher( esc_html__( 'Show filters', 'mime-simple-events-calendar' ), false ),
+			'pagination'    => $this->switcher( esc_html__( 'Show pagination', 'mime-simple-events-calendar' ), true ),
+			'show_image'    => $this->switcher( esc_html__( 'Show image', 'mime-simple-events-calendar' ), true ),
+			'show_excerpt'  => $this->switcher( esc_html__( 'Show excerpt', 'mime-simple-events-calendar' ), true ),
+			'show_location' => $this->switcher( esc_html__( 'Show location', 'mime-simple-events-calendar' ), true ),
 		);
 	}
 
@@ -183,14 +183,14 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->start_controls_section(
 			'wpse_style',
 			array(
-				'label' => esc_html__( 'Event cards', 'simple-events-by-mime' ),
+				'label' => esc_html__( 'Event cards', 'mime-simple-events-calendar' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			)
 		);
 		$this->add_control(
 			'text_color',
 			array(
-				'label'     => esc_html__( 'Text color', 'simple-events-by-mime' ),
+				'label'     => esc_html__( 'Text color', 'mime-simple-events-calendar' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-events' => 'color: {{VALUE}};' ),
 			)
@@ -198,7 +198,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'muted_color',
 			array(
-				'label'     => esc_html__( 'Secondary text color', 'simple-events-by-mime' ),
+				'label'     => esc_html__( 'Secondary text color', 'mime-simple-events-calendar' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array( '{{WRAPPER}} .wpse-events' => '--wpse-color-muted: {{VALUE}};' ),
 			)
@@ -206,7 +206,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_responsive_control(
 			'spacing',
 			array(
-				'label'      => esc_html__( 'Spacing', 'simple-events-by-mime' ),
+				'label'      => esc_html__( 'Spacing', 'mime-simple-events-calendar' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array( 'px', 'rem' ),
 				'range'      => array(
@@ -233,7 +233,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'border_radius',
 			array(
-				'label'      => esc_html__( 'Border radius', 'simple-events-by-mime' ),
+				'label'      => esc_html__( 'Border radius', 'mime-simple-events-calendar' ),
 				'type'       => Controls_Manager::SLIDER,
 				'size_units' => array( 'px', 'rem' ),
 				'selectors'  => array( '{{WRAPPER}} .wpse-events' => '--wpse-radius: {{SIZE}}{{UNIT}};' ),
@@ -256,7 +256,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'button_text_color',
 			array(
-				'label'     => esc_html__( 'Button text color', 'simple-events-by-mime' ),
+				'label'     => esc_html__( 'Button text color', 'mime-simple-events-calendar' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .wpse-events button, {{WRAPPER}} .wpse-events-pagination a, {{WRAPPER}} .wpse-events-pagination span' => 'color: {{VALUE}};',
@@ -266,7 +266,7 @@ final class EventListWidget extends AbstractEventWidget {
 		$this->add_control(
 			'button_background_color',
 			array(
-				'label'     => esc_html__( 'Button background color', 'simple-events-by-mime' ),
+				'label'     => esc_html__( 'Button background color', 'mime-simple-events-calendar' ),
 				'type'      => Controls_Manager::COLOR,
 				'selectors' => array(
 					'{{WRAPPER}} .wpse-events button, {{WRAPPER}} .wpse-events-pagination a, {{WRAPPER}} .wpse-events-pagination span' => 'background-color: {{VALUE}};',

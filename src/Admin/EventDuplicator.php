@@ -37,7 +37,7 @@ final class EventDuplicator {
 		if ( ! $source instanceof WP_Post || EventPostType::POST_TYPE !== $source->post_type ) {
 			return new WP_Error(
 				'wpse_duplicate_invalid_source',
-				__( 'The source event could not be found.', 'simple-events-by-mime' )
+				__( 'The source event could not be found.', 'mime-simple-events-calendar' )
 			);
 		}
 
@@ -92,7 +92,7 @@ final class EventDuplicator {
 
 		return new WP_Error(
 			$code,
-			__( 'The event copy could not be completed safely.', 'simple-events-by-mime' )
+			__( 'The event copy could not be completed safely.', 'mime-simple-events-calendar' )
 		);
 	}
 

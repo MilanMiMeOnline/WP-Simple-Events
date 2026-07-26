@@ -63,7 +63,7 @@ function run( command, argumentsList, { capture = false, cwd } = {} ) {
 async function releaseVersion() {
 	const [ packageSource, pluginSource, readmeSource ] = await Promise.all( [
 		readFile( join( projectDirectory, 'package.json' ), 'utf8' ),
-		readFile( join( projectDirectory, 'simple-events-by-mime.php' ), 'utf8' ),
+		readFile( join( projectDirectory, 'mime-simple-events-calendar.php' ), 'utf8' ),
 		readFile( join( projectDirectory, 'readme.txt' ), 'utf8' ),
 	] );
 	assertReleaseIdentity( { pluginSource, readmeSource } );
@@ -126,12 +126,12 @@ const archiveDetails = await run( 'zipinfo', [ '-l', archivePath ], {
 	capture: true,
 } );
 
-if ( /^l[^\n]*\s+simple-events-by-mime\//m.test( archiveDetails ) ) {
+if ( /^l[^\n]*\s+mime-simple-events-calendar\//m.test( archiveDetails ) ) {
 	throw new Error( 'The release archive contains a symbolic link.' );
 }
 
 const temporaryDirectory = await mkdtemp(
-	join( tmpdir(), 'simple-events-by-mime-release-' ),
+	join( tmpdir(), 'mime-simple-events-calendar-release-' ),
 );
 
 try {

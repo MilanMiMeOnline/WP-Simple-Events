@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest released version of Simple Events by MiMe. The `main` branch may contain an unreleased fix and is not a substitute for an official package.
+Security fixes are applied to the latest released version of MiMe Simple Events and Calendar. The `main` branch may contain an unreleased fix and is not a substitute for an official package.
 
 | Version | Supported |
 | --- | --- |

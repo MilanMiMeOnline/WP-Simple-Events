@@ -83,7 +83,7 @@ final readonly class CalendarFeedController {
 		} catch ( InvalidArgumentException ) {
 			return new WP_Error(
 				'wpse_invalid_calendar_window',
-				__( 'The requested calendar period is invalid or exceeds four hundred days.', 'simple-events-by-mime' ),
+				__( 'The requested calendar period is invalid or exceeds four hundred days.', 'mime-simple-events-calendar' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -118,40 +118,40 @@ final readonly class CalendarFeedController {
 	private function collection_parameters(): array {
 		return array(
 			'start'      => array(
-				'description'       => __( 'Inclusive local-midnight ISO 8601 calendar start with timezone.', 'simple-events-by-mime' ),
+				'description'       => __( 'Inclusive local-midnight ISO 8601 calendar start with timezone.', 'mime-simple-events-calendar' ),
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => array( $this, 'valid_iso_boundary' ),
 			),
 			'end'        => array(
-				'description'       => __( 'Exclusive local-midnight ISO 8601 calendar end with timezone.', 'simple-events-by-mime' ),
+				'description'       => __( 'Exclusive local-midnight ISO 8601 calendar end with timezone.', 'mime-simple-events-calendar' ),
 				'type'              => 'string',
 				'required'          => true,
 				'validate_callback' => array( $this, 'valid_iso_boundary' ),
 			),
 			'categories' => array(
-				'description'       => __( 'Comma-separated event category slugs.', 'simple-events-by-mime' ),
+				'description'       => __( 'Comma-separated event category slugs.', 'mime-simple-events-calendar' ),
 				'type'              => 'string',
 				'default'           => '',
 				'maxLength'         => 2000,
 				'validate_callback' => array( $this, 'valid_slug_list' ),
 			),
 			'tags'       => array(
-				'description'       => __( 'Comma-separated event tag slugs.', 'simple-events-by-mime' ),
+				'description'       => __( 'Comma-separated event tag slugs.', 'mime-simple-events-calendar' ),
 				'type'              => 'string',
 				'default'           => '',
 				'maxLength'         => 2000,
 				'validate_callback' => array( $this, 'valid_slug_list' ),
 			),
 			'page'       => array(
-				'description' => __( 'Current result page.', 'simple-events-by-mime' ),
+				'description' => __( 'Current result page.', 'mime-simple-events-calendar' ),
 				'type'        => 'integer',
 				'default'     => 1,
 				'minimum'     => 1,
 				'maximum'     => EventWindowCriteria::MAX_PAGE,
 			),
 			'per_page'   => array(
-				'description' => __( 'Maximum events per result page.', 'simple-events-by-mime' ),
+				'description' => __( 'Maximum events per result page.', 'mime-simple-events-calendar' ),
 				'type'        => 'integer',
 				'default'     => EventWindowCriteria::MAX_LIMIT,
 				'minimum'     => 1,

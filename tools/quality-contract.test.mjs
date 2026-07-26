@@ -47,8 +47,7 @@ test( 'keeps the WordPress.org image set complete and correctly sized', async ()
 		[ 'screenshot-3.png', [ 1200, 1280 ] ],
 		[ 'screenshot-4.png', [ 1200, 999 ] ],
 		[ 'screenshot-5.png', [ 1440, 917 ] ],
-		[ 'screenshot-6.png', [ 295, 1000 ] ],
-		[ 'screenshot-7.png', [ 1600, 1012 ] ],
+		[ 'screenshot-6.png', [ 1600, 1012 ] ],
 	] );
 	const actualFiles = ( await readdir( wordpressOrgAssets ) ).sort();
 
@@ -67,7 +66,7 @@ test( 'keeps the WordPress.org image set complete and correctly sized', async ()
 	}
 } );
 
-test( 'keeps seven screenshot captions synchronized with the image set', () => {
+test( 'keeps six screenshot captions synchronized with the image set', () => {
 	const screenshotSection = publicReadme.match(
 		/== Screenshots ==\n([\s\S]+?)\n== Changelog ==/,
 	)?.[ 1 ];
@@ -77,6 +76,6 @@ test( 'keeps seven screenshot captions synchronized with the image set', () => {
 		[ ...screenshotSection.matchAll( /^(\d+)\.\s+/gm ) ].map( ( match ) =>
 			Number.parseInt( match[ 1 ], 10 ),
 		),
-		[ 1, 2, 3, 4, 5, 6, 7 ],
+		[ 1, 2, 3, 4, 5, 6 ],
 	);
 } );

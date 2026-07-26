@@ -1,6 +1,6 @@
 <?php
 /**
- * Simple Events by MiMe uninstall entry point.
+ * MiMe Simple Events and Calendar uninstall entry point.
  *
  * @package MiMe\WPSimpleEvents
  */

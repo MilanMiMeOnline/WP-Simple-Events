@@ -15,7 +15,7 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
  * Registers plugin-owned block templates and their shared dynamic render blocks.
  */
 final readonly class BlockTemplates {
-	private const TEMPLATE_NAMESPACE = 'simple-events-by-mime';
+	private const TEMPLATE_NAMESPACE = 'mime-simple-events-calendar';
 
 	/**
 	 * Create the block-template registry.
@@ -54,8 +54,8 @@ final readonly class BlockTemplates {
 	public function definitions(): array {
 		return array(
 			'single-wpse_event'  => array(
-				'title'       => __( 'Single Event', 'simple-events-by-mime' ),
-				'description' => __( 'Native single-event fallback from Simple Events by MiMe.', 'simple-events-by-mime' ),
+				'title'       => __( 'Single Event', 'mime-simple-events-calendar' ),
+				'description' => __( 'Native single-event fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
 				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
 					. '<!-- wp:group {"tagName":"main","className":"wpse-template wpse-template-single"} -->'
 					. '<main class="wp-block-group wpse-template wpse-template-single"><!-- wp:wpse/native-single /--></main>'
@@ -65,8 +65,8 @@ final readonly class BlockTemplates {
 				'plugin'      => self::TEMPLATE_NAMESPACE,
 			),
 			'archive-wpse_event' => array(
-				'title'       => __( 'Event Archive', 'simple-events-by-mime' ),
-				'description' => __( 'Native event-archive fallback from Simple Events by MiMe.', 'simple-events-by-mime' ),
+				'title'       => __( 'Event Archive', 'mime-simple-events-calendar' ),
+				'description' => __( 'Native event-archive fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
 				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
 					. '<!-- wp:group {"tagName":"main","className":"wpse-template wpse-template-archive"} -->'
 					. '<main class="wp-block-group wpse-template wpse-template-archive"><!-- wp:wpse/native-archive /--></main>'

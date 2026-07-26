@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-status",
   "title": "Event Status",
-  "category": "simple-events-by-mime",
+  "category": "mime-simple-events-calendar",
   "icon": "warning",
   "description": "Display a cancelled or postponed event status.",
-  "textdomain": "simple-events-by-mime",
+  "textdomain": "mime-simple-events-calendar",
   "usesContext": ["postId", "postType"],
   "attributes": { "eventId": { "type": "integer", "default": 0 } },
   "supports": {

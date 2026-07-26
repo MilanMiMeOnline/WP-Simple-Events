@@ -130,7 +130,7 @@ async function listFiles( directory ) {
 async function releaseVersion() {
 	const [ packageSource, pluginSource, readmeSource ] = await Promise.all( [
 		readFile( join( projectDirectory, 'package.json' ), 'utf8' ),
-		readFile( join( projectDirectory, 'simple-events-by-mime.php' ), 'utf8' ),
+		readFile( join( projectDirectory, 'mime-simple-events-calendar.php' ), 'utf8' ),
 		readFile( join( projectDirectory, 'readme.txt' ), 'utf8' ),
 	] );
 	assertReleaseIdentity( { pluginSource, readmeSource } );

@@ -90,7 +90,7 @@ The original list, calendar and composite details widgets translate allowlisted 
 
 An explicit event selection is the real source on an ordinary Elementor Free page and a safe preview/source override in a template. With no selection, the widget consumes the current queried event. The field semantics and saved control identifiers do not change between those contexts. Missing or inaccessible fields emit only an editor placeholder; public rendering emits no plugin wrapper. Elementor Pro Theme Builder remains host-owned and optional rather than a plugin dependency.
 
-Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target Simple Events by MiMe markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
+Because Elementor reconstructs each placed widget as a separate PHP object, all native renderers use one request-wide, component-specific ID sequence; shortcode and widget instances therefore cannot emit duplicate DOM IDs. Widget assets use `get_style_depends()` and `get_script_depends()`, and style selectors target MiMe Simple Events and Calendar markup through Elementor's `{{WRAPPER}}` token instead of relying on Elementor's removable inner wrapper.
 
 Elementor Pro dynamic tags remain an optional, separate increment. Field widgets work without dynamic tags in both Elementor Free static layouts and host-provided dynamic templates, so deferring dynamic tags does not reduce the supported component palette or make Elementor Pro a dependency.
 
@@ -148,7 +148,7 @@ Saving an equivalent normalized slug performs no rewrite work. A real successful
 
 **Status:** Accepted
 
-The installable plugin is never an archive of the working tree. A release builder copies an explicit set of runtime files into `.release/simple-events-by-mime`, generates a class-authoritative Composer autoloader without development dependencies or network access, normalizes file permissions and timestamps, and creates `dist/simple-events-by-mime-{version}.zip` plus a SHA-256 file. The plugin header, runtime constant, WordPress stable tag and npm package version must match before the build starts.
+The installable plugin is never an archive of the working tree. A release builder copies an explicit set of runtime files into `.release/mime-simple-events-calendar`, generates a class-authoritative Composer autoloader without development dependencies or network access, normalizes file permissions and timestamps, and creates `dist/mime-simple-events-calendar-{version}.zip` plus a SHA-256 file. The plugin header, runtime constant, WordPress stable tag and npm package version must match before the build starts.
 
 The archive contract rejects wrong roots, traversal, hidden files, development paths, unexpected file types, symlinks and missing runtime files. Verification reopens the archive, validates the complete checksum record, lints every shipped PHP file and loads the main plugin class through the shipped autoloader. The production package retains `composer.json` beside the generated Composer autoloader and ships third-party licence notices as a WordPress.org-compatible text file; the development lockfile and dependencies remain excluded. Two consecutive builds must be byte-for-byte identical. Adding a production dependency or a new shipped file type therefore requires an intentional contract and test change rather than silently expanding the package.
 
@@ -194,7 +194,7 @@ Calendar requests are day-aligned wall-time windows with an explicit client offs
 
 **Status:** Accepted
 
-Public event details, cards and calendars inherit the site's WordPress `time_format`. Simple Events by MiMe does not introduce a duplicate global setting in this package. A future atomic date/time component may offer an explicit presentation-only override, but inheritance remains the default.
+Public event details, cards and calendars inherit the site's WordPress `time_format`. MiMe Simple Events and Calendar does not introduce a duplicate global setting in this package. A future atomic date/time component may offer an explicit presentation-only override, but inheritance remains the default.
 
 Server-rendered output continues through localized `wp_date()`. A bounded adapter maps only the relevant unescaped PHP tokens (`H`, `G`, `h`, `g`, `i`, `a` and `A`) to FullCalendar options. Explicit `h23` and `h12` hour cycles prevent the visitor locale from silently changing WordPress' 12/24-hour choice; uppercase meridiems remain browser-localized rather than being hard-coded in English. Invalid formats fall back to zero-padded `H:i` presentation.
 
@@ -244,7 +244,7 @@ The plugin also registers one opt-in single-event block pattern composed from th
 
 **Status:** Accepted
 
-Official Plugin Check 2.0 runtime performance checks publish one generic fixture for every viewable post type and provide no extension point for required custom metadata. Simple Events by MiMe normally and intentionally downgrades such an incomplete event to draft, which prevents Plugin Check from retrieving the temporary URL and aborts the checker before it can report on the package.
+Official Plugin Check 2.0 runtime performance checks publish one generic fixture for every viewable post type and provide no extension point for required custom metadata. MiMe Simple Events and Calendar normally and intentionally downgrades such an incomplete event to draft, which prevents Plugin Check from retrieving the temporary URL and aborts the checker before it can report on the package.
 
 The native publication guard therefore yields only while the Plugin Check plugin is loaded inside the exact contiguous WP-CLI `plugin check` command. The exception does not apply to the WordPress editor, REST, cron, frontend requests or any other WP-CLI command. Plugin Check deletes its fixture in the same preparation lifecycle, and the exception changes no stored user event or public product behaviour. CI continues to run every stable Plugin Check category in strict mode; no check, warning or error is excluded.
 
@@ -258,7 +258,7 @@ Every public query is bounded and paginated, exposes published password-free eve
 
 ## ADR-032: The first public identity is Simple Events by MiMe
 
-**Status:** Accepted
+**Status:** Superseded by ADR-034
 
 Before the first public release, the product name becomes **Simple Events by MiMe** and the canonical WordPress.org slug and text domain become `simple-events-by-mime`. The production directory, main plugin filename, translation catalogue and release archive use that slug. This avoids reserving a first-release identity that fails WordPress.org trademark validation and is the final public identity chosen by the product owner.
 
@@ -273,3 +273,48 @@ WordPress core protects post content in its REST response but still adds registe
 The `rest_prepare_wpse_event` adapter removes the complete `meta` member while WordPress still requires the event password. An authorized user requesting edit context retains metadata access so Gutenberg and other authenticated editors continue to work. Password-free published events keep their existing public core REST contract, while the plugin's calendar feed and public collections continue to exclude password-protected events entirely.
 
 This response-time protection complements rather than replaces the central metadata authorization callback: that callback controls writes, while this decision controls disclosure. A real WordPress regression test covers both anonymous denial and authorized edit-context access.
+
+## ADR-034: The pre-approval identity is MiMe Simple Events and Calendar
+
+**Status:** Accepted
+
+WordPress.org prereview identified the submitted `Simple Events by MiMe` name and
+`simple-events-by-mime` slug as insufficiently distinctive because the generic
+product terms preceded the owner's identifier. Before directory approval, the
+public product name therefore becomes **MiMe Simple Events and Calendar** and the
+canonical slug and text domain become `mime-simple-events-calendar`. The
+production directory, main plugin filename, translation catalogue and release
+archive use that slug. This owner-selected name places the established MiMe
+identity first and describes both event publishing and calendar presentation.
+
+The migration is limited to public identity, internationalization and
+distribution metadata. The `MiMe\WPSimpleEvents` PHP namespace, `WPSE_`
+constants, `wpse_` global identifiers, event post type, taxonomies, metadata,
+options, capabilities, shortcodes, REST namespace, block names and Elementor
+widget identifiers remain stable. Existing events and composed content are
+therefore recognized after installing the renamed package.
+
+The earlier slug was never approved or distributed through WordPress.org, so
+there is no public automatic-update channel to migrate. Private test sites must
+deactivate and remove the earlier plugin directory before installing version
+0.2.3 under the new slug; the default data-retention policy preserves their
+events and settings. The WordPress.org review reply must explicitly request the
+new `mime-simple-events-calendar` permalink before approval.
+
+## ADR-035: Development tooling pins the patched brace-expansion implementation
+
+**Status:** Accepted
+
+The current WordPress environment and linting packages retain transitive
+`minimatch`, `glob` and `rimraf` branches whose declared ranges resolve to
+`brace-expansion` releases affected by GHSA-mh99-v99m-4gvg. Their upstream
+dependency ranges do not yet select the only patched release, while a forced
+audit fix proposes unrelated breaking package downgrades.
+
+The root development manifest therefore overrides this one transitive package
+to `brace-expansion` 5.0.8. That release supports the repository's Node 20 floor
+and exposes both CommonJS and ESM entry points. The override is acceptable only
+while the full lint, build, test, WordPress smoke and browser journeys pass; it
+must be removed when the direct WordPress tooling resolves to patched ranges.
+Node dependencies remain development-only and are excluded from the production
+plugin archive.

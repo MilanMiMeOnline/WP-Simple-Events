@@ -37,7 +37,7 @@ final class EventTaxonomies {
 	public function category_arguments(): array {
 		return array(
 			'labels'             => $this->category_labels(),
-			'description'        => __( 'Hierarchical categories used only by events.', 'simple-events-by-mime' ),
+			'description'        => __( 'Hierarchical categories used only by events.', 'mime-simple-events-calendar' ),
 			'public'             => true,
 			'publicly_queryable' => true,
 			'hierarchical'       => true,
@@ -64,7 +64,7 @@ final class EventTaxonomies {
 	public function tag_arguments(): array {
 		return array(
 			'labels'             => $this->tag_labels(),
-			'description'        => __( 'Non-hierarchical tags used only by events.', 'simple-events-by-mime' ),
+			'description'        => __( 'Non-hierarchical tags used only by events.', 'mime-simple-events-calendar' ),
 			'public'             => true,
 			'publicly_queryable' => true,
 			'hierarchical'       => false,
@@ -89,21 +89,21 @@ final class EventTaxonomies {
 	 */
 	private function category_labels(): array {
 		return array(
-			'name'              => __( 'Event Categories', 'simple-events-by-mime' ),
-			'singular_name'     => __( 'Event Category', 'simple-events-by-mime' ),
-			'search_items'      => __( 'Search Event Categories', 'simple-events-by-mime' ),
-			'all_items'         => __( 'All Event Categories', 'simple-events-by-mime' ),
-			'parent_item'       => __( 'Parent Event Category', 'simple-events-by-mime' ),
-			'parent_item_colon' => __( 'Parent Event Category:', 'simple-events-by-mime' ),
-			'edit_item'         => __( 'Edit Event Category', 'simple-events-by-mime' ),
-			'view_item'         => __( 'View Event Category', 'simple-events-by-mime' ),
-			'update_item'       => __( 'Update Event Category', 'simple-events-by-mime' ),
-			'add_new_item'      => __( 'Add New Event Category', 'simple-events-by-mime' ),
-			'new_item_name'     => __( 'New Event Category Name', 'simple-events-by-mime' ),
-			'not_found'         => __( 'No event categories found.', 'simple-events-by-mime' ),
-			'no_terms'          => __( 'No event categories', 'simple-events-by-mime' ),
-			'back_to_items'     => __( 'Back to event categories', 'simple-events-by-mime' ),
-			'menu_name'         => __( 'Event Categories', 'simple-events-by-mime' ),
+			'name'              => __( 'Event Categories', 'mime-simple-events-calendar' ),
+			'singular_name'     => __( 'Event Category', 'mime-simple-events-calendar' ),
+			'search_items'      => __( 'Search Event Categories', 'mime-simple-events-calendar' ),
+			'all_items'         => __( 'All Event Categories', 'mime-simple-events-calendar' ),
+			'parent_item'       => __( 'Parent Event Category', 'mime-simple-events-calendar' ),
+			'parent_item_colon' => __( 'Parent Event Category:', 'mime-simple-events-calendar' ),
+			'edit_item'         => __( 'Edit Event Category', 'mime-simple-events-calendar' ),
+			'view_item'         => __( 'View Event Category', 'mime-simple-events-calendar' ),
+			'update_item'       => __( 'Update Event Category', 'mime-simple-events-calendar' ),
+			'add_new_item'      => __( 'Add New Event Category', 'mime-simple-events-calendar' ),
+			'new_item_name'     => __( 'New Event Category Name', 'mime-simple-events-calendar' ),
+			'not_found'         => __( 'No event categories found.', 'mime-simple-events-calendar' ),
+			'no_terms'          => __( 'No event categories', 'mime-simple-events-calendar' ),
+			'back_to_items'     => __( 'Back to event categories', 'mime-simple-events-calendar' ),
+			'menu_name'         => __( 'Event Categories', 'mime-simple-events-calendar' ),
 		);
 	}
 
@@ -114,23 +114,23 @@ final class EventTaxonomies {
 	 */
 	private function tag_labels(): array {
 		return array(
-			'name'                       => __( 'Event Tags', 'simple-events-by-mime' ),
-			'singular_name'              => __( 'Event Tag', 'simple-events-by-mime' ),
-			'search_items'               => __( 'Search Event Tags', 'simple-events-by-mime' ),
-			'popular_items'              => __( 'Popular Event Tags', 'simple-events-by-mime' ),
-			'all_items'                  => __( 'All Event Tags', 'simple-events-by-mime' ),
-			'edit_item'                  => __( 'Edit Event Tag', 'simple-events-by-mime' ),
-			'view_item'                  => __( 'View Event Tag', 'simple-events-by-mime' ),
-			'update_item'                => __( 'Update Event Tag', 'simple-events-by-mime' ),
-			'add_new_item'               => __( 'Add New Event Tag', 'simple-events-by-mime' ),
-			'new_item_name'              => __( 'New Event Tag Name', 'simple-events-by-mime' ),
-			'separate_items_with_commas' => __( 'Separate event tags with commas', 'simple-events-by-mime' ),
-			'add_or_remove_items'        => __( 'Add or remove event tags', 'simple-events-by-mime' ),
-			'choose_from_most_used'      => __( 'Choose from the most used event tags', 'simple-events-by-mime' ),
-			'not_found'                  => __( 'No event tags found.', 'simple-events-by-mime' ),
-			'no_terms'                   => __( 'No event tags', 'simple-events-by-mime' ),
-			'back_to_items'              => __( 'Back to event tags', 'simple-events-by-mime' ),
-			'menu_name'                  => __( 'Event Tags', 'simple-events-by-mime' ),
+			'name'                       => __( 'Event Tags', 'mime-simple-events-calendar' ),
+			'singular_name'              => __( 'Event Tag', 'mime-simple-events-calendar' ),
+			'search_items'               => __( 'Search Event Tags', 'mime-simple-events-calendar' ),
+			'popular_items'              => __( 'Popular Event Tags', 'mime-simple-events-calendar' ),
+			'all_items'                  => __( 'All Event Tags', 'mime-simple-events-calendar' ),
+			'edit_item'                  => __( 'Edit Event Tag', 'mime-simple-events-calendar' ),
+			'view_item'                  => __( 'View Event Tag', 'mime-simple-events-calendar' ),
+			'update_item'                => __( 'Update Event Tag', 'mime-simple-events-calendar' ),
+			'add_new_item'               => __( 'Add New Event Tag', 'mime-simple-events-calendar' ),
+			'new_item_name'              => __( 'New Event Tag Name', 'mime-simple-events-calendar' ),
+			'separate_items_with_commas' => __( 'Separate event tags with commas', 'mime-simple-events-calendar' ),
+			'add_or_remove_items'        => __( 'Add or remove event tags', 'mime-simple-events-calendar' ),
+			'choose_from_most_used'      => __( 'Choose from the most used event tags', 'mime-simple-events-calendar' ),
+			'not_found'                  => __( 'No event tags found.', 'mime-simple-events-calendar' ),
+			'no_terms'                   => __( 'No event tags', 'mime-simple-events-calendar' ),
+			'back_to_items'              => __( 'Back to event tags', 'mime-simple-events-calendar' ),
+			'menu_name'                  => __( 'Event Tags', 'mime-simple-events-calendar' ),
 		);
 	}
 }

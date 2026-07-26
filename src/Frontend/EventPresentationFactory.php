@@ -41,7 +41,7 @@ final readonly class EventPresentationFactory {
 		$title = trim( get_the_title( $event ) );
 
 		if ( '' === $title ) {
-			$title = __( 'Untitled event', 'simple-events-by-mime' );
+			$title = __( 'Untitled event', 'mime-simple-events-calendar' );
 		}
 
 		$permalink = get_permalink( $event );

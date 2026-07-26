@@ -136,7 +136,7 @@ final class EventRestController {
 			$primary_message = reset( $error_messages );
 
 			if ( ! is_string( $primary_message ) ) {
-				$primary_message = __( 'The event could not be saved because its details are invalid.', 'simple-events-by-mime' );
+				$primary_message = __( 'The event could not be saved because its details are invalid.', 'mime-simple-events-calendar' );
 			}
 
 			return new WP_Error(

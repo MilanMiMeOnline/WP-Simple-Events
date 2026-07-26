@@ -99,17 +99,17 @@ final class EventDateFormatter {
 
 		if ( $fixed_offset || 'UTC' === $timezone ) {
 			/* translators: %s: Numeric timezone offset such as +02:00. */
-			return sprintf( __( 'UTC%s', 'simple-events-by-mime' ), $start_offset );
+			return sprintf( __( 'UTC%s', 'mime-simple-events-calendar' ), $start_offset );
 		}
 
 		if ( $start_offset === $end_offset ) {
 			/* translators: 1: IANA timezone identifier, 2: Numeric offset such as +02:00. */
-			return sprintf( __( '%1$s (UTC%2$s)', 'simple-events-by-mime' ), $timezone, $start_offset );
+			return sprintf( __( '%1$s (UTC%2$s)', 'mime-simple-events-calendar' ), $timezone, $start_offset );
 		}
 
 		return sprintf(
 			/* translators: 1: IANA timezone identifier, 2: Start offset, 3: End offset. */
-			__( '%1$s (UTC%2$s → UTC%3$s)', 'simple-events-by-mime' ),
+			__( '%1$s (UTC%2$s → UTC%3$s)', 'mime-simple-events-calendar' ),
 			$timezone,
 			$start_offset,
 			$end_offset

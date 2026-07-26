@@ -1,8 +1,8 @@
-# QA report — Simple Events by MiMe 0.2.1
+# QA report — MiMe Simple Events and Calendar 0.2.1
 
 **Date:** 2026-07-20
 
-**Candidate:** Simple Events by MiMe 0.2.1
+**Candidate:** MiMe Simple Events and Calendar 0.2.1
 
 **Scope:** final public identity, external event-link behaviour, Elementor editing support and public-release qualification
 
@@ -10,7 +10,7 @@
 
 ## Result
 
-Version 0.2.1 adopts **Simple Events by MiMe** with `simple-events-by-mime` as its first public identity and resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without Simple Events by MiMe changing the user's Elementor option. The production archive also satisfies the code-level official Plugin Review standard after request-boundary, cleanup and packaging hardening.
+Version 0.2.1 adopts **MiMe Simple Events and Calendar** with `mime-simple-events-calendar` as its first public identity and resolves both reported issues. Public location and external event actions open in isolated new tabs. Events declare Elementor's official WordPress post-type feature support, so compatible Elementor installations recognize individual Events as editable without MiMe Simple Events and Calendar changing the user's Elementor option. The production archive also satisfies the code-level official Plugin Review standard after request-boundary, cleanup and packaging hardening.
 
 ## Functional evidence
 
@@ -18,7 +18,7 @@ Version 0.2.1 adopts **Simple Events by MiMe** with `simple-events-by-mime` as i
 - Native details, shortcodes, Elementor widgets and Gutenberg blocks inherit the same link output from the shared renderer.
 - Internal event title, image and taxonomy links keep their existing same-tab behaviour.
 - `wpse_event` includes `elementor` in its native post-type supports alongside title, editor, excerpt, thumbnail, author, revisions and custom fields.
-- The distribution directory, main plugin file, archive, WordPress readme, translation catalogue and text domain consistently use `simple-events-by-mime`.
+- The distribution directory, main plugin file, archive, WordPress readme, translation catalogue and text domain consistently use `mime-simple-events-calendar`.
 - Existing post type, taxonomy, metadata, option, shortcode, REST, block and Elementor widget identifiers retain their established `wpse` contracts.
 - Real Elementor 3.35.9 and 4.1.5 hosts confirm both `post_type_supports( 'wpse_event', 'elementor' )` and Elementor's own `Utils::is_post_type_support()` result. Both hosts also create an editable Event document whose official edit URL opens Elementor.
 - Elementor edits the event's normal WordPress content/layout. Event date, time, location and status remain managed through the native Event details panel.
@@ -72,6 +72,6 @@ Version 0.2.1 adopts **Simple Events by MiMe** with `simple-events-by-mime` as i
 
 ## Candidate
 
-Installable archive: `dist/simple-events-by-mime-0.2.1.zip`
+Installable archive: `dist/mime-simple-events-calendar-0.2.1.zip`
 
-Checksum file: `dist/simple-events-by-mime-0.2.1.zip.sha256`
+Checksum file: `dist/mime-simple-events-calendar-0.2.1.zip.sha256`

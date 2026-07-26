@@ -106,12 +106,12 @@ jobs:
       - run: npm run test:release
       - uses: wordpress/plugin-check-action@98a1788320d0add90df2d8183934ecccbc4e05d2 # v1
         with:
-          build-dir: .release/simple-events-by-mime
-          slug: simple-events-by-mime
+          build-dir: .release/mime-simple-events-calendar
+          slug: mime-simple-events-calendar
           strict: true
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: simple-events-by-mime-release
+          name: mime-simple-events-calendar-release
           path: |
             dist/*.zip
             dist/*.sha256
@@ -145,4 +145,4 @@ jobs:
       - run: npm run test:smoke
         env:
           WPSE_SMOKE_CORE: ${{ matrix.core }}
-          WPSE_SMOKE_PLUGIN_PATH: .release/simple-events-by-mime
+          WPSE_SMOKE_PLUGIN_PATH: .release/mime-simple-events-calendar

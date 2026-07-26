@@ -1,17 +1,17 @@
-# Simple Events by MiMe — product specification
+# MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 21 July 2026
-**Current release candidate:** 0.2.2
+**Last reviewed:** 26 July 2026
+**Current release candidate:** 0.2.3
 **Maintainer:** MiMe
 
-This document defines what Simple Events by MiMe must do and the boundaries it
+This document defines what MiMe Simple Events and Calendar must do and the boundaries it
 must preserve. Detailed implementation contracts, decisions and QA evidence are
 linked from [the documentation index](README.md).
 
 ## 1. Product purpose
 
-Simple Events by MiMe is a focused WordPress event-publishing plugin. It gives
+MiMe Simple Events and Calendar is a focused WordPress event-publishing plugin. It gives
 editors a native Events area, adds event-specific dates and location fields, and
 provides lists, grids, a calendar, Gutenberg blocks and optional Elementor
 widgets.
@@ -65,9 +65,9 @@ recurrence model.
 
 | Item | Contract |
 |---|---|
-| Plugin name | Simple Events by MiMe |
+| Plugin name | MiMe Simple Events and Calendar |
 | Author | MiMe |
-| Directory, slug and text domain | `simple-events-by-mime` |
+| Directory, slug and text domain | `mime-simple-events-calendar` |
 | Namespace | `MiMe\WPSimpleEvents` |
 | WordPress-global prefix | `wpse_` |
 | Event post type | `wpse_event` |

@@ -1,10 +1,10 @@
-=== Simple Events by MiMe ===
+=== MiMe Simple Events and Calendar ===
 Contributors: mimeonline
 Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.3
-Stable tag: 0.2.2
+Stable tag: 0.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Create and publish focused WordPress events with lists, calendars, blocks and op
 
 == Description ==
 
-Simple Events by MiMe adds a native Events section to WordPress. It is designed for websites that need clear event publishing without recurrence, ticketing, interactive maps or the overhead of a large event suite.
+MiMe Simple Events and Calendar adds a native Events section to WordPress. It is designed for websites that need clear event publishing without recurrence, ticketing, interactive maps or the overhead of a large event suite.
 
 = Event publishing =
 
@@ -54,7 +54,7 @@ The complete source, build instructions and security policy are available at htt
 == Installation ==
 
 1. In WordPress, go to Plugins > Add New > Upload Plugin.
-2. Select the official Simple Events by MiMe zip file and choose Install Now.
+2. Select the official MiMe Simple Events and Calendar zip file and choose Install Now.
 3. Activate the plugin.
 4. Go to Events > Add New and create the first event. A valid start is required before publication.
 5. Add `[wpse_calendar]` or `[wpse_events]` to a page, or insert the matching Gutenberg or Elementor component.
@@ -100,10 +100,14 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 3. The responsive public month calendar and event list.
 4. A single event with date, venue, location link, external action, categories and tags.
 5. Event archive, display, timezone and data-retention settings.
-6. The complete optional Simple Events by MiMe widget collection in Elementor.
-7. Calendar and event-list configuration inside the Elementor editor.
+6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.2.3 =
+* Rename the pre-approval public identity to MiMe Simple Events and Calendar with the `mime-simple-events-calendar` slug.
+* Preserve existing event data, shortcodes, Gutenberg blocks and Elementor widget identifiers across the rename.
+* Update the WordPress.org banners, translations, release package and development dependencies.
 
 = 0.2.2 =
 * Protect password-locked event metadata in the public WordPress REST API while preserving authorized editor access.
@@ -111,6 +115,6 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 * Pin continuous-integration actions to reviewed immutable revisions.
 
 = 0.2.1 =
-* Adopt the final first-release name and slug: Simple Events by MiMe and simple-events-by-mime.
+* Establish the initial pre-approval distribution identity while preserving all event storage and content identifiers.
 * Open location and external event actions safely in a new tab.
 * Expose Edit with Elementor for individual Events on compatible Elementor installations.

@@ -23,7 +23,7 @@ final class Activator {
 	public static function activate( bool $network_wide = false ): void {
 		if ( $network_wide && is_multisite() ) {
 			wp_die(
-				esc_html__( 'Simple Events by MiMe must currently be activated separately on each site in a multisite network.', 'simple-events-by-mime' )
+				esc_html__( 'MiMe Simple Events and Calendar must currently be activated separately on each site in a multisite network.', 'mime-simple-events-calendar' )
 			);
 		}
 

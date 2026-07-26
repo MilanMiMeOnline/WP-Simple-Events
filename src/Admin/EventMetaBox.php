@@ -37,7 +37,7 @@ final class EventMetaBox {
 	public function add(): void {
 		add_meta_box(
 			'wpse-event-details',
-			__( 'Event details', 'simple-events-by-mime' ),
+			__( 'Event details', 'mime-simple-events-calendar' ),
 			array( $this, 'render' ),
 			EventPostType::POST_TYPE,
 			'normal',
@@ -60,30 +60,30 @@ final class EventMetaBox {
 		?>
 		<div class="wpse-event-fields" data-wpse-event-fields>
 			<p class="wpse-event-fields-intro">
-				<?php esc_html_e( 'A start is required before an event can be published. Drafts may remain incomplete.', 'simple-events-by-mime' ); ?>
+				<?php esc_html_e( 'A start is required before an event can be published. Drafts may remain incomplete.', 'mime-simple-events-calendar' ); ?>
 			</p>
 
 			<?php if ( $this->dates_need_review( $post->ID ) ) : ?>
 				<div class="notice notice-warning inline wpse-event-date-review" role="status">
-					<p><strong><?php esc_html_e( 'Review the copied start and end date before publishing this event.', 'simple-events-by-mime' ); ?></strong></p>
+					<p><strong><?php esc_html_e( 'Review the copied start and end date before publishing this event.', 'mime-simple-events-calendar' ); ?></strong></p>
 				</div>
 			<?php endif; ?>
 
 			<p class="wpse-event-fields-all-day">
 				<label for="wpse-all-day">
 					<input type="checkbox" id="wpse-all-day" name="wpse_event[all_day]" value="1" <?php checked( $input->all_day ); ?>>
-					<?php esc_html_e( 'All-day event', 'simple-events-by-mime' ); ?>
+					<?php esc_html_e( 'All-day event', 'mime-simple-events-calendar' ); ?>
 				</label>
 			</p>
 
 			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'start-date', 'start_date', __( 'Start date', 'simple-events-by-mime' ), 'date', $input->start_date ); ?>
+				<?php $this->render_input( 'start-date', 'start_date', __( 'Start date', 'mime-simple-events-calendar' ), 'date', $input->start_date ); ?>
 				<div data-wpse-time-field>
-					<?php $this->render_input( 'start-time', 'start_time', __( 'Start time', 'simple-events-by-mime' ), 'time', $input->start_time, '60' ); ?>
+					<?php $this->render_input( 'start-time', 'start_time', __( 'Start time', 'mime-simple-events-calendar' ), 'time', $input->start_time, '60' ); ?>
 				</div>
-				<?php $this->render_input( 'end-date', 'end_date', __( 'End date', 'simple-events-by-mime' ), 'date', $input->end_date ); ?>
+				<?php $this->render_input( 'end-date', 'end_date', __( 'End date', 'mime-simple-events-calendar' ), 'date', $input->end_date ); ?>
 				<div data-wpse-time-field>
-					<?php $this->render_input( 'end-time', 'end_time', __( 'End time', 'simple-events-by-mime' ), 'time', $input->end_time, '60' ); ?>
+					<?php $this->render_input( 'end-time', 'end_time', __( 'End time', 'mime-simple-events-calendar' ), 'time', $input->end_time, '60' ); ?>
 				</div>
 			</div>
 
@@ -91,27 +91,27 @@ final class EventMetaBox {
 				<?php
 				printf(
 					/* translators: %s: Event timezone identifier. */
-					esc_html__( 'Timezone: %s. Existing events keep their saved timezone.', 'simple-events-by-mime' ),
+					esc_html__( 'Timezone: %s. Existing events keep their saved timezone.', 'mime-simple-events-calendar' ),
 					esc_html( $input->timezone )
 				);
 				?>
 			</p>
 			<p class="description wpse-event-fields-time-format">
-				<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'simple-events-by-mime' ); ?>
+				<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'mime-simple-events-calendar' ); ?>
 			</p>
 
 			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'venue', 'venue', __( 'Venue', 'simple-events-by-mime' ), 'text', $input->venue, null, 200 ); ?>
+				<?php $this->render_input( 'venue', 'venue', __( 'Venue', 'mime-simple-events-calendar' ), 'text', $input->venue, null, 200 ); ?>
 				<?php $this->render_status( $input->status ); ?>
 			</div>
 
-			<?php $this->render_textarea( 'address', 'address', __( 'Address', 'simple-events-by-mime' ), $input->address, 500 ); ?>
+			<?php $this->render_textarea( 'address', 'address', __( 'Address', 'mime-simple-events-calendar' ), $input->address, 500 ); ?>
 
-			<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'simple-events-by-mime' ), 'url', $input->location_url, null, 2048, __( 'Optional route or location page using HTTP(S).', 'simple-events-by-mime' ) ); ?>
+			<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'mime-simple-events-calendar' ), 'url', $input->location_url, null, 2048, __( 'Optional route or location page using HTTP(S).', 'mime-simple-events-calendar' ) ); ?>
 
 			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'simple-events-by-mime' ), 'url', $input->event_url, null, 2048, __( 'Optional information or registration page using HTTP(S).', 'simple-events-by-mime' ) ); ?>
-				<?php $this->render_input( 'event-url-label', 'event_url_label', __( 'External event link label', 'simple-events-by-mime' ), 'text', $input->event_url_label, null, EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH, __( 'Optional link text. The default is “More event information”.', 'simple-events-by-mime' ) ); ?>
+				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'mime-simple-events-calendar' ), 'url', $input->event_url, null, 2048, __( 'Optional information or registration page using HTTP(S).', 'mime-simple-events-calendar' ) ); ?>
+				<?php $this->render_input( 'event-url-label', 'event_url_label', __( 'External event link label', 'mime-simple-events-calendar' ), 'text', $input->event_url_label, null, EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH, __( 'Optional link text. The default is “More event information”.', 'mime-simple-events-calendar' ) ); ?>
 			</div>
 		</div>
 		<?php
@@ -224,13 +224,13 @@ final class EventMetaBox {
 	 */
 	private function render_status( string $current_status ): void {
 		$options = array(
-			EventStatus::SCHEDULED->value => __( 'Scheduled', 'simple-events-by-mime' ),
-			EventStatus::CANCELLED->value => __( 'Cancelled', 'simple-events-by-mime' ),
-			EventStatus::POSTPONED->value => __( 'Postponed', 'simple-events-by-mime' ),
+			EventStatus::SCHEDULED->value => __( 'Scheduled', 'mime-simple-events-calendar' ),
+			EventStatus::CANCELLED->value => __( 'Cancelled', 'mime-simple-events-calendar' ),
+			EventStatus::POSTPONED->value => __( 'Postponed', 'mime-simple-events-calendar' ),
 		);
 		?>
 		<p class="wpse-event-fields-field">
-			<label for="wpse-status"><?php esc_html_e( 'Event status', 'simple-events-by-mime' ); ?></label>
+			<label for="wpse-status"><?php esc_html_e( 'Event status', 'mime-simple-events-calendar' ); ?></label>
 			<select class="widefat" id="wpse-status" name="wpse_event[status]">
 				<?php foreach ( $options as $value => $label ) : ?>
 					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current_status, $value ); ?>><?php echo esc_html( $label ); ?></option>

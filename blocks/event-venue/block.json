@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "wpse/event-venue",
   "title": "Event Venue",
-  "category": "simple-events-by-mime",
+  "category": "mime-simple-events-calendar",
   "icon": "location-alt",
   "description": "Display the venue of the current or selected event.",
-  "textdomain": "simple-events-by-mime",
+  "textdomain": "mime-simple-events-calendar",
   "usesContext": ["postId", "postType"],
   "attributes": {
     "eventId": { "type": "integer", "default": 0 },

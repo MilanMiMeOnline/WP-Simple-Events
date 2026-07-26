@@ -100,7 +100,7 @@ final class EventFieldRenderer {
 			return '';
 		}
 
-		$visible_label = '' !== $label ? $label : __( 'Date and time:', 'simple-events-by-mime' );
+		$visible_label = '' !== $label ? $label : __( 'Date and time:', 'mime-simple-events-calendar' );
 		$date          = '<p class="wpse-event-date">'
 			. ( $show_label ? '<span class="wpse-event-label">' . esc_html( $visible_label ) . '</span> ' : '' )
 			. '<time datetime="' . esc_attr( $presentation->date->start_iso )
@@ -125,8 +125,8 @@ final class EventFieldRenderer {
 		}
 
 		$label = match ( $presentation->status ) {
-			EventStatus::CANCELLED => __( 'Cancelled', 'simple-events-by-mime' ),
-			EventStatus::POSTPONED => __( 'Postponed', 'simple-events-by-mime' ),
+			EventStatus::CANCELLED => __( 'Cancelled', 'mime-simple-events-calendar' ),
+			EventStatus::POSTPONED => __( 'Postponed', 'mime-simple-events-calendar' ),
 			default => '',
 		};
 
@@ -148,7 +148,7 @@ final class EventFieldRenderer {
 		bool $show_label = true,
 		string $label = ''
 	): string {
-		$visible_label = '' !== $label ? $label : __( 'Location:', 'simple-events-by-mime' );
+		$visible_label = '' !== $label ? $label : __( 'Location:', 'mime-simple-events-calendar' );
 
 		return $this->fields_visible( $presentation ) && '' !== $presentation->venue
 			? '<p class="wpse-event-venue">'
@@ -175,7 +175,7 @@ final class EventFieldRenderer {
 	 * @param string            $label        Optional plain-text action label override.
 	 */
 	public function location_action( EventPresentation $presentation, string $label = '' ): string {
-		$visible_label = '' !== $label ? $label : __( 'View location', 'simple-events-by-mime' );
+		$visible_label = '' !== $label ? $label : __( 'View location', 'mime-simple-events-calendar' );
 
 		return $this->fields_visible( $presentation ) && '' !== $presentation->location_url
 			? '<p class="wpse-event-location-link"><a href="' . esc_url( $presentation->location_url )
@@ -244,7 +244,7 @@ final class EventFieldRenderer {
 			? $label
 			: ( '' !== $presentation->event_url_label
 				? $presentation->event_url_label
-				: __( 'More event information', 'simple-events-by-mime' ) );
+				: __( 'More event information', 'mime-simple-events-calendar' ) );
 
 		return '<p class="wpse-event-action"><a class="wpse-event-action-link" href="'
 			. esc_url( $presentation->event_url ) . '" target="_blank" rel="noopener noreferrer">'
@@ -267,7 +267,7 @@ final class EventFieldRenderer {
 			$presentation,
 			$presentation->categories,
 			'wpse-event-categories',
-			'' !== $label ? $label : __( 'Categories:', 'simple-events-by-mime' ),
+			'' !== $label ? $label : __( 'Categories:', 'mime-simple-events-calendar' ),
 			$show_label
 		);
 	}
@@ -288,7 +288,7 @@ final class EventFieldRenderer {
 			$presentation,
 			$presentation->tags,
 			'wpse-event-tags',
-			'' !== $label ? $label : __( 'Tags:', 'simple-events-by-mime' ),
+			'' !== $label ? $label : __( 'Tags:', 'mime-simple-events-calendar' ),
 			$show_label
 		);
 	}
