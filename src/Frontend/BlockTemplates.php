@@ -41,6 +41,10 @@ final readonly class BlockTemplates {
 			)
 		);
 
+		if ( ! wp_is_block_theme() ) {
+			return;
+		}
+
 		foreach ( $this->definitions() as $slug => $definition ) {
 			register_block_template( self::TEMPLATE_NAMESPACE . '//' . $slug, $definition );
 		}

@@ -7,6 +7,7 @@ import { join, resolve as resolvePath } from 'node:path';
 import {
 	pluginActionUrl,
 	pluginFileFromPath,
+	themeActivationUrl,
 } from './smoke-contract.mjs';
 
 const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
@@ -28,6 +29,15 @@ const smokePluginPath = resolvePath(
 	process.env.WPSE_SMOKE_PLUGIN_PATH ?? '.',
 );
 const smokePluginFile = pluginFileFromPath( smokePluginPath );
+const smokeThemePaths = [
+	'wpse-classic-shell',
+	'wpse-hybrid-shell',
+	'wpse-hybrid-override',
+	'wpse-block-shell',
+	'wpse-block-override',
+].map( ( theme ) =>
+	resolvePath( projectDirectory, 'tests', 'Fixtures', 'themes', theme ),
+);
 const wpEnvExecutable = fileURLToPath(
 	new URL( '../node_modules/.bin/wp-env', import.meta.url ),
 );
@@ -38,6 +48,7 @@ async function prepareSmokeConfiguration() {
 	);
 
 	configuration.plugins = [ smokePluginPath ];
+	configuration.themes = smokeThemePaths;
 
 	await rm( smokeConfigDirectory, { force: true, recursive: true } );
 	await mkdir( smokeConfigDirectory, { recursive: true } );
@@ -173,6 +184,99 @@ async function requestJson( url, options = {} ) {
 function requireCondition( condition, message ) {
 	if ( ! condition ) {
 		throw new Error( message );
+	}
+}
+
+function requireExactlyOnce( body, marker, message ) {
+	requireCondition( body.split( marker ).length - 1 === 1, message );
+}
+
+async function activateSmokeTheme( session, theme ) {
+	const themesUrl = 'http://localhost:8888/wp-admin/themes.php';
+	const body = await fetchHealthyPage( themesUrl, {
+		headers: { cookie: cookieHeader( session.cookieJar ) },
+	} );
+	const activationUrl = themeActivationUrl( body, theme );
+
+	requireCondition(
+		activationUrl,
+		`The smoke theme ${ theme } is unavailable for activation.`,
+	);
+
+	const response = await fetch( activationUrl, {
+		headers: { cookie: cookieHeader( session.cookieJar ) },
+		redirect: 'manual',
+	} );
+
+	requireCondition(
+		response.status === 302,
+		`The protected activation for ${ theme } did not redirect.`,
+	);
+}
+
+async function assertEventThemeShell(
+	{
+		theme,
+		headerMarker,
+		footerMarker,
+		singleOverrideMarker = '',
+		archiveOverrideMarker = '',
+	},
+	session,
+	singleUrl,
+) {
+	await activateSmokeTheme( session, theme );
+
+	const archivePage = await fetchHealthyPage(
+		'http://localhost:8888/events/',
+	);
+	const singlePage = await fetchHealthyPage( singleUrl );
+
+	for ( const [ pageName, body ] of [
+		[ 'archive', archivePage ],
+		[ 'single', singlePage ],
+	] ) {
+		requireExactlyOnce(
+			body,
+			headerMarker,
+			`${ theme } rendered an invalid ${ pageName } header shell.`,
+		);
+		requireExactlyOnce(
+			body,
+			footerMarker,
+			`${ theme } rendered an invalid ${ pageName } footer shell.`,
+		);
+	}
+
+	requireCondition(
+		archivePage.includes( 'wpse-event-archive' ) &&
+			archivePage.includes( 'Future smoke event' ),
+		`${ theme } lost the native event archive inside its theme shell.`,
+	);
+	requireExactlyOnce(
+		singlePage,
+		'class="wpse-single-event"',
+		`${ theme } did not render exactly one native single event.`,
+	);
+	requireCondition(
+		singlePage.includes( 'Future smoke event' ),
+		`${ theme } lost the event title inside its theme shell.`,
+	);
+
+	if ( singleOverrideMarker ) {
+		requireExactlyOnce(
+			singlePage,
+			singleOverrideMarker,
+			`${ theme } did not honor its single-event override.`,
+		);
+	}
+
+	if ( archiveOverrideMarker ) {
+		requireExactlyOnce(
+			archivePage,
+			archiveOverrideMarker,
+			`${ theme } did not honor its event-archive override.`,
+		);
 	}
 }
 
@@ -1251,6 +1355,48 @@ try {
 		( singleBody.match( /class="wpse-single-event"/g ) ?? [] ).length === 1,
 		'The event-details shortcode recursively duplicated the current event.',
 	);
+
+	const themeShellMatrix = [
+		{
+			theme: 'wpse-classic-shell',
+			headerMarker: 'id="wpse-test-classic-header"',
+			footerMarker: 'id="wpse-test-classic-footer"',
+		},
+		{
+			theme: 'wpse-hybrid-shell',
+			headerMarker: 'id="wpse-test-classic-header"',
+			footerMarker: 'id="wpse-test-classic-footer"',
+		},
+		{
+			theme: 'wpse-hybrid-override',
+			headerMarker: 'id="wpse-test-classic-header"',
+			footerMarker: 'id="wpse-test-classic-footer"',
+			singleOverrideMarker: 'id="wpse-test-php-single-override"',
+			archiveOverrideMarker: 'id="wpse-test-php-archive-override"',
+		},
+		{
+			theme: 'wpse-block-shell',
+			headerMarker: 'id="wpse-test-block-header"',
+			footerMarker: 'id="wpse-test-block-footer"',
+		},
+		{
+			theme: 'wpse-block-override',
+			headerMarker: 'id="wpse-test-block-header"',
+			footerMarker: 'id="wpse-test-block-footer"',
+			singleOverrideMarker: 'id="wpse-test-block-single-override"',
+			archiveOverrideMarker: 'id="wpse-test-block-archive-override"',
+		},
+	];
+
+	for ( const themeContract of themeShellMatrix ) {
+		await assertEventThemeShell(
+			themeContract,
+			session,
+			validCreate.data.link,
+		);
+	}
+
+	await activateSmokeTheme( session, 'wpse-classic-shell' );
 
 	const protectedSingleBody = await fetchHealthyPage( protectedCreate.data.link );
 	requireCondition(

@@ -44,3 +44,31 @@ export function pluginActionUrl( body, action, pluginFile ) {
 
 	return null;
 }
+
+/**
+ * Find the nonce-protected activation URL for one allowlisted theme.
+ *
+ * @param {string} body       Themes screen HTML.
+ * @param {string} stylesheet Expected theme stylesheet slug.
+ * @return {URL|null} Matching activation URL or null.
+ */
+export function themeActivationUrl( body, stylesheet ) {
+	for ( const match of body.matchAll( /href="([^"]+)"/g ) ) {
+		const candidate = match[ 1 ]
+			.replaceAll( '&#038;', '&' )
+			.replaceAll( '&amp;', '&' );
+		const url = new URL(
+			candidate,
+			'http://localhost:8888/wp-admin/themes.php',
+		);
+
+		if (
+			url.searchParams.get( 'action' ) === 'activate' &&
+			url.searchParams.get( 'stylesheet' ) === stylesheet
+		) {
+			return url;
+		}
+	}
+
+	return null;
+}

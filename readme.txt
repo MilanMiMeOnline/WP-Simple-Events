@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.3
-Stable tag: 0.2.3
+Stable tag: 0.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,11 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.2.4 =
+* Preserve the active theme or Elementor header and footer on event archives and individual events in classic themes that also contain theme.json.
+* Keep full block-theme templates and explicit PHP or block-template overrides working through a tested template hierarchy.
+* Add a real WordPress compatibility matrix covering classic, hybrid and full block themes plus both override mechanisms.
 
 = 0.2.3 =
 * Rename the pre-approval public identity to MiMe Simple Events and Calendar with the `mime-simple-events-calendar` slug.

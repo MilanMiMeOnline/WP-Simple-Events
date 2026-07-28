@@ -4,6 +4,18 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-07-28
+
+### Fixed
+
+- Preserve the active theme and Elementor header/footer shell on event archives and individual events when a classic or hybrid classic theme contains `theme.json`.
+- Let explicit PHP theme overrides win before block-template discovery and pass the correct WordPress filename hierarchy to full block themes.
+
+### Testing
+
+- Add isolated regressions for classic, hybrid, full block and theme-override template selection.
+- Extend the packaged WordPress smoke journey with five fixture themes and exact header, content and footer assertions on both event routes.
+
 ## [0.2.3] - 2026-07-26
 
 ### Changed

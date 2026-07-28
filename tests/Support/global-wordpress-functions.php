@@ -886,6 +886,87 @@ if ( ! function_exists( 'is_singular' ) ) {
 	}
 }
 
+if ( ! function_exists( 'is_post_type_archive' ) ) {
+	/**
+	 * Return the configured event archive state.
+	 *
+	 * @param string|string[] $post_types Requested post types.
+	 */
+	function is_post_type_archive( string|array $post_types = '' ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		unset( $post_types );
+
+		return WordPressState::is_event_archive();
+	}
+}
+
+if ( ! function_exists( 'locate_template' ) ) {
+	/**
+	 * Return the configured theme-owned PHP template.
+	 *
+	 * @param string|string[] $template_names Candidate theme paths.
+	 * @param bool            $load           Whether WordPress should load the template.
+	 * @param bool            $load_once      Whether WordPress should require once.
+	 * @param array<mixed>    $args           Template arguments.
+	 */
+	function locate_template( string|array $template_names, bool $load = false, bool $load_once = true, array $args = array() ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		unset( $template_names, $load, $load_once, $args );
+
+		return WordPressState::theme_template();
+	}
+}
+
+if ( ! function_exists( 'wp_is_block_theme' ) ) {
+	/**
+	 * Return whether the configured theme is a full block theme.
+	 */
+	function wp_is_block_theme(): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::is_block_theme();
+	}
+}
+
+if ( ! function_exists( 'locate_block_template' ) ) {
+	/**
+	 * Record and resolve a deterministic full block-theme template.
+	 *
+	 * @param string        $template  PHP fallback path.
+	 * @param string        $type      Template type.
+	 * @param array<string> $templates Template hierarchy.
+	 */
+	function locate_block_template( string $template, string $type, array $templates ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::locate_block_template( $template, $type, $templates );
+	}
+}
+
+if ( ! function_exists( 'register_block_type' ) ) {
+	/**
+	 * Record one dynamic block registration.
+	 *
+	 * @param string               $block_type Block name.
+	 * @param array<string, mixed> $arguments  Block arguments.
+	 */
+	function register_block_type( string $block_type, array $arguments = array() ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		unset( $arguments );
+		WordPressState::register_block_type( $block_type );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'register_block_template' ) ) {
+	/**
+	 * Record one plugin block-template registration.
+	 *
+	 * @param string               $template_name Namespaced template name.
+	 * @param array<string, mixed> $arguments     Template arguments.
+	 */
+	function register_block_template( string $template_name, array $arguments = array() ): object { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		unset( $arguments );
+		WordPressState::register_block_template( $template_name );
+
+		return (object) array( 'slug' => $template_name );
+	}
+}
+
 if ( ! function_exists( 'get_queried_object_id' ) ) {
 	/**
 	 * Return the configured queried post ID.

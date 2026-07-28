@@ -133,6 +133,55 @@ final class WordPressState {
 	private static bool $singular_event = false;
 
 	/**
+	 * Current event archive request state.
+	 *
+	 * @var bool
+	 */
+	private static bool $event_archive = false;
+
+	/**
+	 * Whether the active test theme is a full block theme.
+	 *
+	 * @var bool
+	 */
+	private static bool $block_theme = false;
+
+	/**
+	 * Theme-owned PHP template returned by locate_template().
+	 *
+	 * @var string
+	 */
+	private static string $theme_template = '';
+
+	/**
+	 * Final template returned by locate_block_template().
+	 *
+	 * @var string
+	 */
+	private static string $block_template_result = '';
+
+	/**
+	 * Recorded block-template lookup arguments.
+	 *
+	 * @var list<array{template: string, type: string, templates: list<string>}>
+	 */
+	private static array $block_template_calls = array();
+
+	/**
+	 * Registered dynamic block names.
+	 *
+	 * @var list<string>
+	 */
+	private static array $registered_block_types = array();
+
+	/**
+	 * Registered plugin block-template names.
+	 *
+	 * @var list<string>
+	 */
+	private static array $registered_block_templates = array();
+
+	/**
 	 * Current queried post ID.
 	 *
 	 * @var int
@@ -227,36 +276,43 @@ final class WordPressState {
 	 * Reset mutable state before a test.
 	 */
 	public static function reset(): void {
-		self::$roles                   = array();
-		self::$current_user_can        = false;
-		self::$post_meta               = array();
-		self::$posts                   = array();
-		self::$permalinks              = array();
-		self::$image_urls              = array();
-		self::$image_alts              = array();
-		self::$terms                   = array();
-		self::$term_links              = array();
-		self::$filters                 = array();
-		self::$options                 = array();
-		self::$multisite               = false;
-		self::$site_ids                = array( 1 );
-		self::$current_site_id         = 1;
-		self::$site_stack              = array();
-		self::$switched_site_ids       = array();
-		self::$singular_event          = false;
-		self::$queried_object_id       = 0;
-		self::$inserted_post_data      = array();
-		self::$deleted_post_ids        = array();
-		self::$post_terms              = array();
-		self::$taxonomy_terms          = array();
-		self::$deleted_terms           = array();
-		self::$fail_term_operations    = false;
-		self::$fail_meta_operations    = false;
-		self::$rewrite_flushes         = 0;
-		self::$registered_post_types   = array();
-		self::$unregistered_post_types = array();
-		self::$registered_taxonomies   = array();
-		self::$unregistered_taxonomies = array();
+		self::$roles                      = array();
+		self::$current_user_can           = false;
+		self::$post_meta                  = array();
+		self::$posts                      = array();
+		self::$permalinks                 = array();
+		self::$image_urls                 = array();
+		self::$image_alts                 = array();
+		self::$terms                      = array();
+		self::$term_links                 = array();
+		self::$filters                    = array();
+		self::$options                    = array();
+		self::$multisite                  = false;
+		self::$site_ids                   = array( 1 );
+		self::$current_site_id            = 1;
+		self::$site_stack                 = array();
+		self::$switched_site_ids          = array();
+		self::$singular_event             = false;
+		self::$event_archive              = false;
+		self::$block_theme                = false;
+		self::$theme_template             = '';
+		self::$block_template_result      = '';
+		self::$block_template_calls       = array();
+		self::$registered_block_types     = array();
+		self::$registered_block_templates = array();
+		self::$queried_object_id          = 0;
+		self::$inserted_post_data         = array();
+		self::$deleted_post_ids           = array();
+		self::$post_terms                 = array();
+		self::$taxonomy_terms             = array();
+		self::$deleted_terms              = array();
+		self::$fail_term_operations       = false;
+		self::$fail_meta_operations       = false;
+		self::$rewrite_flushes            = 0;
+		self::$registered_post_types      = array();
+		self::$unregistered_post_types    = array();
+		self::$registered_taxonomies      = array();
+		self::$unregistered_taxonomies    = array();
 	}
 
 	/**
@@ -789,6 +845,125 @@ final class WordPressState {
 	 */
 	public static function is_singular_event(): bool {
 		return self::$singular_event;
+	}
+
+	/**
+	 * Configure the current event archive request.
+	 *
+	 * @param bool $archive Whether this is the event archive.
+	 */
+	public static function set_event_archive( bool $archive ): void {
+		self::$event_archive = $archive;
+	}
+
+	/**
+	 * Return the configured event archive decision.
+	 */
+	public static function is_event_archive(): bool {
+		return self::$event_archive;
+	}
+
+	/**
+	 * Configure whether the active theme is a full block theme.
+	 *
+	 * @param bool $block_theme Full block-theme decision.
+	 */
+	public static function set_block_theme( bool $block_theme ): void {
+		self::$block_theme = $block_theme;
+	}
+
+	/**
+	 * Return whether the active theme is a full block theme.
+	 */
+	public static function is_block_theme(): bool {
+		return self::$block_theme;
+	}
+
+	/**
+	 * Configure a theme-owned PHP template.
+	 *
+	 * @param string $template Absolute template path.
+	 */
+	public static function set_theme_template( string $template ): void {
+		self::$theme_template = $template;
+	}
+
+	/**
+	 * Return the configured theme-owned PHP template.
+	 */
+	public static function theme_template(): string {
+		return self::$theme_template;
+	}
+
+	/**
+	 * Configure the final full block-theme canvas.
+	 *
+	 * @param string $template Absolute template path.
+	 */
+	public static function set_block_template_result( string $template ): void {
+		self::$block_template_result = $template;
+	}
+
+	/**
+	 * Record and resolve a block-template lookup.
+	 *
+	 * @param string        $template  PHP fallback path.
+	 * @param string        $type      Template type.
+	 * @param array<string> $templates Template hierarchy.
+	 */
+	public static function locate_block_template( string $template, string $type, array $templates ): string {
+		self::$block_template_calls[] = array(
+			'template'  => $template,
+			'type'      => $type,
+			'templates' => $templates,
+		);
+
+		return '' !== self::$block_template_result ? self::$block_template_result : $template;
+	}
+
+	/**
+	 * Return recorded block-template lookups.
+	 *
+	 * @return list<array{template: string, type: string, templates: list<string>}>
+	 */
+	public static function block_template_calls(): array {
+		return self::$block_template_calls;
+	}
+
+	/**
+	 * Record one dynamic block registration.
+	 *
+	 * @param string $block_type Block name.
+	 */
+	public static function register_block_type( string $block_type ): void {
+		self::$registered_block_types[] = $block_type;
+	}
+
+	/**
+	 * Return registered dynamic block names.
+	 *
+	 * @return list<string>
+	 */
+	public static function registered_block_types(): array {
+		return self::$registered_block_types;
+	}
+
+	/**
+	 * Record one plugin block-template registration.
+	 *
+	 * @param string $template_name Namespaced template name.
+	 */
+	public static function register_block_template( string $template_name ): void {
+		self::$registered_block_templates[] = $template_name;
+	}
+
+	/**
+	 * Return registered plugin block-template names.
+	 *
+	 * @return list<string>
+	 */
+	public static function registered_block_templates(): array {
+		return self::$registered_block_templates;
 	}
 
 	/**

@@ -51,16 +51,19 @@ final readonly class TemplateLoader {
 	private function event_template( string $original, string $filename, string $slug ): string {
 		$theme_template  = locate_template( self::THEME_DIRECTORY . $filename, false, false );
 		$plugin_template = WPSE_PLUGIN_DIR . '/templates/' . $filename;
-		$candidate       = '' !== $theme_template ? $theme_template : $plugin_template;
 
-		if ( ! is_readable( $candidate ) ) {
+		if ( '' !== $theme_template ) {
+			return $theme_template;
+		}
+
+		if ( ! is_readable( $plugin_template ) ) {
 			return $original;
 		}
 
-		if ( function_exists( 'locate_block_template' ) ) {
-			return locate_block_template( $candidate, $slug, array( $slug, 'index' ) );
+		if ( wp_is_block_theme() ) {
+			return locate_block_template( $plugin_template, $slug, array( $filename, 'index.php' ) );
 		}
 
-		return $candidate;
+		return $plugin_template;
 	}
 }

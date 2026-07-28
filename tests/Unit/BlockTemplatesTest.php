@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Frontend\BlockTemplates;
+use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,13 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( BlockTemplates::class )]
 final class BlockTemplatesTest extends TestCase {
+	/**
+	 * Reset deterministic WordPress state between tests.
+	 */
+	protected function setUp(): void {
+		WordPressState::reset();
+	}
+
 	/**
 	 * Single and archive templates stay scoped to events and shared renderers.
 	 */
@@ -33,5 +41,32 @@ final class BlockTemplatesTest extends TestCase {
 		self::assertSame( array( EventPostType::POST_TYPE ), $definitions['archive-wpse_event']['post_types'] );
 		self::assertStringContainsString( '<!-- wp:wpse/native-single /-->', $definitions['single-wpse_event']['content'] );
 		self::assertStringContainsString( '<!-- wp:wpse/native-archive /-->', $definitions['archive-wpse_event']['content'] );
+	}
+
+	/**
+	 * Shared render blocks remain available to classic and hybrid themes.
+	 */
+	public function test_register_skips_plugin_templates_outside_full_block_themes(): void {
+		( new BlockTemplates() )->register();
+
+		self::assertSame( array( 'wpse/native-single', 'wpse/native-archive' ), WordPressState::registered_block_types() );
+		self::assertSame( array(), WordPressState::registered_block_templates() );
+	}
+
+	/**
+	 * Full block themes receive both plugin-owned fallback templates.
+	 */
+	public function test_register_exposes_plugin_templates_to_full_block_themes(): void {
+		WordPressState::set_block_theme( true );
+
+		( new BlockTemplates() )->register();
+
+		self::assertSame(
+			array(
+				'mime-simple-events-calendar//single-wpse_event',
+				'mime-simple-events-calendar//archive-wpse_event',
+			),
+			WordPressState::registered_block_templates()
+		);
 	}
 }

@@ -2,7 +2,7 @@
 
 **Status:** normative product and technical contract
 **Last reviewed:** 26 July 2026
-**Current release candidate:** 0.2.3
+**Current release candidate:** 0.2.4
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -242,10 +242,12 @@ the configured event archive slug. It remains functional without JavaScript.
 
 ### Template ownership
 
-The plugin supplies safe native fallbacks for classic and block themes. A theme
-may override them through documented WordPress template rules. Elementor Free
-widgets work on ordinary pages. Elementor Pro users may build dynamic event
-templates with Theme Builder, but Pro is not required by this plugin.
+The plugin supplies safe native fallbacks for classic, hybrid classic and full
+block themes. Hybrid classic themes with `theme.json` retain their PHP header and
+footer. A theme may override event presentation through the documented PHP or
+block-template rules. Elementor Free widgets work on ordinary pages. Elementor
+Pro users may build dynamic event templates with Theme Builder, but Pro is not
+required by this plugin.
 
 ## 10. Lists, grids and shortcodes
 

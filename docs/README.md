@@ -36,7 +36,7 @@ Versioned and phase-specific `QA-REPORT-*` documents are retained as historical
 release evidence. They are not user documentation and are excluded from the
 installable plugin package.
 
-The current release evidence is [QA report 0.2.3](QA-REPORT-0.2.3.md).
+The current release evidence is [QA report 0.2.4](QA-REPORT-0.2.4.md).
 
 ## Releases and WordPress.org
 

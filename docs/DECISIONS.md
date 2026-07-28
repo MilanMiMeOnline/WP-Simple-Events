@@ -318,3 +318,31 @@ while the full lint, build, test, WordPress smoke and browser journeys pass; it
 must be removed when the direct WordPress tooling resolves to patched ranges.
 Node dependencies remain development-only and are excluded from the production
 plugin archive.
+
+## ADR-036: Full block templates require a full block theme
+
+**Status:** Accepted
+
+WordPress enables the `block-templates` theme feature for both full block themes
+and classic themes that contain `theme.json`. Feature support alone therefore
+does not prove that the active theme owns block `header` and `footer` template
+parts. Selecting the plugin block template in a hybrid classic theme can replace
+its PHP `header.php` and `footer.php` with unresolved block template parts and
+remove the complete site shell.
+
+MiMe Simple Events and Calendar uses plugin block templates only when
+`wp_is_block_theme()` identifies a full block theme. Classic and hybrid classic
+themes use the bundled PHP templates, which call `get_header()` and
+`get_footer()` and consequently preserve theme and Elementor Pro locations.
+Internal native render blocks remain registered on every site, while the two
+plugin template definitions are registered only for a full block theme.
+
+An explicit PHP override under
+`mime-simple-events-calendar/single-wpse_event.php` or
+`mime-simple-events-calendar/archive-wpse_event.php` always wins before plugin
+block-template discovery. A full block theme or Site Editor may instead override
+the matching `single-wpse_event` or `archive-wpse_event` block template. The
+release matrix must cover a classic theme, a hybrid classic theme with
+`theme.json`, a PHP override, a full block theme and a block-template override,
+and must assert the complete header/content/footer shell rather than event
+content alone.

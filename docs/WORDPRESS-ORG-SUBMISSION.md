@@ -14,7 +14,7 @@ This checklist separates source hosting on GitHub from distribution through the 
 - [x] Security/privacy audit and password-protected REST regression completed.
 - [x] Deterministic production allowlist, checksum and reproducible archive.
 - [x] Enable GitHub Private Vulnerability Reporting and publish its direct private-reporting route in `SECURITY.md`.
-- [x] Version the prereview response candidate as 0.2.3.
+- [x] Version the corrected prereview response candidate as 0.2.4.
 - [ ] Explicitly request the new `mime-simple-events-calendar` permalink in the existing review email thread.
 - [x] Run the final versioned package through every local gate and the official Plugin Check runtime.
 - [ ] Push the reviewed commit and require the pinned GitHub Actions matrix, including strict Plugin Check, to pass.

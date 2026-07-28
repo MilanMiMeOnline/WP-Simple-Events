@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MiMe Simple Events and Calendar 0.2.3\n"
+"Project-Id-Version: MiMe Simple Events and Calendar 0.2.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mime-simple-events-calendar\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1230,19 +1230,19 @@ msgstr ""
 msgid "Location:"
 msgstr ""
 
-#: src/Frontend/BlockTemplates.php:57
+#: src/Frontend/BlockTemplates.php:61
 msgid "Single Event"
 msgstr ""
 
-#: src/Frontend/BlockTemplates.php:58
+#: src/Frontend/BlockTemplates.php:62
 msgid "Native single-event fallback from MiMe Simple Events and Calendar."
 msgstr ""
 
-#: src/Frontend/BlockTemplates.php:68
+#: src/Frontend/BlockTemplates.php:72
 msgid "Event Archive"
 msgstr ""
 
-#: src/Frontend/BlockTemplates.php:69
+#: src/Frontend/BlockTemplates.php:73
 msgid "Native event-archive fallback from MiMe Simple Events and Calendar."
 msgstr ""
 

@@ -33,6 +33,8 @@ Use the applicable items before every handoff. Record anything not tested and wh
 - [ ] Narrow and wide layouts work with theme-inherited styling.
 - [ ] User-facing strings are translatable and contain no hard-coded locale.
 - [ ] Behaviour without Elementor and WooCommerce is correct.
+- [ ] Single and archive pages preserve exactly one header, main region and footer in classic, hybrid classic and full block themes.
+- [ ] PHP and block theme overrides win at their documented positions in the template hierarchy.
 - [ ] Elementor widgets register and render on the supported 3.x and current tested 4.x versions.
 - [ ] Multiple shortcode and Elementor instances do not duplicate DOM IDs or request namespaces.
 

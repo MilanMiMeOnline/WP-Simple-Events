@@ -1,6 +1,6 @@
 {
   "name": "mime-simple-events-calendar",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "description": "Development tooling for MiMe Simple Events and Calendar.",
   "engines": {
