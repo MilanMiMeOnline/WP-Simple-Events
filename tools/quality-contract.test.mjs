@@ -14,10 +14,43 @@ const publicReadme = await readFile(
 	new URL( '../readme.txt', import.meta.url ),
 	'utf8',
 );
+const pluginBootstrap = await readFile(
+	new URL( '../mime-simple-events-calendar.php', import.meta.url ),
+	'utf8',
+);
+const composerManifest = JSON.parse(
+	await readFile( new URL( '../composer.json', import.meta.url ), 'utf8' ),
+);
+const productSpecification = await readFile(
+	new URL( '../docs/PRODUCT-SPECIFICATION.md', import.meta.url ),
+	'utf8',
+);
+const smokeRunner = await readFile(
+	new URL( './smoke-playground.mjs', import.meta.url ),
+	'utf8',
+);
 const wordpressOrgAssets = new URL( '../.wordpress-org/', import.meta.url );
 
 test( 'keeps non-PHP dependency trees optional for PHP-only CI jobs', () => {
 	assert.match( phpstanConfig, /^\s*- node_modules \(\?\)$/m );
+} );
+
+test( 'enforces PHP 8.2 as one consistent, executable compatibility floor', () => {
+	assert.equal( composerManifest.require.php, '>=8.2' );
+	assert.equal( composerManifest.config.platform.php, '8.2.0' );
+	assert.match( pluginBootstrap, /^ \* Requires PHP:\s+8\.2$/m );
+	assert.match( publicReadme, /^Requires PHP: 8\.2$/m );
+	assert.match( productSpecification, /^\| Minimum PHP \| 8\.2 \|$/m );
+	assert.match( qualityWorkflow, /^\s+- '8\.2'$/m );
+	assert.match(
+		qualityWorkflow,
+		/php-version: \$\{\{ matrix\.php \}\}/,
+	);
+	assert.match( qualityWorkflow, /WPSE_SMOKE_PHP: \$\{\{ matrix\.php \}\}/ );
+	assert.match(
+		smokeRunner,
+		/configuration\.phpVersion = requestedPhp/,
+	);
 } );
 
 test( 'pins every remote GitHub Action to an immutable commit', () => {

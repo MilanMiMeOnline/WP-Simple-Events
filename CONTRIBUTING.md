@@ -4,7 +4,7 @@ The project is developed in small, reviewable increments. The complete product c
 
 ## Local prerequisites
 
-- PHP 8.3 or newer
+- PHP 8.2 or newer
 - Composer 2
 - Node.js 20 or newer and npm 10 or newer
 - `zip`, `zipinfo` and `unzip` for verified release packages
@@ -30,7 +30,7 @@ Run the automated Playground smoke test, which starts WordPress and verifies act
 npm run test:smoke
 ```
 
-The smoke runner recreates its own temporary `WP_ENV_HOME`; it does not reset or destroy the normal project development database. `WPSE_SMOKE_CORE` selects a WordPress core source and `WPSE_SMOKE_PLUGIN_PATH` can point the journey at the generated package staging directory. The release matrix commands are documented in `docs/RELEASE-PROCESS.md`.
+The smoke runner recreates its own temporary `WP_ENV_HOME`; it does not reset or destroy the normal project development database. `WPSE_SMOKE_CORE` selects a WordPress core source, `WPSE_SMOKE_PHP` selects the Playground PHP runtime and `WPSE_SMOKE_PLUGIN_PATH` can point the journey at the generated package staging directory. The release matrix commands are documented in `docs/RELEASE-PROCESS.md`.
 
 Start the full Docker-backed WordPress environment when Docker is available:
 

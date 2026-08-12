@@ -303,7 +303,7 @@ new `mime-simple-events-calendar` permalink before approval.
 
 ## ADR-035: Development tooling pins the patched brace-expansion implementation
 
-**Status:** Accepted
+**Status:** Superseded by ADR-038
 
 The current WordPress environment and linting packages retain transitive
 `minimatch`, `glob` and `rimraf` branches whose declared ranges resolve to
@@ -346,3 +346,45 @@ release matrix must cover a classic theme, a hybrid classic theme with
 `theme.json`, a PHP override, a full block theme and a block-template override,
 and must assert the complete header/content/footer shell rather than event
 content alone.
+
+## ADR-037: PHP 8.2 is the public runtime floor from version 0.2.5
+
+**Status:** Accepted
+
+The minimum supported PHP version is lowered from 8.3 to 8.2 while the minimum
+WordPress version remains 6.9. PHP 8.2 is still receiving upstream security
+fixes at the time of this decision and represents a substantial share of active
+WordPress installations that cannot use the plugin under the earlier metadata
+floor. PHP 8.3 or newer remains recommended for site operators when their
+hosting platform supports it.
+
+The compatibility claim applies to the shipped plugin and to the complete
+quality suite. Composer resolves development tooling against a PHP 8.2 platform,
+and CI executes the PHP gates on 8.2 as well as the newer supported runtimes.
+The WordPress compatibility smoke matrix runs its minimum WordPress target on
+PHP 8.2. A metadata-only change without executable 8.2 evidence is not an
+acceptable release.
+
+This decision does not permit compatibility shims, conditional feature loss or
+weaker security controls. PHP 8.1 and 8.0 remain unsupported because reaching
+them would require broad production refactors of readonly classes, readonly
+properties, enums and constructor defaults with disproportionately high
+maintenance and regression cost. Historical release evidence continues to
+describe the PHP version on which it was produced.
+
+## ADR-038: The transitive brace-expansion override tracks patched releases
+
+**Status:** Accepted
+
+After ADR-035, a second high-severity denial-of-service advisory also affected
+the previously pinned 5.0.8 release. The narrow root override therefore advances
+to 5.0.9, the first release outside the new affected range. The architectural
+boundary remains unchanged: this dependency belongs only to linting and local
+WordPress tooling, is excluded from the production archive and may be overridden
+only while all frontend, release, browser and WordPress compatibility gates pass.
+
+The override is intentionally patch-specific instead of accepting npm's proposed
+forced major upgrade of ESLint. It must continue to move to a patched compatible
+release when a relevant advisory appears, and it must be removed once the direct
+WordPress tooling dependency tree resolves safely without it. High or critical
+audit findings are never ignored or allowlisted to preserve a green build.

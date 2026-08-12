@@ -6,7 +6,7 @@ These instructions apply to the entire repository. They are mandatory for human 
 
 - `docs/PRODUCT-SPECIFICATION.md` is the functional and technical source of truth.
 - Plugin name: MiMe Simple Events and Calendar. Author: MiMe. Text domain and slug: `mime-simple-events-calendar`.
-- Minimum versions: WordPress 6.9 and PHP 8.3.
+- Minimum versions: WordPress 6.9 and PHP 8.2.
 - WooCommerce and Elementor are optional integrations, never core dependencies.
 - Version 1 deliberately excludes recurrence, interactive maps, geocoding, ticketing and a custom database table.
 - Do not expand scope silently. Record intentional changes in `docs/DECISIONS.md` first.

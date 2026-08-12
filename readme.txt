@@ -3,8 +3,8 @@ Contributors: mimeonline
 Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.0
-Requires PHP: 8.3
-Stable tag: 0.2.4
+Requires PHP: 8.2
+Stable tag: 0.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,6 +103,11 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.2.5 =
+* Support PHP 8.2 while continuing to support PHP 8.3, 8.4 and 8.5.
+* Test the complete PHP quality suite and packaged WordPress compatibility journeys against the new minimum.
+* Refresh development dependencies to patched releases; these tools are not shipped with the plugin.
 
 = 0.2.4 =
 * Preserve the active theme or Elementor header and footer on event archives and individual events in classic themes that also contain theme.json.

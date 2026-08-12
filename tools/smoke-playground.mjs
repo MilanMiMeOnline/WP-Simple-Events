@@ -12,7 +12,10 @@ import {
 
 const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
 const requestedCore = process.env.WPSE_SMOKE_CORE;
-const smokeIdentifier = ( requestedCore ?? 'configured' ).replace(
+const requestedPhp = process.env.WPSE_SMOKE_PHP;
+const smokeIdentifier = `${ requestedCore ?? 'configured' }-${
+	requestedPhp ?? 'configured'
+}`.replace(
 	/[^a-z0-9.-]+/gi,
 	'-',
 );
@@ -49,6 +52,10 @@ async function prepareSmokeConfiguration() {
 
 	configuration.plugins = [ smokePluginPath ];
 	configuration.themes = smokeThemePaths;
+
+	if ( requestedPhp ) {
+		configuration.phpVersion = requestedPhp;
+	}
 
 	await rm( smokeConfigDirectory, { force: true, recursive: true } );
 	await mkdir( smokeConfigDirectory, { recursive: true } );

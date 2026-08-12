@@ -4,7 +4,7 @@ This process produces and verifies the installable MiMe Simple Events and Calend
 
 ## Prerequisites
 
-- PHP 8.3 or newer and Composer 2.
+- PHP 8.2 or newer and Composer 2.
 - Node.js 20 or newer and npm 10 or newer.
 - The system `zip`, `zipinfo` and `unzip` commands.
 - WP-CLI 2.12.0 for translation-catalogue generation.
@@ -21,8 +21,8 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 6. Run the packaged smoke journey on both supported WordPress versions:
 
    ```sh
-   WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
-   WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
+   WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
+   WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    ```
 
 7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/mime-simple-events-calendar` and uploads the verified zip and checksum as one CI artifact.

@@ -4,7 +4,7 @@ Elementor is an optional presentation host. MiMe Simple Events and Calendar regi
 
 The event post type declares WordPress' public `elementor` feature support. A compatible Elementor installation therefore exposes **Edit with Elementor** for individual Events without MiMe Simple Events and Calendar modifying the user's `elementor_cpt_support` option. Event dates, locations and other native Event details remain managed by the WordPress Event details panel; Elementor edits the event's normal content and layout.
 
-The initial compatibility matrix is Elementor 3.35.9 and 4.1.5 on WordPress 7.0.1 with PHP 8.3. The main plugin header records the current tested Elementor release. The matrix must be rerun and the header updated before a release; a passing minimum-version comparison alone is not release evidence for a future major version.
+The current compatibility matrix is Elementor 3.35.9 and 4.1.5 on WordPress 7.0.1 with PHP 8.2. The main plugin header records the current tested Elementor release. The matrix must be rerun and the header updated before a release; a passing minimum-version comparison alone is not release evidence for a future major version.
 
 ## Widget category and widgets
 

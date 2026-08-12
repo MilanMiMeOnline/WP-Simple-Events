@@ -1,8 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 26 July 2026
-**Current release candidate:** 0.2.4
+**Last reviewed:** 12 August 2026
+**Current release candidate:** 0.2.5
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -76,7 +76,7 @@ recurrence model.
 | Event meta prefix | `_wpse_` |
 | REST namespace | `wpse/v1` |
 | Minimum WordPress | 6.9 |
-| Minimum PHP | 8.3 |
+| Minimum PHP | 8.2 |
 | Optional Elementor minimum | 3.35 |
 | Licence | GPL-2.0-or-later |
 

@@ -25,7 +25,7 @@ Recurrence, interactive maps, geocoding, ticketing and external calendar synchro
 ## Requirements
 
 - WordPress 6.9 or newer
-- PHP 8.3 or newer
+- PHP 8.2 or newer (PHP 8.3 or newer recommended)
 - Elementor 3.35 or newer only when using the optional Elementor integration
 
 WooCommerce and Elementor are optional and never core dependencies.

@@ -4,6 +4,24 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-08-12
+
+### Changed
+
+- Lower the supported PHP floor from 8.3 to 8.2 while continuing to recommend a newer maintained PHP release when hosting permits it.
+- Resolve Composer development tooling against PHP 8.2 so the compatibility promise is enforced by the dependency graph.
+
+### Security
+
+- Refresh vulnerable Composer and npm development dependencies to patched releases; development tools remain excluded from the production plugin archive.
+
+### Testing
+
+- Run PHP quality gates on PHP 8.2, 8.3, 8.4 and 8.5.
+- Run the packaged WordPress 6.9 and 7.0.1 smoke matrix on PHP 8.2 and allow local smoke runs to select their Playground PHP runtime explicitly.
+- Requalify Elementor 3.35.9 and 4.1.5 on WordPress 7.0.1 with PHP 8.2.
+- Freeze the browser harness clock so calendar regressions remain deterministic across real calendar months.
+
 ## [0.2.4] - 2026-07-28
 
 ### Fixed

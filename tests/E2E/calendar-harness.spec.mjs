@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+const FIXED_BROWSER_TIME = new Date( '2026-07-15T12:00:00Z' );
+
 /**
  * Assert that a rendered month grid has seven evenly distributed columns.
  *
@@ -55,6 +57,10 @@ const isEventFeed = ( url ) =>
  */
 const gotoFixturePage = async ( page, slug ) => {
 	let response;
+
+	// FullCalendar initializes from the visitor's current month. Keep the
+	// fixture events one navigation step away regardless of the real test date.
+	await page.clock.setFixedTime( FIXED_BROWSER_TIME );
 
 	for ( let attempt = 0; attempt < 3; attempt += 1 ) {
 		response = attempt === 0

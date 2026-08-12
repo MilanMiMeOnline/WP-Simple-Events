@@ -8,7 +8,7 @@ The core must remain usable without WooCommerce and Elementor. Optional integrat
 
 ## PHP
 
-- PHP 8.3 is the language floor. Use strict types in PHP-only class files.
+- PHP 8.2 is the language floor. Use strict types in PHP-only class files.
 - Follow WordPress Coding Standards plus WordPress documentation standards.
 - Put production classes under `src/` using `MiMe\WPSimpleEvents`.
 - Prefer immutable value objects for validated event dates and query criteria when introduced.
