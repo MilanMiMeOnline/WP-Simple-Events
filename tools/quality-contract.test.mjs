@@ -69,10 +69,20 @@ test( 'pins every remote GitHub Action to an immutable commit', () => {
 	}
 } );
 
-test( 'runs the official Plugin Check against a real supported WordPress release', () => {
+test( 'keeps external WordPress QA inputs deterministic and available', () => {
 	assert.match(
 		qualityWorkflow,
-		/wordpress\/plugin-check-action@[a-f0-9]{40}[\s\S]*?wp-version: '7\.0\.1'/,
+		/wordpress\/plugin-check-action@[a-f0-9]{40}[\s\S]*?wp-version: trunk/,
+	);
+	assert.match( qualityWorkflow, /^\s+- wordpress: '6\.9'$/m );
+	assert.match( qualityWorkflow, /^\s+- wordpress: '7\.0\.1'$/m );
+	assert.match(
+		qualityWorkflow,
+		/https:\/\/github\.com\/wp-cli\/wp-cli\/releases\/download\/v2\.12\.0\/wp-cli-2\.12\.0\.phar/,
+	);
+	assert.match(
+		qualityWorkflow,
+		/ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c/,
 	);
 } );
 
