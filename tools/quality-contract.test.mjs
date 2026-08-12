@@ -69,6 +69,13 @@ test( 'pins every remote GitHub Action to an immutable commit', () => {
 	}
 } );
 
+test( 'runs the official Plugin Check against a real supported WordPress release', () => {
+	assert.match(
+		qualityWorkflow,
+		/wordpress\/plugin-check-action@[a-f0-9]{40}[\s\S]*?wp-version: '7\.0\.1'/,
+	);
+} );
+
 test( 'keeps the WordPress.org image set complete and correctly sized', async () => {
 	const expected = new Map( [
 		[ 'banner-1544x500.png', [ 1544, 500 ] ],
