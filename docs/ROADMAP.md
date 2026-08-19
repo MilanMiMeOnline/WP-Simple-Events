@@ -2,8 +2,8 @@
 
 **Status:** active planning contract
 **Last reviewed:** 19 August 2026
-**Current public release:** 0.2.5
-**Next planned release:** 0.3.0 — builder and presentation polish
+**Current public release:** 0.3.0
+**Next planned phase:** recurring-events discovery and specification; version target unassigned
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -23,7 +23,7 @@ Interactive maps, geocoding, ticketing and attendee management remain outside th
 roadmap. The plugin continues to favor a small, native WordPress core over a broad
 event-management suite.
 
-## Phase 1 — 0.3.0 builder and presentation polish
+## Phase 1 — 0.3.0 builder and presentation polish (released 19 August 2026)
 
 ### Goal
 

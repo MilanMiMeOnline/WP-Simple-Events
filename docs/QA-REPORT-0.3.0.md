@@ -3,7 +3,7 @@
 **Date:** 19 August 2026
 **Candidate:** 0.3.0
 **Scope:** builder and presentation polish release qualification
-**Status:** qualified for publication
+**Status:** published and verified
 
 ## Result
 
@@ -123,7 +123,9 @@ configuration without claiming every available style control.
 
 ## External release evidence
 
-- Release commit: `73b7b431c93a46b0b0e05afeb01d91c14527fde0`.
+- Qualified production commit: `73b7b431c93a46b0b0e05afeb01d91c14527fde0`.
+- Publication tag commit: `e97e3e9be5dd9a1a48237ea6cd5d90c79dfff925`;
+  its only additional changes record the qualification evidence.
 - GitHub Actions: [Quality run 32279672029, attempt 2](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/32279672029/attempts/2).
 - Result: all ten jobs passed, including **Release archive and Plugin Check**,
   both supported WordPress smoke environments, PHP 8.2–8.5 and browser
@@ -132,6 +134,8 @@ configuration without claiming every available style control.
   `7c338dd7a207d2d257fab85205198348ee877092b0011ee29d786070b0be03f7`.
 - `cmp` confirmed that the CI artifact and locally reviewed release ZIP are
   byte-identical.
+- The publication tag commit independently passed the same ten-job matrix in
+  [Quality run 32282099923](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/32282099923).
 
 The first CI attempt encountered two unrelated runner/network failures: GitHub
 returned HTTP 504 while the Plugin Check action downloaded PHPUnit, and the
@@ -142,6 +146,22 @@ Node.js 24. This does not affect plugin production code or release correctness,
 but the pins should be refreshed when upstream action releases remove the
 advisory.
 
-The candidate is approved for the separately authorized publication workflow.
-No GitHub release or WordPress.org SVN mutation was performed in this
-qualification step.
+The qualified tree was then published through the separately authorized
+publication workflow.
+
+## Publication evidence
+
+- Git tag and release: [`v0.3.0`](https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v0.3.0),
+  containing the reviewed ZIP and its SHA-256 file.
+- WordPress.org SVN trunk release commit: revision `3655163`.
+- WordPress.org immutable `tags/0.3.0` copy: revision `3655166`.
+- Public directory version: `0.3.0`, with download URL
+  `https://downloads.wordpress.org/plugin/mime-simple-events-calendar.0.3.0.zip`.
+- A fresh export of the SVN tag and a fresh extraction of the public
+  WordPress.org ZIP both compare without content differences against
+  `.release/mime-simple-events-calendar`.
+- The existing WordPress.org banners, icons and screenshots were unchanged and
+  remained byte-identical to the reviewed `.wordpress-org` source set.
+
+Version 0.3.0 is therefore published on both GitHub and WordPress.org with no
+unresolved release blocker.
