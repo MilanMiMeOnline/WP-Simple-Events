@@ -110,4 +110,51 @@ final class EventFeaturedImageWidget extends AbstractEventFieldWidget {
 	protected function supports_text_style(): bool {
 		return false;
 	}
+
+	/** Register image-specific visual controls. */
+	protected function register_additional_style_controls(): void {
+		$this->add_responsive_control(
+			'image_width',
+			array(
+				'label'      => esc_html__( 'Width', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( '%', 'px' ),
+				'range'      => array(
+					'%'  => array(
+						'min' => 1,
+						'max' => 100,
+					),
+					'px' => array(
+						'min' => 1,
+						'max' => 2000,
+					),
+				),
+				'selectors'  => array( '{{WRAPPER}} .wpse-single-event-image img' => 'width: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'image_ratio',
+			array(
+				'label'     => esc_html__( 'Aspect ratio', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::SELECT,
+				'options'   => array(
+					'auto'   => esc_html__( 'Original', 'mime-simple-events-calendar' ),
+					'16 / 9' => esc_html__( 'Landscape 16:9', 'mime-simple-events-calendar' ),
+					'3 / 2'  => esc_html__( 'Landscape 3:2', 'mime-simple-events-calendar' ),
+					'1 / 1'  => esc_html__( 'Square 1:1', 'mime-simple-events-calendar' ),
+					'4 / 5'  => esc_html__( 'Portrait 4:5', 'mime-simple-events-calendar' ),
+				),
+				'selectors' => array( '{{WRAPPER}} .wpse-single-event-image' => '--wpse-single-image-ratio: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'image_border_radius',
+			array(
+				'label'      => esc_html__( 'Border radius', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-single-event-image' => '--wpse-single-image-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+	}
 }

@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 0.2.5
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,16 +26,16 @@ MiMe Simple Events and Calendar adds a native Events section to WordPress. It is
 = Display options =
 
 * Native single-event and event-archive pages for classic and block themes.
-* Responsive event list and grid with optional filters and pagination.
-* Month and list calendar views with category and tag filters.
+* Responsive event list and grid with bounded card controls, optional filters and pagination.
+* Month and list calendar views with category/tag filters, an optional initial date and configurable toolbar groups.
 * An accessible upcoming-event fallback when JavaScript is unavailable or the calendar cannot load.
-* Twelve dynamic Gutenberg blocks for individual event fields, plus a single-event pattern.
+* Three complete Gutenberg components, twelve dynamic individual event-field blocks and a single-event pattern.
 * Three complete shortcodes: `[wpse_events]`, `[wpse_calendar]` and `[wpse_event_details]`.
 * Event JSON-LD on eligible single-event pages, with an administrator opt-out.
 
 = Optional Elementor integration =
 
-Elementor 3.35 or newer adds Event List / Grid, Event Calendar and Event Details widgets, together with twelve individual event-field widgets. Elementor is optional: the event editor, shortcodes, Gutenberg blocks and native templates work without it.
+Elementor 3.35 or newer adds Event List / Grid, Event Calendar and configurable Event Details widgets, together with twelve individual event-field widgets. Elementor is optional: the event editor, shortcodes, Gutenberg blocks and native templates work without it.
 
 Individual widgets can select a published event on an ordinary Elementor page. In a dynamic event template they can use the current event context. Elementor Pro is only required when the site owner wants to use Elementor's Theme Builder; it is not required by this plugin.
 
@@ -103,6 +103,13 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.3.0 =
+* Add native Event List / Grid, Event Calendar and complete Event Details blocks for Gutenberg.
+* Add practical, opt-in presentation controls across Elementor, Gutenberg and shared public components.
+* Make event category and tag archives use event chronology while preserving the active theme shell.
+* Improve Elementor calendar previews, visitor filter reset behaviour, responsive grids and accessible component semantics.
+* Preserve existing event data, shortcodes, block names, Elementor widget identifiers and visual defaults.
 
 = 0.2.5 =
 * Support PHP 8.2 while continuing to support PHP 8.3, 8.4 and 8.5.

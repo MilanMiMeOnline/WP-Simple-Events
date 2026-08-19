@@ -103,6 +103,7 @@ final class EventListWidget extends AbstractEventWidget {
 				'selectors'      => array(
 					'{{WRAPPER}} .wpse-events-view-grid' => 'grid-template-columns: repeat({{VALUE}}, minmax(0, 1fr));',
 				),
+				'condition'      => array( 'view' => 'grid' ),
 			)
 		);
 		$this->add_control(
@@ -129,6 +130,28 @@ final class EventListWidget extends AbstractEventWidget {
 		foreach ( $this->switcher_controls() as $id => $control ) {
 			$this->add_control( $id, $control );
 		}
+		$this->add_control(
+			'excerpt_length',
+			array(
+				'label'     => esc_html__( 'Excerpt length (words)', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::NUMBER,
+				'default'   => 30,
+				'min'       => 1,
+				'max'       => 100,
+				'step'      => 1,
+				'condition' => array( 'show_excerpt' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'heading_level',
+			array(
+				'label'     => esc_html__( 'Title heading level', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::SELECT,
+				'default'   => 'h3',
+				'options'   => $this->heading_options(),
+				'condition' => array( 'show_title' => 'yes' ),
+			)
+		);
 
 		$this->end_controls_section();
 		$this->register_style_controls();
@@ -157,8 +180,25 @@ final class EventListWidget extends AbstractEventWidget {
 			'filters'       => $this->switcher( esc_html__( 'Show filters', 'mime-simple-events-calendar' ), false ),
 			'pagination'    => $this->switcher( esc_html__( 'Show pagination', 'mime-simple-events-calendar' ), true ),
 			'show_image'    => $this->switcher( esc_html__( 'Show image', 'mime-simple-events-calendar' ), true ),
+			'show_title'    => $this->switcher( esc_html__( 'Show title', 'mime-simple-events-calendar' ), true ),
+			'show_date'     => $this->switcher( esc_html__( 'Show date and time', 'mime-simple-events-calendar' ), true ),
 			'show_excerpt'  => $this->switcher( esc_html__( 'Show excerpt', 'mime-simple-events-calendar' ), true ),
 			'show_location' => $this->switcher( esc_html__( 'Show location', 'mime-simple-events-calendar' ), true ),
+		);
+	}
+
+	/**
+	 * Return safe card-title heading choices.
+	 *
+	 * @return array<string, string>
+	 */
+	private function heading_options(): array {
+		return array(
+			'h2' => 'H2',
+			'h3' => 'H3',
+			'h4' => 'H4',
+			'h5' => 'H5',
+			'h6' => 'H6',
 		);
 	}
 
@@ -203,6 +243,14 @@ final class EventListWidget extends AbstractEventWidget {
 				'selectors' => array( '{{WRAPPER}} .wpse-events' => '--wpse-color-muted: {{VALUE}};' ),
 			)
 		);
+		$this->add_control(
+			'card_background_color',
+			array(
+				'label'     => esc_html__( 'Card background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-event-card' => '--wpse-card-background: {{VALUE}};' ),
+			)
+		);
 		$this->add_responsive_control(
 			'spacing',
 			array(
@@ -221,6 +269,48 @@ final class EventListWidget extends AbstractEventWidget {
 					),
 				),
 				'selectors'  => array( '{{WRAPPER}} .wpse-events' => '--wpse-spacing: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'card_row_gap',
+			array(
+				'label'      => esc_html__( 'Row gap', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-events' => '--wpse-grid-row-gap: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'card_column_gap',
+			array(
+				'label'      => esc_html__( 'Column gap', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-events' => '--wpse-grid-column-gap: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'card_content_padding',
+			array(
+				'label'      => esc_html__( 'Content padding', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-event-card' => '--wpse-card-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'card_image_ratio',
+			array(
+				'label'     => esc_html__( 'Image aspect ratio', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::SELECT,
+				'options'   => array(
+					'auto'   => esc_html__( 'Original', 'mime-simple-events-calendar' ),
+					'16 / 9' => esc_html__( 'Landscape 16:9', 'mime-simple-events-calendar' ),
+					'3 / 2'  => esc_html__( 'Landscape 3:2', 'mime-simple-events-calendar' ),
+					'1 / 1'  => esc_html__( 'Square 1:1', 'mime-simple-events-calendar' ),
+					'4 / 5'  => esc_html__( 'Portrait 4:5', 'mime-simple-events-calendar' ),
+				),
+				'selectors' => array( '{{WRAPPER}} .wpse-events' => '--wpse-image-ratio: {{VALUE}};' ),
 			)
 		);
 		$this->add_group_control(
@@ -278,6 +368,106 @@ final class EventListWidget extends AbstractEventWidget {
 			array(
 				'name'     => 'button_border',
 				'selector' => '{{WRAPPER}} .wpse-events button, {{WRAPPER}} .wpse-events-pagination a, {{WRAPPER}} .wpse-events-pagination span',
+			)
+		);
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'wpse_filter_style',
+			array(
+				'label'     => esc_html__( 'Filters', 'mime-simple-events-calendar' ),
+				'tab'       => Controls_Manager::TAB_STYLE,
+				'condition' => array( 'filters' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'filters_background_color',
+			array(
+				'label'     => esc_html__( 'Panel background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-filter-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'filters_padding',
+			array(
+				'label'      => esc_html__( 'Panel padding', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-filter-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'filters_border',
+				'selector' => '{{WRAPPER}} .wpse-events-filters',
+			)
+		);
+		$this->add_control(
+			'control_background_color',
+			array(
+				'label'     => esc_html__( 'Control background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-control-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'control_text_color',
+			array(
+				'label'     => esc_html__( 'Control text color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-control-text: {{VALUE}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'control_border',
+				'selector' => '{{WRAPPER}} .wpse-events-filters select, {{WRAPPER}} .wpse-events-filter-submit button',
+			)
+		);
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'wpse_pagination_style',
+			array(
+				'label'     => esc_html__( 'Pagination', 'mime-simple-events-calendar' ),
+				'tab'       => Controls_Manager::TAB_STYLE,
+				'condition' => array( 'pagination' => 'yes' ),
+			)
+		);
+		$this->add_control(
+			'pagination_background_color',
+			array(
+				'label'     => esc_html__( 'Container background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-events-pagination ul.page-numbers' => '--wpse-pagination-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'pagination_padding',
+			array(
+				'label'      => esc_html__( 'Container padding', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-events-pagination ul.page-numbers' => '--wpse-pagination-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'pagination_gap',
+			array(
+				'label'      => esc_html__( 'Item gap', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-events-pagination ul.page-numbers' => '--wpse-pagination-gap: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'pagination_border',
+				'selector' => '{{WRAPPER}} .wpse-events-pagination ul.page-numbers',
 			)
 		);
 		$this->end_controls_section();

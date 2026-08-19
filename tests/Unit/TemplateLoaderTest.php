@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\TemplateLoader;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -92,6 +93,40 @@ final class TemplateLoaderTest extends TestCase {
 					'template'  => WPSE_PLUGIN_DIR . '/templates/single-wpse_event.php',
 					'type'      => 'single-wpse_event',
 					'templates' => array( 'single-wpse_event.php', 'index.php' ),
+				),
+			),
+			WordPressState::block_template_calls()
+		);
+	}
+
+	/**
+	 * Classic event taxonomy archives use the shared event archive in the theme shell.
+	 */
+	public function test_classic_event_category_archive_uses_bundled_event_archive_template(): void {
+		WordPressState::set_event_taxonomy_archive( EventTaxonomies::CATEGORY );
+
+		$result = ( new TemplateLoader() )->template( '/theme/taxonomy.php' );
+
+		self::assertSame( WPSE_PLUGIN_DIR . '/templates/archive-wpse_event.php', $result );
+	}
+
+	/**
+	 * Full block themes resolve the registered taxonomy template hierarchy.
+	 */
+	public function test_full_block_theme_resolves_event_tag_taxonomy_template(): void {
+		WordPressState::set_event_taxonomy_archive( EventTaxonomies::TAG );
+		WordPressState::set_block_theme( true );
+		WordPressState::set_block_template_result( '/wordpress/template-canvas.php' );
+
+		$result = ( new TemplateLoader() )->template( '/theme/taxonomy.php' );
+
+		self::assertSame( '/wordpress/template-canvas.php', $result );
+		self::assertSame(
+			array(
+				array(
+					'template'  => WPSE_PLUGIN_DIR . '/templates/archive-wpse_event.php',
+					'type'      => 'taxonomy-wpse_event_tag',
+					'templates' => array( 'taxonomy-wpse_event_tag.php', 'archive-wpse_event.php', 'taxonomy.php', 'archive.php', 'index.php' ),
 				),
 			),
 			WordPressState::block_template_calls()

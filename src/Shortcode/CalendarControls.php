@@ -39,7 +39,9 @@ final readonly class CalendarControls {
 
 		$action    = get_permalink( get_queried_object_id() );
 		$action    = is_string( $action ) ? $action : '';
-		$selected  = array() !== $attributes->category_slugs || array() !== $attributes->tag_slugs;
+		$selected  = array_key_exists( $prefix . '_apply', $request )
+			|| array_key_exists( $prefix . '_category', $request )
+			|| array_key_exists( $prefix . '_tag', $request );
 		$preserved = $this->preserved_instance_values( $request, $prefix );
 		$reset_url = add_query_arg( $preserved, $action );
 
@@ -47,6 +49,7 @@ final readonly class CalendarControls {
 		?>
 		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'mime-simple-events-calendar' ); ?>" data-wpse-calendar-filters>
 			<?php echo $this->preserved_instance_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The method escapes every hidden value and attribute. ?>
+			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
 
 			<?php if ( array() !== $categories ) : ?>
 				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs, 'category' ); ?>
@@ -59,7 +62,7 @@ final readonly class CalendarControls {
 			<p class="wpse-events-filter-submit">
 				<button type="submit" aria-controls="<?php echo esc_attr( $canvas_id ); ?>"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
 				<?php if ( $selected ) : ?>
-					<a href="<?php echo esc_url( $reset_url ); ?>"><?php esc_html_e( 'Reset filters', 'mime-simple-events-calendar' ); ?></a>
+					<a href="<?php echo esc_url( $reset_url ); ?>" data-wpse-calendar-reset><?php esc_html_e( 'Reset filters', 'mime-simple-events-calendar' ); ?></a>
 				<?php endif; ?>
 			</p>
 		</form>
@@ -110,7 +113,7 @@ final readonly class CalendarControls {
 		?>
 		<p class="wpse-events-filter-field">
 			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'mime-simple-events-calendar' ); ?></span>
+			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Choose one or more. Leave all unselected to include every available option.', 'mime-simple-events-calendar' ); ?></span>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>" data-wpse-calendar-filter="<?php echo esc_attr( $filter_type ); ?>">
 				<?php foreach ( $terms as $term ) : ?>
 					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>
@@ -123,16 +126,19 @@ final readonly class CalendarControls {
 	/**
 	 * Render allowlisted state belonging to other calendar instances.
 	 *
-	 * @param array<string, string[]> $values Normalized values by request key.
+	 * @param array<string, string|string[]> $values Normalized values by request key.
 	 */
 	private function preserved_instance_fields( array $values ): string {
 		$fields = array();
 
-		foreach ( $values as $key => $items ) {
+		foreach ( $values as $key => $value ) {
+			$items = is_array( $value ) ? $value : array( $value );
+
 			foreach ( $items as $item ) {
-				$fields[] = sprintf(
-					'<input type="hidden" name="%1$s[]" value="%2$s">',
-					esc_attr( $key ),
+				$field_name = is_array( $value ) ? $key . '[]' : $key;
+				$fields[]   = sprintf(
+					'<input type="hidden" name="%1$s" value="%2$s">',
+					esc_attr( $field_name ),
 					esc_attr( $item )
 				);
 			}
@@ -146,7 +152,7 @@ final readonly class CalendarControls {
 	 *
 	 * @param array<string, mixed> $request Current public request values.
 	 * @param string               $prefix  Current instance prefix.
-	 * @return array<string, string[]>
+	 * @return array<string, string|string[]>
 	 */
 	private function preserved_instance_values( array $request, string $prefix ): array {
 		$preserved = array();
@@ -155,18 +161,27 @@ final readonly class CalendarControls {
 		foreach ( $request as $key => $value ) {
 			if ( $count >= 40
 				|| str_starts_with( $key, $prefix . '_' )
-				|| 1 !== preg_match( '/^wpse_calendar_\d+_(?:category|tag)$/D', $key ) ) {
+				|| 1 !== preg_match( '/^wpse_calendar_\d+_(?:apply|category|tag)$/D', $key ) ) {
 				continue;
 			}
 
-			$items = is_array( $value ) ? array_slice( $value, 0, 20 ) : array( $value );
+			$is_multiple = is_array( $value );
+			$items       = $is_multiple ? array_slice( $value, 0, 20 ) : array( $value );
 
 			foreach ( $items as $item ) {
 				if ( ! is_scalar( $item ) || $count >= 40 ) {
 					continue;
 				}
 
-				$preserved[ $key ][] = substr( sanitize_text_field( (string) $item ), 0, 200 );
+				$clean = substr( sanitize_text_field( (string) $item ), 0, 200 );
+
+				if ( $is_multiple ) {
+					$existing          = is_array( $preserved[ $key ] ?? null ) ? $preserved[ $key ] : array();
+					$existing[]        = $clean;
+					$preserved[ $key ] = $existing;
+				} else {
+					$preserved[ $key ] = $clean;
+				}
 				++$count;
 			}
 		}

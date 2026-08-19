@@ -56,8 +56,14 @@ final readonly class BlockTemplates {
 	 * @return array<string, array{title: string, description: string, content: string, post_types: string[], plugin: string}>
 	 */
 	public function definitions(): array {
+		$archive_content = '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
+			. '<!-- wp:group {"tagName":"main","className":"wpse-template wpse-template-archive"} -->'
+			. '<main class="wp-block-group wpse-template wpse-template-archive"><!-- wp:wpse/native-archive /--></main>'
+			. '<!-- /wp:group -->'
+			. '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->';
+
 		return array(
-			'single-wpse_event'  => array(
+			'single-wpse_event'            => array(
 				'title'       => __( 'Single Event', 'mime-simple-events-calendar' ),
 				'description' => __( 'Native single-event fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
 				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
@@ -68,14 +74,24 @@ final readonly class BlockTemplates {
 				'post_types'  => array( EventPostType::POST_TYPE ),
 				'plugin'      => self::TEMPLATE_NAMESPACE,
 			),
-			'archive-wpse_event' => array(
+			'archive-wpse_event'           => array(
 				'title'       => __( 'Event Archive', 'mime-simple-events-calendar' ),
 				'description' => __( 'Native event-archive fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
-				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
-					. '<!-- wp:group {"tagName":"main","className":"wpse-template wpse-template-archive"} -->'
-					. '<main class="wp-block-group wpse-template wpse-template-archive"><!-- wp:wpse/native-archive /--></main>'
-					. '<!-- /wp:group -->'
-					. '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->',
+				'content'     => $archive_content,
+				'post_types'  => array( EventPostType::POST_TYPE ),
+				'plugin'      => self::TEMPLATE_NAMESPACE,
+			),
+			'taxonomy-wpse_event_category' => array(
+				'title'       => __( 'Event Categories', 'mime-simple-events-calendar' ),
+				'description' => __( 'Native event-archive fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
+				'content'     => $archive_content,
+				'post_types'  => array( EventPostType::POST_TYPE ),
+				'plugin'      => self::TEMPLATE_NAMESPACE,
+			),
+			'taxonomy-wpse_event_tag'      => array(
+				'title'       => __( 'Event Tags', 'mime-simple-events-calendar' ),
+				'description' => __( 'Native event-archive fallback from MiMe Simple Events and Calendar.', 'mime-simple-events-calendar' ),
+				'content'     => $archive_content,
 				'post_types'  => array( EventPostType::POST_TYPE ),
 				'plugin'      => self::TEMPLATE_NAMESPACE,
 			),

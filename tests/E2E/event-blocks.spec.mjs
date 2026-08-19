@@ -14,6 +14,11 @@ const atomicBlockNames = [
 	'wpse/event-categories',
 	'wpse/event-tags',
 ];
+const compositeBlockNames = [
+	'wpse/event-list',
+	'wpse/event-calendar',
+	'wpse/event-details',
+];
 
 /**
  * Authenticate the deterministic WordPress administrator.
@@ -83,6 +88,35 @@ test( 'resolves current event context inside a Query Loop', async ( { page } ) =
 	expect( titles ).toContain( 'E2E All-day event' );
 } );
 
+test( 'renders all primary event blocks with a useful no-JavaScript fallback', async ( {
+	browser,
+	page: setupPage,
+} ) => {
+	// Trigger the capability-protected fixture seeder before opening an anonymous,
+	// JavaScript-free visitor context.
+	await login( setupPage );
+
+	const context = await browser.newContext( {
+		baseURL: 'http://localhost:8888',
+		javaScriptEnabled: false,
+	} );
+	const page = await context.newPage();
+
+	try {
+		const response = await page.goto( '/?pagename=wpse-e2e-composite-blocks' );
+
+		expect( response?.status() ).toBeLessThan( 400 );
+		await expect( page.locator( '.wpse-event-composite-block-list .wpse-events-view-list' ) ).toBeVisible();
+		await expect( page.locator( '.wpse-event-composite-block-calendar .wpse-calendar-fallback' ) ).toBeVisible();
+		await expect( page.locator( '.wpse-event-composite-block-calendar .wpse-calendar-canvas' ) ).toBeHidden();
+		await expect( page.locator( '.wpse-event-composite-block-details .wpse-single-event' ) ).toContainText( 'E2E Same-day event' );
+		await expect( page.locator( '.wpse-event-composite-block-details' ) ).toContainText( 'E2E Atomic Hall' );
+		expect( await page.locator( 'script[src*="event-fields-editor"]' ).count() ).toBe( 0 );
+	} finally {
+		await context.close();
+	}
+} );
+
 test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	page,
 } ) => {
@@ -134,4 +168,108 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	expect( contract.serialized ).not.toContain( 'E2E Atomic Hall' );
 	expect( contract.preview ).toContain( 'wpse-event-field-block-event-venue' );
 	expect( contract.preview ).toContain( 'E2E Atomic Hall' );
+} );
+
+test( 'registers, serializes and previews the primary event components in Gutenberg', async ( {
+	page,
+} ) => {
+	await login( page );
+	await page.goto( '/wp-admin/post-new.php?post_type=page' );
+	await expect.poll( () => page.evaluate( () => Boolean( window.wp?.blocks ) ) ).toBe( true );
+
+	const contract = await page.evaluate( async ( names ) => {
+		const eventIds = Object.keys( window.wpseEventFieldBlocks?.events || {} );
+		const eventId = Number.parseInt( eventIds[ 0 ], 10 );
+		const blocks = names.map( ( name ) => {
+			const type = window.wp.blocks.getBlockType( name );
+
+			return {
+				name: type?.name,
+				category: type?.category,
+				hasEdit: typeof type?.edit === 'function',
+				hasSave: typeof type?.save === 'function',
+			};
+		} );
+		const serialized = window.wp.blocks.serialize( [
+			window.wp.blocks.createBlock( 'wpse/event-list', { limit: 2, view: 'list' } ),
+			window.wp.blocks.createBlock( 'wpse/event-calendar', { initialView: 'list', filters: false } ),
+			window.wp.blocks.createBlock( 'wpse/event-details', { eventId } ),
+		] );
+		const previews = await Promise.all( [
+			window.wp.apiFetch( {
+				path: '/wp/v2/block-renderer/wpse/event-list?context=edit',
+				method: 'POST',
+				data: { attributes: { limit: 2, view: 'list', filters: false } },
+			} ),
+			window.wp.apiFetch( {
+				path: '/wp/v2/block-renderer/wpse/event-calendar?context=edit',
+				method: 'POST',
+				data: { attributes: { initialView: 'list', filters: false } },
+			} ),
+			window.wp.apiFetch( {
+				path: '/wp/v2/block-renderer/wpse/event-details?context=edit',
+				method: 'POST',
+				data: { attributes: { eventId } },
+			} ),
+		] );
+
+		return {
+			blocks,
+			categoryCount: Object.keys( window.wpseEventFieldBlocks?.categories || {} ).length,
+			tagCount: Object.keys( window.wpseEventFieldBlocks?.tags || {} ).length,
+			serialized,
+			previews: previews.map( ( preview ) => preview.rendered ),
+		};
+	}, compositeBlockNames );
+
+	for ( const [ index, block ] of contract.blocks.entries() ) {
+		expect( block.name ).toBe( compositeBlockNames[ index ] );
+		expect( block.category ).toBe( 'mime-simple-events-calendar' );
+		expect( block.hasEdit ).toBe( true );
+		expect( block.hasSave ).toBe( true );
+	}
+	expect( contract.categoryCount ).toBeGreaterThan( 0 );
+	expect( contract.tagCount ).toBeGreaterThan( 0 );
+	expect( contract.serialized ).toContain( '<!-- wp:wpse/event-list' );
+	expect( contract.serialized ).toContain( '<!-- wp:wpse/event-calendar' );
+	expect( contract.serialized ).toContain( '<!-- wp:wpse/event-details' );
+	expect( contract.serialized ).not.toContain( 'E2E Same-day event' );
+	expect( contract.previews[ 0 ] ).toContain( 'wpse-event-composite-block-list' );
+	expect( contract.previews[ 0 ] ).toContain( 'wpse-events-view-list' );
+	expect( contract.previews[ 1 ] ).toContain( 'wpse-event-composite-block-calendar' );
+	expect( contract.previews[ 1 ] ).toContain( 'wpse-calendar' );
+	expect( contract.previews[ 2 ] ).toContain( 'wpse-event-composite-block-details' );
+	expect( contract.previews[ 2 ] ).toContain( 'wpse-single-event' );
+
+	await page.evaluate( () => {
+		const block = window.wp.blocks.createBlock( 'wpse/event-list' );
+
+		window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( [ block ] );
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+	} );
+	await expect( page.getByLabel( 'Layout', { exact: true } ) ).toBeVisible();
+	await expect( page.locator( 'input[type="number"][aria-label="Events per page"]' ) ).toBeVisible();
+	await expect( page.getByLabel( 'Title heading level', { exact: true } ) ).toBeVisible();
+	await expect( page.locator( 'input[type="number"][aria-label="Excerpt length (words)"]' ) ).toBeVisible();
+
+	await page.evaluate( () => {
+		const block = window.wp.blocks.createBlock( 'wpse/event-calendar' );
+
+		window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( [ block ] );
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+	} );
+	await expect( page.getByLabel( 'Desktop view', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Mobile view', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Initial date', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Show previous and next buttons', { exact: true } ) ).toBeVisible();
+
+	await page.evaluate( () => {
+		const block = window.wp.blocks.createBlock( 'wpse/event-details' );
+
+		window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( [ block ] );
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+	} );
+	await expect( page.getByLabel( 'Event source', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Show title', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Title heading level', { exact: true } ) ).toBeVisible();
 } );

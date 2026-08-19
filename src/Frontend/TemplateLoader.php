@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Frontend;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 
 /**
  * Supplies low-priority plugin fallbacks while preserving higher presentation layers.
@@ -38,19 +39,44 @@ final readonly class TemplateLoader {
 			return $this->event_template( $template, 'archive-wpse_event.php', 'archive-wpse_event' );
 		}
 
+		foreach ( array( EventTaxonomies::CATEGORY, EventTaxonomies::TAG ) as $taxonomy ) {
+			if ( is_tax( $taxonomy ) ) {
+				return $this->event_template(
+					$template,
+					'archive-wpse_event.php',
+					'taxonomy-' . $taxonomy,
+					array( 'taxonomy-' . $taxonomy . '.php', 'archive-wpse_event.php' ),
+					array( 'taxonomy-' . $taxonomy . '.php', 'archive-wpse_event.php', 'taxonomy.php', 'archive.php', 'index.php' )
+				);
+			}
+		}
+
 		return $template;
 	}
 
 	/**
 	 * Resolve one fixed event template hierarchy.
 	 *
-	 * @param string $original Previously selected WordPress template.
-	 * @param string $filename Fixed PHP template filename.
-	 * @param string $slug     Fixed WordPress template slug.
+	 * @param string   $original Previously selected WordPress template.
+	 * @param string   $filename Fixed PHP template filename.
+	 * @param string   $slug             Fixed WordPress template slug.
+	 * @param string[] $theme_candidates Optional plugin-directory theme overrides.
+	 * @param string[] $block_hierarchy  Optional WordPress block-template hierarchy.
 	 */
-	private function event_template( string $original, string $filename, string $slug ): string {
-		$theme_template  = locate_template( self::THEME_DIRECTORY . $filename, false, false );
-		$plugin_template = WPSE_PLUGIN_DIR . '/templates/' . $filename;
+	private function event_template(
+		string $original,
+		string $filename,
+		string $slug,
+		array $theme_candidates = array(),
+		array $block_hierarchy = array()
+	): string {
+		$theme_candidates = array() === $theme_candidates ? array( $filename ) : $theme_candidates;
+		$theme_template   = locate_template(
+			array_map( static fn ( string $candidate ): string => self::THEME_DIRECTORY . $candidate, $theme_candidates ),
+			false,
+			false
+		);
+		$plugin_template  = WPSE_PLUGIN_DIR . '/templates/' . $filename;
 
 		if ( '' !== $theme_template ) {
 			return $theme_template;
@@ -61,7 +87,9 @@ final readonly class TemplateLoader {
 		}
 
 		if ( wp_is_block_theme() ) {
-			return locate_block_template( $plugin_template, $slug, array( $filename, 'index.php' ) );
+			$block_hierarchy = array() === $block_hierarchy ? array( $filename, 'index.php' ) : $block_hierarchy;
+
+			return locate_block_template( $plugin_template, $slug, $block_hierarchy );
 		}
 
 		return $plugin_template;

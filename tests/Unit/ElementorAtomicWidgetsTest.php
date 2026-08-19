@@ -230,6 +230,32 @@ final class ElementorAtomicWidgetsTest extends TestCase {
 		self::assertStringContainsString( '>Register now</a>', $this->render( $action ) );
 	}
 
+	/**
+	 * Image and action widgets expose field-specific visual controls through shared selectors.
+	 */
+	public function test_image_and_action_widgets_expose_practical_style_controls(): void {
+		$image        = $this->widget( EventFeaturedImageWidget::class, false );
+		$image_method = new ReflectionMethod( $image, 'register_controls' );
+		$image_method->invoke( $image );
+		$image_controls = $image->wpse_test_controls();
+
+		foreach ( array( 'image_width', 'image_ratio', 'image_border_radius' ) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $image_controls );
+			self::assertArrayNotHasKey( 'default', $image_controls[ $control_id ] );
+		}
+
+		$action        = $this->widget( EventExternalActionWidget::class, false );
+		$action_method = new ReflectionMethod( $action, 'register_controls' );
+		$action_method->invoke( $action );
+		$action_controls = $action->wpse_test_controls();
+
+		foreach ( array( 'background_color', 'hover_background_color', 'hover_text_color', 'padding', 'border_radius' ) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $action_controls );
+			self::assertArrayNotHasKey( 'default', $action_controls[ $control_id ] );
+		}
+		self::assertArrayHasKey( 'action_border', $action->wpse_test_group_controls() );
+	}
+
 	/** Reconstructed widget objects share request-local presentation services. */
 	public function test_default_widget_objects_share_request_runtime_services(): void {
 		$title = new EventTitleWidget();

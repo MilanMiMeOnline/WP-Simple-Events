@@ -59,13 +59,13 @@ final class CalendarShortcode implements ShortcodeRenderer {
 		$results_id  = $instance_id . '-fallback-results';
 		$prefix      = 'wpse_calendar_' . $instance;
 		$request     = $this->request_values();
-		$normalized  = CalendarShortcodeAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() )
-			->with_request( $request, $prefix );
+		$configured  = CalendarShortcodeAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() );
+		$normalized  = $configured->with_request( $request, $prefix );
 		$query       = $this->events->query( $normalized->fallback_criteria( time() ) );
 		$posts       = array_values(
 			array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
 		);
-		$config      = wp_json_encode( $this->configuration( $normalized, $prefix ) );
+		$config      = wp_json_encode( $this->configuration( $normalized, $configured, $prefix ) );
 
 		if ( ! is_string( $config ) ) {
 			return '';
@@ -86,13 +86,15 @@ final class CalendarShortcode implements ShortcodeRenderer {
 		$output .= '<p class="wpse-calendar-empty-action" data-wpse-calendar-empty-action hidden><button type="button">'
 			. esc_html__( 'Reset filters', 'mime-simple-events-calendar' ) . '</button></p>';
 		$output .= '<div class="wpse-calendar-fallback" aria-labelledby="' . esc_attr( $instance_id . '-fallback-title' ) . '">';
-		$output .= '<h3 id="' . esc_attr( $instance_id . '-fallback-title' ) . '">'
-			. esc_html__( 'Upcoming events', 'mime-simple-events-calendar' ) . '</h3>';
+		$output .= '<' . esc_attr( $normalized->fallback_heading_level ) . ' id="'
+			. esc_attr( $instance_id . '-fallback-title' ) . '">'
+			. esc_html__( 'Upcoming events', 'mime-simple-events-calendar' )
+			. '</' . esc_attr( $normalized->fallback_heading_level ) . '>';
 		$output .= $this->renderer->render(
 			$posts,
 			EventListView::LIST,
 			1,
-			new EventCardOptions( true, true, true ),
+			new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level ),
 			$results_id
 		);
 
@@ -102,31 +104,43 @@ final class CalendarShortcode implements ShortcodeRenderer {
 	/**
 	 * Build escaped-late JavaScript configuration for one instance.
 	 *
-	 * @param CalendarShortcodeAttributes $attributes Normalized calendar choices.
+	 * @param CalendarShortcodeAttributes $attributes Current normalized calendar choices.
+	 * @param CalendarShortcodeAttributes $configured Original per-instance choices.
 	 * @param string                      $prefix     Stable request prefix.
 	 * @return array<string, mixed>
 	 */
-	private function configuration( CalendarShortcodeAttributes $attributes, string $prefix ): array {
+	private function configuration(
+		CalendarShortcodeAttributes $attributes,
+		CalendarShortcodeAttributes $configured,
+		string $prefix
+	): array {
 		$start_of_week = get_option( 'start_of_week', 1 );
 		$start_of_week = is_numeric( $start_of_week ) ? min( 6, max( 0, (int) $start_of_week ) ) : 1;
 		$time_format   = get_option( 'time_format', 'H:i' );
 		$time_format   = is_string( $time_format ) && '' !== $time_format ? $time_format : 'H:i';
 
 		return array(
-			'endpoint'        => rest_url( 'wpse/v1/events' ),
-			'initialView'     => $this->fullcalendar_view( $attributes->initial_view ),
-			'mobileView'      => $this->fullcalendar_view( $attributes->mobile_view ),
-			'locale'          => strtolower( str_replace( '_', '-', determine_locale() ) ),
-			'firstDay'        => $start_of_week,
-			'eventTimeFormat' => $this->time_format->fullcalendar( $time_format ),
-			'perPage'         => 100,
-			'maxPages'        => 5,
-			'categoryKey'     => $prefix . '_category',
-			'tagKey'          => $prefix . '_tag',
-			'categories'      => $attributes->category_slugs,
-			'tags'            => $attributes->tag_slugs,
-			'filtersEnabled'  => $attributes->filters,
-			'strings'         => array(
+			'endpoint'          => rest_url( 'wpse/v1/events' ),
+			'initialView'       => $this->fullcalendar_view( $attributes->initial_view ),
+			'mobileView'        => $this->fullcalendar_view( $attributes->mobile_view ),
+			'initialDate'       => $attributes->initial_date,
+			'locale'            => strtolower( str_replace( '_', '-', determine_locale() ) ),
+			'firstDay'          => $start_of_week,
+			'eventTimeFormat'   => $this->time_format->fullcalendar( $time_format ),
+			'perPage'           => 100,
+			'maxPages'          => 5,
+			'categoryKey'       => $prefix . '_category',
+			'tagKey'            => $prefix . '_tag',
+			'applyKey'          => $prefix . '_apply',
+			'categories'        => $attributes->category_slugs,
+			'tags'              => $attributes->tag_slugs,
+			'initialCategories' => $configured->category_slugs,
+			'initialTags'       => $configured->tag_slugs,
+			'filtersEnabled'    => $attributes->filters,
+			'showNavigation'    => $attributes->show_navigation,
+			'showToday'         => $attributes->show_today,
+			'showViewSwitcher'  => $attributes->show_view_switcher,
+			'strings'           => array(
 				'previous'   => __( 'Previous', 'mime-simple-events-calendar' ),
 				'next'       => __( 'Next', 'mime-simple-events-calendar' ),
 				'today'      => __( 'Today', 'mime-simple-events-calendar' ),

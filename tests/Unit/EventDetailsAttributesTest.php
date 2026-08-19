@@ -26,6 +26,30 @@ final class EventDetailsAttributesTest extends TestCase {
 
 		self::assertNull( $attributes->event_id );
 		self::assertFalse( $attributes->has_explicit_id );
+		self::assertTrue( $attributes->options->show_title );
+		self::assertTrue( $attributes->options->show_location );
+		self::assertSame( 'h1', $attributes->options->heading_level );
+	}
+
+	/** Composite presentation choices are bounded and plain-text labels are sanitized. */
+	public function test_presentation_options_are_normalized(): void {
+		$attributes = EventDetailsAttributes::from_shortcode(
+			array(
+				'show_title'    => 'false',
+				'show_location' => '0',
+				'show_terms'    => 'off',
+				'heading_level' => 'h3',
+				'date_label'    => " When\n<script> ",
+				'action_label'  => str_repeat( 'A', 250 ),
+			)
+		);
+
+		self::assertFalse( $attributes->options->show_title );
+		self::assertFalse( $attributes->options->show_location );
+		self::assertFalse( $attributes->options->show_terms );
+		self::assertSame( 'h3', $attributes->options->heading_level );
+		self::assertSame( 'When', $attributes->options->date_label );
+		self::assertSame( 120, strlen( $attributes->options->action_label ) );
 	}
 
 	/**

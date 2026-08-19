@@ -53,11 +53,16 @@ final readonly class EventRenderer {
 		$location_url = $this->string_meta( $event->ID, EventMeta::LOCATION_URL );
 		$title_id     = 'wpse-event-' . $event->ID . '-title';
 		$classes      = array( 'wpse-event-card' );
-		$excerpt      = $options->show_excerpt ? trim( wp_trim_words( get_the_excerpt( $event ), 30 ) ) : '';
-
+		$excerpt      = $options->show_excerpt
+			? trim( wp_trim_words( get_the_excerpt( $event ), $options->excerpt_length ) )
+			: '';
 		if ( '' === $title ) {
 			$title = __( 'Untitled event', 'mime-simple-events-calendar' );
 		}
+
+		$label_attr = $options->show_title
+			? ' aria-labelledby="' . esc_attr( $title_id ) . '"'
+			: ' aria-label="' . esc_attr( $title ) . '"';
 
 		if ( null !== $status && EventStatus::SCHEDULED !== $status ) {
 			$classes[] = 'wpse-event-card-status-' . $status->value;
@@ -65,7 +70,7 @@ final readonly class EventRenderer {
 
 		ob_start();
 		?>
-		<article class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" aria-labelledby="<?php echo esc_attr( $title_id ); ?>">
+		<article class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"<?php echo $label_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete attribute is escaped above. ?>>
 			<?php if ( $options->show_image && has_post_thumbnail( $event ) ) : ?>
 				<a class="wpse-event-card-image-link" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
 					<?php echo wp_kses_post( get_the_post_thumbnail( $event, 'medium_large', array( 'class' => 'wpse-event-card-image' ) ) ); ?>
@@ -73,25 +78,29 @@ final readonly class EventRenderer {
 			<?php endif; ?>
 
 			<div class="wpse-event-card-body">
-				<div class="wpse-event-card-date">
-					<time datetime="<?php echo esc_attr( $presentation->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->end_iso ); ?>">
-						<?php echo esc_html( $presentation->label ); ?>
-					</time>
-				</div>
+				<?php if ( $options->show_date ) : ?>
+					<div class="wpse-event-card-date">
+						<time datetime="<?php echo esc_attr( $presentation->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->end_iso ); ?>">
+							<?php echo esc_html( $presentation->label ); ?>
+						</time>
+					</div>
+				<?php endif; ?>
 
 				<?php if ( '' !== $status_label ) : ?>
 					<p class="wpse-event-status wpse-event-status-<?php echo esc_attr( $status_value ); ?>"><?php echo esc_html( $status_label ); ?></p>
 				<?php endif; ?>
 
-				<h3 class="wpse-event-card-title" id="<?php echo esc_attr( $title_id ); ?>">
-					<a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $title ); ?></a>
-				</h3>
+				<?php if ( $options->show_title ) : ?>
+					<<?php echo esc_attr( $options->heading_level ); ?> class="wpse-event-card-title" id="<?php echo esc_attr( $title_id ); ?>">
+						<a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $title ); ?></a>
+					</<?php echo esc_attr( $options->heading_level ); ?>>
+				<?php endif; ?>
 
 				<?php if ( $options->show_location && '' !== $location ) : ?>
 					<p class="wpse-event-card-location">
 						<span class="screen-reader-text"><?php esc_html_e( 'Location:', 'mime-simple-events-calendar' ); ?></span>
 						<?php if ( '' !== $location_url ) : ?>
-							<a href="<?php echo esc_url( $location_url ); ?>"><?php echo esc_html( $location ); ?></a>
+							<a href="<?php echo esc_url( $location_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $location ); ?></a>
 						<?php else : ?>
 							<?php echo esc_html( $location ); ?>
 						<?php endif; ?>

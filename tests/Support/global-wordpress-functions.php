@@ -899,6 +899,44 @@ if ( ! function_exists( 'is_post_type_archive' ) ) {
 	}
 }
 
+if ( ! function_exists( 'is_tax' ) ) {
+	/**
+	 * Return the configured event taxonomy archive state.
+	 *
+	 * @param string|string[] $taxonomies Requested taxonomy names.
+	 */
+	function is_tax( string|array $taxonomies = '' ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::is_event_taxonomy_archive( $taxonomies );
+	}
+}
+
+if ( ! function_exists( 'get_the_archive_title' ) ) {
+	/**
+	 * Return the configured public archive title.
+	 */
+	function get_the_archive_title(): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::archive_title();
+	}
+}
+
+if ( ! function_exists( 'post_type_archive_title' ) ) {
+	/**
+	 * Return the configured post-type archive title.
+	 *
+	 * @param string $prefix Optional title prefix.
+	 * @param bool   $display Whether to echo the title.
+	 */
+	function post_type_archive_title( string $prefix = '', bool $display = true ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$title = $prefix . WordPressState::archive_title();
+
+		if ( $display ) {
+			echo esc_html( $title );
+		}
+
+		return $title;
+	}
+}
+
 if ( ! function_exists( 'locate_template' ) ) {
 	/**
 	 * Return the configured theme-owned PHP template.

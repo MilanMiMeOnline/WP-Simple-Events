@@ -56,7 +56,25 @@ if ( ! class_exists( 'WP_Query' ) ) {
 		 * @param string $post_type Requested post type.
 		 */
 		public function is_post_type_archive( string $post_type = '' ): bool {
-			return 'wpse_event' === $post_type;
+			return 'taxonomy' !== $this->get( 'wpse_test_request' )
+				&& 'unrelated' !== $this->get( 'wpse_test_request' )
+				&& 'wpse_event' === $post_type;
+		}
+
+		/**
+		 * Match a deterministic taxonomy archive when requested by a test.
+		 *
+		 * @param string|string[] $taxonomies Requested taxonomies.
+		 */
+		public function is_tax( string|array $taxonomies = '' ): bool {
+			if ( 'taxonomy' !== $this->get( 'wpse_test_request' ) ) {
+				return false;
+			}
+
+			$taxonomy = $this->get( 'taxonomy' );
+			$allowed  = is_array( $taxonomies ) ? $taxonomies : array( $taxonomies );
+
+			return is_string( $taxonomy ) && in_array( $taxonomy, $allowed, true );
 		}
 
 		/**

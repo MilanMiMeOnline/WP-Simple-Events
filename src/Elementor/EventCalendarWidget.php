@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Elementor;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
@@ -81,6 +82,15 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			)
 		);
 		$this->add_control(
+			'initial_date',
+			array(
+				'label'       => esc_html__( 'Initial date', 'mime-simple-events-calendar' ),
+				'description' => esc_html__( 'Optional. Use YYYY-MM-DD to open on a specific date.', 'mime-simple-events-calendar' ),
+				'type'        => Controls_Manager::TEXT,
+				'placeholder' => 'YYYY-MM-DD',
+			)
+		);
+		$this->add_control(
 			'category',
 			array(
 				'label'       => esc_html__( 'Initial categories', 'mime-simple-events-calendar' ),
@@ -110,6 +120,38 @@ final class EventCalendarWidget extends AbstractEventWidget {
 				'return_value' => 'yes',
 				'default'      => 'yes',
 				'description'  => esc_html__( 'Let visitors filter by available event categories and tags. Hidden when no choices are available.', 'mime-simple-events-calendar' ),
+			)
+		);
+		foreach (
+			array(
+				'show_navigation'    => esc_html__( 'Show previous and next buttons', 'mime-simple-events-calendar' ),
+				'show_today'         => esc_html__( 'Show Today button', 'mime-simple-events-calendar' ),
+				'show_view_switcher' => esc_html__( 'Show month/list switcher', 'mime-simple-events-calendar' ),
+			) as $id => $label
+		) {
+			$this->add_control(
+				$id,
+				array(
+					'label'        => $label,
+					'type'         => Controls_Manager::SWITCHER,
+					'return_value' => 'yes',
+					'default'      => 'yes',
+				)
+			);
+		}
+		$this->add_control(
+			'fallback_heading_level',
+			array(
+				'label'   => esc_html__( 'Fallback heading level', 'mime-simple-events-calendar' ),
+				'type'    => Controls_Manager::SELECT,
+				'default' => 'h3',
+				'options' => array(
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+				),
 			)
 		);
 		$this->end_controls_section();
@@ -182,6 +224,55 @@ final class EventCalendarWidget extends AbstractEventWidget {
 				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-color-border: {{VALUE}};' ),
 			)
 		);
+		$this->add_control(
+			'calendar_background_color',
+			array(
+				'label'     => esc_html__( 'Background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'calendar_padding',
+			array(
+				'label'      => esc_html__( 'Calendar padding', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_control(
+			'today_background_color',
+			array(
+				'label'     => esc_html__( 'Today background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-today: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'hover_background_color',
+			array(
+				'label'     => esc_html__( 'List hover background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-hover: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'event_background_color',
+			array(
+				'label'     => esc_html__( 'Event background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-event-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'event_text_color',
+			array(
+				'label'     => esc_html__( 'Event text color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-event-text: {{VALUE}};' ),
+			)
+		);
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			array(
@@ -196,6 +287,63 @@ final class EventCalendarWidget extends AbstractEventWidget {
 				'name'     => 'button_typography',
 				'label'    => esc_html__( 'Button typography', 'mime-simple-events-calendar' ),
 				'selector' => '{{WRAPPER}} .wpse-calendar button',
+			)
+		);
+		$this->add_control(
+			'button_background_color',
+			array(
+				'label'     => esc_html__( 'Button background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-button-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'button_text_color',
+			array(
+				'label'     => esc_html__( 'Button text color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-button-text: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'button_hover_background_color',
+			array(
+				'label'     => esc_html__( 'Button hover background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-button-hover-background: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'button_hover_text_color',
+			array(
+				'label'     => esc_html__( 'Button hover text color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-button-hover-text: {{VALUE}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'button_border',
+				'selector' => '{{WRAPPER}} .wpse-calendar .fc .fc-button',
+			)
+		);
+		$this->add_responsive_control(
+			'button_border_radius',
+			array(
+				'label'      => esc_html__( 'Button border radius', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-button-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'toolbar_gap',
+			array(
+				'label'      => esc_html__( 'Mobile toolbar gap', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-calendar' => '--wpse-calendar-toolbar-gap: {{SIZE}}{{UNIT}};' ),
 			)
 		);
 		$this->end_controls_section();

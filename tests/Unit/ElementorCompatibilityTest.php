@@ -43,7 +43,7 @@ final class ElementorCompatibilityTest extends TestCase {
 			'one patch too old'    => array( '3.34.9', false ),
 			'minimum supported'    => array( '3.35.0', true ),
 			'recent 3.x'           => array( '3.35.7', true ),
-			'current tested 4.x'   => array( '4.1.5', true ),
+			'current tested 4.x'   => array( '4.2.2', true ),
 			'future major version' => array( '5.0.0', true ),
 		);
 	}

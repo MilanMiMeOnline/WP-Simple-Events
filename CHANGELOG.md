@@ -2,7 +2,42 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
-## [Unreleased]
+## [0.3.0] - 2026-08-19
+
+### Added
+
+- Add native dynamic Gutenberg blocks for Event List / Grid, Event Calendar and complete Event Details, with bounded Inspector controls and server-rendered previews.
+- Give Gutenberg collection blocks initial category and tag constraints while preserving the existing visitor-filter and no-JavaScript contracts.
+- Add cross-host card controls for title/date visibility, excerpt length and semantic title headings.
+- Add a validated calendar initial date, optional navigation, Today and view-switcher groups, plus a semantic fallback heading.
+- Let complete Event Details hide established field groups and customize bounded date, venue, location, action, category and tag labels.
+
+### Fixed
+
+- Initialize Event Calendar widgets when Elementor dynamically renders or rerenders their editor preview, while preventing duplicate calendar instances and listeners.
+- Present event category and tag archives as bounded event collections ordered by event start date, with the active classic, hybrid or block-theme shell intact.
+- Exclude draft, private and password-protected events from event taxonomy archives and enqueue their shared component styling.
+- Preserve an intentionally empty filter selection across multiple list and calendar instances, and reset only the active component to its configured initial constraints.
+- Open event-card location destinations in an isolated new tab and omit empty complete-details wrappers when every field is hidden.
+
+### Changed
+
+- Keep event taxonomy archives complete across past, active and future events, while preserving their fixed term scope and omitting cross-archive filters.
+- Leave blog, product and mixed WordPress search ordering and publication-date presentation unchanged.
+- Make event-card columns respond to their available component width, with the established viewport behaviour retained as a fallback for older browsers.
+- Add opt-in Elementor presentation controls for card content and gaps, filter panels and controls, pagination containers, calendar states, composite details, featured images and external actions without changing existing saved defaults.
+- Condition irrelevant Elementor and Gutenberg controls, keep internal event links same-tab and preserve accessible component names when visible titles are disabled.
+
+### Testing
+
+- Requalify all fifteen widgets and Event editing against Elementor 3.35.9 and 4.2.2 on WordPress 7.0.1 with PHP 8.2.
+- Add an isolated browser regression for delayed Elementor initialization, repeated element-ready hooks and widget-root replacement.
+- Add unit and packaged WordPress smoke regressions for taxonomy chronology, term titles, theme ownership, protected-content exclusion and unrelated-query isolation.
+- Add control-contract and stylesheet regressions for the expanded Elementor presentation system, scoped variables and container-width fallback.
+- Add unit regressions for strict composite-block attribute mapping, native renderer delegation and current versus explicit event access.
+- Add browser coverage for Gutenberg registration, attribute-only serialization, server previews, anonymous output and a useful no-JavaScript fallback.
+- Add regressions for bounded presentation options, heading semantics, isolated external links, filter apply/reset state and multiple-instance preservation.
+- Add browser coverage for calendar initial-date/toolbar configuration and the expanded Gutenberg Inspector controls.
 
 ## [0.2.5] - 2026-08-12
 

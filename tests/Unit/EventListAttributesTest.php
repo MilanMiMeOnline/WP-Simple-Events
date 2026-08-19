@@ -33,6 +33,10 @@ final class EventListAttributesTest extends TestCase {
 		self::assertSame( 3, $attributes->columns );
 		self::assertFalse( $attributes->filters );
 		self::assertTrue( $attributes->pagination );
+		self::assertTrue( $attributes->show_title );
+		self::assertTrue( $attributes->show_date );
+		self::assertSame( 30, $attributes->excerpt_length );
+		self::assertSame( 'h3', $attributes->heading_level );
 	}
 
 	/**
@@ -41,15 +45,19 @@ final class EventListAttributesTest extends TestCase {
 	public function test_invalid_attributes_use_safe_fallbacks(): void {
 		$attributes = EventListAttributes::from_shortcode(
 			array(
-				'view'          => 'carousel',
-				'period'        => 'private',
-				'limit'         => '999999',
-				'columns'       => '-2',
-				'filters'       => 'maybe',
-				'pagination'    => array( 'true' ),
-				'show_excerpt'  => 'false',
-				'show_image'    => '0',
-				'show_location' => 'off',
+				'view'           => 'carousel',
+				'period'         => 'private',
+				'limit'          => '999999',
+				'columns'        => '-2',
+				'filters'        => 'maybe',
+				'pagination'     => array( 'true' ),
+				'show_excerpt'   => 'false',
+				'show_image'     => '0',
+				'show_location'  => 'off',
+				'show_title'     => 'false',
+				'show_date'      => '0',
+				'excerpt_length' => '999',
+				'heading_level'  => 'script',
 			)
 		);
 
@@ -62,6 +70,10 @@ final class EventListAttributesTest extends TestCase {
 		self::assertFalse( $attributes->show_excerpt );
 		self::assertFalse( $attributes->show_image );
 		self::assertFalse( $attributes->show_location );
+		self::assertFalse( $attributes->show_title );
+		self::assertFalse( $attributes->show_date );
+		self::assertSame( 30, $attributes->excerpt_length );
+		self::assertSame( 'h3', $attributes->heading_level );
 	}
 
 	/**

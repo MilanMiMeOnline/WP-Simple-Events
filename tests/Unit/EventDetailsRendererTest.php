@@ -16,6 +16,7 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
+use MiMe\WPSimpleEvents\Frontend\EventDetailsOptions;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -98,6 +99,47 @@ final class EventDetailsRendererTest extends TestCase {
 		$output = $outer->render( 84 );
 
 		self::assertSame( 1, substr_count( $output, 'Complete event' ) );
+	}
+
+	/** Bounded options hide groups, change labels and preserve an accessible name. */
+	public function test_composite_presentation_options_are_applied(): void {
+		$this->add_complete_event( 85 );
+		$options = new EventDetailsOptions(
+			show_title: false,
+			show_image: false,
+			show_status: false,
+			show_location: false,
+			show_content: false,
+			show_terms: false,
+			date_label: 'When:',
+			action_label: 'Tickets'
+		);
+		$output  = ( new EventDetailsRenderer() )->render( 85, $options );
+
+		self::assertStringContainsString( 'aria-label="Complete event"', $output );
+		self::assertStringContainsString( 'When:', $output );
+		self::assertStringContainsString( '>Tickets</a>', $output );
+		self::assertStringNotContainsString( 'wpse-single-event-title', $output );
+		self::assertStringNotContainsString( 'wpse-single-event-image', $output );
+		self::assertStringNotContainsString( 'wpse-event-location', $output );
+		self::assertStringNotContainsString( 'wpse-event-taxonomies', $output );
+	}
+
+	/** Hiding every composite field emits no empty public component. */
+	public function test_all_hidden_fields_return_no_public_wrapper(): void {
+		$this->add_complete_event( 86 );
+		$options = new EventDetailsOptions(
+			show_title: false,
+			show_image: false,
+			show_date: false,
+			show_status: false,
+			show_location: false,
+			show_content: false,
+			show_action: false,
+			show_terms: false
+		);
+
+		self::assertSame( '', ( new EventDetailsRenderer() )->render( 86, $options ) );
 	}
 
 	/**

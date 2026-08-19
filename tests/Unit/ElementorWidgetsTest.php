@@ -112,6 +112,112 @@ final class ElementorWidgetsTest extends TestCase {
 	}
 
 	/**
+	 * List controls cover cards, controls and pagination without custom CSS.
+	 */
+	public function test_list_widget_exposes_component_scoped_presentation_controls(): void {
+		$widget = new EventListWidget();
+		$method = new ReflectionMethod( $widget, 'register_controls' );
+		$method->invoke( $widget );
+		$controls       = $widget->wpse_test_controls();
+		$group_controls = $widget->wpse_test_group_controls();
+
+		foreach ( array(
+			'card_background_color',
+			'card_content_padding',
+			'card_row_gap',
+			'card_column_gap',
+			'card_image_ratio',
+			'filters_background_color',
+			'filters_padding',
+			'control_background_color',
+			'control_text_color',
+			'pagination_background_color',
+			'pagination_padding',
+			'pagination_gap',
+		) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $controls );
+			self::assertArrayNotHasKey( 'default', $controls[ $control_id ] );
+		}
+
+		foreach ( array( 'card_border', 'filters_border', 'control_border', 'pagination_border' ) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $group_controls );
+		}
+		self::assertSame(
+			array( '{{WRAPPER}} .wpse-events-pagination ul.page-numbers' => '--wpse-pagination-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			$controls['pagination_padding']['selectors'] ?? null
+		);
+		self::assertSame( array( 'view' => 'grid' ), $controls['columns']['condition'] ?? null );
+		self::assertSame( array( 'show_excerpt' => 'yes' ), $controls['excerpt_length']['condition'] ?? null );
+		self::assertSame( array( 'show_title' => 'yes' ), $controls['heading_level']['condition'] ?? null );
+	}
+
+	/**
+	 * Calendar controls separate canvas, events and button interaction states.
+	 */
+	public function test_calendar_widget_exposes_practical_visual_states(): void {
+		$widget = new EventCalendarWidget();
+		$method = new ReflectionMethod( $widget, 'register_controls' );
+		$method->invoke( $widget );
+		$controls = $widget->wpse_test_controls();
+
+		foreach ( array(
+			'calendar_background_color',
+			'calendar_padding',
+			'today_background_color',
+			'hover_background_color',
+			'event_background_color',
+			'event_text_color',
+			'button_background_color',
+			'button_text_color',
+			'button_hover_background_color',
+			'button_hover_text_color',
+			'button_border_radius',
+			'toolbar_gap',
+		) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $controls );
+			self::assertArrayNotHasKey( 'default', $controls[ $control_id ] );
+		}
+		self::assertArrayHasKey( 'button_border', $widget->wpse_test_group_controls() );
+		self::assertSame( 'text', $controls['initial_date']['type'] ?? null );
+		self::assertSame( 'yes', $controls['show_navigation']['default'] ?? null );
+		self::assertSame( 'yes', $controls['show_today']['default'] ?? null );
+		self::assertSame( 'yes', $controls['show_view_switcher']['default'] ?? null );
+	}
+
+	/**
+	 * Composite details expose summary, image and action styling boundaries.
+	 */
+	public function test_details_widget_exposes_shared_field_style_controls(): void {
+		$widget = new EventDetailsWidget();
+		$method = new ReflectionMethod( $widget, 'register_controls' );
+		$method->invoke( $widget );
+		$controls = $widget->wpse_test_controls();
+
+		foreach ( array(
+			'spacing',
+			'summary_background_color',
+			'summary_padding',
+			'summary_border_radius',
+			'image_ratio',
+			'image_border_radius',
+			'action_background_color',
+			'action_text_color',
+			'action_padding',
+			'action_border_radius',
+		) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $controls );
+			self::assertArrayNotHasKey( 'default', $controls[ $control_id ] );
+		}
+		self::assertArrayHasKey( 'action_border', $widget->wpse_test_group_controls() );
+
+		foreach ( array( 'show_title', 'show_image', 'show_date', 'show_status', 'show_location', 'show_content', 'show_action', 'show_terms' ) as $control_id ) {
+			self::assertSame( 'yes', $controls[ $control_id ]['default'] ?? null );
+		}
+		self::assertSame( array( 'show_title' => 'yes' ), $controls['heading_level']['condition'] ?? null );
+		self::assertSame( array( 'show_action' => 'yes' ), $controls['action_label']['condition'] ?? null );
+	}
+
+	/**
 	 * A selected preview event reaches the shared details renderer.
 	 */
 	public function test_details_widget_delegates_a_valid_preview_event(): void {
@@ -120,7 +226,8 @@ final class ElementorWidgetsTest extends TestCase {
 		$widget->wpse_set_test_settings( array( 'event_id' => '81' ) );
 
 		self::assertSame( '<div class="rendered">Event output</div>', $this->render( $widget ) );
-		self::assertSame( array( 'id' => 81 ), $renderer->attributes );
+		self::assertSame( 81, $renderer->attributes['id'] ?? null );
+		self::assertTrue( $renderer->attributes['show_title'] ?? false );
 		self::assertSame( 'wpse-event-details', $widget->get_name() );
 	}
 

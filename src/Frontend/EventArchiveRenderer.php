@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Frontend;
 
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventListView;
 use MiMe\WPSimpleEvents\Shortcode\EventListAttributes;
 use WP_Post;
@@ -35,19 +36,20 @@ final readonly class EventArchiveRenderer {
 	 * @param WP_Query $query Native main event archive query.
 	 */
 	public function render( WP_Query $query ): string {
-		$attributes = EventListAttributes::from_shortcode(
+		$is_taxonomy_archive = $query->is_tax( array( EventTaxonomies::CATEGORY, EventTaxonomies::TAG ) );
+		$attributes          = EventListAttributes::from_shortcode(
 			array(
 				'period'   => $query->get( 'wpse_period' ),
 				'category' => $query->get( 'wpse_category' ),
 				'tag'      => $query->get( 'wpse_tag' ),
 			)
 		);
-		$posts      = array_values(
+		$posts               = array_values(
 			array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
 		);
-		$page_value = $query->get( 'paged' );
-		$page       = is_numeric( $page_value ) ? max( 1, (int) $page_value ) : 1;
-		$title      = post_type_archive_title( '', false );
+		$page_value          = $query->get( 'paged' );
+		$page                = is_numeric( $page_value ) ? max( 1, (int) $page_value ) : 1;
+		$title               = $is_taxonomy_archive ? get_the_archive_title() : post_type_archive_title( '', false );
 
 		if ( ! is_string( $title ) || '' === trim( $title ) ) {
 			$title = __( 'Events', 'mime-simple-events-calendar' );
@@ -55,7 +57,9 @@ final readonly class EventArchiveRenderer {
 
 		$output  = '<section class="wpse-events wpse-event-archive" aria-labelledby="wpse-event-archive-title">';
 		$output .= '<h1 id="wpse-event-archive-title" class="wpse-event-archive-title">' . esc_html( $title ) . '</h1>';
-		$output .= $this->controls->filters( $attributes );
+		if ( ! $is_taxonomy_archive ) {
+			$output .= $this->controls->filters( $attributes );
+		}
 		$output .= $this->events->render(
 			$posts,
 			EventListView::GRID,

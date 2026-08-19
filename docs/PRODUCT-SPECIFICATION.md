@@ -1,8 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 12 August 2026
-**Current release candidate:** 0.2.5
+**Last reviewed:** 19 August 2026
+**Current release candidate:** 0.3.0
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -240,6 +240,13 @@ referrer. Empty values produce no empty wrapper.
 The native archive supports upcoming, past and all-event periods, pagination and
 the configured event archive slug. It remains functional without JavaScript.
 
+Event category and tag archives retain the active theme shell while using the
+shared event cards, event start-date labels and ascending event chronology. They
+remain complete term archives containing public past, active and future events;
+draft, private and password-protected events are excluded. Their fixed term scope
+cannot be replaced by the general event-archive filters. Blog, product and mixed
+search queries keep normal WordPress ordering and date semantics.
+
 ### Template ownership
 
 The plugin supplies safe native fallbacks for classic, hybrid classic and full
@@ -259,13 +266,17 @@ required by this plugin.
 - category and tag constraints;
 - optional visitor filters;
 - bounded items per page and pagination;
+- optional card image, title, date, excerpt and location sections;
+- a 1–100 word excerpt limit and an allowlisted H2–H6 card-title heading;
 - deliberate empty-state copy.
 
 `[wpse_event_details]` displays the normalized detail group for the current or an
 explicit eligible event.
 
 Multiple instances on one page must use unique IDs and must not share accidental
-state.
+state. A submitted empty term selection is distinct from untouched initial
+constraints. Reset restores the current instance's configured values without
+removing another instance's bounded request state.
 
 ## 11. Calendar
 
@@ -279,6 +290,8 @@ Calendar requirements:
 - bounded date windows and result counts;
 - canonical local dates to prevent browser-timezone day shifts;
 - accessible buttons, labels, focus states and keyboard operation;
+- an optional real `YYYY-MM-DD` initial date, independently optional navigation,
+  Today and month/list controls, and an H2–H6 fallback heading;
 - theme-compatible controls with scoped CSS;
 - a useful server-rendered upcoming-event fallback;
 - clear loading, empty and error states;
@@ -289,7 +302,13 @@ recorded in the third-party notices and decision log.
 
 ## 12. Gutenberg
 
-Server-rendered Gutenberg blocks provide:
+Server-rendered Gutenberg blocks provide the three primary components:
+
+- Event List / Grid;
+- Event Calendar;
+- Event Details.
+
+They also provide the atomic event-field palette:
 
 - event title;
 - featured image;
@@ -309,7 +328,10 @@ query context, a block may use the current event. The plugin also provides a
 single-event pattern composed from these blocks.
 
 Editor previews and front-end rendering must share the same eligibility,
-sanitization and presentation services.
+sanitization and presentation services. List/Grid exposes the bounded card
+choices, Calendar exposes its bounded initial-date and toolbar choices, and
+complete Details can hide established field groups or override short plain-text
+labels without exposing arbitrary metadata.
 
 ## 13. Elementor
 
@@ -323,7 +345,9 @@ Elementor 3.35 or newer conditionally adds:
 Widgets work on normal Elementor Free pages and may explicitly select a published
 event. Dynamic event context is available to templates where Elementor provides
 it. Controls must expose only bounded settings and must not duplicate query,
-formatting or security logic.
+formatting or security logic. Irrelevant controls are conditionally hidden, and
+the three primary widgets expose the same bounded content choices as their
+Gutenberg counterparts.
 
 The integration is registered only through supported Elementor hooks. It must not
 modify the user's Elementor settings automatically.
@@ -459,7 +483,12 @@ The version 1 product contract is satisfied when:
 
 ## 21. Post-version-1 roadmap boundary
 
-Divi 5 compatibility may be planned after the first public release has real-world
-feedback. It must reuse the shared presentation and query services rather than
-forking event logic. Recurrence and interactive maps remain separate product
-decisions and are not implied by a page-builder integration.
+Future work is prioritized in [ROADMAP.md](ROADMAP.md). The next development
+cycle sharpens the existing one-off event, presentation and builder experience
+before adding a new event model or page-builder adapter.
+
+Recurrence requires a separate occurrence model, migration design and explicit
+series/occurrence editing contract before implementation. Divi 5 compatibility
+must reuse the shared presentation and query services rather than forking event
+logic. Interactive maps remain outside the roadmap. No roadmap item changes the
+supported product until its specification, tests and release are complete.

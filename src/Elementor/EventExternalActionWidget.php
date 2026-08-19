@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Elementor;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Border;
 use MiMe\WPSimpleEvents\Frontend\EventPresentation;
 
 /** Renders the configured external event destination. */
@@ -71,5 +72,58 @@ final class EventExternalActionWidget extends AbstractEventFieldWidget {
 	/** Return the action style selector. */
 	protected function field_selector(): string {
 		return '.wpse-event-action';
+	}
+
+	/** Register action-specific visual controls. */
+	protected function register_additional_style_controls(): void {
+		$this->add_control(
+			'background_color',
+			array(
+				'label'     => esc_html__( 'Background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-event-action-link' => 'background-color: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'hover_background_color',
+			array(
+				'label'     => esc_html__( 'Hover background color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-event-action-link:hover, {{WRAPPER}} .wpse-event-action-link:focus-visible' => 'background-color: {{VALUE}};' ),
+			)
+		);
+		$this->add_control(
+			'hover_text_color',
+			array(
+				'label'     => esc_html__( 'Hover text color', 'mime-simple-events-calendar' ),
+				'type'      => Controls_Manager::COLOR,
+				'selectors' => array( '{{WRAPPER}} .wpse-event-action-link:hover, {{WRAPPER}} .wpse-event-action-link:focus-visible' => 'color: {{VALUE}};' ),
+			)
+		);
+		$this->add_responsive_control(
+			'padding',
+			array(
+				'label'      => esc_html__( 'Padding', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::DIMENSIONS,
+				'size_units' => array( 'px', 'em', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-event-action-link' => '--wpse-action-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
+			)
+		);
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
+			array(
+				'name'     => 'action_border',
+				'selector' => '{{WRAPPER}} .wpse-event-action-link',
+			)
+		);
+		$this->add_responsive_control(
+			'border_radius',
+			array(
+				'label'      => esc_html__( 'Border radius', 'mime-simple-events-calendar' ),
+				'type'       => Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'rem' ),
+				'selectors'  => array( '{{WRAPPER}} .wpse-event-action-link' => '--wpse-action-radius: {{SIZE}}{{UNIT}};' ),
+			)
+		);
 	}
 }

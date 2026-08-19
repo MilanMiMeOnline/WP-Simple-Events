@@ -57,27 +57,30 @@ final class EventDetailsRenderer {
 	/**
 	 * Render a current page/template event, including authorized previews.
 	 *
-	 * @param int $event_id Current event post ID.
+	 * @param int                 $event_id Current event post ID.
+	 * @param EventDetailsOptions $options  Bounded presentation choices.
 	 */
-	public function render( int $event_id ): string {
-		return $this->render_presentation( $this->contexts->resolve_current( $event_id ) );
+	public function render( int $event_id, EventDetailsOptions $options = new EventDetailsOptions() ): string {
+		return $this->render_presentation( $this->contexts->resolve_current( $event_id ), $options );
 	}
 
 	/**
 	 * Render an explicitly selected public, password-free event.
 	 *
-	 * @param int $event_id Explicit public event ID.
+	 * @param int                 $event_id Explicit public event ID.
+	 * @param EventDetailsOptions $options  Bounded presentation choices.
 	 */
-	public function render_public( int $event_id ): string {
-		return $this->render_presentation( $this->contexts->resolve_public( $event_id ) );
+	public function render_public( int $event_id, EventDetailsOptions $options = new EventDetailsOptions() ): string {
+		return $this->render_presentation( $this->contexts->resolve_public( $event_id ), $options );
 	}
 
 	/**
 	 * Render a complete event in the established presentation order.
 	 *
 	 * @param EventPresentation|null $presentation Resolved event presentation.
+	 * @param EventDetailsOptions    $options      Bounded presentation choices.
 	 */
-	private function render_presentation( ?EventPresentation $presentation ): string {
+	private function render_presentation( ?EventPresentation $presentation, EventDetailsOptions $options ): string {
 		if ( null === $presentation ) {
 			return '';
 		}
@@ -98,7 +101,7 @@ final class EventDetailsRenderer {
 		$instance                      = RenderInstanceIds::next( RenderInstanceIds::EVENT_DETAILS );
 
 		try {
-			return $this->event( $presentation, 'wpse-event-title-' . $event->ID . '-' . $instance );
+			return $this->event( $presentation, $options, 'wpse-event-title-' . $event->ID . '-' . $instance );
 		} finally {
 			unset( self::$rendering[ $event->ID ] );
 		}
@@ -107,26 +110,38 @@ final class EventDetailsRenderer {
 	/**
 	 * Compose the existing complete event markup from named field fragments.
 	 *
-	 * @param EventPresentation $presentation Resolved event presentation.
-	 * @param string            $title_id     Unique composite heading ID.
+	 * @param EventPresentation   $presentation Resolved event presentation.
+	 * @param EventDetailsOptions $options    Bounded presentation choices.
+	 * @param string              $title_id   Unique composite heading ID.
 	 */
-	private function event( EventPresentation $presentation, string $title_id ): string {
-		$title      = $this->fields->title( $presentation, 'h1', $title_id );
-		$image      = $this->fields->featured_image( $presentation );
-		$date       = $this->fields->date_time( $presentation );
-		$status     = $this->fields->status( $presentation );
-		$venue      = $this->fields->venue( $presentation );
-		$address    = $this->fields->address( $presentation );
-		$location   = $this->fields->location_action( $presentation );
-		$content    = $this->fields->content( $presentation );
-		$action     = $this->fields->external_action( $presentation );
-		$categories = $this->fields->categories( $presentation );
-		$tags       = $this->fields->tags( $presentation );
+	private function event( EventPresentation $presentation, EventDetailsOptions $options, string $title_id ): string {
+		$title      = $options->show_title ? $this->fields->title( $presentation, $options->heading_level, $title_id ) : '';
+		$image      = $options->show_image ? $this->fields->featured_image( $presentation ) : '';
+		$date       = $options->show_date ? $this->fields->date_time( $presentation, true, $options->date_label ) : '';
+		$status     = $options->show_status ? $this->fields->status( $presentation ) : '';
+		$venue      = $options->show_location ? $this->fields->venue( $presentation, true, $options->venue_label ) : '';
+		$address    = $options->show_location ? $this->fields->address( $presentation ) : '';
+		$location   = $options->show_location ? $this->fields->location_action( $presentation, $options->location_label ) : '';
+		$content    = $options->show_content ? $this->fields->content( $presentation ) : '';
+		$action     = $options->show_action ? $this->fields->external_action( $presentation, $options->action_label ) : '';
+		$categories = $options->show_terms ? $this->fields->categories( $presentation, true, $options->categories_label ) : '';
+		$tags       = $options->show_terms ? $this->fields->tags( $presentation, true, $options->tags_label ) : '';
 		$summary    = $this->summary( $date, $status, $venue, $address, $location );
 		$terms      = $this->terms( $categories, $tags );
+		$header     = '' !== $title || '' !== $image
+			? '<header class="wpse-single-event-header">' . $title . $image . '</header>'
+			: '';
 
-		return '<article class="wpse-single-event" aria-labelledby="' . esc_attr( $title_id ) . '">'
-			. '<header class="wpse-single-event-header">' . $title . $image . '</header>'
+		if ( '' === $header . $summary . $content . $action . $terms ) {
+			return '';
+		}
+
+		$label = '' !== $title
+			? ' aria-labelledby="' . esc_attr( $title_id ) . '"'
+			: ' aria-label="' . esc_attr( $presentation->title ) . '"';
+
+		return '<article class="wpse-single-event"' . $label . '>'
+			. $header
 			. $summary
 			. $content
 			. $action

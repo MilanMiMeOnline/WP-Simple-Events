@@ -29,6 +29,11 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 		self::assertSame( CalendarView::LIST, $attributes->mobile_view );
 		self::assertTrue( $attributes->filters );
 		self::assertSame( array(), $attributes->category_slugs );
+		self::assertSame( '', $attributes->initial_date );
+		self::assertTrue( $attributes->show_navigation );
+		self::assertTrue( $attributes->show_today );
+		self::assertTrue( $attributes->show_view_switcher );
+		self::assertSame( 'h3', $attributes->fallback_heading_level );
 	}
 
 	/**
@@ -37,10 +42,15 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 	public function test_invalid_attributes_use_safe_defaults(): void {
 		$attributes = CalendarShortcodeAttributes::from_shortcode(
 			array(
-				'initial_view' => 'resourceTimeline',
-				'mobile_view'  => 'agenda',
-				'filters'      => 'maybe',
-				'category'     => ' Workshops, Talks, workshops ',
+				'initial_view'           => 'resourceTimeline',
+				'mobile_view'            => 'agenda',
+				'filters'                => 'maybe',
+				'category'               => ' Workshops, Talks, workshops ',
+				'initial_date'           => '2026-02-30',
+				'show_navigation'        => 'false',
+				'show_today'             => '0',
+				'show_view_switcher'     => 'off',
+				'fallback_heading_level' => 'h9',
 			)
 		);
 
@@ -48,6 +58,24 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 		self::assertSame( CalendarView::LIST, $attributes->mobile_view );
 		self::assertTrue( $attributes->filters );
 		self::assertSame( array( 'workshops', 'talks' ), $attributes->category_slugs );
+		self::assertSame( '', $attributes->initial_date );
+		self::assertFalse( $attributes->show_navigation );
+		self::assertFalse( $attributes->show_today );
+		self::assertFalse( $attributes->show_view_switcher );
+		self::assertSame( 'h3', $attributes->fallback_heading_level );
+	}
+
+	/** A real canonical date and safe fallback heading are retained. */
+	public function test_calendar_presentation_options_are_allowlisted(): void {
+		$attributes = CalendarShortcodeAttributes::from_shortcode(
+			array(
+				'initial_date'           => '2028-02-29',
+				'fallback_heading_level' => 'h2',
+			)
+		);
+
+		self::assertSame( '2028-02-29', $attributes->initial_date );
+		self::assertSame( 'h2', $attributes->fallback_heading_level );
 	}
 
 	/**

@@ -1,6 +1,6 @@
 # Gutenberg integration contract
 
-MiMe Simple Events and Calendar registers twelve public dynamic blocks under **MiMe Simple Events and Calendar**: Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. Each block has dedicated `block.json` metadata and is discoverable independently; there is no raw-meta block.
+MiMe Simple Events and Calendar registers three complete dynamic components and twelve public dynamic field blocks under **MiMe Simple Events and Calendar**. The complete components are Event List / Grid, Event Calendar and Event Details. The field palette is Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. Each block has dedicated `block.json` metadata and is discoverable independently; there is no raw-meta block.
 
 ## Sources and rendering
 
@@ -20,6 +20,14 @@ Inspector controls mirror the Elementor allowlists:
 - featured-image size, Media Library/decorative alt behaviour and optional permalink;
 - label visibility and custom text for date/time, venue, categories and tags;
 - visible-text overrides for location and external actions.
+
+The complete List/Grid block also controls bounded layout, period, page size,
+columns, initial terms, visitor filters, pagination, card sections, excerpt length
+and title heading. Calendar controls its desktop/mobile view, real initial date,
+initial terms, visitor filters, toolbar groups and fallback heading. Complete
+Details controls its event source, established field groups, title heading and
+bounded label overrides. Controls that depend on another choice are hidden while
+that feature is disabled.
 
 ServerSideRender supplies the live preview. Empty fields receive an editor-only placeholder; saved block content and visitor output remain empty. Loading and server errors have distinct editor placeholders.
 

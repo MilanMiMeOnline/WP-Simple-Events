@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Frontend;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use WP_Post;
 
 /**
@@ -40,6 +41,7 @@ final class FrontendAssets {
 
 		if ( is_post_type_archive( EventPostType::POST_TYPE )
 			|| is_singular( EventPostType::POST_TYPE )
+			|| is_tax( array( EventTaxonomies::CATEGORY, EventTaxonomies::TAG ) )
 			|| $contains_shortcode ) {
 			$this->enqueue();
 		}

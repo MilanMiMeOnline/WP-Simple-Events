@@ -34,13 +34,15 @@ final class BlockTemplatesTest extends TestCase {
 		$definitions = ( new BlockTemplates() )->definitions();
 
 		self::assertSame(
-			array( 'single-wpse_event', 'archive-wpse_event' ),
+			array( 'single-wpse_event', 'archive-wpse_event', 'taxonomy-wpse_event_category', 'taxonomy-wpse_event_tag' ),
 			array_keys( $definitions )
 		);
 		self::assertSame( array( EventPostType::POST_TYPE ), $definitions['single-wpse_event']['post_types'] );
 		self::assertSame( array( EventPostType::POST_TYPE ), $definitions['archive-wpse_event']['post_types'] );
 		self::assertStringContainsString( '<!-- wp:wpse/native-single /-->', $definitions['single-wpse_event']['content'] );
 		self::assertStringContainsString( '<!-- wp:wpse/native-archive /-->', $definitions['archive-wpse_event']['content'] );
+		self::assertStringContainsString( '<!-- wp:wpse/native-archive /-->', $definitions['taxonomy-wpse_event_category']['content'] );
+		self::assertStringContainsString( '<!-- wp:wpse/native-archive /-->', $definitions['taxonomy-wpse_event_tag']['content'] );
 	}
 
 	/**
@@ -65,6 +67,8 @@ final class BlockTemplatesTest extends TestCase {
 			array(
 				'mime-simple-events-calendar//single-wpse_event',
 				'mime-simple-events-calendar//archive-wpse_event',
+				'mime-simple-events-calendar//taxonomy-wpse_event_category',
+				'mime-simple-events-calendar//taxonomy-wpse_event_tag',
 			),
 			WordPressState::registered_block_templates()
 		);

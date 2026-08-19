@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-list",
+  "title": "Event List / Grid",
+  "category": "mime-simple-events-calendar",
+  "icon": "list-view",
+  "description": "Display a bounded list or grid of public events.",
+  "textdomain": "mime-simple-events-calendar",
+  "attributes": {
+    "view": { "type": "string", "default": "grid", "enum": ["list", "grid"] },
+    "period": { "type": "string", "default": "upcoming", "enum": ["upcoming", "past", "all"] },
+    "limit": { "type": "integer", "default": 12 },
+    "columns": { "type": "integer", "default": 3 },
+    "categories": { "type": "array", "default": [], "items": { "type": "string" } },
+    "tags": { "type": "array", "default": [], "items": { "type": "string" } },
+    "filters": { "type": "boolean", "default": false },
+    "pagination": { "type": "boolean", "default": true },
+    "showExcerpt": { "type": "boolean", "default": true },
+    "showImage": { "type": "boolean", "default": true },
+    "showLocation": { "type": "boolean", "default": true },
+    "showTitle": { "type": "boolean", "default": true },
+    "showDate": { "type": "boolean", "default": true },
+    "excerptLength": { "type": "integer", "default": 30 },
+    "headingLevel": { "type": "string", "default": "h3", "enum": ["h2", "h3", "h4", "h5", "h6"] }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "background": true, "link": true },
+    "spacing": { "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

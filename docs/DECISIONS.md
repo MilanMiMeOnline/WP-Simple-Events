@@ -388,3 +388,126 @@ forced major upgrade of ESLint. It must continue to move to a patched compatible
 release when a relevant advisory appears, and it must be removed once the direct
 WordPress tooling dependency tree resolves safely without it. High or critical
 audit findings are never ignored or allowlisted to preserve a green build.
+
+## ADR-039: Post-release work starts with builder and presentation stabilization
+
+**Status:** Accepted
+
+Real-world use and exploratory testing after version 0.2.5 identified unfinished
+presentation controls, an Elementor editor lifecycle gap, event-taxonomy archive
+semantics, narrow-container behaviour and missing composite Gutenberg components.
+The next feature release is therefore 0.3.0 and resolves those existing-product
+gaps before recurrence, another page-builder adapter or a lower platform floor is
+introduced.
+
+The active ordered plan lives in `docs/ROADMAP.md`; completed historical backlogs
+remain immutable evidence. Version 0.3.0 must preserve current event storage,
+shortcodes, block names, widget identifiers and saved Elementor control IDs. It
+may add bounded controls and dynamic blocks, but it may not duplicate event
+queries, access decisions or presentation logic inside a host adapter.
+
+Recurrence follows as a separate discovery and specification phase. No recurring
+event implementation begins until an ADR defines series ownership, occurrences,
+exceptions, edit scope, timezones, deletion and migrations. Divi 5 follows through
+the shared renderer/query boundaries and remains optional. WordPress 6.9 and PHP
+8.2 remain the supported floor; broader compatibility requires separate evidence
+and must not weaken security or create conditional feature loss.
+
+## ADR-040: Event taxonomy archives are complete, fixed-scope event collections
+
+**Status:** Accepted
+
+The public `wpse_event_category` and `wpse_event_tag` routes are known event-only
+collections, but WordPress' default theme loop orders and labels them by post
+publication date. They now reuse the public event visibility and start-date
+ordering rules while preserving the term constraint already resolved by
+WordPress. These archives intentionally use the `all` period in ascending order:
+a taxonomy URL represents the complete public history of that term, independent
+of the configurable upcoming-only landing-page preference.
+
+The shared event archive renderer is used inside classic, hybrid and block-theme
+shells. The general archive filters are omitted because a second category or tag
+selection could replace or contradict the fixed route term. Taxonomy-specific
+theme overrides take priority. Classic themes may then reuse the existing generic
+PHP event-archive override; full block themes receive registered taxonomy-specific
+fallbacks because WordPress does not reliably fall through from a plugin taxonomy
+template to a theme's custom post-type archive template. Draft, private and
+password-protected events remain excluded.
+
+No global post-date, loop or search filter is introduced. Blog categories, post
+tags, products and mixed WordPress search keep their native relevance, ordering
+and publication-date semantics. Event-specific search presentation may be
+reconsidered only behind a separately scoped contract that cannot alter non-event
+results.
+
+## ADR-041: Builder styling extends shared components through opt-in variables
+
+**Status:** Accepted
+
+Elementor presentation controls target the existing semantic event components and
+shared CSS custom properties. New visual controls do not receive saved defaults;
+Elementor emits a scoped value only after an editor selects one. Optional colors
+that were not part of the existing native stylesheet remain undefined until then,
+so themes keep ownership of typography and backgrounds on update. Existing widget
+names, saved control IDs and shortcode/render output remain unchanged.
+
+Cards, filters, controls, pagination, composite details and calendar interaction
+states each have a stable target instead of sharing one broad button rule. Atomic
+Featured Image and External Action widgets extend the shared field-widget style
+section rather than introducing alternate markup or metadata access. The composite
+Details widget uses the same image, summary and action targets.
+
+Grid columns respond to the inline width available to `.wpse-events`, which is the
+relevant constraint inside builder columns and theme containers. Browsers without
+container-query support retain the established viewport breakpoints through an
+explicit feature-detected fallback. No JavaScript layout observer or builder
+dependency is introduced.
+
+## ADR-042: Composite Gutenberg blocks are dynamic adapters over native renderers
+
+**Status:** Accepted
+
+The Event List / Grid, Event Calendar and Event Details components become
+metadata-registered dynamic Gutenberg blocks. Their saved form contains only a
+block comment and bounded attributes; public HTML is produced on every request by
+the existing shortcode, query, context and presentation services. The blocks do
+not copy an event query, calendar configuration, access rule or details template.
+
+Block attributes use Gutenberg-native camelCase names and are translated through
+one strict server-side adapter to the established shortcode contract. Collection
+limits, layouts, periods, views, taxonomy slugs and booleans retain the existing
+allowlists and bounds. An explicit Details source must be a published,
+password-free event. A zero source may use an event supplied by block context;
+editorial preview access then follows the current-event resolver rather than
+silently falling back to another event.
+
+All three blocks share the existing editor script, inserter category and bounded
+public event/term choices. `ServerSideRender` owns loading, error and empty editor
+states; no placeholder is serialized or emitted publicly. Frontend styles and the
+calendar enhancement remain on-demand through their existing handles. Existing
+atomic block names, serialized attributes and pattern content remain unchanged.
+
+## ADR-043: Interaction controls remain bounded presentation state
+
+**Status:** Accepted
+
+The 0.3.0 interaction polish extends the existing list, calendar and complete
+details contracts instead of introducing a second builder-only presentation
+path. Event cards may hide title or date, bound excerpts to 1–100 words and use
+an allowlisted H2–H6 title. Calendars may open on one validated Gregorian date,
+hide individual toolbar groups and choose an H2–H6 fallback heading. Complete
+details may hide established field groups, use an H1–H6 title and override six
+short plain-text labels. Defaults reproduce the previous public output.
+
+Visitor filtering remains a read-only GET interaction. A namespaced apply marker
+distinguishes an intentionally empty visitor selection from an untouched initial
+constraint. Reset removes only the current component's state and restores its
+configured initial terms while preserving bounded, allowlisted state belonging
+to other list or calendar instances. JavaScript enhancement mirrors that
+behaviour without becoming required for filtering or fallback content.
+
+All host adapters normalize into the same shortcode and renderer services.
+External location destinations consistently open in an isolated new tab;
+internal event links remain same-tab. Hiding every complete-details field emits
+no empty public wrapper. These controls affect presentation only: event storage,
+dates, timezones, eligibility, queries, feeds and structured data are unchanged.

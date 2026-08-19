@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-details",
+  "title": "Event Details",
+  "category": "mime-simple-events-calendar",
+  "icon": "media-document",
+  "description": "Display the complete details of the current or selected public event.",
+  "textdomain": "mime-simple-events-calendar",
+  "usesContext": ["postId", "postType"],
+  "attributes": {
+    "eventId": { "type": "integer", "default": 0 },
+    "showTitle": { "type": "boolean", "default": true },
+    "showImage": { "type": "boolean", "default": true },
+    "showDate": { "type": "boolean", "default": true },
+    "showStatus": { "type": "boolean", "default": true },
+    "showLocation": { "type": "boolean", "default": true },
+    "showContent": { "type": "boolean", "default": true },
+    "showAction": { "type": "boolean", "default": true },
+    "showTerms": { "type": "boolean", "default": true },
+    "headingLevel": { "type": "string", "default": "h1", "enum": ["h1", "h2", "h3", "h4", "h5", "h6"] },
+    "dateLabel": { "type": "string", "default": "" },
+    "venueLabel": { "type": "string", "default": "" },
+    "locationLabel": { "type": "string", "default": "" },
+    "actionLabel": { "type": "string", "default": "" },
+    "categoriesLabel": { "type": "string", "default": "" },
+    "tagsLabel": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "background": true, "link": true },
+    "spacing": { "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

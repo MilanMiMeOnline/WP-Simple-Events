@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Query;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Shortcode\EventListAttributes;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
@@ -53,18 +54,21 @@ final readonly class EventArchiveQuery {
 	}
 
 	/**
-	 * Apply upcoming-by-default visibility and ordering to the main archive.
+	 * Apply public visibility and event chronology to known event collections.
 	 *
 	 * @param WP_Query $query Current WordPress query.
 	 */
 	public function apply( WP_Query $query ): void {
-		if ( is_admin() || ! $query->is_main_query() || ! $query->is_post_type_archive( EventPostType::POST_TYPE ) ) {
+		$is_post_type_archive = $query->is_post_type_archive( EventPostType::POST_TYPE );
+		$is_taxonomy_archive  = $query->is_tax( array( EventTaxonomies::CATEGORY, EventTaxonomies::TAG ) );
+
+		if ( is_admin() || ! $query->is_main_query() || ( ! $is_post_type_archive && ! $is_taxonomy_archive ) ) {
 			return;
 		}
 
-		$default      = $this->settings->default_period();
+		$default      = $is_taxonomy_archive ? EventPeriod::ALL : $this->settings->default_period();
 		$period_value = $query->get( 'wpse_period' );
-		$period       = is_scalar( $period_value )
+		$period       = ! $is_taxonomy_archive && is_scalar( $period_value )
 			? EventPeriod::tryFrom( strtolower( (string) $period_value ) ) ?? $default
 			: $default;
 		$per_page     = $this->settings->per_page();
@@ -73,8 +77,8 @@ final readonly class EventArchiveQuery {
 		$page         = $page >= 1 && $page <= EventQueryCriteria::MAX_PAGE ? $page : 1;
 		$attributes   = EventListAttributes::from_shortcode(
 			array(
-				'category' => $query->get( 'wpse_category' ),
-				'tag'      => $query->get( 'wpse_tag' ),
+				'category' => $is_taxonomy_archive ? '' : $query->get( 'wpse_category' ),
+				'tag'      => $is_taxonomy_archive ? '' : $query->get( 'wpse_tag' ),
 			)
 		);
 		$criteria     = new EventQueryCriteria(

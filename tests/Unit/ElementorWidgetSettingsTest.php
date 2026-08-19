@@ -24,33 +24,41 @@ final class ElementorWidgetSettingsTest extends TestCase {
 	public function test_event_list_settings_are_normalized(): void {
 		$attributes = WidgetSettings::event_list(
 			array(
-				'view'          => 'list',
-				'period'        => 'past',
-				'limit'         => '24',
-				'columns'       => '4',
-				'category'      => array( 'Workshops', '<script>', 'Workshops' ),
-				'tag'           => array( 'Featured', array( 'invalid' ) ),
-				'filters'       => 'yes',
-				'pagination'    => '',
-				'show_excerpt'  => '',
-				'show_image'    => 'yes',
-				'show_location' => 'yes',
+				'view'           => 'list',
+				'period'         => 'past',
+				'limit'          => '24',
+				'columns'        => '4',
+				'category'       => array( 'Workshops', '<script>', 'Workshops' ),
+				'tag'            => array( 'Featured', array( 'invalid' ) ),
+				'filters'        => 'yes',
+				'pagination'     => '',
+				'show_excerpt'   => '',
+				'show_image'     => 'yes',
+				'show_location'  => 'yes',
+				'show_title'     => '',
+				'show_date'      => 'yes',
+				'excerpt_length' => '18',
+				'heading_level'  => 'h4',
 			)
 		);
 
 		self::assertSame(
 			array(
-				'view'          => 'list',
-				'period'        => 'past',
-				'limit'         => 24,
-				'columns'       => 4,
-				'category'      => array( 'workshops', 'script' ),
-				'tag'           => array( 'featured' ),
-				'filters'       => true,
-				'pagination'    => false,
-				'show_excerpt'  => false,
-				'show_image'    => true,
-				'show_location' => true,
+				'view'           => 'list',
+				'period'         => 'past',
+				'limit'          => 24,
+				'columns'        => 4,
+				'category'       => array( 'workshops', 'script' ),
+				'tag'            => array( 'featured' ),
+				'filters'        => true,
+				'pagination'     => false,
+				'show_excerpt'   => false,
+				'show_image'     => true,
+				'show_location'  => true,
+				'show_title'     => false,
+				'show_date'      => true,
+				'excerpt_length' => 18,
+				'heading_level'  => 'h4',
 			),
 			$attributes
 		);
@@ -83,19 +91,29 @@ final class ElementorWidgetSettingsTest extends TestCase {
 	public function test_calendar_settings_are_normalized(): void {
 		self::assertSame(
 			array(
-				'initial_view' => 'list',
-				'mobile_view'  => 'month',
-				'category'     => array( 'music' ),
-				'tag'          => array( 'free' ),
-				'filters'      => false,
+				'initial_view'           => 'list',
+				'mobile_view'            => 'month',
+				'category'               => array( 'music' ),
+				'tag'                    => array( 'free' ),
+				'filters'                => false,
+				'initial_date'           => '2028-02-29',
+				'show_navigation'        => false,
+				'show_today'             => true,
+				'show_view_switcher'     => false,
+				'fallback_heading_level' => 'h2',
 			),
 			WidgetSettings::calendar(
 				array(
-					'initial_view' => 'list',
-					'mobile_view'  => 'month',
-					'category'     => array( 'Music' ),
-					'tag'          => array( 'Free' ),
-					'filters'      => '',
+					'initial_view'           => 'list',
+					'mobile_view'            => 'month',
+					'category'               => array( 'Music' ),
+					'tag'                    => array( 'Free' ),
+					'filters'                => '',
+					'initial_date'           => '2028-02-29',
+					'show_navigation'        => '',
+					'show_today'             => 'yes',
+					'show_view_switcher'     => '',
+					'fallback_heading_level' => 'h2',
 				)
 			)
 		);
@@ -115,15 +133,24 @@ final class ElementorWidgetSettingsTest extends TestCase {
 		self::assertSame( 'month', $attributes['initial_view'] );
 		self::assertSame( 'list', $attributes['mobile_view'] );
 		self::assertTrue( $attributes['filters'] );
+		self::assertSame( '', $attributes['initial_date'] );
+		self::assertTrue( $attributes['show_navigation'] );
+		self::assertTrue( $attributes['show_today'] );
+		self::assertTrue( $attributes['show_view_switcher'] );
+		self::assertSame( 'h3', $attributes['fallback_heading_level'] );
 	}
 
 	/**
 	 * Details preview IDs must be positive decimal integers without coercion.
 	 */
 	public function test_details_settings_accept_only_a_valid_preview_event(): void {
-		self::assertSame( array( 'id' => 42 ), WidgetSettings::details( array( 'event_id' => '42' ) ) );
-		self::assertSame( array(), WidgetSettings::details( array( 'event_id' => '42x' ) ) );
-		self::assertSame( array(), WidgetSettings::details( array( 'event_id' => 0 ) ) );
-		self::assertSame( array(), WidgetSettings::details( array() ) );
+		$valid = WidgetSettings::details( array( 'event_id' => '42' ) );
+
+		self::assertSame( 42, $valid['id'] ?? null );
+		self::assertTrue( $valid['show_title'] ?? false );
+		self::assertSame( 'h1', $valid['heading_level'] ?? null );
+		self::assertArrayNotHasKey( 'id', WidgetSettings::details( array( 'event_id' => '42x' ) ) );
+		self::assertArrayNotHasKey( 'id', WidgetSettings::details( array( 'event_id' => 0 ) ) );
+		self::assertArrayNotHasKey( 'id', WidgetSettings::details( array() ) );
 	}
 }

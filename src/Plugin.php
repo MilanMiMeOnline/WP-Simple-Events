@@ -17,6 +17,7 @@ use MiMe\WPSimpleEvents\Admin\EventSaveController;
 use MiMe\WPSimpleEvents\Admin\EventSettingsPage;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRenderer;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRegistry;
+use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockRenderer;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\ContentRegistry;
 use MiMe\WPSimpleEvents\Elementor\ElementorIntegration;
@@ -83,7 +84,8 @@ final class Plugin {
 		$field_blocks      = new EventFieldBlockRegistry(
 			renderer: new EventFieldBlockRenderer( $event_contexts, $event_fields ),
 			events: $public_events,
-			assets: $frontend_assets
+			assets: $frontend_assets,
+			composites: new EventCompositeBlockRenderer( $event_lists, $calendar, $event_details )
 		);
 		$template_loader   = new TemplateLoader();
 		$structured_data   = new StructuredDataController();

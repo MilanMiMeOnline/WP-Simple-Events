@@ -34,11 +34,19 @@ final class EventListControls {
 		$categories = $this->terms( EventTaxonomies::CATEGORY );
 		$tags       = $this->terms( EventTaxonomies::TAG );
 		$action     = get_permalink( get_queried_object_id() );
+		$action     = is_string( $action ) ? $action : '';
+		$selected   = array_key_exists( $prefix . '_apply', $request )
+			|| array_key_exists( $prefix . '_period', $request )
+			|| array_key_exists( $prefix . '_category', $request )
+			|| array_key_exists( $prefix . '_tag', $request );
+		$preserved  = $this->preserved_instance_values( $request, $prefix );
+		$reset_url  = add_query_arg( $preserved, $action );
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
-			<?php echo $this->preserved_instance_fields( $request, $prefix ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Method escapes every hidden value and attribute. ?>
+		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
+			<?php echo $this->preserved_instance_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Method escapes every hidden value and attribute. ?>
+			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
 
 			<p class="wpse-events-filter-field">
 				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php esc_html_e( 'Period', 'mime-simple-events-calendar' ); ?></label>
@@ -59,6 +67,9 @@ final class EventListControls {
 
 			<p class="wpse-events-filter-submit">
 				<button type="submit" aria-controls="<?php echo esc_attr( $results_id ); ?>"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
+				<?php if ( $selected ) : ?>
+					<a href="<?php echo esc_url( $reset_url ); ?>"><?php esc_html_e( 'Reset filters', 'mime-simple-events-calendar' ); ?></a>
+				<?php endif; ?>
 			</p>
 		</form>
 		<?php
@@ -139,7 +150,7 @@ final class EventListControls {
 		?>
 		<p class="wpse-events-filter-field">
 			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'mime-simple-events-calendar' ); ?></span>
+			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Choose one or more. Leave all unselected to include every available option.', 'mime-simple-events-calendar' ); ?></span>
 			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>">
 				<?php foreach ( $terms as $term ) : ?>
 					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>
@@ -152,37 +163,66 @@ final class EventListControls {
 	/**
 	 * Preserve state belonging to other event-list instances.
 	 *
-	 * @param array<string, mixed> $request Current normalized request values.
-	 * @param string               $prefix  Current instance prefix.
+	 * @param array<string, string|string[]> $values Preserved request values.
 	 */
-	private function preserved_instance_fields( array $request, string $prefix ): string {
+	private function preserved_instance_fields( array $values ): string {
 		$fields = array();
-		$count  = 0;
 
-		foreach ( $request as $key => $value ) {
-			if ( $count >= 50
-				|| str_starts_with( $key, $prefix . '_' )
-				|| 1 !== preg_match( '/^wpse_\d+_(?:period|category|tag|page)$/D', $key ) ) {
-				continue;
-			}
+		foreach ( $values as $key => $value ) {
+			$items = is_array( $value ) ? $value : array( $value );
 
-			$values = is_array( $value ) ? array_slice( $value, 0, 20 ) : array( $value );
-
-			foreach ( $values as $item ) {
-				if ( ! is_scalar( $item ) || $count >= 50 ) {
-					continue;
-				}
-
+			foreach ( $items as $item ) {
 				$field_name = is_array( $value ) ? $key . '[]' : $key;
 				$fields[]   = sprintf(
 					'<input type="hidden" name="%1$s" value="%2$s">',
 					esc_attr( $field_name ),
-					esc_attr( substr( sanitize_text_field( (string) $item ), 0, 200 ) )
+					esc_attr( $item )
 				);
-				++$count;
 			}
 		}
 
 		return implode( '', $fields );
+	}
+
+	/**
+	 * Normalize allowlisted state belonging to other list instances.
+	 *
+	 * @param array<string, mixed> $request Current public request values.
+	 * @param string               $prefix  Current instance prefix.
+	 * @return array<string, string|string[]>
+	 */
+	private function preserved_instance_values( array $request, string $prefix ): array {
+		$preserved = array();
+		$count     = 0;
+
+		foreach ( $request as $key => $value ) {
+			if ( $count >= 50
+				|| str_starts_with( $key, $prefix . '_' )
+				|| 1 !== preg_match( '/^wpse_\d+_(?:apply|period|category|tag|page)$/D', $key ) ) {
+				continue;
+			}
+
+			$is_multiple = is_array( $value );
+			$items       = $is_multiple ? array_slice( $value, 0, 20 ) : array( $value );
+
+			foreach ( $items as $item ) {
+				if ( ! is_scalar( $item ) || $count >= 50 ) {
+					continue;
+				}
+
+				$clean = substr( sanitize_text_field( (string) $item ), 0, 200 );
+
+				if ( $is_multiple ) {
+					$existing          = is_array( $preserved[ $key ] ?? null ) ? $preserved[ $key ] : array();
+					$existing[]        = $clean;
+					$preserved[ $key ] = $existing;
+				} else {
+					$preserved[ $key ] = $clean;
+				}
+				++$count;
+			}
+		}
+
+		return $preserved;
 	}
 }

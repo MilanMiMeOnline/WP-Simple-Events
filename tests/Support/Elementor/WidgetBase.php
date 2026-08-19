@@ -112,6 +112,7 @@ abstract class Widget_Base {
 	 * @param array<string, mixed> $options Registration options.
 	 */
 	public function add_responsive_control( string $id, array $args, array $options = array() ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Test recorder is added only when needed.
+		$this->wpse_test_controls[ $id ] = $args;
 	}
 
 	/**

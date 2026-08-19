@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/event-calendar",
+  "title": "Event Calendar",
+  "category": "mime-simple-events-calendar",
+  "icon": "calendar-alt",
+  "description": "Display the interactive public event calendar with a server-rendered fallback.",
+  "textdomain": "mime-simple-events-calendar",
+  "attributes": {
+    "initialView": { "type": "string", "default": "month", "enum": ["month", "list"] },
+    "mobileView": { "type": "string", "default": "list", "enum": ["month", "list"] },
+    "categories": { "type": "array", "default": [], "items": { "type": "string" } },
+    "tags": { "type": "array", "default": [], "items": { "type": "string" } },
+    "filters": { "type": "boolean", "default": true },
+    "initialDate": { "type": "string", "default": "" },
+    "showNavigation": { "type": "boolean", "default": true },
+    "showToday": { "type": "boolean", "default": true },
+    "showViewSwitcher": { "type": "boolean", "default": true },
+    "fallbackHeadingLevel": { "type": "string", "default": "h3", "enum": ["h2", "h3", "h4", "h5", "h6"] }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "color": { "text": true, "background": true, "link": true },
+    "spacing": { "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

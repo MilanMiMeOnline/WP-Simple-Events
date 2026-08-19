@@ -228,6 +228,7 @@ async function assertEventThemeShell(
 		footerMarker,
 		singleOverrideMarker = '',
 		archiveOverrideMarker = '',
+		taxonomyOverrideMarker = '',
 	},
 	session,
 	singleUrl,
@@ -237,10 +238,14 @@ async function assertEventThemeShell(
 	const archivePage = await fetchHealthyPage(
 		'http://localhost:8888/events/',
 	);
+	const taxonomyPage = await fetchHealthyPage(
+		'http://localhost:8888/event-category/archive-smoke/',
+	);
 	const singlePage = await fetchHealthyPage( singleUrl );
 
 	for ( const [ pageName, body ] of [
 		[ 'archive', archivePage ],
+		[ 'taxonomy archive', taxonomyPage ],
 		[ 'single', singlePage ],
 	] ) {
 		requireExactlyOnce(
@@ -259,6 +264,11 @@ async function assertEventThemeShell(
 		archivePage.includes( 'wpse-event-archive' ) &&
 			archivePage.includes( 'Future smoke event' ),
 		`${ theme } lost the native event archive inside its theme shell.`,
+	);
+	requireCondition(
+		taxonomyPage.includes( 'wpse-event-archive' ) &&
+			taxonomyPage.includes( 'Future smoke event' ),
+		`${ theme } lost the event taxonomy archive inside its theme shell.`,
 	);
 	requireExactlyOnce(
 		singlePage,
@@ -283,6 +293,14 @@ async function assertEventThemeShell(
 			archivePage,
 			archiveOverrideMarker,
 			`${ theme } did not honor its event-archive override.`,
+		);
+	}
+
+	if ( taxonomyOverrideMarker ) {
+		requireExactlyOnce(
+			taxonomyPage,
+			taxonomyOverrideMarker,
+			`${ theme } did not honor its event-taxonomy archive override.`,
 		);
 	}
 }
@@ -864,6 +882,19 @@ try {
 		},
 	);
 	requireCondition( calendarCategory.response.status === 201, 'The calendar category fixture could not be created.' );
+	const archiveCategory = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/wpse_event_category',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				name: 'Archive smoke category',
+				slug: 'archive-smoke',
+			} ),
+		},
+	);
+	requireCondition( archiveCategory.response.status === 201, 'The archive category fixture could not be created.' );
 
 	const categorizedEvent = await authenticatedRequest(
 		session,
@@ -872,11 +903,25 @@ try {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify( {
-				wpse_event_category: [ calendarCategory.data.id ],
+				wpse_event_category: [ calendarCategory.data.id, archiveCategory.data.id ],
 			} ),
 		},
 	);
 	requireCondition( categorizedEvent.response.ok, 'The event could not be assigned to its calendar category.' );
+	for ( const event of [ ongoingCreate.data, pastCreate.data, protectedCreate.data, draftCreate.data ] ) {
+		const categorizedFixture = await authenticatedRequest(
+			session,
+			`/wp-json/wp/v2/wpse_event/${ event.id }`,
+			{
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify( {
+					wpse_event_category: [ archiveCategory.data.id ],
+				} ),
+			},
+		);
+		requireCondition( categorizedFixture.response.ok, 'A taxonomy archive fixture could not be categorized.' );
+	}
 	const blockTag = await authenticatedRequest(
 		session,
 		'/wp-json/wp/v2/wpse_event_tag',
@@ -1293,6 +1338,31 @@ try {
 	requireCondition( pastArchiveBody.includes( 'Past smoke event' ), 'The native archive past filter did not show past events.' );
 	requireCondition( ! pastArchiveBody.includes( 'Future smoke event' ), 'The native archive past filter exposed future events.' );
 
+	const categoryArchiveBody = await fetchHealthyPage(
+		'http://localhost:8888/event-category/archive-smoke/',
+	);
+	requireCondition( categoryArchiveBody.includes( 'wpse-event-archive' ), 'The event category archive did not use event presentation.' );
+	requireCondition( categoryArchiveBody.includes( 'Archive smoke category' ), 'The event category archive omitted its term title.' );
+	requireCondition( categoryArchiveBody.includes( 'frontend.css' ), 'The event category archive omitted component styling.' );
+	requireCondition( categoryArchiveBody.includes( 'Past smoke event' ), 'The event category archive omitted a public past event.' );
+	requireCondition( categoryArchiveBody.includes( 'Ongoing smoke event' ), 'The event category archive omitted a public active event.' );
+	requireCondition( categoryArchiveBody.includes( 'Future smoke event' ), 'The event category archive omitted a public future event.' );
+	requireCondition( ! categoryArchiveBody.includes( 'Protected smoke event' ), 'The event category archive exposed a password-protected event.' );
+	requireCondition( ! categoryArchiveBody.includes( 'Incomplete draft smoke event' ), 'The event category archive exposed a draft event.' );
+	requireCondition( ! categoryArchiveBody.includes( 'wpse-event-archive-filters' ), 'The fixed event category archive exposed cross-archive filters.' );
+	requireCondition(
+		categoryArchiveBody.indexOf( 'Past smoke event' ) < categoryArchiveBody.indexOf( 'Ongoing smoke event' ) &&
+			categoryArchiveBody.indexOf( 'Ongoing smoke event' ) < categoryArchiveBody.indexOf( 'Future smoke event' ),
+		'The event category archive did not order events by ascending start.',
+	);
+	const tagArchiveBody = await fetchHealthyPage(
+		'http://localhost:8888/event-tag/block-smoke/',
+	);
+	requireCondition( tagArchiveBody.includes( 'wpse-event-archive' ), 'The event tag archive did not use event presentation.' );
+	requireCondition( tagArchiveBody.includes( 'Block smoke tag' ), 'The event tag archive omitted its term title.' );
+	requireCondition( tagArchiveBody.includes( 'Future smoke event' ), 'The event tag archive omitted its public event.' );
+	requireCondition( ! tagArchiveBody.includes( 'wpse-event-archive-filters' ), 'The fixed event tag archive exposed cross-archive filters.' );
+
 	const singleBody = await fetchHealthyPage( validCreate.data.link );
 	const singleArticleStart = singleBody.indexOf( '<article class="wpse-single-event"' );
 	const singleArticleEnd = singleBody.indexOf( '</article>', singleArticleStart );
@@ -1380,6 +1450,7 @@ try {
 			footerMarker: 'id="wpse-test-classic-footer"',
 			singleOverrideMarker: 'id="wpse-test-php-single-override"',
 			archiveOverrideMarker: 'id="wpse-test-php-archive-override"',
+			taxonomyOverrideMarker: 'id="wpse-test-php-archive-override"',
 		},
 		{
 			theme: 'wpse-block-shell',
@@ -1392,6 +1463,7 @@ try {
 			footerMarker: 'id="wpse-test-block-footer"',
 			singleOverrideMarker: 'id="wpse-test-block-single-override"',
 			archiveOverrideMarker: 'id="wpse-test-block-archive-override"',
+			taxonomyOverrideMarker: 'id="wpse-test-block-taxonomy-override"',
 		},
 	];
 
@@ -1845,6 +1917,8 @@ try {
 		[ 'pages', calendarPage.data.id ],
 		[ 'pages', conflictingArchivePage.data.id ],
 		[ 'wpse_event_category', calendarCategory.data.id ],
+		[ 'wpse_event_category', archiveCategory.data.id ],
+		[ 'wpse_event_tag', blockTag.data.id ],
 	];
 
 	for ( const [ resource, id ] of resources ) {

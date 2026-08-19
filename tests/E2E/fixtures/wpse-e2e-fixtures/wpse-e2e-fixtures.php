@@ -28,6 +28,11 @@ function wpse_e2e_seed_calendar_page(): void {
 		'[wpse_calendar category="wpse-e2e-category" filters="true"]'
 	);
 	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-options',
+		'Calendar Options Harness',
+		'[wpse_calendar category="wpse-e2e-wall-time" filters="false" initial_date="2026-08-10" show_navigation="false" show_today="false" show_view_switcher="false" fallback_heading_level="h2"]'
+	);
+	wpse_e2e_insert_page(
 		'wpse-e2e-calendar-multiple',
 		'Multiple Calendar Harness',
 		'[wpse_calendar category="wpse-e2e-category" filters="false"][wpse_calendar tag="wpse-e2e-tag" filters="false"]'
@@ -36,6 +41,11 @@ function wpse_e2e_seed_calendar_page(): void {
 		'wpse-e2e-calendar-hidden',
 		'Hidden Calendar Harness',
 		'[wpse_e2e_hidden_calendar]'
+	);
+	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-elementor',
+		'Elementor Calendar Lifecycle Harness',
+		'[wpse_e2e_elementor_calendar]'
 	);
 	wpse_e2e_insert_page(
 		'wpse-e2e-calendar-wall-time',
@@ -180,7 +190,10 @@ function wpse_e2e_seed_calendar_page(): void {
 
 /** Seed one public page built from the complete explicit-source block palette. */
 function wpse_e2e_seed_atomic_page(): void {
-	if ( get_page_by_path( 'wpse-e2e-atomic-fields' ) instanceof WP_Post ) {
+	$atomic_page    = get_page_by_path( 'wpse-e2e-atomic-fields' );
+	$composite_page = get_page_by_path( 'wpse-e2e-composite-blocks' );
+
+	if ( $atomic_page instanceof WP_Post && $composite_page instanceof WP_Post ) {
 		return;
 	}
 
@@ -232,14 +245,26 @@ function wpse_e2e_seed_atomic_page(): void {
 		)
 	);
 
-	wpse_e2e_insert_page( 'wpse-e2e-atomic-fields', 'Atomic Event Fields Harness', $content );
-	wpse_e2e_insert_page(
-		'wpse-e2e-atomic-query',
-		'Atomic Event Query Harness',
-		'<!-- wp:query {"query":{"perPage":3,"postType":"wpse_event","order":"asc","orderBy":"title","inherit":false}} -->'
-		. '<div class="wp-block-query"><!-- wp:post-template --><!-- wp:wpse/event-title /--><!-- /wp:post-template --></div>'
-		. '<!-- /wp:query -->'
-	);
+	if ( ! $atomic_page instanceof WP_Post ) {
+		wpse_e2e_insert_page( 'wpse-e2e-atomic-fields', 'Atomic Event Fields Harness', $content );
+		wpse_e2e_insert_page(
+			'wpse-e2e-atomic-query',
+			'Atomic Event Query Harness',
+			'<!-- wp:query {"query":{"perPage":3,"postType":"wpse_event","order":"asc","orderBy":"title","inherit":false}} -->'
+			. '<div class="wp-block-query"><!-- wp:post-template --><!-- wp:wpse/event-title /--><!-- /wp:post-template --></div>'
+			. '<!-- /wp:query -->'
+		);
+	}
+
+	if ( ! $composite_page instanceof WP_Post ) {
+		wpse_e2e_insert_page(
+			'wpse-e2e-composite-blocks',
+			'Composite Event Blocks Harness',
+			'<!-- wp:wpse/event-list {"view":"list","limit":2,"filters":false} /-->'
+			. '<!-- wp:wpse/event-calendar {"initialView":"list","filters":false} /-->'
+			. '<!-- wp:wpse/event-details {"eventId":' . $event->ID . '} /-->'
+		);
+	}
 }
 
 /**
@@ -251,6 +276,18 @@ function wpse_e2e_render_hidden_calendar(): string {
 	return '<div data-wpse-e2e-hidden-calendar hidden>'
 		. do_shortcode( '[wpse_calendar category="wpse-e2e-empty" filters="false"]' )
 		. '</div>';
+}
+
+/**
+ * Keep server-rendered calendar markup inert until the test invokes the same
+ * element-ready hook used by Elementor's editor preview.
+ *
+ * @return string Test-only Elementor lifecycle markup.
+ */
+function wpse_e2e_render_elementor_calendar(): string {
+	return '<template data-wpse-e2e-elementor-calendar-template>'
+		. do_shortcode( '[wpse_calendar category="wpse-e2e-empty" filters="false"]' )
+		. '</template><div data-wpse-e2e-elementor-scope></div>';
 }
 
 /**
@@ -282,7 +319,36 @@ function wpse_e2e_render_calendar_time(): string {
 /** Register test-only shortcodes before fixture pages are seeded. */
 function wpse_e2e_register_shortcodes(): void {
 	add_shortcode( 'wpse_e2e_hidden_calendar', 'wpse_e2e_render_hidden_calendar' );
+	add_shortcode( 'wpse_e2e_elementor_calendar', 'wpse_e2e_render_elementor_calendar' );
 	add_shortcode( 'wpse_e2e_calendar_time', 'wpse_e2e_render_calendar_time' );
+}
+
+/** Load jQuery only for the test page that reproduces Elementor's init event. */
+function wpse_e2e_enqueue_elementor_calendar_fixture(): void {
+	if ( is_page( 'wpse-e2e-calendar-elementor' ) ) {
+		wp_enqueue_script( 'jquery' );
+	}
+}
+
+/**
+ * Define a minimal supported Elementor hooks surface before the calendar bundle.
+ */
+function wpse_e2e_add_elementor_calendar_fixture_script(): void {
+	if ( ! is_page( 'wpse-e2e-calendar-elementor' ) || ! wp_script_is( 'wpse-calendar', 'enqueued' ) ) {
+		return;
+	}
+
+	wp_add_inline_script(
+		'wpse-calendar',
+		'window.wpseE2EInstallElementor = function () {'
+		. 'var actions = {};'
+		. 'window.elementorFrontend = { hooks: {'
+		. 'addAction: function (name, callback) { (actions[name] = actions[name] || []).push(callback); },'
+		. 'doAction: function (name, scope) { (actions[name] || []).forEach(function (callback) { callback(scope); }); }'
+		. '} };'
+		. '};',
+		'before'
+	);
 }
 
 /**
@@ -410,3 +476,5 @@ function wpse_e2e_insert_page( string $slug, string $title, string $content ): v
 register_activation_hook( __FILE__, 'wpse_e2e_seed_calendar_page' );
 add_action( 'init', 'wpse_e2e_register_shortcodes', 5 );
 add_action( 'init', 'wpse_e2e_seed_calendar_page', 20 );
+add_action( 'wp_enqueue_scripts', 'wpse_e2e_enqueue_elementor_calendar_fixture' );
+add_action( 'wp_footer', 'wpse_e2e_add_elementor_calendar_fixture_script', 1 );

@@ -52,10 +52,15 @@ const isEventFeed = ( url ) =>
  * Open a fixture page, allowing the test-only plugin one request to seed a
  * fresh Playground database when activation hooks have not run yet.
  *
- * @param {import('@playwright/test').Page} page Browser page.
- * @param {string}                          slug Fixture page slug.
+ * @param {import('@playwright/test').Page} page          Browser page.
+ * @param {string}                          slug          Fixture page slug.
+ * @param {string}                          readySelector Stable fixture marker.
  */
-const gotoFixturePage = async ( page, slug ) => {
+const gotoFixturePage = async (
+	page,
+	slug,
+	readySelector = '[data-wpse-calendar]',
+) => {
 	let response;
 
 	// FullCalendar initializes from the visitor's current month. Keep the
@@ -70,7 +75,7 @@ const gotoFixturePage = async ( page, slug ) => {
 		if (
 			response &&
 			response.status() < 400 &&
-			( await page.locator( '[data-wpse-calendar]' ).count() ) > 0
+			( await page.locator( readySelector ).count() ) > 0
 		) {
 			break;
 		}
@@ -81,7 +86,7 @@ const gotoFixturePage = async ( page, slug ) => {
 	}
 
 	expect( response.status() ).toBeLessThan( 400 );
-	expect( await page.locator( '[data-wpse-calendar]' ).count() ).toBeGreaterThan( 0 );
+	expect( await page.locator( readySelector ).count() ).toBeGreaterThan( 0 );
 };
 
 /**
@@ -218,12 +223,15 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 
 	await expect( reset ).toBeVisible();
 	await reset.click();
-	await expect.poll( () => selectedOptions( category ) ).toEqual( [] );
+	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+		'wpse-e2e-category',
+	] );
 	await expect.poll( () => selectedOptions( tag ) ).toEqual( [] );
 	await expect.poll( () => {
 		const url = new URL( page.url() );
 
 		return [
+			...url.searchParams.getAll( 'wpse_calendar_1_apply' ),
 			...url.searchParams.getAll( 'wpse_calendar_1_category[]' ),
 			...url.searchParams.getAll( 'wpse_calendar_1_tag[]' ),
 		];
@@ -245,6 +253,25 @@ test( 'uses the configured mobile list view on its first render', async ( {
 	await expect( canvas.locator( '.fc-listMonth-view' ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+} );
+
+test( 'applies a safe initial date and optional toolbar controls', async ( {
+	page,
+} ) => {
+	await gotoFixturePage( page, 'wpse-e2e-calendar-options' );
+
+	const calendar = page.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+	await expect( canvas.locator( '.fc-toolbar-title' ) ).toContainText( 'August' );
+	await expect( canvas.getByRole( 'button', { name: 'Previous' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'button', { name: 'Next' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'button', { name: 'Today' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toHaveCount( 0 );
+	await expect( calendar.locator( '.wpse-calendar-fallback > h2' ) ).toHaveText(
+		'Upcoming events',
+	);
 } );
 
 for ( const timezoneId of [ 'Europe/Brussels', 'America/Los_Angeles' ] ) {
@@ -604,4 +631,93 @@ test( 'repairs its geometry after a hidden integration container is revealed', a
 	} );
 	await expect( container ).toBeVisible();
 	await expectHealthyMonthGrid( canvas );
+} );
+
+test( 'initializes an Elementor calendar exactly once for every rendered root', async ( {
+	page,
+} ) => {
+	let feedRequests = 0;
+
+	page.on( 'request', ( request ) => {
+		if ( isEventFeed( new URL( request.url() ) ) ) {
+			feedRequests += 1;
+		}
+	} );
+
+	await gotoFixturePage(
+		page,
+		'wpse-e2e-calendar-elementor',
+		'[data-wpse-e2e-elementor-calendar-template]',
+	);
+
+	const scope = page.locator( '[data-wpse-e2e-elementor-scope]' );
+
+	await expect( scope.locator( '[data-wpse-calendar]' ) ).toHaveCount( 0 );
+	await page.evaluate( () => {
+		window.wpseE2EInstallElementor();
+		window.jQuery( window ).trigger( 'elementor/frontend/init' );
+
+		const template = document.querySelector(
+			'[data-wpse-e2e-elementor-calendar-template]',
+		);
+		const elementorScope = document.querySelector(
+			'[data-wpse-e2e-elementor-scope]',
+		);
+
+		elementorScope.append( template.content.cloneNode( true ) );
+		window.elementorFrontend.hooks.doAction(
+			'frontend/element_ready/wpse-event-calendar.default',
+			[ elementorScope ],
+		);
+	} );
+
+	const calendar = scope.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'No events match your selection.',
+	);
+	await expect( calendar.locator( '.fc' ) ).toHaveCount( 1 );
+	await expectHealthyMonthGrid( canvas );
+	await expect.poll( () => feedRequests ).toBe( 1 );
+
+	await page.evaluate( () => {
+		const elementorScope = document.querySelector(
+			'[data-wpse-e2e-elementor-scope]',
+		);
+
+		window.elementorFrontend.hooks.doAction(
+			'frontend/element_ready/wpse-event-calendar.default',
+			[ elementorScope ],
+		);
+	} );
+	await expect( calendar.locator( '.fc' ) ).toHaveCount( 1 );
+	await expect.poll( () => feedRequests ).toBe( 1 );
+
+	await page.evaluate( () => {
+		const template = document.querySelector(
+			'[data-wpse-e2e-elementor-calendar-template]',
+		);
+		const elementorScope = document.querySelector(
+			'[data-wpse-e2e-elementor-scope]',
+		);
+
+		elementorScope.replaceChildren( template.content.cloneNode( true ) );
+		window.elementorFrontend.hooks.doAction(
+			'frontend/element_ready/wpse-event-calendar.default',
+			[ elementorScope ],
+		);
+	} );
+
+	const rerenderedCalendar = scope.locator( '[data-wpse-calendar]' );
+	const rerenderedCanvas = rerenderedCalendar.locator(
+		'[data-wpse-calendar-canvas]',
+	);
+
+	await expect(
+		rerenderedCalendar.locator( '[data-wpse-calendar-status]' ),
+	).toHaveText( 'No events match your selection.' );
+	await expect( rerenderedCalendar.locator( '.fc' ) ).toHaveCount( 1 );
+	await expectHealthyMonthGrid( rerenderedCanvas );
+	await expect.poll( () => feedRequests ).toBe( 2 );
 } );

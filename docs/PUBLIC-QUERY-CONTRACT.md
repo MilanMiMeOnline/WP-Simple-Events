@@ -31,6 +31,14 @@ The adapter changes only the front-end main event archive. It does not alter adm
 
 The native archive renderer consumes this main query directly and adds an accessible filter form for `wpse_period`, `wpse_category` and `wpse_tag`. It does not create a duplicate query. Classic and block-theme presentation details are frozen in `TEMPLATE-CONTRACT.md`.
 
+## Event taxonomy archives
+
+The front-end main archives for `wpse_event_category` and `wpse_event_tag` are also known event collections. They preserve WordPress' resolved term constraint, expose only published events without a post password, use the bounded archive page size and order all matching events by `_wpse_start_utc` ascending. They deliberately include past, active and future events so a term archive remains a complete archive rather than inheriting the configurable upcoming-only landing-page default.
+
+Term archives use the term title, shared event cards and native pagination. They do not render the general archive filter form: accepting category or tag filters there could replace the fixed term constraint and let a request escape the archive it represents. Front-end component styles are enqueued for these two taxonomies.
+
+No query or date filter is attached to blog categories, post tags, product archives, site search or mixed post-type search. Mixed search therefore retains WordPress relevance ordering and the active theme's normal publication-date presentation.
+
 ## `[wpse_events]` shortcode
 
 Default attributes are:

@@ -32,6 +32,10 @@ final readonly class EventListAttributes {
 	 * @param bool          $show_excerpt   Show card excerpts.
 	 * @param bool          $show_image     Show card images.
 	 * @param bool          $show_location  Show card locations.
+	 * @param bool          $show_title     Show linked card titles.
+	 * @param bool          $show_date      Show card dates.
+	 * @param int           $excerpt_length Maximum excerpt words.
+	 * @param string        $heading_level  Card title heading element.
 	 * @param int           $page           Current instance page.
 	 */
 	private function __construct(
@@ -46,6 +50,10 @@ final readonly class EventListAttributes {
 		public bool $show_excerpt,
 		public bool $show_image,
 		public bool $show_location,
+		public bool $show_title,
+		public bool $show_date,
+		public int $excerpt_length,
+		public string $heading_level,
 		public int $page
 	) {}
 
@@ -70,6 +78,10 @@ final readonly class EventListAttributes {
 			self::boolean_value( $attributes['show_excerpt'] ?? null, true ),
 			self::boolean_value( $attributes['show_image'] ?? null, true ),
 			self::boolean_value( $attributes['show_location'] ?? null, true ),
+			self::boolean_value( $attributes['show_title'] ?? null, true ),
+			self::boolean_value( $attributes['show_date'] ?? null, true ),
+			self::bounded_integer( $attributes['excerpt_length'] ?? null, 30, 1, 100 ),
+			self::heading( $attributes['heading_level'] ?? null, 'h3' ),
 			1
 		);
 	}
@@ -86,15 +98,16 @@ final readonly class EventListAttributes {
 		$tag_slugs      = $this->tag_slugs;
 
 		if ( $this->filters ) {
+			$submitted        = '1' === self::request_scalar( $request, $prefix . '_apply' )
+				|| array_key_exists( $prefix . '_period', $request )
+				|| array_key_exists( $prefix . '_category', $request )
+				|| array_key_exists( $prefix . '_tag', $request );
 			$requested_period = self::request_scalar( $request, $prefix . '_period' );
 			$period           = EventPeriod::tryFrom( $requested_period ) ?? $period;
 
-			if ( array_key_exists( $prefix . '_category', $request ) ) {
-				$category_slugs = self::slugs( $request[ $prefix . '_category' ] );
-			}
-
-			if ( array_key_exists( $prefix . '_tag', $request ) ) {
-				$tag_slugs = self::slugs( $request[ $prefix . '_tag' ] );
+			if ( $submitted ) {
+				$category_slugs = self::slugs( $request[ $prefix . '_category' ] ?? array() );
+				$tag_slugs      = self::slugs( $request[ $prefix . '_tag' ] ?? array() );
 			}
 		}
 
@@ -114,6 +127,10 @@ final readonly class EventListAttributes {
 			$this->show_excerpt,
 			$this->show_image,
 			$this->show_location,
+			$this->show_title,
+			$this->show_date,
+			$this->excerpt_length,
+			$this->heading_level,
 			$page
 		);
 	}
@@ -138,7 +155,27 @@ final readonly class EventListAttributes {
 	 * Build optional card-section choices.
 	 */
 	public function card_options(): EventCardOptions {
-		return new EventCardOptions( $this->show_excerpt, $this->show_image, $this->show_location );
+		return new EventCardOptions(
+			$this->show_excerpt,
+			$this->show_image,
+			$this->show_location,
+			$this->show_title,
+			$this->show_date,
+			$this->excerpt_length,
+			$this->heading_level
+		);
+	}
+
+	/**
+	 * Normalize an allowlisted heading element.
+	 *
+	 * @param mixed  $value    Raw heading value.
+	 * @param string $fallback Invalid-value fallback.
+	 */
+	private static function heading( mixed $value, string $fallback ): string {
+		$value = is_scalar( $value ) ? strtolower( trim( (string) $value ) ) : '';
+
+		return in_array( $value, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $value : $fallback;
 	}
 
 	/**

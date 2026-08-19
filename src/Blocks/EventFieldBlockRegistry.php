@@ -10,26 +10,29 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Blocks;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
 use MiMe\WPSimpleEvents\Query\PublicEventOptions;
 
-/** Registers metadata blocks, the editor adapter and an opt-in event pattern. */
+/** Registers event blocks, the shared editor adapter and an opt-in field pattern. */
 final readonly class EventFieldBlockRegistry {
 	public const EDITOR_SCRIPT_HANDLE = 'wpse-event-fields-editor';
 
 	/**
 	 * Create the registry with request-shared services.
 	 *
-	 * @param EventFieldBlockRenderer $renderer Shared block renderer.
-	 * @param PublicEventOptions      $events   Bounded public editor choices.
-	 * @param EventFieldBlockPattern  $pattern  Opt-in layout pattern.
-	 * @param FrontendAssets          $assets   Shared frontend assets.
+	 * @param EventFieldBlockRenderer     $renderer   Shared block renderer.
+	 * @param PublicEventOptions          $events     Bounded public editor choices.
+	 * @param EventFieldBlockPattern      $pattern    Opt-in layout pattern.
+	 * @param FrontendAssets              $assets     Shared frontend assets.
+	 * @param EventCompositeBlockRenderer $composites Shared primary-component adapter.
 	 */
 	public function __construct(
 		private EventFieldBlockRenderer $renderer = new EventFieldBlockRenderer(),
 		private PublicEventOptions $events = new PublicEventOptions(),
 		private EventFieldBlockPattern $pattern = new EventFieldBlockPattern(),
-		private FrontendAssets $assets = new FrontendAssets()
+		private FrontendAssets $assets = new FrontendAssets(),
+		private EventCompositeBlockRenderer $composites = new EventCompositeBlockRenderer()
 	) {}
 
 	/** Register WordPress hooks without loading editor data on public requests. */
@@ -57,6 +60,13 @@ final readonly class EventFieldBlockRegistry {
 			);
 		}
 
+		foreach ( EventCompositeBlockDefinitions::slugs() as $slug ) {
+			register_block_type(
+				WPSE_PLUGIN_DIR . '/blocks/' . $slug,
+				array( 'render_callback' => array( $this->composites, 'render' ) )
+			);
+		}
+
 		register_block_pattern_category(
 			EventFieldBlockDefinitions::CATEGORY,
 			array( 'label' => __( 'MiMe Simple Events and Calendar', 'mime-simple-events-calendar' ) )
@@ -80,6 +90,8 @@ final readonly class EventFieldBlockRegistry {
 			'wpseEventFieldBlocks',
 			array(
 				'events'        => $this->events->options(),
+				'categories'    => $this->term_options( EventTaxonomies::CATEGORY ),
+				'tags'          => $this->term_options( EventTaxonomies::TAG ),
 				'eventPostType' => EventPostType::POST_TYPE,
 			)
 		);
@@ -106,5 +118,35 @@ final readonly class EventFieldBlockRegistry {
 		);
 
 		return $categories;
+	}
+
+	/**
+	 * Build bounded event taxonomy choices for the shared editor controls.
+	 *
+	 * @param string $taxonomy Allowlisted event taxonomy.
+	 * @return array<string, string>
+	 */
+	private function term_options( string $taxonomy ): array {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => $taxonomy,
+				'hide_empty' => false,
+				'number'     => 100,
+				'orderby'    => 'name',
+				'order'      => 'ASC',
+			)
+		);
+
+		if ( is_wp_error( $terms ) ) {
+			return array();
+		}
+
+		$options = array();
+
+		foreach ( $terms as $term ) {
+			$options[ $term->slug ] = $term->name;
+		}
+
+		return $options;
 	}
 }

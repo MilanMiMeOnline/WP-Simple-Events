@@ -8,6 +8,7 @@ const { InspectorControls, useBlockProps } = wp.blockEditor;
 const {
 	PanelBody,
 	Placeholder,
+	RangeControl,
 	SelectControl,
 	Spinner,
 	TextControl,
@@ -35,7 +36,7 @@ const eventOptions = [
 	),
 ];
 
-const definitions = [
+const fieldDefinitions = [
 	{
 		name: 'wpse/event-title',
 		title: __( 'Event Title', 'mime-simple-events-calendar' ),
@@ -296,7 +297,7 @@ const errorPreview = ( response ) => el( Placeholder, {
 	instructions: response?.message || __( 'The server could not render this event field.', 'mime-simple-events-calendar' ),
 } );
 
-definitions.forEach( ( definition ) => {
+fieldDefinitions.forEach( ( definition ) => {
 	const EventFieldEdit = ( { attributes, context = {}, setAttributes } ) => {
 		const postId = context.postType === wpseEventFieldBlocks.eventPostType && Number.isInteger( context.postId )
 			? context.postId
@@ -341,6 +342,341 @@ definitions.forEach( ( definition ) => {
 		supports: definition.supports,
 		usesContext: [ 'postId', 'postType' ],
 		edit: EventFieldEdit,
+		save: () => null,
+	} );
+} );
+
+const taxonomyOptions = ( choices = {} ) => Object.entries( choices ).map(
+	( [ value, label ] ) => ( { label, value } ),
+);
+const categoryOptions = taxonomyOptions( wpseEventFieldBlocks.categories );
+const tagOptions = taxonomyOptions( wpseEventFieldBlocks.tags );
+const componentSupports = () => ( {
+	html: false,
+	anchor: true,
+	align: [ 'wide', 'full' ],
+	color: { text: true, background: true, link: true },
+	spacing: { margin: true, padding: true },
+	typography: { fontSize: true, lineHeight: true },
+} );
+
+const compositeDefinitions = [
+	{
+		name: 'wpse/event-list',
+		title: __( 'Event List / Grid', 'mime-simple-events-calendar' ),
+		description: __( 'Display a bounded list or grid of public events.', 'mime-simple-events-calendar' ),
+		icon: 'list-view',
+		attributes: {
+			view: { type: 'string', default: 'grid', enum: [ 'list', 'grid' ] },
+			period: { type: 'string', default: 'upcoming', enum: [ 'upcoming', 'past', 'all' ] },
+			limit: { type: 'integer', default: 12 },
+			columns: { type: 'integer', default: 3 },
+			categories: { type: 'array', default: [], items: { type: 'string' } },
+			tags: { type: 'array', default: [], items: { type: 'string' } },
+			filters: { type: 'boolean', default: false },
+			pagination: { type: 'boolean', default: true },
+			showExcerpt: { type: 'boolean', default: true },
+			showImage: { type: 'boolean', default: true },
+			showLocation: { type: 'boolean', default: true },
+			showTitle: { type: 'boolean', default: true },
+			showDate: { type: 'boolean', default: true },
+			excerptLength: { type: 'integer', default: 30 },
+			headingLevel: { type: 'string', default: 'h3', enum: [ 'h2', 'h3', 'h4', 'h5', 'h6' ] },
+		},
+		supports: componentSupports(),
+		controls: 'list',
+	},
+	{
+		name: 'wpse/event-calendar',
+		title: __( 'Event Calendar', 'mime-simple-events-calendar' ),
+		description: __( 'Display the interactive public event calendar with a server-rendered fallback.', 'mime-simple-events-calendar' ),
+		icon: 'calendar-alt',
+		attributes: {
+			initialView: { type: 'string', default: 'month', enum: [ 'month', 'list' ] },
+			mobileView: { type: 'string', default: 'list', enum: [ 'month', 'list' ] },
+			categories: { type: 'array', default: [], items: { type: 'string' } },
+			tags: { type: 'array', default: [], items: { type: 'string' } },
+			filters: { type: 'boolean', default: true },
+			initialDate: { type: 'string', default: '' },
+			showNavigation: { type: 'boolean', default: true },
+			showToday: { type: 'boolean', default: true },
+			showViewSwitcher: { type: 'boolean', default: true },
+			fallbackHeadingLevel: { type: 'string', default: 'h3', enum: [ 'h2', 'h3', 'h4', 'h5', 'h6' ] },
+		},
+		supports: componentSupports(),
+		controls: 'calendar',
+	},
+	{
+		name: 'wpse/event-details',
+		title: __( 'Event Details', 'mime-simple-events-calendar' ),
+		description: __( 'Display the complete details of the current or selected public event.', 'mime-simple-events-calendar' ),
+		icon: 'media-document',
+		attributes: {
+			...commonAttributes(),
+			showTitle: { type: 'boolean', default: true },
+			showImage: { type: 'boolean', default: true },
+			showDate: { type: 'boolean', default: true },
+			showStatus: { type: 'boolean', default: true },
+			showLocation: { type: 'boolean', default: true },
+			showContent: { type: 'boolean', default: true },
+			showAction: { type: 'boolean', default: true },
+			showTerms: { type: 'boolean', default: true },
+			headingLevel: { type: 'string', default: 'h1', enum: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] },
+			dateLabel: { type: 'string', default: '' },
+			venueLabel: { type: 'string', default: '' },
+			locationLabel: { type: 'string', default: '' },
+			actionLabel: { type: 'string', default: '' },
+			categoriesLabel: { type: 'string', default: '' },
+			tagsLabel: { type: 'string', default: '' },
+		},
+		supports: componentSupports(),
+		controls: 'details',
+	},
+];
+
+const taxonomyControl = ( key, label, value, options, setAttributes ) => el( SelectControl, {
+	key,
+	label,
+	multiple: true,
+	value: Array.isArray( value ) ? value : [],
+	options,
+	help: options.length > 0
+		? __( 'Leave empty to include every available term.', 'mime-simple-events-calendar' )
+		: __( 'No event terms are available yet.', 'mime-simple-events-calendar' ),
+	disabled: options.length === 0,
+	onChange: ( selected ) => setAttributes( { [ key ]: Array.isArray( selected ) ? selected : [] } ),
+} );
+
+const listControls = ( attributes, setAttributes ) => [
+	el( SelectControl, {
+		key: 'view',
+		label: __( 'Layout', 'mime-simple-events-calendar' ),
+		value: attributes.view,
+		options: [
+			{ label: __( 'Grid', 'mime-simple-events-calendar' ), value: 'grid' },
+			{ label: __( 'List', 'mime-simple-events-calendar' ), value: 'list' },
+		],
+		onChange: ( view ) => setAttributes( { view } ),
+	} ),
+	el( SelectControl, {
+		key: 'period',
+		label: __( 'Period', 'mime-simple-events-calendar' ),
+		value: attributes.period,
+		options: [
+			{ label: __( 'Upcoming', 'mime-simple-events-calendar' ), value: 'upcoming' },
+			{ label: __( 'Past', 'mime-simple-events-calendar' ), value: 'past' },
+			{ label: __( 'All', 'mime-simple-events-calendar' ), value: 'all' },
+		],
+		onChange: ( period ) => setAttributes( { period } ),
+	} ),
+	el( RangeControl, {
+		key: 'limit',
+		label: __( 'Events per page', 'mime-simple-events-calendar' ),
+		value: attributes.limit,
+		min: 1,
+		max: 50,
+		onChange: ( limit ) => setAttributes( { limit } ),
+	} ),
+	attributes.view === 'grid' && el( RangeControl, {
+		key: 'columns',
+		label: __( 'Columns', 'mime-simple-events-calendar' ),
+		value: attributes.columns,
+		min: 1,
+		max: 4,
+		onChange: ( columns ) => setAttributes( { columns } ),
+	} ),
+	taxonomyControl( 'categories', __( 'Categories', 'mime-simple-events-calendar' ), attributes.categories, categoryOptions, setAttributes ),
+	taxonomyControl( 'tags', __( 'Tags', 'mime-simple-events-calendar' ), attributes.tags, tagOptions, setAttributes ),
+	attributes.showTitle && el( SelectControl, {
+		key: 'headingLevel',
+		label: __( 'Title heading level', 'mime-simple-events-calendar' ),
+		value: attributes.headingLevel,
+		options: [ 'h2', 'h3', 'h4', 'h5', 'h6' ].map( ( value ) => ( { label: value.toUpperCase(), value } ) ),
+		onChange: ( headingLevel ) => setAttributes( { headingLevel } ),
+	} ),
+	...[
+		[ 'filters', __( 'Show visitor filters', 'mime-simple-events-calendar' ) ],
+		[ 'pagination', __( 'Show pagination', 'mime-simple-events-calendar' ) ],
+		[ 'showImage', __( 'Show image', 'mime-simple-events-calendar' ) ],
+		[ 'showTitle', __( 'Show title', 'mime-simple-events-calendar' ) ],
+		[ 'showDate', __( 'Show date and time', 'mime-simple-events-calendar' ) ],
+		[ 'showExcerpt', __( 'Show excerpt', 'mime-simple-events-calendar' ) ],
+		[ 'showLocation', __( 'Show location', 'mime-simple-events-calendar' ) ],
+	].map( ( [ key, label ] ) => el( ToggleControl, {
+		key,
+		label,
+		checked: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+	attributes.showExcerpt && el( RangeControl, {
+		key: 'excerptLength',
+		label: __( 'Excerpt length (words)', 'mime-simple-events-calendar' ),
+		value: attributes.excerptLength,
+		min: 1,
+		max: 100,
+		onChange: ( excerptLength ) => setAttributes( { excerptLength } ),
+	} ),
+].filter( Boolean );
+
+const calendarControls = ( attributes, setAttributes ) => [
+	el( SelectControl, {
+		key: 'initialView',
+		label: __( 'Desktop view', 'mime-simple-events-calendar' ),
+		value: attributes.initialView,
+		options: [
+			{ label: __( 'Month', 'mime-simple-events-calendar' ), value: 'month' },
+			{ label: __( 'List', 'mime-simple-events-calendar' ), value: 'list' },
+		],
+		onChange: ( initialView ) => setAttributes( { initialView } ),
+	} ),
+	el( TextControl, {
+		key: 'initialDate',
+		label: __( 'Initial date', 'mime-simple-events-calendar' ),
+		help: __( 'Optional. Use YYYY-MM-DD to open the calendar on a specific date.', 'mime-simple-events-calendar' ),
+		type: 'date',
+		value: attributes.initialDate,
+		onChange: ( initialDate ) => setAttributes( { initialDate } ),
+	} ),
+	el( SelectControl, {
+		key: 'mobileView',
+		label: __( 'Mobile view', 'mime-simple-events-calendar' ),
+		value: attributes.mobileView,
+		options: [
+			{ label: __( 'Month', 'mime-simple-events-calendar' ), value: 'month' },
+			{ label: __( 'List', 'mime-simple-events-calendar' ), value: 'list' },
+		],
+		onChange: ( mobileView ) => setAttributes( { mobileView } ),
+	} ),
+	taxonomyControl( 'categories', __( 'Initial categories', 'mime-simple-events-calendar' ), attributes.categories, categoryOptions, setAttributes ),
+	taxonomyControl( 'tags', __( 'Initial tags', 'mime-simple-events-calendar' ), attributes.tags, tagOptions, setAttributes ),
+	el( ToggleControl, {
+		key: 'filters',
+		label: __( 'Show visitor filters', 'mime-simple-events-calendar' ),
+		checked: attributes.filters,
+		onChange: ( filters ) => setAttributes( { filters } ),
+	} ),
+	...[
+		[ 'showNavigation', __( 'Show previous and next buttons', 'mime-simple-events-calendar' ) ],
+		[ 'showToday', __( 'Show Today button', 'mime-simple-events-calendar' ) ],
+		[ 'showViewSwitcher', __( 'Show month/list switcher', 'mime-simple-events-calendar' ) ],
+	].map( ( [ key, label ] ) => el( ToggleControl, {
+		key,
+		label,
+		checked: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+	el( SelectControl, {
+		key: 'fallbackHeadingLevel',
+		label: __( 'Fallback heading level', 'mime-simple-events-calendar' ),
+		value: attributes.fallbackHeadingLevel,
+		options: [ 'h2', 'h3', 'h4', 'h5', 'h6' ].map( ( value ) => ( { label: value.toUpperCase(), value } ) ),
+		onChange: ( fallbackHeadingLevel ) => setAttributes( { fallbackHeadingLevel } ),
+	} ),
+];
+
+const detailsControls = ( attributes, setAttributes ) => [
+	sourceControls( attributes, setAttributes ),
+	...[
+		[ 'showTitle', __( 'Show title', 'mime-simple-events-calendar' ) ],
+		[ 'showImage', __( 'Show image', 'mime-simple-events-calendar' ) ],
+		[ 'showDate', __( 'Show date and time', 'mime-simple-events-calendar' ) ],
+		[ 'showStatus', __( 'Show event status', 'mime-simple-events-calendar' ) ],
+		[ 'showLocation', __( 'Show location details', 'mime-simple-events-calendar' ) ],
+		[ 'showContent', __( 'Show content', 'mime-simple-events-calendar' ) ],
+		[ 'showAction', __( 'Show external action', 'mime-simple-events-calendar' ) ],
+		[ 'showTerms', __( 'Show categories and tags', 'mime-simple-events-calendar' ) ],
+	].map( ( [ key, label ] ) => el( ToggleControl, {
+		key,
+		label,
+		checked: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+	attributes.showTitle && el( SelectControl, {
+		key: 'headingLevel',
+		label: __( 'Title heading level', 'mime-simple-events-calendar' ),
+		value: attributes.headingLevel,
+		options: [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].map( ( value ) => ( { label: value.toUpperCase(), value } ) ),
+		onChange: ( headingLevel ) => setAttributes( { headingLevel } ),
+	} ),
+	...[
+		[ 'dateLabel', __( 'Date label', 'mime-simple-events-calendar' ), attributes.showDate ],
+		[ 'venueLabel', __( 'Venue label', 'mime-simple-events-calendar' ), attributes.showLocation ],
+		[ 'locationLabel', __( 'Location link text', 'mime-simple-events-calendar' ), attributes.showLocation ],
+		[ 'actionLabel', __( 'External action text', 'mime-simple-events-calendar' ), attributes.showAction ],
+		[ 'categoriesLabel', __( 'Categories label', 'mime-simple-events-calendar' ), attributes.showTerms ],
+		[ 'tagsLabel', __( 'Tags label', 'mime-simple-events-calendar' ), attributes.showTerms ],
+	].map( ( [ key, label, visible ] ) => visible && el( TextControl, {
+		key,
+		label,
+		help: __( 'Leave empty to use the event default.', 'mime-simple-events-calendar' ),
+		value: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+].filter( Boolean );
+
+const compositeControls = ( definition, attributes, setAttributes ) => {
+	switch ( definition.controls ) {
+		case 'list':
+			return listControls( attributes, setAttributes );
+		case 'calendar':
+			return calendarControls( attributes, setAttributes );
+		case 'details':
+			return detailsControls( attributes, setAttributes );
+		default:
+			return [];
+	}
+};
+
+const compositeEmptyPreview = ( title ) => () => el( Placeholder, {
+	icon: 'calendar-alt',
+	label: title,
+	instructions: __( 'No public event output is available for the current settings or context.', 'mime-simple-events-calendar' ),
+} );
+
+compositeDefinitions.forEach( ( definition ) => {
+	const EventCompositeEdit = ( { attributes, context = {}, setAttributes } ) => {
+		const postId = context.postType === wpseEventFieldBlocks.eventPostType && Number.isInteger( context.postId )
+			? context.postId
+			: 0;
+
+		return el(
+			Fragment,
+			{},
+			el(
+				InspectorControls,
+				{},
+				el(
+					PanelBody,
+					{ title: __( 'Event settings', 'mime-simple-events-calendar' ), initialOpen: true },
+					...compositeControls( definition, attributes, setAttributes ),
+				),
+			),
+			el(
+				'div',
+				useBlockProps(),
+				el( ServerSideRender, {
+					block: definition.name,
+					attributes,
+					httpMethod: 'POST',
+					urlQueryArgs: definition.controls === 'details' && postId > 0 ? { post_id: postId } : {},
+					EmptyResponsePlaceholder: compositeEmptyPreview( definition.title ),
+					LoadingResponsePlaceholder: loadingPreview,
+					ErrorResponsePlaceholder: errorPreview,
+				} ),
+			),
+		);
+	};
+
+	registerBlockType( definition.name, {
+		apiVersion: 3,
+		title: definition.title,
+		description: definition.description,
+		category: 'mime-simple-events-calendar',
+		icon: definition.icon,
+		attributes: definition.attributes,
+		supports: definition.supports,
+		usesContext: definition.controls === 'details' ? [ 'postId', 'postType' ] : [],
+		edit: EventCompositeEdit,
 		save: () => null,
 	} );
 } );

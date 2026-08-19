@@ -140,6 +140,20 @@ final class WordPressState {
 	private static bool $event_archive = false;
 
 	/**
+	 * Current event taxonomy archive, or an empty string for another request.
+	 *
+	 * @var string
+	 */
+	private static string $event_taxonomy_archive = '';
+
+	/**
+	 * Deterministic public archive title.
+	 *
+	 * @var string
+	 */
+	private static string $archive_title = 'Events';
+
+	/**
 	 * Whether the active test theme is a full block theme.
 	 *
 	 * @var bool
@@ -294,6 +308,8 @@ final class WordPressState {
 		self::$switched_site_ids          = array();
 		self::$singular_event             = false;
 		self::$event_archive              = false;
+		self::$event_taxonomy_archive     = '';
+		self::$archive_title              = 'Events';
 		self::$block_theme                = false;
 		self::$theme_template             = '';
 		self::$block_template_result      = '';
@@ -861,6 +877,42 @@ final class WordPressState {
 	 */
 	public static function is_event_archive(): bool {
 		return self::$event_archive;
+	}
+
+	/**
+	 * Configure an event taxonomy archive request.
+	 *
+	 * @param string $taxonomy Event taxonomy name, or an empty string.
+	 */
+	public static function set_event_taxonomy_archive( string $taxonomy ): void {
+		self::$event_taxonomy_archive = $taxonomy;
+	}
+
+	/**
+	 * Return whether the current request matches an event taxonomy.
+	 *
+	 * @param string|string[] $taxonomies Requested taxonomy names.
+	 */
+	public static function is_event_taxonomy_archive( string|array $taxonomies ): bool {
+		$allowed = is_array( $taxonomies ) ? $taxonomies : array( $taxonomies );
+
+		return in_array( self::$event_taxonomy_archive, $allowed, true );
+	}
+
+	/**
+	 * Configure the deterministic public archive title.
+	 *
+	 * @param string $title Public archive title.
+	 */
+	public static function set_archive_title( string $title ): void {
+		self::$archive_title = $title;
+	}
+
+	/**
+	 * Return the deterministic public archive title.
+	 */
+	public static function archive_title(): string {
+		return self::$archive_title;
 	}
 
 	/**

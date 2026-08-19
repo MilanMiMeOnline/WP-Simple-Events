@@ -191,6 +191,10 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		return true;
 	}
 
+	/** Register optional field-specific style controls in the shared style section. */
+	protected function register_additional_style_controls(): void {
+	}
+
 	/** Register the bounded explicit-source control. */
 	private function register_source_controls(): void {
 		$this->start_controls_section(
@@ -277,6 +281,7 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 				'selectors'  => array( $selector => 'margin-bottom: {{SIZE}}{{UNIT}};' ),
 			)
 		);
+		$this->register_additional_style_controls();
 		$this->end_controls_section();
 	}
 }

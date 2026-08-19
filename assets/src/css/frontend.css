@@ -11,6 +11,25 @@
 	--wpse-spacing: 1rem;
 	--wpse-radius: 0.25rem;
 	--wpse-image-ratio: 3 / 2;
+	--wpse-card-background: transparent;
+	--wpse-card-padding: var(--wpse-spacing);
+	--wpse-grid-row-gap: calc(var(--wpse-spacing) * 1.5);
+	--wpse-grid-column-gap: calc(var(--wpse-spacing) * 1.5);
+	--wpse-filter-padding: 0;
+	--wpse-filter-gap: var(--wpse-spacing);
+	--wpse-pagination-padding: 0;
+	--wpse-pagination-gap: 0.5rem;
+	--wpse-summary-padding: var(--wpse-spacing);
+	--wpse-summary-radius: var(--wpse-radius);
+	--wpse-action-padding: calc(var(--wpse-spacing) * 0.625) var(--wpse-spacing);
+	--wpse-action-radius: var(--wpse-radius);
+	--wpse-single-image-ratio: auto;
+	--wpse-single-image-radius: 0;
+}
+
+.wpse-events {
+	container-type: inline-size;
+	container-name: wpse-events;
 }
 
 .wpse-single-event,
@@ -41,15 +60,18 @@
 	display: block;
 	width: 100%;
 	height: auto;
+	aspect-ratio: var(--wpse-single-image-ratio);
+	border-radius: var(--wpse-single-image-radius);
+	object-fit: cover;
 }
 
 .wpse-event-summary {
 	display: grid;
 	gap: calc(var(--wpse-spacing) * 0.5);
 	margin-block: 0 calc(var(--wpse-spacing) * 1.5);
-	padding: var(--wpse-spacing);
+	padding: var(--wpse-summary-padding);
 	border: 1px solid var(--wpse-color-border);
-	border-radius: var(--wpse-radius);
+	border-radius: var(--wpse-summary-radius);
 }
 
 .wpse-event-summary p,
@@ -78,14 +100,15 @@
 
 .wpse-event-action-link {
 	display: inline-block;
-	padding: calc(var(--wpse-spacing) * 0.625) var(--wpse-spacing);
+	padding: var(--wpse-action-padding);
 	border: 1px solid currentcolor;
-	border-radius: var(--wpse-radius);
+	border-radius: var(--wpse-action-radius);
 }
 
 .wpse-events-results {
 	display: grid;
-	gap: calc(var(--wpse-spacing) * 1.5);
+	row-gap: var(--wpse-grid-row-gap);
+	column-gap: var(--wpse-grid-column-gap);
 }
 
 .wpse-events-view-list {
@@ -96,7 +119,7 @@
 	overflow: hidden;
 	border: 1px solid var(--wpse-color-border);
 	border-radius: var(--wpse-radius);
-	background: transparent;
+	background: var(--wpse-card-background);
 	color: inherit;
 }
 
@@ -113,7 +136,7 @@
 }
 
 .wpse-event-card-body {
-	padding: var(--wpse-spacing);
+	padding: var(--wpse-card-padding);
 }
 
 .wpse-event-card-date,
@@ -146,8 +169,10 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: end;
-	gap: var(--wpse-spacing);
+	gap: var(--wpse-filter-gap);
 	margin: 0 0 calc(var(--wpse-spacing) * 1.5);
+	padding: var(--wpse-filter-padding);
+	background: var(--wpse-filter-background);
 }
 
 .wpse-events-filter-field,
@@ -170,11 +195,18 @@
 	min-width: 10rem;
 	max-width: 100%;
 	font: inherit;
+	background-color: var(--wpse-control-background);
+	color: var(--wpse-control-text);
 }
 
 .wpse-events-filter-submit button,
 .wpse-calendar-empty-action button {
 	font: inherit;
+}
+
+.wpse-events-filter-submit button {
+	background-color: var(--wpse-control-background);
+	color: var(--wpse-control-text);
 }
 
 .wpse-event-card a:focus-visible,
@@ -187,6 +219,7 @@
 .wpse-event-tags a:focus-visible,
 .wpse-events-filters select:focus-visible,
 .wpse-events-filters button:focus-visible,
+.wpse-events-filters a:focus-visible,
 .wpse-events-pagination a:focus-visible {
 	outline: 2px solid currentcolor;
 	outline-offset: 2px;
@@ -215,28 +248,61 @@
 .wpse-events-pagination ul.page-numbers {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.5rem;
-	padding: 0;
+	gap: var(--wpse-pagination-gap);
+	padding: var(--wpse-pagination-padding);
+	background: var(--wpse-pagination-background);
 	list-style: none;
 }
 
-@media (min-width: 600px) {
+@container wpse-events (max-width: 599px) {
 
-	.wpse-events-view-grid.wpse-events-columns-2,
-	.wpse-events-view-grid.wpse-events-columns-3,
-	.wpse-events-view-grid.wpse-events-columns-4 {
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-2,
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-3,
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-4 {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@container wpse-events (min-width: 600px) {
+
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-2,
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-3,
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-4 {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 }
 
-@media (min-width: 960px) {
+@container wpse-events (min-width: 960px) {
 
-	.wpse-events-view-grid.wpse-events-columns-3 {
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-3 {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
-	.wpse-events-view-grid.wpse-events-columns-4 {
+	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-4 {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+@supports not (container-type: inline-size) {
+
+	@media (min-width: 600px) {
+
+		.wpse-events-view-grid.wpse-events-columns-2,
+		.wpse-events-view-grid.wpse-events-columns-3,
+		.wpse-events-view-grid.wpse-events-columns-4 {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 960px) {
+
+		.wpse-events-view-grid.wpse-events-columns-3 {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		.wpse-events-view-grid.wpse-events-columns-4 {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
 	}
 }
 
@@ -245,8 +311,19 @@
 	--wpse-calendar-on-accent: var(--wp--preset--color--base, Canvas);
 	--wpse-calendar-today: rgb(128 128 128 / 15%);
 	--wpse-calendar-hover: rgb(128 128 128 / 15%);
+	--wpse-calendar-padding: 0;
+	--wpse-calendar-event-background: var(--wpse-calendar-accent);
+	--wpse-calendar-event-text: var(--wpse-calendar-on-accent);
+	--wpse-calendar-button-background: transparent;
+	--wpse-calendar-button-text: inherit;
+	--wpse-calendar-button-hover-background: var(--wpse-calendar-accent);
+	--wpse-calendar-button-hover-text: var(--wpse-calendar-on-accent);
+	--wpse-calendar-button-radius: var(--wpse-radius);
+	--wpse-calendar-toolbar-gap: calc(var(--wpse-spacing) * 0.5);
 
 	margin-block: calc(var(--wpse-spacing) * 1.5);
+	padding: var(--wpse-calendar-padding);
+	background-color: var(--wpse-calendar-background);
 }
 
 .wpse-calendar-status {
@@ -280,9 +357,9 @@
 	--fc-button-text-color: var(--wpse-calendar-on-accent);
 	--fc-button-bg-color: var(--wpse-calendar-accent);
 	--fc-button-border-color: var(--wpse-calendar-accent);
-	--fc-event-bg-color: var(--wpse-calendar-accent);
-	--fc-event-border-color: var(--wpse-calendar-accent);
-	--fc-event-text-color: var(--wpse-calendar-on-accent);
+	--fc-event-bg-color: var(--wpse-calendar-event-background);
+	--fc-event-border-color: var(--wpse-calendar-event-background);
+	--fc-event-text-color: var(--wpse-calendar-event-text);
 	--fc-today-bg-color: var(--wpse-calendar-today);
 	--fc-list-event-hover-bg-color: var(--wpse-calendar-hover);
 
@@ -295,8 +372,9 @@
 
 .wpse-calendar .fc .fc-button {
 	border-color: var(--wpse-calendar-accent);
-	background-color: transparent;
-	color: inherit;
+	border-radius: var(--wpse-calendar-button-radius);
+	background-color: var(--wpse-calendar-button-background);
+	color: var(--wpse-calendar-button-text);
 	font: inherit;
 }
 
@@ -306,8 +384,8 @@
 
 .wpse-calendar .fc .fc-button-primary:disabled {
 	border-color: var(--wpse-calendar-accent);
-	background-color: transparent;
-	color: inherit;
+	background-color: var(--wpse-calendar-button-background);
+	color: var(--wpse-calendar-button-text);
 	opacity: 0.55;
 }
 
@@ -316,8 +394,8 @@
 .wpse-calendar .fc .fc-button-primary:not(:disabled):active,
 .wpse-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
 	border-color: var(--wpse-calendar-accent);
-	background-color: var(--wpse-calendar-accent);
-	color: var(--wpse-calendar-on-accent);
+	background-color: var(--wpse-calendar-button-hover-background);
+	color: var(--wpse-calendar-button-hover-text);
 }
 
 .wpse-calendar .fc .fc-button:focus-visible {
@@ -325,6 +403,7 @@
 	outline-offset: 2px;
 }
 
+.wpse-calendar-filters a:focus-visible,
 .wpse-calendar .fc a:focus-visible,
 .wpse-calendar-filters select:focus-visible,
 .wpse-calendar-filters button:focus-visible,
@@ -352,7 +431,7 @@
 
 	.wpse-calendar .fc .fc-header-toolbar {
 		align-items: stretch;
-		gap: calc(var(--wpse-spacing) * 0.5);
+		gap: var(--wpse-calendar-toolbar-gap);
 		flex-direction: column;
 	}
 

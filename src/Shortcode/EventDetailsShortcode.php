@@ -48,8 +48,8 @@ final readonly class EventDetailsShortcode implements ShortcodeRenderer {
 		}
 
 		$output = $normalized->has_explicit_id
-			? $this->renderer->render_public( $event_id )
-			: $this->renderer->render( $event_id );
+			? $this->renderer->render_public( $event_id, $normalized->options )
+			: $this->renderer->render( $event_id, $normalized->options );
 
 		if ( '' === $output ) {
 			return '';

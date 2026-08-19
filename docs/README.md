@@ -7,6 +7,8 @@ for MiMe Simple Events and Calendar.
 
 - [Product specification](PRODUCT-SPECIFICATION.md) — normative functional and
   technical scope.
+- [Product roadmap](ROADMAP.md) — prioritized future work and the next
+  implementation plan.
 - [Development standards](DEVELOPMENT-STANDARDS.md) — implementation conventions.
 - [Decision log](DECISIONS.md) — intentional architectural and product changes.
 - [Contributing](../CONTRIBUTING.md) — local setup, testing and review workflow.
@@ -32,11 +34,14 @@ for MiMe Simple Events and Calendar.
 - [Manual QA checklist](QA-CHECKLIST.md)
 - [Hardening gap audit](HARDENING-GAP-AUDIT.md)
 
-Versioned and phase-specific `QA-REPORT-*` documents are retained as historical
-release evidence. They are not user documentation and are excluded from the
-installable plugin package.
+`BACKLOG-TESTING.md`, `BACKLOG-EXECUTION-PLAN.md` and versioned or phase-specific
+`QA-REPORT-*` documents are retained as historical development and release
+evidence. They are not user documentation and are excluded from the installable
+plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
+those completed backlogs.
 
-The current release evidence is [QA report 0.2.5](QA-REPORT-0.2.5.md).
+The active candidate evidence is [QA report 0.3.0](QA-REPORT-0.3.0.md). The last
+public release evidence is [QA report 0.2.5](QA-REPORT-0.2.5.md).
 
 ## Releases and WordPress.org
 

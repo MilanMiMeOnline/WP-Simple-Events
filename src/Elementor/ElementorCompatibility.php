@@ -14,7 +14,7 @@ namespace MiMe\WPSimpleEvents\Elementor;
  */
 final class ElementorCompatibility {
 	public const MINIMUM_VERSION = '3.35.0';
-	public const TESTED_VERSION  = '4.1.5';
+	public const TESTED_VERSION  = '4.2.2';
 
 	/**
 	 * Accept a structurally valid Elementor version at or above the minimum.

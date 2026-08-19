@@ -49,7 +49,7 @@ final class ElementorIntegrationTest extends TestCase {
 	 * A compatible, already-loaded host receives only current registration hooks.
 	 */
 	public function test_supported_elementor_registers_modern_hooks_immediately(): void {
-		$integration = new ElementorIntegration( $this->registrar(), new FakeElementorHost( true, '4.1.5' ) );
+		$integration = new ElementorIntegration( $this->registrar(), new FakeElementorHost( true, '4.2.2' ) );
 
 		$integration->register();
 

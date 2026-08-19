@@ -2,6 +2,9 @@ import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 
+const calendarInstances = new WeakMap();
+let elementorHookRegistered = false;
+
 /**
  * Format a translated string containing one integer placeholder.
  *
@@ -94,15 +97,23 @@ const fetchEvents = async ( config, root, range ) => {
 /**
  * Reflect active filters in the URL without reloading the page.
  *
- * @param {Object}      config Calendar configuration.
- * @param {HTMLElement} root   Calendar root.
+ * @param {Object}      config    Calendar configuration.
+ * @param {HTMLElement} root      Calendar root.
+ * @param {boolean}     submitted Whether visitor choices should be encoded.
  */
-const updateUrl = ( config, root ) => {
+const updateUrl = ( config, root, submitted = true ) => {
 	const url = new URL( window.location.href );
 	const filterKeys = [
 		[ config.categoryKey, 'category' ],
 		[ config.tagKey, 'tag' ],
 	];
+
+	url.searchParams.delete( config.applyKey );
+	url.searchParams.delete( `${ config.applyKey }[]` );
+
+	if ( submitted ) {
+		url.searchParams.set( config.applyKey, '1' );
+	}
 
 	filterKeys.forEach( ( [ key, type ] ) => {
 		url.searchParams.delete( key );
@@ -110,7 +121,7 @@ const updateUrl = ( config, root ) => {
 
 		const fallback = type === 'category' ? config.categories : config.tags;
 
-		selectedValues( root, type, fallback ).forEach( ( value ) => {
+		( submitted ? selectedValues( root, type, fallback ) : [] ).forEach( ( value ) => {
 			url.searchParams.append( `${ key }[]`, value );
 		} );
 	} );
@@ -119,17 +130,33 @@ const updateUrl = ( config, root ) => {
 };
 
 /**
- * Clear all filters in one calendar instance.
+ * Restore configured initial filters in one calendar instance.
  *
- * @param {HTMLElement} root Calendar root.
+ * @param {Object}      config Calendar configuration.
+ * @param {HTMLElement} root   Calendar root.
  */
-const clearFilters = ( root ) => {
+const restoreInitialFilters = ( config, root ) => {
 	root.querySelectorAll( '[data-wpse-calendar-filter]' ).forEach( ( select ) => {
+		const type = select.dataset.wpseCalendarFilter;
+		const initial = type === 'category'
+			? config.initialCategories
+			: config.initialTags;
+
 		Array.from( select.options ).forEach( ( option ) => {
-			option.selected = false;
+			option.selected = Array.isArray( initial ) && initial.includes( option.value );
 		} );
 	} );
 };
+
+/**
+ * Compare two filter selections without relying on their option order.
+ *
+ * @param {Array<string>} first  First selection.
+ * @param {Array<string>} second Second selection.
+ * @return {boolean} Whether both selections contain the same values.
+ */
+const sameSelection = ( first, second ) => JSON.stringify( [ ...first ].sort() ) ===
+	JSON.stringify( [ ...second ].sort() );
 
 /**
  * Repair FullCalendar after a hidden or resized integration container becomes
@@ -140,7 +167,7 @@ const clearFilters = ( root ) => {
  */
 const observeCalendarSize = ( canvas, calendar ) => {
 	if ( typeof window.ResizeObserver !== 'function' ) {
-		return;
+		return () => {};
 	}
 
 	let previousWidth = canvas.getBoundingClientRect().width;
@@ -166,6 +193,8 @@ const observeCalendarSize = ( canvas, calendar ) => {
 	} );
 
 	observer.observe( canvas );
+
+	return () => observer.disconnect();
 };
 
 /**
@@ -174,15 +203,29 @@ const observeCalendarSize = ( canvas, calendar ) => {
  * @param {HTMLElement} root Calendar root.
  */
 const initializeCalendar = ( root ) => {
+	const configSource = root.dataset.wpseCalendar;
+	const canvas = root.querySelector( '[data-wpse-calendar-canvas]' );
+	const existing = calendarInstances.get( root );
+
+	if (
+		existing &&
+		existing.canvas === canvas &&
+		existing.configSource === configSource
+	) {
+		existing.calendar.updateSize();
+		return;
+	}
+
+	existing?.destroy();
+
 	let config;
 
 	try {
-		config = JSON.parse( root.dataset.wpseCalendar );
+		config = JSON.parse( configSource );
 	} catch {
 		return;
 	}
 
-	const canvas = root.querySelector( '[data-wpse-calendar-canvas]' );
 	const status = root.querySelector( '[data-wpse-calendar-status]' );
 	const emptyAction = root.querySelector(
 		'[data-wpse-calendar-empty-action]',
@@ -193,24 +236,30 @@ const initializeCalendar = ( root ) => {
 	}
 
 	const filters = root.querySelector( '[data-wpse-calendar-filters]' );
+	const resetLink = root.querySelector( '[data-wpse-calendar-reset]' );
 	let lastResult = { events: [], truncated: false };
 	let loadFailed = false;
 	const initialView =
 		window.matchMedia( '(max-width: 599px)' ).matches && config.mobileView
 			? config.mobileView
 			: config.initialView;
+	const toolbarStart = [
+		config.showNavigation ? 'prev,next' : '',
+		config.showToday ? 'today' : '',
+	].filter( Boolean ).join( ' ' );
 
 	const calendar = new Calendar( canvas, {
 		plugins: [ dayGridPlugin, listPlugin ],
 		initialView,
+		initialDate: config.initialDate || undefined,
 		firstDay: config.firstDay,
 		timeZone: 'local',
 		eventTimeFormat: config.eventTimeFormat,
 		height: 'auto',
 		headerToolbar: {
-			start: 'prev,next today',
+			start: toolbarStart,
 			center: 'title',
-			end: 'dayGridMonth,listMonth',
+			end: config.showViewSwitcher ? 'dayGridMonth,listMonth' : '',
 		},
 		buttonText: {
 			prev: config.strings.previous,
@@ -270,9 +319,13 @@ const initializeCalendar = ( root ) => {
 				);
 			}
 
-			const hasActiveFilters =
-				selectedValues( root, 'category' ).length > 0 ||
-				selectedValues( root, 'tag' ).length > 0;
+			const hasActiveFilters = ! sameSelection(
+				selectedValues( root, 'category', config.categories ),
+				config.initialCategories,
+			) || ! sameSelection(
+				selectedValues( root, 'tag', config.tags ),
+				config.initialTags,
+			);
 
 			emptyAction.hidden =
 				events.length !== 0 ||
@@ -319,21 +372,98 @@ const initializeCalendar = ( root ) => {
 	// fallback remains available until the first event request succeeds.
 	canvas.hidden = false;
 	calendar.render();
-	observeCalendarSize( canvas, calendar );
-
-	if ( filters ) {
-		filters.addEventListener( 'submit', ( event ) => {
-			event.preventDefault();
-			updateUrl( config, root );
-			calendar.refetchEvents();
-		} );
-	}
-
-	emptyAction.querySelector( 'button' )?.addEventListener( 'click', () => {
-		clearFilters( root );
+	const stopObservingSize = observeCalendarSize( canvas, calendar );
+	const emptyActionButton = emptyAction.querySelector( 'button' );
+	const handleFilterSubmit = ( event ) => {
+		event.preventDefault();
 		updateUrl( config, root );
 		calendar.refetchEvents();
-	} );
+	};
+	const handleReset = ( event ) => {
+		event?.preventDefault();
+		restoreInitialFilters( config, root );
+		updateUrl( config, root, false );
+		calendar.refetchEvents();
+	};
+
+	if ( filters ) {
+		filters.addEventListener( 'submit', handleFilterSubmit );
+	}
+
+	emptyActionButton?.addEventListener( 'click', handleReset );
+	resetLink?.addEventListener( 'click', handleReset );
+
+	const instance = {
+		calendar,
+		canvas,
+		configSource,
+		destroy: () => {
+			stopObservingSize();
+			filters?.removeEventListener( 'submit', handleFilterSubmit );
+			emptyActionButton?.removeEventListener( 'click', handleReset );
+			resetLink?.removeEventListener( 'click', handleReset );
+			calendar.destroy();
+
+			if ( calendarInstances.get( root ) === instance ) {
+				calendarInstances.delete( root );
+			}
+		},
+	};
+
+	calendarInstances.set( root, instance );
 };
 
-document.querySelectorAll( '[data-wpse-calendar]' ).forEach( initializeCalendar );
+/**
+ * Progressively enhance every calendar inside one document or widget scope.
+ *
+ * @param {Document|Element|Array<Element>|Object} scope Host-provided scope.
+ */
+const initializeCalendars = ( scope ) => {
+	const scopeElement = scope?.jquery ? scope[ 0 ] : scope?.[ 0 ] ?? scope;
+
+	if ( ! scopeElement || typeof scopeElement.querySelectorAll !== 'function' ) {
+		return;
+	}
+
+	if ( scopeElement.matches?.( '[data-wpse-calendar]' ) ) {
+		initializeCalendar( scopeElement );
+	}
+
+	scopeElement
+		.querySelectorAll( '[data-wpse-calendar]' )
+		.forEach( initializeCalendar );
+};
+
+/** Bind the calendar initializer to Elementor only when its public hook exists. */
+const registerElementorHook = () => {
+	if ( elementorHookRegistered ) {
+		return;
+	}
+
+	const hooks = window.elementorFrontend?.hooks;
+
+	if ( ! hooks || typeof hooks.addAction !== 'function' ) {
+		return;
+	}
+
+	hooks.addAction(
+		'frontend/element_ready/wpse-event-calendar.default',
+		initializeCalendars,
+	);
+	elementorHookRegistered = true;
+};
+
+initializeCalendars( document );
+registerElementorHook();
+
+if ( ! elementorHookRegistered ) {
+	window.addEventListener( 'elementor/frontend/init', registerElementorHook, {
+		once: true,
+	} );
+
+	if ( typeof window.jQuery === 'function' ) {
+		window
+			.jQuery( window )
+			.one( 'elementor/frontend/init.wpseCalendar', registerElementorHook );
+	}
+}

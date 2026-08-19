@@ -13,9 +13,9 @@ The plugin is free software licensed under GPL-2.0-or-later. Its public WordPres
 - Event-specific categories, tags and scheduled, postponed or cancelled states.
 - Venue, address, location link and customizable external action link.
 - Native single and archive templates for classic and block themes.
-- A responsive list/grid and month/list calendar with bounded filters.
+- A responsive list/grid and month/list calendar with bounded filters and presentation controls.
 - A no-JavaScript upcoming-event fallback.
-- Twelve dynamic Gutenberg event-field blocks and a single-event pattern.
+- Three complete Gutenberg components, twelve dynamic event-field blocks and a single-event pattern.
 - Optional Elementor 3.35+ composite and atomic widgets.
 - Safe Event JSON-LD for eligible individual events.
 - Default-safe data retention and explicit administrator maintenance tools.
@@ -48,9 +48,9 @@ WooCommerce and Elementor are optional and never core dependencies.
 
 ## Editors and page builders
 
-Gutenberg provides twelve server-rendered blocks for event title, featured image, date and time, status, venue, address, location link, content, excerpt, external action, categories and tags. Static pages can select one published event; dynamic templates can use the current event context.
+Gutenberg provides complete Event List / Grid, Event Calendar and Event Details blocks plus twelve server-rendered blocks for event title, featured image, date and time, status, venue, address, location link, content, excerpt, external action, categories and tags. Static pages can select one published event; dynamic templates can use the current event context.
 
-Elementor 3.35+ provides the same twelve fields plus Event List / Grid, Event Calendar and Event Details widgets. The widgets work on ordinary Elementor Free pages. Elementor Pro is only relevant when a site owner chooses to build dynamic templates with Elementor Theme Builder.
+Elementor 3.35+ provides the same twelve fields plus configurable Event List / Grid, Event Calendar and Event Details widgets. The widgets work on ordinary Elementor Free pages. Elementor Pro is only relevant when a site owner chooses to build dynamic templates with Elementor Theme Builder.
 
 ## Privacy and security
 

@@ -83,14 +83,37 @@ final class CalendarControlsTest extends TestCase {
 		);
 		$output     = $this->render(
 			$attributes,
-			array( 'wpse_calendar_2_tag' => array( 'online' ) )
+			array(
+				'wpse_calendar_1_apply' => '1',
+				'wpse_calendar_2_tag'   => array( 'online' ),
+			)
 		);
 
 		self::assertSame( 2, substr_count( $output, 'selected="selected"' ) );
 		self::assertStringContainsString( 'name="wpse_calendar_2_tag[]" value="online"', $output );
 		self::assertStringContainsString( 'Reset filters', $output );
+		self::assertStringContainsString( 'name="wpse_calendar_1_apply" value="1"', $output );
 		self::assertStringContainsString( 'method="get"', $output );
 		self::assertStringContainsString( 'aria-controls="wpse-calendar-1-canvas"', $output );
+	}
+
+	/** An explicitly empty second calendar keeps its scalar apply marker. */
+	public function test_reset_preserves_another_instances_empty_filter_submission(): void {
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::CATEGORY,
+			array( $this->term( 3, 'Workshops', 'workshops' ) )
+		);
+
+		$output = $this->render(
+			CalendarShortcodeAttributes::from_shortcode( array() ),
+			array(
+				'wpse_calendar_1_apply' => '1',
+				'wpse_calendar_2_apply' => '1',
+			)
+		);
+
+		self::assertStringContainsString( 'name="wpse_calendar_2_apply" value="1"', $output );
+		self::assertStringNotContainsString( 'name="wpse_calendar_2_apply[]"', $output );
 	}
 
 	/**

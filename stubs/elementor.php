@@ -55,6 +55,7 @@ final class Controls_Manager {
 	public const TEXT        = 'text';
 	public const COLOR       = 'color';
 	public const SLIDER      = 'slider';
+	public const DIMENSIONS  = 'dimensions';
 }
 
 final class Group_Control_Typography {
