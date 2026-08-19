@@ -3,7 +3,7 @@
 **Date:** 19 August 2026
 **Candidate:** 0.3.0
 **Scope:** builder and presentation polish release qualification
-**Status:** locally qualified; official Plugin Check CI pending
+**Status:** qualified for publication
 
 ## Result
 
@@ -14,9 +14,10 @@ remain valid. The release adds composite Gutenberg blocks, event-aware taxonomy
 archives, practical opt-in presentation controls and interaction/semantic polish.
 
 All local source, package, WordPress, browser, translation and real Elementor
-gates pass. The exact release commit must still be pushed so GitHub Actions can
-run the official strict WordPress Plugin Check against the generated staging
-directory. Publication is not approved until that external result is green.
+gates pass. GitHub Actions attempt 2 for release commit `73b7b43` also passed all
+ten jobs, including the official strict WordPress Plugin Check against the
+generated staging directory. The published CI artifact is byte-identical to the
+locally qualified release ZIP.
 
 ## Senior developer review
 
@@ -120,17 +121,27 @@ six existing WordPress.org screenshots and captions remain factually accurate;
 they present the editor, archive, calendar, single event, settings and Elementor
 configuration without claiming every available style control.
 
-## Remaining release gate
+## External release evidence
 
-The official `wordpress/plugin-check-action` job is immutable-pinned and targets
-`.release/mime-simple-events-calendar` in strict mode. It cannot produce evidence
-for the unpushed worktree. After review and explicit approval:
+- Release commit: `73b7b431c93a46b0b0e05afeb01d91c14527fde0`.
+- GitHub Actions: [Quality run 32279672029, attempt 2](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/32279672029/attempts/2).
+- Result: all ten jobs passed, including **Release archive and Plugin Check**,
+  both supported WordPress smoke environments, PHP 8.2–8.5 and browser
+  regressions.
+- CI artifact SHA-256:
+  `7c338dd7a207d2d257fab85205198348ee877092b0011ee29d786070b0be03f7`.
+- `cmp` confirmed that the CI artifact and locally reviewed release ZIP are
+  byte-identical.
 
-1. commit and push the complete 0.3.0 candidate;
-2. require every GitHub Actions job, especially **Release archive and Plugin
-   Check**, to pass for that exact commit;
-3. compare the CI artifact checksum with the reviewed release artifact;
-4. only then create the GitHub release and update WordPress.org SVN trunk/tag.
+The first CI attempt encountered two unrelated runner/network failures: GitHub
+returned HTTP 504 while the Plugin Check action downloaded PHPUnit, and the
+Playwright browser installation stalled. No source change was made in response;
+the clean rerun of the same commit passed. GitHub currently emits maintenance
+advisories for immutable-pinned actions whose Node.js 20 runtime is forced to
+Node.js 24. This does not affect plugin production code or release correctness,
+but the pins should be refreshed when upstream action releases remove the
+advisory.
 
-No commit, push, GitHub release or WordPress.org SVN mutation was performed in
-this local qualification step.
+The candidate is approved for the separately authorized publication workflow.
+No GitHub release or WordPress.org SVN mutation was performed in this
+qualification step.

@@ -238,8 +238,10 @@ journeys on PHP 8.2, and the real Elementor 3.35.9/4.2.2 inspector. A read-only
 check of the live 0.2.5 installation on `taranartos.be` confirmed the site shell,
 calendar feed, representative event, external-link isolation, JSON-LD and narrow
 layout without changing production data or settings. Detailed evidence is in
-[QA-REPORT-0.3.0.md](QA-REPORT-0.3.0.md). WP6 remains formally open until the
-official strict Plugin Check job is green for the eventual pushed release commit.
+[QA-REPORT-0.3.0.md](QA-REPORT-0.3.0.md). WP6 is complete: all ten jobs in
+[GitHub Actions attempt 2](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/32279672029/attempts/2)
+passed for release commit `73b7b43`, including the official strict Plugin Check,
+and the CI release artifact is byte-identical to the locally qualified ZIP.
 
 ### 0.3.0 release criteria
 
