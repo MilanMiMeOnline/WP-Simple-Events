@@ -47,7 +47,7 @@
     "prettier": "^3.0.0",
     "stylelint": "^16.8.2",
     "stylelint-scss": "^6.4.0",
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "@wordpress/theme": {
