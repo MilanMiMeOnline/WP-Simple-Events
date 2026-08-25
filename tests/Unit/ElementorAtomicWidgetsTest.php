@@ -32,10 +32,14 @@ use MiMe\WPSimpleEvents\Elementor\EventTagsWidget;
 use MiMe\WPSimpleEvents\Elementor\EventTitleWidget;
 use MiMe\WPSimpleEvents\Elementor\EventVenueWidget;
 use MiMe\WPSimpleEvents\Elementor\PreviewEventOptions;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
 use MiMe\WPSimpleEvents\Tests\Support\FakeEditorContext;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrencePresentationProvider;
+use MiMe\WPSimpleEvents\Tests\Support\OccurrencePresentationFixture;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -43,6 +47,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 use WP_Post;
+use WP_Query;
 use WP_Term;
 
 #[CoversClass( AbstractEventFieldWidget::class )]
@@ -130,6 +135,48 @@ final class ElementorAtomicWidgetsTest extends TestCase {
 		self::assertSame( $this->render( $explicit ), $this->render( $current ) );
 		self::assertStringContainsString( 'Place now:', $this->render( $current ) );
 		self::assertStringNotContainsString( '<b>', $this->render( $current ) );
+	}
+
+	/** Current widgets use exact occurrence fields while selected events remain series sources. */
+	public function test_current_occurrence_and_explicit_series_sources_remain_distinct(): void {
+		WordPressState::set_singular_event( true, 91 );
+		WordPressState::set_option( 'date_format', 'Y-m-d' );
+		WordPressState::set_option( 'time_format', 'H:i' );
+		$contexts = new EventContextResolver();
+		$route    = $this->occurrence_route( 91, $contexts );
+		$current  = new CurrentEventPresentationResolver( $contexts, $route );
+		$output   = '';
+
+		foreach ( array_keys( self::field_widgets() ) as $field ) {
+			$definition = self::field_widgets()[ $field ];
+			$widget     = $this->widget(
+				$definition[0],
+				false,
+				$contexts,
+				new EventFieldRenderer(),
+				$current
+			);
+			$widget->wpse_set_test_settings( array() );
+			$output .= $this->render( $widget );
+		}
+
+		self::assertStringContainsString( 'Occurrence block title', $output );
+		self::assertStringContainsString( '2027-01-05, 19:00 – 21:00', $output );
+		self::assertStringContainsString( 'wpse-event-status-postponed', $output );
+		self::assertStringContainsString( 'Occurrence block venue', $output );
+		self::assertStringContainsString( 'Occurrence block address', $output );
+		self::assertStringContainsString( 'https://example.com/occurrence-location', $output );
+		self::assertStringContainsString( 'https://example.com/occurrence-action', $output );
+		self::assertStringContainsString( 'Complete description', $output );
+		self::assertStringContainsString( 'Short summary', $output );
+		self::assertStringContainsString( 'Music', $output );
+		self::assertStringContainsString( 'Live', $output );
+		self::assertStringNotContainsString( 'poster.jpg', $output );
+
+		$explicit = $this->widget( EventTitleWidget::class, false, $contexts, new EventFieldRenderer(), $current );
+		$explicit->wpse_set_test_settings( array( 'event_id' => 91 ) );
+		self::assertStringContainsString( 'Summer event', $this->render( $explicit ) );
+		self::assertStringNotContainsString( 'Occurrence block title', $this->render( $explicit ) );
 	}
 
 	/** Invalid and inaccessible selections never fall back or leak on the frontend. */
@@ -261,7 +308,7 @@ final class ElementorAtomicWidgetsTest extends TestCase {
 		$title = new EventTitleWidget();
 		$venue = new EventVenueWidget();
 
-		foreach ( array( 'contexts', 'fields' ) as $property_name ) {
+		foreach ( array( 'contexts', 'fields', 'current' ) as $property_name ) {
 			$property = new ReflectionProperty( AbstractEventFieldWidget::class, $property_name );
 			self::assertSame( $property->getValue( $title ), $property->getValue( $venue ) );
 		}
@@ -270,16 +317,18 @@ final class ElementorAtomicWidgetsTest extends TestCase {
 	/**
 	 * Create one widget with explicitly shared test services.
 	 *
-	 * @param string                    $widget_class Widget class.
-	 * @param bool                      $editing      Editor state.
-	 * @param EventContextResolver|null $contexts     Optional shared resolver.
-	 * @param EventFieldRenderer|null   $fields       Optional shared renderer.
+	 * @param string                                $widget_class Widget class.
+	 * @param bool                                  $editing      Editor state.
+	 * @param EventContextResolver|null             $contexts     Optional shared resolver.
+	 * @param EventFieldRenderer|null               $fields       Optional shared renderer.
+	 * @param CurrentEventPresentationResolver|null $current Optional occurrence resolver.
 	 */
 	private function widget(
 		string $widget_class,
 		bool $editing,
 		?EventContextResolver $contexts = null,
-		?EventFieldRenderer $fields = null
+		?EventFieldRenderer $fields = null,
+		?CurrentEventPresentationResolver $current = null
 	): AbstractEventFieldWidget {
 		return new $widget_class(
 			array(),
@@ -287,8 +336,37 @@ final class ElementorAtomicWidgetsTest extends TestCase {
 			$contexts ?? new EventContextResolver(),
 			$fields ?? new EventFieldRenderer(),
 			new FakeEditorContext( $editing ),
-			new PreviewEventOptions()
+			new PreviewEventOptions(),
+			$current
 		);
+	}
+
+	/**
+	 * Resolve one deterministic occurrence route over an existing event.
+	 *
+	 * @param int                  $event_id Event post ID.
+	 * @param EventContextResolver $contexts Shared series resolver.
+	 */
+	private function occurrence_route( int $event_id, EventContextResolver $contexts ): OccurrenceRouteController {
+		$key      = 'dddddddddddddddddddddddddddddddd';
+		$series   = $contexts->resolve_public( $event_id );
+		$provider = new FakeOccurrencePresentationProvider();
+
+		self::assertNotNull( $series );
+		$provider->context = OccurrencePresentationFixture::create( $series, $key );
+		$route             = new OccurrenceRouteController( $provider );
+		$query             = new WP_Query(
+			array(
+				'wpse_test_request'                  => 'singular',
+				'post_type'                          => EventPostType::POST_TYPE,
+				'p'                                  => $event_id,
+				OccurrenceRouteController::QUERY_VAR => $key,
+			)
+		);
+
+		self::assertNotNull( $route->resolve( $query ) );
+
+		return $route;
 	}
 
 	/**

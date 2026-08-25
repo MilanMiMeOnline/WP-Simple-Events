@@ -5,7 +5,13 @@ const eventFields = document.querySelector( '[data-wpse-event-fields]' );
 
 if ( eventFields ) {
 	const allDay = eventFields.querySelector( '#wpse-all-day' );
+	const scheduleFields = eventFields.querySelector( '[data-wpse-schedule-fields]' );
+	const scheduleIntro = eventFields.querySelector( '[data-wpse-schedule-intro]' );
+	const scheduleNotice = eventFields.querySelector(
+		'[data-wpse-recurrence-schedule-notice]',
+	);
 	const timeFields = eventFields.querySelectorAll( '[data-wpse-time-field]' );
+	let scheduleOwned = eventFields.dataset.wpseScheduleOwner === 'recurrence';
 	const fields = {
 		address: eventFields.querySelector( '#wpse-address' ),
 		endDate: eventFields.querySelector( '#wpse-end-date' ),
@@ -59,23 +65,26 @@ if ( eventFields ) {
 		const isAllDay = allDay.checked;
 		const eventMeta = {
 			_wpse_address: fields.address.value,
-			_wpse_all_day: isAllDay,
-			_wpse_end_local: canonicalLocal(
-				fields.endDate.value,
-				fields.endTime.value,
-				isAllDay,
-			),
 			_wpse_event_status: fields.status.value,
 			_wpse_event_url: fields.eventUrl.value,
 			_wpse_event_url_label: fields.eventUrlLabel.value,
 			_wpse_location_url: fields.locationUrl.value,
-			_wpse_start_local: canonicalLocal(
+			_wpse_venue: fields.venue.value,
+		};
+
+		if ( ! scheduleOwned ) {
+			eventMeta._wpse_all_day = isAllDay;
+			eventMeta._wpse_end_local = canonicalLocal(
+				fields.endDate.value,
+				fields.endTime.value,
+				isAllDay,
+			);
+			eventMeta._wpse_start_local = canonicalLocal(
 				fields.startDate.value,
 				fields.startTime.value,
 				isAllDay,
-			),
-			_wpse_venue: fields.venue.value,
-		};
+			);
+		}
 		const changed = Object.entries( eventMeta ).some(
 			( [ key, value ] ) => currentMeta[ key ] !== value,
 		);
@@ -95,9 +104,21 @@ if ( eventFields ) {
 			const input = wrapper.querySelector( 'input' );
 
 			if ( input ) {
-				input.disabled = isAllDay;
+				input.disabled = scheduleOwned || isAllDay;
 			}
 		} );
+	};
+
+	const syncScheduleOwnership = ( owned ) => {
+		scheduleOwned = owned;
+		eventFields.dataset.wpseScheduleOwner = owned ? 'recurrence' : 'event';
+		scheduleFields.hidden = owned;
+		scheduleIntro.hidden = owned;
+		scheduleNotice.hidden = ! owned;
+		allDay.disabled = owned;
+		fields.startDate.disabled = owned;
+		fields.endDate.disabled = owned;
+		syncTimeFields();
 	};
 
 	Object.values( fields ).forEach( ( field ) => {
@@ -108,5 +129,8 @@ if ( eventFields ) {
 		syncTimeFields();
 		syncEditorMeta();
 	} );
-	syncTimeFields();
+	document.addEventListener( 'wpse:recurrence-state', ( event ) => {
+		syncScheduleOwnership( Boolean( event.detail?.recurring ) );
+	} );
+	syncScheduleOwnership( scheduleOwned );
 }

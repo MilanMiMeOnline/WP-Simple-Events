@@ -511,3 +511,919 @@ External location destinations consistently open in an isolated new tab;
 internal event links remain same-tab. Hiding every complete-details field emits
 no empty public wrapper. These controls affect presentation only: event storage,
 dates, timezones, eligibility, queries, feeds and structured data are unchanged.
+
+## ADR-044: Recurrence uses one series post and a rebuildable occurrence projection
+
+**Status:** Accepted
+
+This decision supersedes the recurrence and custom-table exclusions in ADR-001,
+ADR-005 and ADR-031 for development from 0.4.0 onward. Those earlier decisions
+remain accurate historical contracts for released versions through 0.3.0.
+
+The recurrence phase keeps one `wpse_event` post as the canonical series. Shared
+WordPress content, taxonomies and event metadata remain on that post. A versioned,
+revision-enabled recurrence definition owns the normalized rule, timezone,
+segments, manual additions, exclusions and sparse occurrence overrides. Raw
+RRULE input, duplicate occurrence posts and an externally hosted recurrence
+service are not accepted storage models.
+
+One plugin-owned occurrence table is introduced as a rebuildable read projection
+for both recurring and one-off events. A one-off event has exactly one projected
+occurrence. Public chronological collections, pagination, calendar windows and
+occurrence routing will migrate to this common projection only after one-off
+parity is proven. Search remains series-oriented. The event post and registered
+metadata remain the source of truth; deleting or rebuilding projection rows may
+never delete canonical event content.
+
+Projection replacement is generation-based. New rows are built and validated
+under a new generation before one event-level active-generation marker is
+switched. Interrupted generation therefore leaves the previous complete
+projection active. Queries are bounded, join only eligible event posts and their
+active generation, and use prepared SQL at the custom-table boundary. Infinite
+rules always receive both a time horizon and a hard occurrence cap.
+
+Regular rules cover daily, weekly, monthly and yearly intervals with inclusive
+end-date or occurrence-count bounds. A specific-dates mode, manual additions and
+individual cancellations are included. Multiple simultaneous rule patterns,
+hourly/minutely recurrence, patterned exclusions, tickets, external sync and a
+separate page-builder body per occurrence remain excluded from this increment.
+
+An occurrence has an immutable identity based on the series UID and its original
+local recurrence slot. Moving it does not change that identity or public URL.
+Sparse overrides may change its title, short note, featured image, dates, status,
+venue, address and external actions; body content and taxonomies continue to
+inherit from the series. Broad schedule edits preserve past occurrences and never
+silently discard a modified future occurrence.
+
+Editors choose **only this occurrence**, **this and following occurrences**, or
+**the complete series** before editing. The selected scope remains visible and a
+broad change previews added, removed, moved and exception-affected dates before
+commit. Cancellation is reversible and distinct from permanent deletion.
+
+Recurring public events receive a series overview plus stable leaf URLs for
+individual occurrences. Canonical URLs, document titles, structured data,
+sitemaps, cache context, Elementor, Gutenberg and REST must resolve the same
+occurrence. Lists default to the next occurrence per series while calendars show
+all eligible occurrences in their bounded window. The complete normative contract
+is in `docs/RECURRENCE-CONTRACT.md`.
+
+## ADR-045: The recurrence aggregate uses bounded canonical JSON metadata
+
+**Status:** Accepted
+
+The complete recurrence aggregate is stored under one protected, single-value,
+revision-enabled post-meta key as a canonical JSON string. JSON is only the
+WordPress persistence envelope: the versioned plugin-owned aggregate and its
+strict codec remain the domain and schema authority. The key is not writable or
+readable through core REST. Editor mutations must pass through a dedicated
+capability-checked application service and replace the aggregate atomically.
+
+An accepted value is decoded with exceptions enabled, bounded by a 2 MiB encoded
+size and validated as the complete exact aggregate before use. Re-encoding fixes
+root, nested and sparse-field ordering so semantically equal aggregates have one
+stored representation. Invalid JSON, unsupported versions, unknown fields,
+excessive collections and weak scalar coercion fail closed. PHP serialization,
+raw RRULE strings and partial nested metadata are never accepted.
+
+WordPress supports revision-enabled string metadata natively. A string envelope
+also avoids the single-object metadata ambiguity in WordPress' revision-preview
+filter while retaining one atomic value. Restoring a revision must mark the
+derived occurrence projection dirty before any occurrence-aware public read can
+resume. The current 0.3.0 public paths remain unchanged until aggregate writes,
+revision restoration and projection rebuilding pass their complete integration
+matrix.
+
+## ADR-046: Recurrence saves are canonical-first and projection-complete
+
+**Status:** Accepted
+
+A recurrence mutation is one application operation with two ordered durability
+stages. The capability-, post-, identity- and timezone-checked aggregate service
+first replaces the complete canonical JSON value after setting the occurrence
+index dirty. A separate coordinator then derives and activates one complete
+bounded occurrence generation using the event status read from canonical metadata.
+It never accepts request-supplied status as projection authority.
+
+An unchanged clean aggregate is a no-op. An unchanged dirty aggregate deliberately
+retries projection, making interrupted or previously failed builds repairable
+without changing the rule again. If projection fails after canonical storage has
+changed, the canonical value is not rolled back: the dirty marker remains and the
+result reports both the projection failure and the fact that canonical storage
+changed. Occurrence-aware reads therefore fail closed while the authoritative
+editor state remains recoverable.
+
+Projection accepts a complete empty window and activates its generation marker.
+Every schedule segment must generate its effective seed, and each non-root anchor
+must be generated by the preceding schedule. A seed moved earlier may move the
+selected occurrence but later slots on or before its original anchor date are not
+regenerated, preventing duplicate identities across the segment boundary.
+
+Sparse exceptions are reconciled against bounded engine output. A date override
+whose immutable original identity lies outside the requested window but whose
+effective date moves into it receives an additional membership check and remains
+visible. This path is capped at 25 inbound moves per complete build to prevent a
+large aggregate from multiplying catch-up work. Missing membership, duplicate
+identity, unsafe expansion or an excessive inbound set rejects the complete
+generation; no exception is silently dropped or partially projected.
+
+## ADR-047: Recurrence impact is identity-based and scope-validated server-side
+
+**Status:** Accepted
+
+The recurrence editor must select **only this occurrence**, **this and
+following**, or **complete series** before it submits a proposed complete
+aggregate. Scope is not a client-side hint. A pure application service validates
+the structural mutation against that scope, builds current and proposed bounded
+occurrence sets through the exact same projection builder used during saves, and
+compares them by immutable recurrence identity.
+
+The preview reports additions, removals, moves, status changes, source changes and
+manual/exclusion/override impact in chronological order. Only-this edits cannot
+change segments or another exception. This-and-following requires a generated
+target and rejects any changed prior segment, prior exception or generated impact
+before the target. Changed exception state without a row inside the explicit
+bounded preview window fails closed rather than disappearing from the summary.
+
+Broad schedule reconciliation retains modified slots by converting them to the
+manual collection when their new rule membership disappears. Such a detached
+slot deliberately keeps its original generated recurrence identity; only a new
+manual addition receives `manual:{UUID}`. Because the public key derives from the
+series UID and recurrence identity, the detached event keeps its established URL
+while its projection source changes from rule to manual.
+
+## ADR-048: Recurrence editor writes use canonical compare-and-replace
+
+**Status:** Accepted
+
+Every editable recurrence snapshot receives a deterministic SHA-256 revision
+token derived from a plugin-specific context and its exact canonical JSON. The
+absence of recurrence has its own one-off token. Tokens reveal no secret and are
+used only to prove that preview and save began from the same canonical state.
+
+The authorized persistence service validates the expected token before marking
+the derived projection dirty. The WordPress aggregate adapter then performs the
+actual race-safe write with the previous raw metadata value as
+`update_post_meta()`'s compare argument. First-time recurrence uses unique
+`add_post_meta()`. A changed value between preview and write returns a stable
+stale-revision result and never overwrites the newer aggregate. Because derived
+health is invalidated before canonical mutation, a race discovered at the final
+compare may conservatively leave the event dirty; repair is preferable to a
+window in which stale projection is falsely healthy.
+
+## ADR-049: Recurrence edits require an authorized preview-confirm-save cycle
+
+**Status:** Accepted
+
+The recurrence editor uses dedicated authenticated `wpse/v1` routes for context,
+impact preview and confirmed save. The canonical aggregate remains absent from
+core REST and is exposed only to a user who can edit the selected event. Every
+mutation accepts a complete exact aggregate, explicit edit scope and target,
+bounded generation window and the revision loaded by that editor. WordPress REST
+cookie authentication supplies its normal nonce protection; route permission
+callbacks additionally recheck the event post type and mapped `edit_post`
+capability.
+
+Preview is server-owned. It runs the proposed aggregate through the exact codec,
+scope validator and occurrence builder used by persistence, then returns a
+bounded impact summary. The confirmation is an HMAC over the event, current user,
+canonical revision, proposed aggregate, scope, target and complete preview
+window. Save re-runs the preview, verifies that exact confirmation and finally
+uses canonical compare-and-replace. A changed event, different user, altered
+proposal, broader window or replay after a successful save therefore fails
+without overwriting current state.
+
+Because the custom recurrence route does not perform a normal post update, a
+changed canonical aggregate explicitly requests a WordPress post revision after
+the compare-and-replace attempt. This also happens when canonical storage changed
+but derived projection failed, because that new canonical state remains
+authoritative and repairable. Unchanged saves do not add a revision.
+
+The first Gutenberg adapter deliberately exposes only **complete series**
+schedule changes. It follows the site's configured week start, preserves the
+difference between an ordinal weekday and the last weekday of a month, blocks
+preview while ordinary post fields are dirty, and requires an exact impact
+preview before apply. Localized numeric settings are normalized before date
+arithmetic or strict REST submission. Series containing future segments or
+individual exceptions remain locked until their occurrence-scoped editor is
+available.
+
+The context route may bootstrap a valid one-off event as a one-date comparison
+aggregate, but does not store recurrence merely by being opened. Returning a
+series to **does not repeat** remains a separate future operation because it must
+select the surviving occurrence, update canonical one-off dates and remove the
+aggregate under one explicit preview and concurrency contract.
+
+## ADR-050: Disabling recurrence retains one explicitly selected occurrence
+
+**Status:** Accepted
+
+Disabling recurrence is a distinct destructive operation, never an empty or
+degenerate recurrence rule. The editor must select one effective occurrence that
+will survive as the canonical one-off event. Preview identifies that occurrence,
+counts the other occurrences removed inside its explicit bounded window and
+states unambiguously that every occurrence outside the preview window is also
+removed. The existing aggregate revision, selected immutable recurrence identity,
+window and authenticated user are bound into a dedicated confirmation signature.
+
+Survivor discovery remains bounded but may not assume that the first schedule
+anchor is recent. The editor starts near the site's current date for an active
+or open-ended series, near the final bounded period for an already-ended series,
+and falls back to the anchor period when the initial window is empty. It also
+offers an explicit ISO-date search start so an editor can move the bounded window
+to an old or distant occurrence. The loaded window, not an unsubmitted date-field
+value, is bound into preview and save. Changing the search date clears the prior
+selection and confirmation instead of silently retargeting either one.
+
+Save rebuilds and revalidates that exact preview before changing state. It marks
+the occurrence projection dirty first, prepares the ordinary event date, time,
+timezone and status metadata from the selected effective occurrence, and then
+removes the complete aggregate with an exact compare-and-delete against the
+previewed revision. A stale aggregate or failed delete rolls back only metadata
+that still equals the values prepared by this operation, so a concurrent change
+is never overwritten. The small multi-key WordPress metadata transition is
+therefore guarded by post locking, optimistic comparison and a dirty derived
+index rather than represented as an unsafe healthy intermediate state.
+
+After the aggregate has been removed, the normal one-off projector becomes the
+only derived representation. Projection failure leaves the authoritative
+one-off metadata intact and the index dirty for deterministic repair; it does not
+recreate the old series. A successful canonical conversion explicitly creates a
+WordPress post revision. No-op, rejected and stale requests do not create one.
+
+## ADR-051: Occurrence override input is canonical before scope editing
+
+**Status:** Accepted
+
+The recurrence aggregate's strict domain codec is necessary but not sufficient
+as a WordPress input boundary. Before an authenticated editor context exposes a
+stored aggregate, and before any proposed complete aggregate reaches impact
+preview, every plain-text, multiline-text and URL occurrence override must equal
+its value after the corresponding WordPress sanitizer. The editor rejects rather
+than silently rewrites a proposal so the exact aggregate signed during preview is
+also the exact aggregate considered for persistence.
+
+Date ranges, statuses and non-negative image identifiers retain their strict
+typed domain validation. Rendering must still escape every override for its
+eventual output context. This guard prevents stored HTML or normalization drift
+from entering the future occurrence editor while keeping the recurrence domain
+independent of WordPress globals.
+
+## ADR-052: Occurrence editing starts from server-resolved effective and inherited state
+
+**Status:** Accepted
+
+An occurrence-scoped editor may not reconstruct inheritance from the visible date,
+the first schedule segment or client-side aggregate inspection. After an editor
+selects one occurrence from a bounded occurrence window, a dedicated authorized
+read route resolves the immutable target against that exact window and returns the
+current canonical revision, current effective occurrence, inherited occurrence,
+existing sparse override and existing cancellation action.
+
+Inherited state is derived by removing only the selected identity's override and
+exclusion from an otherwise unchanged aggregate. A moved occurrence may have its
+current effective date inside the selected window while its original inherited
+slot lies outside it. The application therefore retries inheritance through one
+identity-local one-day window. Manual and detached occurrences resolve that
+fallback from their stored manual range before a generated-looking identity is
+interpreted as a rule slot. Every expansion remains bounded.
+
+This route is read-only and does not create an alternative persistence path. The
+client preserves unedited sparse fields, constructs one complete aggregate and
+continues through the existing scope-validated preview, signed confirmation and
+compare-and-replace save contract. Removing an override field restores inheritance;
+an empty sparse override is removed. Cancellation remains a separate reversible
+exclusion. The selected window and revision returned by the server are the values
+that must be carried into preview, preventing a changed search period or stale
+editor from silently retargeting an edit.
+
+## ADR-053: Only-this editing exposes reversible exceptions before content overrides
+
+**Status:** Accepted
+
+The first occurrence-scoped Gutenberg workflow exposes date/time, all-day state,
+event status and reversible cancellation. Editors enter **only this occurrence**
+explicitly, search one bounded period, select an immutable occurrence identity and
+load its server-resolved current/inherited context before any field is editable.
+The panel repeats the scope, captured timezone and selected occurrence. It never
+infers a target from a visible date or silently widens the loaded window.
+
+Date/time and status each have a named “use series” action. That action removes
+the corresponding sparse override key instead of copying today's inherited value
+into a new exception. Cancellation remains a separate reversible exclusion, not
+a destructive deletion or an implicit status rewrite. Existing supported content,
+location and image override fields remain byte-for-byte represented in the complete
+proposal even though this first UI slice does not expose controls for them.
+
+Every change must pass native-control validation, the ordinary-post dirty guard and
+the existing impact preview before the signed save button is enabled. The save uses
+the same complete aggregate, scope validator, confirmation and compare-and-replace
+path as complete-series editing. A successful save reloads the same immutable target
+from the exact selected window before another edit is allowed. If that refresh fails,
+the UI reports that the save succeeded and requires an explicit reload rather than
+misreporting a committed change as failed.
+
+## ADR-054: This-and-following replaces the future schedule at one immutable boundary
+
+**Status:** Accepted
+
+An editor who chooses **this and following** selects one generated occurrence
+identity after the root occurrence. The selected immutable identity becomes the
+anchor of one replacement schedule segment. Every earlier segment remains
+byte-for-byte canonical; the segment at that anchor, when present, is replaced,
+and all later schedule segments are removed. This makes “following” mean the
+complete future from the selected occurrence instead of silently stopping at a
+previously scheduled future change.
+
+Choosing the root occurrence is presented as a complete-series edit because both
+actions would affect the same set. Manual occurrences, exclusions and sparse
+overrides remain unchanged by the structural split. Before a proposal can be
+saved, server-owned reconciliation must prove that each retained exception still
+belongs to the proposed future schedule or detach the modified occurrence under
+its existing identity. No exception may disappear because a future segment was
+replaced.
+
+New segment IDs are monotonic within the aggregate and never reuse a removed
+segment ID. Replacing a segment already anchored at the target retains that
+segment ID. The editor repeats the selected boundary, states that later scheduled
+changes will be replaced, and requires the normal bounded impact preview before
+save.
+
+## ADR-055: The server constructs every this-and-following proposal
+
+**Status:** Accepted
+
+The **this and following** browser request contains only one selected generated
+boundary, current canonical revision, exact bounded occurrence window and one
+strict replacement schedule. It does not submit earlier segments, exception
+collections, a series identity or a timezone. The server reuses the canonical
+series timezone, proves that the selected boundary is an effective non-root
+generated occurrence, applies ADR-054 and reconciles every retained exception.
+Unknown keys, weak scalar values, manual identities, skipped identities, the root
+identity and stale revisions fail before an impact confirmation can be issued.
+
+The authenticated preview response returns the exact complete aggregate proposal
+alongside its bounded impact and server signature. The established generic
+recurrence save route remains the only persistence boundary: it decodes that
+complete proposal again, rebuilds the impact, verifies the exact editor, event,
+revision, scope, target and window signature, and performs compare-and-replace.
+This avoids trusting a browser-side aggregate rewrite while retaining one audited
+atomic save path and one replay/stale-state contract for every editing scope.
+
+## ADR-056: This-and-following editing starts from generated inheritance
+
+**Status:** Accepted
+
+The Gutenberg boundary picker offers only effective `rule` occurrences after the
+root identity. The root remains a complete-series edit; manual and detached
+occurrences remain only-this edits. This prevents a visually date-shaped manual
+identity from being presented as a valid generated split and mirrors the server's
+authoritative membership checks.
+
+After selection, the editor loads the authorized occurrence context and initializes
+the replacement template from the inherited generated range, not from a sparse
+date override on that one occurrence. It initializes the recurrence controls from
+the schedule segment active at the selected identity. Existing overrides and
+cancellations remain explicit exceptions and are reconciled by the server. The UI
+therefore cannot accidentally turn one exceptional occurrence into the pattern
+for every future occurrence.
+
+The panel repeats the selected scope, captured timezone and immutable boundary,
+warns that every later schedule segment is replaced, clears previews when any
+boundary or field changes and blocks ordinary unsaved post state. It submits only
+ADR-055's narrow request and applies only the exact server-returned proposal
+through the generic confirmed save route.
+
+## ADR-057: Occurrence content controls keep inheritance explicit
+
+**Status:** Accepted
+
+The only-this editor exposes every sparse presentation field already accepted by
+the recurrence aggregate: title, bounded note, featured image, venue, address,
+location URL, external event URL and external action label. The authorized
+occurrence context returns a separate normalized `inherited_fields` snapshot from
+the canonical series post. It never exposes metadata keys and never treats a
+browser copy of series content as authoritative persistence input.
+
+Each control carries explicit ownership state. Editing a field creates or updates
+that occurrence's sparse key; **Use series value** removes the key. Empty venue,
+address and URL values deliberately hide inheritance, while an empty title, note
+or action label remains invalid. Featured-image ID zero deliberately hides the
+series image. Browser limits come from the same PHP domain constants, but the
+complete aggregate codec, WordPress canonical-content guard, capability check,
+signed preview and compare-and-replace save remain authoritative.
+
+The media picker uses WordPress' own editor and permission UI and is loaded only
+for event block editors. All controls remain in the existing document panel;
+there is no second post save, raw metadata endpoint or occurrence body. A content-
+only change appears in the impact preview as an individual-field change even when
+its date and status do not move.
+
+Stopping recurrence retains the ordinary series post and, by the accepted
+conversion contract, copies only the selected occurrence's effective date,
+timezone and status. Individual occurrence title, note, image, location and
+external-action values are removed with the aggregate. The destructive preview
+states this explicitly instead of implying that those values are promoted to the
+one-off event.
+
+## ADR-058: Public occurrence presentation resolves through one exact identity
+
+**Status:** Accepted
+
+Before any public consumer switches to the occurrence projection, the shared
+presentation boundary must resolve exactly one published, password-free
+occurrence by its canonical event ID and stable public key. The lookup rechecks
+the parent event, active projection generation and exact public key in one bounded
+query. Zero rows mean no public context; duplicate, corrupt or inconsistent rows
+fail closed.
+
+The resolver loads the protected canonical recurrence aggregate, proves that the
+projected recurrence identity and stored series UID derive the requested public
+key, and applies only that identity's sparse override. Effective date and status
+always come from the validated active projection row. Title, note, featured image,
+venue, address, location URL, external URL and action label use the aggregate
+override when present and otherwise inherit from one normalized series
+presentation snapshot. Body, excerpt and taxonomies remain series-owned.
+
+This increment exposes a request-local named presentation context only. Positive
+and negative exact identities are cached for that request so multiple atomic
+widgets reuse the same snapshot without repeated or divergent storage reads. It does
+not register a rewrite, alter canonical URLs, switch list/calendar queries or make
+recurrence publicly discoverable. Native templates, Gutenberg, Elementor, REST,
+schema and sitemap adapters may migrate only after occurrence routing and their
+complete parity tests use this same resolver instead of reimplementing override
+logic.
+
+## ADR-059: Occurrence leaf routing is an explicit development feature
+
+**Status:** Superseded for activation by ADR-073
+
+The virtual leaf route uses the configured event archive segment followed by the
+canonical series slug, the fixed `occurrence` segment and one lowercase 32-byte
+hexadecimal public key. Its dedicated query variable is registered only when the
+strict boolean `WPSE_ENABLE_OCCURRENCE_ROUTES` constant is explicitly enabled.
+Ordinary releases therefore cannot expose a recurring leaf accidentally while
+template, builder, schema and SEO parity remain unfinished.
+
+An enabled request must still resolve as the queried public event post and pass
+the shared exact presentation provider. Malformed keys, missing or ambiguous
+projection rows, nonrecurring events, private/draft/password-protected parents and
+canonical-aggregate inconsistencies all become non-cacheable 404 responses. Core
+canonical redirection is suppressed for any recognized occurrence request so an
+invalid private leaf cannot reveal or redirect to its series URL.
+
+The route controller retains one request-local resolved context for future native,
+Gutenberg and builder adapters. Pretty permalinks use the documented leaf path;
+plain permalinks retain the canonical series URL and add only the allowlisted
+occurrence query variable. This increment does not yet change templates, document
+titles, schema, sitemaps, REST output or the public collection read switch.
+
+## ADR-060: Ordinary recurring-event saves cannot create a one-off projection
+
+**Status:** Accepted
+
+Once a non-empty canonical recurrence aggregate exists, its schedule owns the
+event date range, all-day state and captured timezone. A normal WordPress post or
+REST save may continue to update series-owned venue, address, external actions,
+title, content, excerpt, featured image and taxonomies, but it cannot overwrite
+those schedule fields or invoke the one-off projector. This prevents an ordinary
+editor save from leaving one canonical recurrence aggregate beside a falsely
+healthy one-row projection.
+
+The ordinary event-status field remains the inherited series status. When that
+value changes, persistence stores the validated status and marks the derived
+occurrence index dirty; the next confirmed recurrence save repairs the same
+bounded projection through the canonical recurrence coordinator. A status-neutral
+series-content save does not dirty the index because those fields are resolved
+live from the series context and are not duplicated in the occurrence table.
+
+Every occurrence-level public query excludes a parent whenever the dirty marker
+exists, even if an older active generation remains. That is intentional fail-safe
+behaviour: temporary unavailability is preferable to stale dates or statuses.
+The editor must make schedule ownership visible before public recurrence is
+enabled; this server rule remains authoritative regardless of browser state.
+
+## ADR-061: Native occurrence output derives from one shared presentation
+
+**Status:** Accepted
+
+An exact route context is converted once into the existing named event-
+presentation shape. Effective title, date, status, note, featured image, venue,
+address, location action and external action come from that context. The series
+post continues to own body, excerpt and taxonomies. Invalid canonical URLs or
+unformattable date values fail closed before native output is assembled.
+
+The development-gated occurrence leaf uses this presentation for the bundled PHP
+and block-theme fallback, the core document-title part, WordPress' core canonical
+filter and the plugin-owned Event JSON-LD graph. Featured-image overrides render
+only through WordPress attachment APIs; an unavailable attachment creates no
+image markup or raw identifier. The occurrence note is escaped as bounded plain
+text and never enters the post-content filter pipeline.
+
+Elementor Theme Builder was initially bypassed until its event widgets consumed
+the same current occurrence context. Once that adapter parity is present, an
+applicable Elementor single location may own the leaf again; without a matching
+location the exact native fallback remains authoritative. Core one-off routes and
+explicit series selections remain unchanged. Third-party SEO canonical adapters,
+sitemaps and REST remain separate gated work at this boundary; ADR-063 and
+ADR-064 subsequently complete the REST leaf and supported SEO canonical filters.
+
+## ADR-062: Host adapters distinguish current occurrence context from explicit series selection
+
+**Status:** Accepted
+
+Gutenberg and page-builder fields use one shared current-presentation resolver.
+When a validated occurrence leaf is active and a component consumes the current
+event context, that resolver returns the exact occurrence presentation already
+used by native output and schema. If no occurrence leaf is active, it preserves
+the established authorized current-event preview rules.
+
+The existing explicit event identifier remains an explicit public series
+selection. It never silently changes to the occurrence merely because the
+component happens to render on an occurrence URL. A future additional context
+selector may offer next or specific occurrences without changing that identifier's
+meaning. This keeps static pages, query loops and editor previews deterministic
+and preserves the saved 0.3.0 block and widget contract.
+If an active occurrence cannot produce a valid canonical presentation, the
+current component fails closed rather than falling back to potentially incorrect
+series dates or occurrence-owned fields.
+
+Elementor's reconstructed widget objects receive the same request-shared
+resolver through its runtime service set. The existing twelve atomic widgets and
+composite Event Details widget therefore follow the same current-versus-explicit
+contract as Gutenberg. The Event Details shortcode shares that boundary because
+the composite widget is intentionally a thin shortcode adapter. List and calendar
+collection reads do not switch in this decision.
+
+## ADR-063: Public occurrence REST leaves are versioned, exact and development-gated
+
+**Status:** Accepted
+
+The first public occurrence REST resource uses the new `wpse/v2` namespace and
+one exact event-ID/public-key path. It is registered only while the same strict
+development feature that owns occurrence routes is active. The existing
+`wpse/v1/events` calendar feed and WordPress core event resource keep their 0.3.0
+meaning; neither an event ID nor an existing response silently changes from a
+series to an occurrence.
+
+The controller delegates eligibility to the shared occurrence-presentation
+provider and canonical URL builder already used by the native leaf. Missing,
+private, password-protected, stale, ambiguous, dirty, corrupt or mismatched
+identities all return one indistinguishable 404 response. The route is read-only,
+has strict scalar argument schemas and performs no editor capability shortcut.
+
+The version-one response is a bounded scalar presentation. It exposes the event
+ID, stable public occurrence key, canonical URL, effective title, optional note,
+effective date/status/image/location/action data and public category/tag names
+and destinations. It deliberately omits recurrence identities, generation and
+segment numbers, protected aggregate JSON, internal metadata keys, passwords,
+editor confirmations and raw post content. Image URLs are resolved through the
+WordPress attachment API; unavailable images become `null`. This contract is the
+leaf reference for later collection, sitemap and cache adapters, but does not
+enable occurrence discovery by itself.
+
+## ADR-064: Supported SEO canonicals delegate to the exact occurrence route
+
+**Status:** Accepted
+
+When occurrence routing is enabled, one optional adapter filters the documented
+canonical URL extension points for [Yoast SEO](https://developer.yoast.com/features/seo-tags/canonical-urls/api/),
+[Rank Math](https://rankmath.com/docs/filters-and-hooks/frontend/meta-data/) and
+[AIOSEO](https://aioseo.com/docs/aioseo_canonical_url/). WordPress accepts filter
+registrations even when those plugins are absent, so this introduces no runtime
+dependency, version check, class probe or activation notice.
+
+The adapter reads only the occurrence route's already validated current context
+and returns its strict HTTP(S) canonical. Ordinary pages, series roots, invalid
+or unresolved leaves and unsafe canonical values preserve the SEO plugin's
+original value exactly, including Yoast's supported `false` value. It does not
+read query input, resolve an occurrence independently or add Open Graph, schema
+or sitemap behaviour. Registration remains behind the same development gate as
+the occurrence leaf so released 0.3.x output cannot change accidentally.
+
+## ADR-065: Core occurrence sitemap discovery is bounded by the active projection
+
+**Status:** Accepted
+
+When occurrence routing is enabled, WordPress Core receives one dedicated
+`occurrences` sitemap provider through its public sitemap registration API. The
+provider lists only non-one-off rows from the active, clean projection generation
+whose parent is published and password-free. A row is emitted only after the
+shared public presentation resolver proves its exact event ID, public key and
+canonical aggregate identity; corrupt or otherwise ineligible rows fail closed.
+
+The provider uses the Core maximum-URL setting but enforces a plugin ceiling of
+100 rows per database page. This preserves deterministic pagination and prevents
+a filtered Core limit or a large projection from turning one public request into
+an unbounded query or thousands of aggregate resolutions. Infinite schedules do
+not expand during sitemap generation: only the finite coverage already present in
+the disposable active projection can be discovered. One-off events remain in the
+normal post-type sitemap and are deliberately excluded from this provider.
+
+Entries contain only the strict HTTP(S) occurrence canonical. They omit
+`lastmod`, because a recurrence aggregate and sparse occurrence overrides can
+change without a reliable public modification timestamp; an inaccurate date is
+worse than no optional date. Registration remains behind the occurrence route
+development gate. SEO plugins that replace WordPress Core sitemaps need separate,
+documented adapters and real-plugin qualification before public recurrence is
+enabled; this Core provider does not pretend to cover those host-specific APIs.
+
+## ADR-066: Occurrence leaves fail safe with a no-store cache policy
+
+**Status:** Accepted
+
+An occurrence public key remains stable when its date, status or sparse content
+changes. Standard post-cache invalidation cleans the parent post object, but it
+cannot guarantee that every full-page cache product discovers and purges all
+virtual occurrence URLs. A validated occurrence browser leaf calls WordPress'
+native `nocache_headers()` after exact route resolution and before template
+output. It also defines the de facto `DONOTCACHEPAGE` constant used by WP Rocket
+and comparable WordPress cache products, and invokes LiteSpeed Cache's documented
+`litespeed_control_set_nocache` action. These exclusions remove the need to
+discover and purge every virtual leaf after recurrence changes.
+
+The policy applies only when the shared route has a valid current occurrence
+context. Ordinary events, archives,
+lists, calendars, sitemap resources and unrelated pages retain their existing
+cache behaviour. Invalid occurrence identities already use the same Core no-cache
+headers with their generic 404. The exact REST leaf retains WordPress REST's own
+cache contract and is not changed by this browser-page policy.
+
+This conservative boundary prioritizes correct event information over anonymous
+full-page cache hits. It was qualified against WP Rocket's documented
+`DONOTCACHEPAGE` handling and LiteSpeed Cache's public no-cache API on 25 August
+2026. A host or CDN that deliberately overrides origin no-store directives is
+outside the plugin's safe control. Re-enabling full-page caching would require
+product-specific proof of purge coverage for moved, cancelled, edited, detached
+and removed leaves; a stable URL or post-object cache flush alone is insufficient.
+
+## ADR-067: Inactive occurrence generations are cleaned asynchronously and conservatively
+
+**Status:** Accepted
+
+Complete occurrence replacement intentionally leaves the previous generation in
+the disposable projection table. Removing it inside the writer is unsafe because
+another request may still be constructing a generation for the same event. The
+projection therefore records an internal UTC creation timestamp on every row and
+uses a separate bounded WordPress-Cron worker for later cleanup.
+
+One cleanup batch may select and remove at most 100 rows. A row is eligible only
+when its generation is no longer the event's active generation, its canonical
+parent has no dirty projection marker and the row is at least 24 hours old. The
+delete repeats those predicates after the bounded ID selection so an intervening
+generation switch or repair cannot turn an active or dirty row into collateral
+damage. Existing rows created before this schema field existed receive the safe
+legacy value `0` and become eligible only when they are inactive and clean.
+
+The worker uses single scheduled events rather than visitor-request cleanup. A
+full batch schedules a continuation after five minutes; an incomplete batch
+schedules the next maintenance pass after one day. Database or schema failure is
+not reported as successful cleanup and uses the bounded retry delay. Deactivation
+removes the scheduled hook but never removes occurrence data. Permanent event
+deletion and explicit uninstall retain their existing, separate cleanup paths.
+
+This is storage hygiene only. It may not repair canonical recurrence data, choose
+an active generation, clear a dirty marker or make an unhealthy event publicly
+readable.
+
+## ADR-068: Occurrence health and repair share one canonical type-aware boundary
+
+**Status:** Accepted
+
+Administrators receive the same occurrence-index health summary on the event
+settings screen and in WordPress Site Health. It distinguishes an unavailable
+schema, an initial background build, public events that require repair and a
+healthy index. The summary exposes only state and bounded aggregate counters; it
+never lists event titles, recurrence definitions, internal identities or other
+event content.
+
+The initial migration and explicit administrator repair both delegate each event
+to one type-aware repair service. That service loads the protected recurrence
+aggregate first. A valid aggregate is rebuilt with the recurring projector and
+the canonical inherited event status; the absence of an aggregate delegates to
+the established one-off repairer. Corrupt aggregate data remains dirty and is
+reported as invalid. It must never be mistaken for a one-off event or overwritten
+with a one-row projection.
+
+Recurring repair uses the same production horizon as the editor: the current
+WordPress local date through 540 calendar days later, with the existing 1,000-row
+cap. This is a derived read-model repair policy, not a canonical recurrence edit.
+It does not change the aggregate, event dates, timezone, content, taxonomy or
+publication state.
+
+Manual repair selects only published, password-free events with a canonical start
+and either no active generation or an explicit dirty marker. Each request handles
+at most 25 events. Successfully repaired events disappear from the candidate set;
+invalid or failed events remain fail-closed. Continuation therefore carries only
+a bounded offset equal to the accumulated unresolved candidates, preventing one
+bad event from trapping all later repairs without persisting event identifiers in
+URLs or logs. A final health probe remains authoritative, so concurrent changes
+can never turn an incomplete run into a falsely healthy state.
+
+The action is available only through authenticated `admin-post.php`, requires
+`manage_options` and an action nonce, and redirects with allowlisted bounded
+counters. Background migration uses the same type-aware service but retains its
+separate missing-generation selection contract.
+
+## ADR-069: Recurring projection coverage is explicit and renewed with a safety buffer
+
+**Status:** Accepted
+
+An active generation token proves that one complete build was activated, but it
+does not prove which local dates that build covers. Every successful recurring
+projection therefore stores two protected canonical date metadata values: the
+inclusive projection start and inclusive projection end, plus the generation
+token that binds those dates to the active rows. One-off projections and
+projection removal delete both values so stale recurrence coverage can never be
+mistaken for current state. These values are derived state, are excluded from
+REST and revisions, and never change the canonical recurrence aggregate.
+
+Production builds cover the current WordPress-local date through 540 calendar
+days later. A clean recurring projection is public-read ready only while its
+stored start is on or before today and its stored end is at least 365 days after
+today. Missing, malformed or shorter coverage is a repair gap and fails closed.
+The 365-day minimum is not a new generation limit; it is the guaranteed forward
+read window retained while maintenance catches up.
+
+A dedicated WordPress-Cron worker checks at most 25 published, password-free
+recurring events per pass. It renews a projection when its start is after today,
+its end is missing, or fewer than 450 covered days remain. Successful rebuilds
+disappear from the candidate set. Invalid or failed candidates remain dirty and
+are skipped through the same bounded unresolved-offset strategy as manual repair,
+so one event cannot trap later series. A full batch continues after five minutes;
+an incomplete pass schedules the next check after one day.
+
+The 450-day renewal threshold leaves an 85-day buffer before the 365-day public
+minimum is crossed. This avoids rebuilding every series every day while allowing
+substantial delay in low-traffic WP-Cron. Site Health reports only an actual
+public-read gap, not routine buffered renewal work. Deactivation clears the
+renewal hook and preserves all canonical and derived event data.
+
+The projection store sets the dirty marker before changing any derived rows or
+metadata. It writes recurring coverage before activating the generation, checks
+the coverage-generation binding, clears dirty only after complete activation and
+then checks the binding a second time. Projectors may add a failure marker but
+never clear one after the store returns. Any partial write, concurrent mismatch,
+activation failure or later concurrent mutation therefore remains dirty.
+Recurring SQL reads also require the coverage-generation token to match their row
+generation.
+
+## ADR-070: Occurrence collections share one exact presentation bridge
+
+**Status:** Accepted
+
+Occurrence-aware lists, calendars, feeds and archives must paginate the derived
+occurrence rows rather than WordPress posts. Repeated event IDs are valid and
+must not be collapsed: each active row keeps its own date, status, stable public
+key and canonical occurrence URL. Exact totals and page counts therefore remain
+owned by `OccurrencePage`; no adapter may recalculate them from the number of
+distinct parent posts it happened to render.
+
+One shared collection presenter joins every already-authorized projection row to
+its public series presentation. A one-off row inherits the normalized series
+fields and retains the existing series URL. A recurring row resolves sparse
+overrides from the canonical aggregate and receives the virtual occurrence URL.
+The exact-route resolver and collection presenter share the same identity,
+inheritance and URL builders, while the collection path consumes its already
+validated row directly instead of issuing one additional projection query per
+item.
+
+The bridge fails closed for the complete requested page when any row cannot be
+bound to a published, password-free parent, current canonical aggregate,
+matching public identity or safe HTTP(S) URL. Silently dropping a corrupt row
+would make totals, pagination and calendar counts dishonest; falling back to the
+parent post date would reveal stale or semantically different data. The caller
+may expose an empty or unavailable state, but may not mix legacy series dates
+with an occurrence result page.
+
+Existing public consumers remain on their one-off WordPress-query path while the
+occurrence route feature is disabled. When the development gate is enabled, a
+consumer may switch only after occurrence readiness is healthy and must use this
+shared bridge. Archive routing requires a dedicated adapter because the native
+main query cannot represent repeated parent post IDs; it may not emulate
+occurrence pagination through a `post__in` query.
+No visitor request expands recurrence or performs renewal.
+
+## ADR-071: Native archives use an occurrence-backed WordPress templateshell
+
+**Status:** Accepted
+
+The native archive cannot paginate recurring output through `post__in`, because
+WordPress collections represent posts and collapse or miscount repeated parent
+IDs. When the occurrence feature and read-readiness gates are active, the archive
+adapter therefore owns one exact occurrence query and stores its page in
+request-local plugin state keyed by the main `WP_Query` object. Domain criteria
+objects never enter WordPress query variables or cache-key serialization.
+
+`posts_pre_query` short-circuits the redundant post SQL and returns one validated
+published, password-free parent object for every occurrence row, including
+repeated objects for one series. These posts are a routing and compatibility shell
+only. The adapter assigns the occurrence total and total-page count directly and
+sets `no_found_rows`, so Core does not overwrite those values with post counts.
+The native renderer retrieves the stored occurrence page and uses the shared
+collection presenter for effective fields, stable leaf URLs and cards.
+
+If occurrence storage fails, a parent changes visibility between the projection
+read and shell construction, or presentation cannot bind every row, the complete
+page fails closed. No partial cards, parent-date fallback or dishonest pagination
+is permitted. Empty page one remains a normal archive empty state; WordPress keeps
+its standard paged-empty 404 decision. With either gate disabled, the established
+one-off `WP_Query` archive remains byte-for-byte in control.
+
+## ADR-072: Recurrence-owned schedule fields are replaced by an explicit editor boundary
+
+**Status:** Accepted
+
+Once an event has a non-empty protected recurrence aggregate, its ordinary
+start, end, all-day and timezone metadata are bootstrap history rather than the
+current series schedule. Showing those values as disabled reference controls is
+misleading after a complete-series or future-segment change. The native Event
+details metabox therefore replaces the ordinary schedule controls with a visible
+notice that directs editors to the **Repeating event** document panel and its
+three explicit scopes. The server-side recurrence ownership rule remains the
+authoritative protection when JavaScript is absent or a request is forged.
+
+The ordinary event-status control remains editable because it is the inherited
+status of the complete series. Venue, address, external actions and other normal
+post content also remain series-owned fields. Gutenberg mirrors only those
+editable values into its REST save while recurrence owns the schedule. Enabling
+recurrence updates the metabox state immediately through one namespaced editor
+event; disabling recurrence reloads the editor and restores the ordinary schedule
+controls. Existing classic-editor submissions retain canonical hidden schedule
+values solely so an unrelated series-field save continues through the shared
+validator without exposing a second schedule editor.
+
+## ADR-073: Public occurrence reads are enabled by default for 0.4.0 qualification
+
+**Status:** Accepted
+
+The recurrence authoring, projection and read contracts now share one fail-closed
+boundary from the editor through native archives, lists, calendars, REST,
+Gutenberg, Elementor, schema and canonical output. Public recurrence therefore no
+longer depends on the undocumented `WPSE_ENABLE_OCCURRENCE_ROUTES` development
+constant. The 0.4.0 development branch registers occurrence routing and reads by
+default. An explicit constructor decision remains only for deterministic tests of
+the legacy one-off path.
+
+Activation does not relax readiness or eligibility. Dirty, stale, incomplete,
+ambiguous, unpublished, password-protected or corrupt occurrence state still
+fails closed and never falls back to a parent date. Exact leaf pages remain
+non-cacheable under ADR-066. WordPress Core supplies the bounded occurrence
+sitemap. Replacement SEO products retain exact canonical parity, while dedicated
+replacement-sitemap adapters remain optional follow-up compatibility work rather
+than a security or data-correctness release gate.
+
+Elementor Pro remains optional. Its single-template host continues to own the
+document shell while atomic widgets resolve the same request-local occurrence
+presentation. A real Elementor Pro release-candidate journey is required before
+publishing 0.4.0, but does not justify keeping the implementation behind a secret
+runtime constant.
+
+## ADR-074: Schema upgrades schedule one late rewrite flush
+
+**Status:** Accepted
+
+Updating a plugin does not run its activation hook. The first release with public
+occurrence leaves therefore cannot rely on activation to add the new pretty route
+to WordPress' stored rewrite rules. A successful schema change records the current
+validated event archive slug in the existing one-shot rewrite manager. Its late
+`init` callback flushes softly only after the post type and occurrence rule have
+registered, then deletes the marker.
+
+A failed install does not schedule a flush. Re-running an unchanged schema does
+not schedule one either. This makes the upgrade self-healing for default and
+custom archive slugs without flushing on visitor requests indefinitely or asking
+an administrator to resave Permalinks.
+
+## ADR-075: Third-party canonical filters preserve nullable host values
+
+**Status:** Accepted
+
+SEO integrations do not share one strict canonical input type. Yoast SEO may pass
+`null` while rendering an Elementor Theme Builder preview, even though ordinary
+public requests commonly pass a string or `false`. The compatibility adapter
+therefore accepts and preserves `string|false|null` when no exact occurrence is
+active. A validated occurrence still replaces every supported host value with
+its exact safe HTTP(S) leaf URL.
+
+This is a compatibility boundary, not weak typing inside the occurrence domain.
+Unknown structures remain rejected by PHP, and an unsafe generated URL still
+preserves the original host value. Elementor previews must never fail merely
+because an optional SEO plugin suppresses its canonical with `null`.
+
+## ADR-076: Publishing an event repairs its occurrence projection synchronously
+
+**Status:** Accepted
+
+A transition from any non-public WordPress status to `publish` is the final point
+at which a public event becomes eligible for occurrence reads. That transition
+therefore repairs the event's bounded occurrence projection from canonical state
+before the request completes, regardless of whether publication came from the
+block editor, Classic Editor, WP-Cron or another WordPress-native workflow.
+
+The hook is event-only and transition-only: unrelated posts and `publish` to
+`publish` updates do no work. The shared type-aware repair service keeps corrupt
+recurrence fail-closed, marks failed work dirty and uses the same bounded
+production horizon as manual maintenance. Public requests may still use the safe
+one-off fallback while a failed projection is repaired, but a successful ordinary
+publication must not leave administrators with a manual **Repair occurrence
+index** step.

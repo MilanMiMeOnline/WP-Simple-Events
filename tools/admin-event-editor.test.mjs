@@ -24,7 +24,7 @@ function control( value = '' ) {
 	};
 }
 
-function editorFixture( { withEditorStore = true } = {} ) {
+function editorFixture( { withEditorStore = true, scheduleOwned = false } = {} ) {
 	const controls = {
 		'#wpse-address': control(),
 		'#wpse-all-day': control(),
@@ -48,11 +48,32 @@ function editorFixture( { withEditorStore = true } = {} ) {
 			querySelector: () => controls[ '#wpse-end-time' ],
 		},
 	];
+	const scheduleFields = { hidden: false };
+	const scheduleIntro = { hidden: false };
+	const scheduleNotice = { hidden: true };
 	const eventFields = {
-		querySelector: ( selector ) => controls[ selector ] ?? null,
+		dataset: {
+			wpseScheduleOwner: scheduleOwned ? 'recurrence' : 'event',
+		},
+		querySelector: ( selector ) => {
+			if ( selector === '[data-wpse-schedule-fields]' ) {
+				return scheduleFields;
+			}
+
+			if ( selector === '[data-wpse-schedule-intro]' ) {
+				return scheduleIntro;
+			}
+
+			if ( selector === '[data-wpse-recurrence-schedule-notice]' ) {
+				return scheduleNotice;
+			}
+
+			return controls[ selector ] ?? null;
+		},
 		querySelectorAll: ( selector ) =>
 			selector === '[data-wpse-time-field]' ? timeWrappers : [],
 	};
+	const documentListeners = new Map();
 	const edits = [];
 	let currentMeta = {
 		_unrelated_plugin_meta: 'preserved',
@@ -92,13 +113,26 @@ function editorFixture( { withEditorStore = true } = {} ) {
 
 	runInNewContext( script, {
 		document: {
+			addEventListener: ( eventName, listener ) => {
+				documentListeners.set( eventName, listener );
+			},
 			querySelector: ( selector ) =>
 				selector === '[data-wpse-event-fields]' ? eventFields : null,
 		},
 		wp: data ? { data } : undefined,
 	} );
 
-	return { controls, edits, timeWrappers };
+	return {
+		controls,
+		edits,
+		eventFields,
+		fireDocumentEvent: ( eventName, detail ) =>
+			documentListeners.get( eventName )?.( { detail } ),
+		scheduleFields,
+		scheduleIntro,
+		scheduleNotice,
+		timeWrappers,
+	};
 }
 
 test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
@@ -161,4 +195,53 @@ test( 'keeps classic-editor time toggling safe when the Gutenberg store is absen
 		controls[ '#wpse-all-day' ].fire( 'change' ),
 	);
 	assert.ok( timeWrappers.every( ( wrapper ) => wrapper.hidden ) );
+} );
+
+test( 'keeps recurrence-owned schedule values out of Gutenberg edits', () => {
+	const {
+		controls,
+		edits,
+		scheduleFields,
+		scheduleIntro,
+		scheduleNotice,
+	} = editorFixture( { scheduleOwned: true } );
+
+	controls[ '#wpse-start-date' ].value = '2099-12-31';
+	controls[ '#wpse-end-date' ].value = '2099-12-31';
+	controls[ '#wpse-venue' ].value = 'Shared series venue';
+	controls[ '#wpse-venue' ].fire( 'input' );
+
+	assert.equal( scheduleFields.hidden, true );
+	assert.equal( scheduleIntro.hidden, true );
+	assert.equal( scheduleNotice.hidden, false );
+	assert.equal( controls[ '#wpse-all-day' ].disabled, true );
+	assert.equal( controls[ '#wpse-start-date' ].disabled, true );
+	assert.equal( controls[ '#wpse-end-date' ].disabled, true );
+	assert.equal( edits.at( -1 ).meta._wpse_start_local, '' );
+	assert.equal( edits.at( -1 ).meta._wpse_end_local, '' );
+	assert.equal( edits.at( -1 ).meta._wpse_venue, 'Shared series venue' );
+} );
+
+test( 'updates native schedule ownership immediately when recurrence changes', () => {
+	const {
+		controls,
+		eventFields,
+		fireDocumentEvent,
+		scheduleFields,
+		scheduleNotice,
+	} = editorFixture();
+
+	fireDocumentEvent( 'wpse:recurrence-state', { recurring: true } );
+
+	assert.equal( eventFields.dataset.wpseScheduleOwner, 'recurrence' );
+	assert.equal( scheduleFields.hidden, true );
+	assert.equal( scheduleNotice.hidden, false );
+	assert.equal( controls[ '#wpse-start-date' ].disabled, true );
+
+	fireDocumentEvent( 'wpse:recurrence-state', { recurring: false } );
+
+	assert.equal( eventFields.dataset.wpseScheduleOwner, 'event' );
+	assert.equal( scheduleFields.hidden, false );
+	assert.equal( scheduleNotice.hidden, true );
+	assert.equal( controls[ '#wpse-start-date' ].disabled, false );
 } );

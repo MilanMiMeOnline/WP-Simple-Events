@@ -28,7 +28,13 @@ final class Activator {
 		}
 
 		( new ContentRegistry() )->register();
-		( new Installer() )->install();
+
+		if ( ! ( new Installer() )->install() ) {
+			wp_die(
+				esc_html__( 'MiMe Simple Events and Calendar could not create its occurrence index. No event content was changed. Check the database permissions and try activation again.', 'mime-simple-events-calendar' )
+			);
+		}
+
 		flush_rewrite_rules( false );
 	}
 }

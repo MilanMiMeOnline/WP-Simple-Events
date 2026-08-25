@@ -19,6 +19,7 @@ const REQUIRED_RELEASE_PATHS = [
 	'assets/src/css/',
 	'assets/dist/js/calendar.min.js',
 	'assets/dist/js/event-fields-editor.min.js',
+	'assets/dist/js/recurrence-editor.min.js',
 ];
 
 const FORBIDDEN_PATH_PARTS = new Set( [

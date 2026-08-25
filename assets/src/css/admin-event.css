@@ -6,6 +6,10 @@
 	margin-top: 0;
 }
 
+.wpse-event-schedule-notice {
+	margin: 0 0 16px;
+}
+
 .wpse-event-fields-all-day label {
 	font-weight: 600;
 }
@@ -29,6 +33,91 @@
 
 .wpse-event-fields-timezone {
 	margin-top: 0;
+}
+
+.wpse-recurrence-editor .components-notice {
+	margin: 0 0 16px;
+}
+
+.wpse-recurrence-editor .wpse-recurrence-weekdays {
+	margin: 0 0 16px;
+	padding: 0;
+	border: 0;
+}
+
+.wpse-recurrence-editor .wpse-recurrence-weekdays legend,
+.wpse-recurrence-editor .wpse-recurrence-summary {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.wpse-recurrence-editor .wpse-recurrence-impact summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.wpse-recurrence-editor .wpse-recurrence-impact ul {
+	max-height: 240px;
+	margin: 8px 0 0 18px;
+	overflow: auto;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-edit-fields {
+	margin: 20px 0 0;
+	padding: 16px 0 0;
+	border: 0;
+	border-top: 1px solid #ddd;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-edit-fields legend {
+	padding: 0;
+	font-weight: 600;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-edit-summary {
+	margin: 8px 0 16px;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-section-title {
+	margin: 20px 0 12px;
+	padding-top: 16px;
+	border-top: 1px solid #ddd;
+	font-size: 13px;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-override-field {
+	margin-bottom: 16px;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-override-field > .components-button {
+	margin-top: -8px;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-field-label {
+	margin: 0 0 8px;
+	font-weight: 600;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-image-preview {
+	display: block;
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	max-height: 160px;
+	margin-bottom: 8px;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-image-field > .components-button {
+	margin: 0 8px 8px 0;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-date-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
+.wpse-recurrence-editor .wpse-occurrence-edit-fields > .components-button {
+	margin: 0 0 16px;
 }
 
 @media (max-width: 782px) {

@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Plugin;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteFeature;
 use MiMe\WPSimpleEvents\Tests\Support\HookRecorder;
+use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -25,6 +27,7 @@ final class PluginTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		HookRecorder::reset();
+		WordPressState::reset();
 	}
 
 	/**
@@ -40,7 +43,7 @@ final class PluginTest extends TestCase {
 	 * Registration defers booting until all plugins are loaded.
 	 */
 	public function test_register_defers_boot_until_plugins_loaded(): void {
-		$plugin = new Plugin();
+		$plugin = new Plugin( new OccurrenceRouteFeature( false ) );
 
 		$plugin->register();
 
@@ -52,8 +55,14 @@ final class PluginTest extends TestCase {
 		$callback();
 
 		self::assertTrue( HookRecorder::was_fired( 'wpse_loaded' ) );
-		self::assertCount( 5, HookRecorder::actions( 'init' ) );
+		self::assertCount( 8, HookRecorder::actions( 'init' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpse_occurrence_index_migrate' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpse_occurrence_generation_cleanup' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpse_occurrence_projection_renewal' ) );
+		self::assertIsCallable( HookRecorder::action( 'before_delete_post' ) );
+		self::assertIsCallable( HookRecorder::action( 'wp_restore_post_revision' ) );
 		self::assertIsCallable( HookRecorder::action( 'enqueue_block_editor_assets' ) );
+		self::assertCount( 2, HookRecorder::actions( 'enqueue_block_editor_assets' ) );
 		self::assertIsCallable( HookRecorder::action( 'block_categories_all' ) );
 		self::assertIsCallable( HookRecorder::action( 'update_option_wpse_archive_slug' ) );
 		self::assertIsCallable( HookRecorder::action( 'add_option_wpse_archive_slug' ) );
@@ -75,13 +84,51 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_event_details' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_calendar' ) );
 		self::assertIsCallable( HookRecorder::action( 'pre_get_posts' ) );
+		self::assertIsCallable( HookRecorder::action( 'posts_pre_query' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_enqueue_scripts' ) );
 		self::assertIsCallable( HookRecorder::action( 'rest_api_init' ) );
+		self::assertCount( 2, HookRecorder::actions( 'rest_api_init' ) );
 		self::assertIsCallable( HookRecorder::action( 'template_include' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_single_template' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_archive_template' ) );
 		self::assertIsCallable( HookRecorder::action( 'elementor/loaded' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_head' ) );
 		self::assertNull( HookRecorder::action( 'elementor/widgets/register' ) );
+		self::assertNull( HookRecorder::action( 'wp' ) );
+		self::assertNull( HookRecorder::action( 'redirect_canonical' ) );
+		self::assertNull( HookRecorder::action( 'wpseo_canonical' ) );
+		self::assertNull( HookRecorder::action( 'rank_math/frontend/canonical' ) );
+		self::assertNull( HookRecorder::action( 'aioseo_canonical_url' ) );
+		self::assertNull( WordPressState::sitemap_provider( 'occurrences' ) );
+	}
+
+	/** Public occurrence routes register through the production default. */
+	public function test_public_occurrence_route_feature_registers_its_hooks_by_default(): void {
+		$plugin = new Plugin();
+
+		$plugin->register();
+		$callback = HookRecorder::action( 'plugins_loaded' );
+
+		self::assertIsCallable( $callback );
+		$callback();
+
+		self::assertCount( 10, HookRecorder::actions( 'init' ) );
+		self::assertCount( 2, HookRecorder::actions( 'query_vars' ) );
+		self::assertIsCallable( HookRecorder::action( 'wp' ) );
+		self::assertCount( 2, HookRecorder::actions( 'wp' ) );
+		self::assertIsCallable( HookRecorder::action( 'redirect_canonical' ) );
+		self::assertIsCallable( HookRecorder::action( 'document_title_parts' ) );
+		self::assertIsCallable( HookRecorder::action( 'get_canonical_url' ) );
+		self::assertCount( 3, HookRecorder::actions( 'rest_api_init' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpseo_canonical' ) );
+		self::assertIsCallable( HookRecorder::action( 'rank_math/frontend/canonical' ) );
+		self::assertIsCallable( HookRecorder::action( 'aioseo_canonical_url' ) );
+
+		$init_callbacks = HookRecorder::actions( 'init' );
+		$init_callbacks[9]();
+		self::assertInstanceOf(
+			\MiMe\WPSimpleEvents\Seo\OccurrenceSitemapProvider::class,
+			WordPressState::sitemap_provider( 'occurrences' )
+		);
 	}
 }

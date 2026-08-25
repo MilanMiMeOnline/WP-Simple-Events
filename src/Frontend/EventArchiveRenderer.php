@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Frontend;
 
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventListView;
+use MiMe\WPSimpleEvents\Query\EventArchiveQuery;
 use MiMe\WPSimpleEvents\Shortcode\EventListAttributes;
 use WP_Post;
 use WP_Query;
@@ -22,12 +23,16 @@ final readonly class EventArchiveRenderer {
 	/**
 	 * Create the archive renderer.
 	 *
-	 * @param EventListRenderer    $events   Shared event collection renderer.
-	 * @param EventArchiveControls $controls Native filter and pagination controls.
+	 * @param EventListRenderer             $events               Shared event collection renderer.
+	 * @param EventArchiveControls          $controls             Native filter and pagination controls.
+	 * @param EventArchiveQuery             $query                Native query and occurrence-page adapter.
+	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
 	 */
 	public function __construct(
 		private EventListRenderer $events = new EventListRenderer(),
-		private EventArchiveControls $controls = new EventArchiveControls()
+		private EventArchiveControls $controls = new EventArchiveControls(),
+		private EventArchiveQuery $query = new EventArchiveQuery(),
+		private OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter()
 	) {}
 
 	/**
@@ -50,6 +55,7 @@ final readonly class EventArchiveRenderer {
 		$page_value          = $query->get( 'paged' );
 		$page                = is_numeric( $page_value ) ? max( 1, (int) $page_value ) : 1;
 		$title               = $is_taxonomy_archive ? get_the_archive_title() : post_type_archive_title( '', false );
+		$occurrence_page     = $this->query->occurrence_page( $query );
 
 		if ( ! is_string( $title ) || '' === trim( $title ) ) {
 			$title = __( 'Events', 'mime-simple-events-calendar' );
@@ -60,14 +66,27 @@ final readonly class EventArchiveRenderer {
 		if ( ! $is_taxonomy_archive ) {
 			$output .= $this->controls->filters( $attributes );
 		}
-		$output .= $this->events->render(
-			$posts,
-			EventListView::GRID,
-			3,
-			$attributes->card_options(),
-			'wpse-archive-results'
-		);
-		$output .= $this->controls->pagination( $page, (int) $query->max_num_pages );
+		if ( null !== $occurrence_page ) {
+			$presented = $this->occurrence_presenter->present( $occurrence_page )
+				?? new OccurrenceCollectionPage( array(), 0, 0 );
+			$output   .= $this->events->render_occurrences(
+				$presented,
+				EventListView::GRID,
+				3,
+				$attributes->card_options(),
+				'wpse-archive-results'
+			);
+			$output   .= $this->controls->pagination( $page, $presented->total_pages );
+		} else {
+			$output .= $this->events->render(
+				$posts,
+				EventListView::GRID,
+				3,
+				$attributes->card_options(),
+				'wpse-archive-results'
+			);
+			$output .= $this->controls->pagination( $page, (int) $query->max_num_pages );
+		}
 
 		return $output . '</section>';
 	}

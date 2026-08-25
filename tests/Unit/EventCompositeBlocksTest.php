@@ -14,13 +14,19 @@ use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockRenderer;
 use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockSettings;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
+use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrencePresentationProvider;
+use MiMe\WPSimpleEvents\Tests\Support\OccurrencePresentationFixture;
 use MiMe\WPSimpleEvents\Tests\Support\RecordingShortcodeRenderer;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use WP_Block;
 use WP_Post;
+use WP_Query;
 
 #[CoversClass( EventCompositeBlockDefinitions::class )]
 #[CoversClass( EventCompositeBlockRenderer::class )]
@@ -203,6 +209,51 @@ final class EventCompositeBlocksTest extends TestCase {
 				new WP_Block( array( 'blockName' => 'wpse/event-details' ) )
 			)
 		);
+	}
+
+	/** Details uses the exact occurrence only for its current-context source. */
+	public function test_details_distinguishes_current_occurrence_from_explicit_series(): void {
+		$this->add_event( 503, 'publish', 'Series details title' );
+		$contexts = new EventContextResolver();
+		$series   = $contexts->resolve_public( 503 );
+
+		self::assertNotNull( $series );
+		$key               = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+		$provider          = new FakeOccurrencePresentationProvider();
+		$provider->context = OccurrencePresentationFixture::create( $series, $key );
+		$route             = new OccurrenceRouteController( $provider );
+		$query             = new WP_Query(
+			array(
+				'wpse_test_request'                  => 'singular',
+				'post_type'                          => EventPostType::POST_TYPE,
+				'p'                                  => 503,
+				OccurrenceRouteController::QUERY_VAR => $key,
+			)
+		);
+
+		self::assertNotNull( $route->resolve( $query ) );
+		$renderer = new EventCompositeBlockRenderer(
+			new RecordingShortcodeRenderer( '' ),
+			new RecordingShortcodeRenderer( '' ),
+			new EventDetailsRenderer( contexts: $contexts ),
+			new CurrentEventPresentationResolver( $contexts, $route )
+		);
+		$block    = new WP_Block(
+			array( 'blockName' => 'wpse/event-details' ),
+			array(
+				'postId'   => 503,
+				'postType' => EventPostType::POST_TYPE,
+			)
+		);
+
+		$current = $renderer->render( array( 'eventId' => 0 ), '', $block );
+		self::assertStringContainsString( 'Occurrence block title', $current );
+		self::assertStringContainsString( 'Occurrence block note', $current );
+		self::assertStringContainsString( 'Occurrence block venue', $current );
+
+		$explicit = $renderer->render( array( 'eventId' => 503 ), '', $block );
+		self::assertStringContainsString( 'Series details title', $explicit );
+		self::assertStringNotContainsString( 'Occurrence block title', $explicit );
 	}
 
 	/**

@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: MiMe Simple Events and Calendar 0.3.0\n"
+"Project-Id-Version: MiMe Simple Events and Calendar 0.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mime-simple-events-calendar\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 #: mime-simple-events-calendar.php
 #: src/Blocks/EventFieldBlockRegistry.php:72
 #: src/Blocks/EventFieldBlockRegistry.php:117
-#: src/Elementor/WidgetRegistrar.php:47
+#: src/Elementor/WidgetRegistrar.php:54
 msgid "MiMe Simple Events and Calendar"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 
 #. Description of the plugin
 #: mime-simple-events-calendar.php
-msgid "A lightweight, native events plugin for WordPress."
+msgid "Lightweight one-off and recurring events for native WordPress, Gutenberg and Elementor."
 msgstr ""
 
 #. Author of the plugin
@@ -101,6 +101,7 @@ msgid "All day"
 msgstr ""
 
 #: src/Admin/EventListTable.php:57
+#: assets/src/js/recurrence-editor.js:1706
 msgid "Location"
 msgstr ""
 
@@ -114,8 +115,9 @@ msgid "Event Categories"
 msgstr ""
 
 #: src/Admin/EventListTable.php:60
-#: src/Admin/EventMetaBox.php:233
-#: src/Content/EventMeta.php:152
+#: src/Admin/EventMetaBox.php:296
+#: src/Content/EventMeta.php:163
+#: assets/src/js/recurrence-editor.js:1667
 msgid "Event status"
 msgstr ""
 
@@ -132,23 +134,25 @@ msgid "No"
 msgstr ""
 
 #: src/Admin/EventListTable.php:103
-#: src/Admin/EventMetaBox.php:227
+#: src/Admin/EventMetaBox.php:290
+#: assets/src/js/recurrence-editor.js:1671
 msgid "Scheduled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:104
-#: src/Admin/EventMetaBox.php:228
-#: src/Frontend/EventFieldRenderer.php:128
-#: src/Frontend/EventRenderer.php:128
-#: src/Shortcode/CalendarShortcode.php:161
+#: src/Admin/EventMetaBox.php:291
+#: src/Frontend/EventFieldRenderer.php:130
+#: src/Frontend/EventRenderer.php:146
+#: src/Shortcode/CalendarShortcode.php:206
 msgid "Cancelled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:105
-#: src/Admin/EventMetaBox.php:229
-#: src/Frontend/EventFieldRenderer.php:129
-#: src/Frontend/EventRenderer.php:129
-#: src/Shortcode/CalendarShortcode.php:162
+#: src/Admin/EventMetaBox.php:292
+#: src/Frontend/EventFieldRenderer.php:131
+#: src/Frontend/EventRenderer.php:147
+#: src/Shortcode/CalendarShortcode.php:207
+#: assets/src/js/recurrence-editor.js:1672
 msgid "Postponed"
 msgstr ""
 
@@ -186,93 +190,115 @@ msgstr ""
 msgid "Not set"
 msgstr ""
 
-#: src/Admin/EventMaintenanceController.php:85
+#: src/Admin/EventMaintenanceController.php:117
 msgid "You are not allowed to run event maintenance."
 msgstr ""
 
-#: src/Admin/EventMaintenanceController.php:86
+#: src/Admin/EventMaintenanceController.php:118
 msgid "Event maintenance denied"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:40
-#: src/Elementor/EventDetailsWidget.php:193
+#: src/Admin/EventMetaBox.php:50
+#: src/Elementor/EventDetailsWidget.php:192
 msgid "Event details"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:63
+#: src/Admin/EventMetaBox.php:83
 msgid "A start is required before an event can be published. Drafts may remain incomplete."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:68
+#: src/Admin/EventMetaBox.php:96
+msgid "This event’s schedule is managed in the block editor."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:97
+msgid "Dates, times, the all-day setting and timezone are managed in the Repeating event panel in the block editor. Choose Complete series, Only this occurrence, or This and following there. The event status below applies to the complete series."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:103
 msgid "Review the copied start and end date before publishing this event."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:75
-#: src/Content/EventMeta.php:91
+#: src/Admin/EventMetaBox.php:121
+#: src/Content/EventMeta.php:102
+#: assets/src/js/recurrence-editor.js:1594
+#: assets/src/js/recurrence-editor.js:1825
 msgid "All-day event"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:80
+#: src/Admin/EventMetaBox.php:126
+#: assets/src/js/recurrence-editor.js:1607
+#: assets/src/js/recurrence-editor.js:1834
 msgid "Start date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:82
+#: src/Admin/EventMetaBox.php:128
+#: assets/src/js/recurrence-editor.js:1616
+#: assets/src/js/recurrence-editor.js:1842
 msgid "Start time"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:84
+#: src/Admin/EventMetaBox.php:130
+#: assets/src/js/recurrence-editor.js:1624
+#: assets/src/js/recurrence-editor.js:1849
 msgid "End date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:86
+#: src/Admin/EventMetaBox.php:132
+#: assets/src/js/recurrence-editor.js:1633
+#: assets/src/js/recurrence-editor.js:1857
 msgid "End time"
 msgstr ""
 
 #. translators: %s: Event timezone identifier.
-#: src/Admin/EventMetaBox.php:94
+#: src/Admin/EventMetaBox.php:140
 #, php-format
 msgid "Timezone: %s. Existing events keep their saved timezone."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:100
+#: src/Admin/EventMetaBox.php:146
 msgid "Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:104
-#: src/Content/EventMeta.php:107
+#: src/Admin/EventMetaBox.php:161
+#: src/Content/EventMeta.php:118
 #: src/Elementor/EventVenueWidget.php:46
+#: assets/src/js/recurrence-editor.js:1709
 msgid "Venue"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:108
-#: src/Content/EventMeta.php:115
+#: src/Admin/EventMetaBox.php:165
+#: src/Content/EventMeta.php:126
+#: assets/src/js/recurrence-editor.js:1724
 msgid "Address"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:110
-#: src/Content/EventMeta.php:123
+#: src/Admin/EventMetaBox.php:167
+#: src/Content/EventMeta.php:134
+#: assets/src/js/recurrence-editor.js:1740
 msgid "Location URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:110
+#: src/Admin/EventMetaBox.php:167
 msgid "Optional route or location page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:113
-#: src/Content/EventMeta.php:131
+#: src/Admin/EventMetaBox.php:170
+#: src/Content/EventMeta.php:142
+#: assets/src/js/recurrence-editor.js:1764
 msgid "External event URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:113
+#: src/Admin/EventMetaBox.php:170
 msgid "Optional information or registration page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:114
-#: src/Content/EventMeta.php:139
+#: src/Admin/EventMetaBox.php:171
+#: src/Content/EventMeta.php:150
 msgid "External event link label"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:114
+#: src/Admin/EventMetaBox.php:171
 msgid "Optional link text. The default is “More event information”."
 msgstr ""
 
@@ -280,172 +306,271 @@ msgstr ""
 msgid "The event details were not saved because they need attention."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:71
+#: src/Admin/EventSettingsPage.php:77
 #: assets/src/js/event-fields-editor.js:314
 #: assets/src/js/event-fields-editor.js:650
 msgid "Event settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:72
+#: src/Admin/EventSettingsPage.php:78
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:118
+#: src/Admin/EventSettingsPage.php:124
 msgid "Event archive"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:125
+#: src/Admin/EventSettingsPage.php:131
 msgid "Archive slug"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:134
+#: src/Admin/EventSettingsPage.php:140
 #: src/Elementor/EventListWidget.php:84
 #: assets/src/js/event-fields-editor.js:474
 msgid "Events per page"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:143
+#: src/Admin/EventSettingsPage.php:149
 msgid "Default period"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:163
+#: src/Admin/EventSettingsPage.php:169
 msgid "Display"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:170
+#: src/Admin/EventSettingsPage.php:176
 msgid "Site timezone"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:189
+#: src/Admin/EventSettingsPage.php:195
 msgid "Public event timezone"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:198
+#: src/Admin/EventSettingsPage.php:204
 msgid "Event structured data"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:218
+#: src/Admin/EventSettingsPage.php:224
 msgid "Data ownership"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:225
+#: src/Admin/EventSettingsPage.php:231
 msgid "Delete plugin data"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:247
+#: src/Admin/EventSettingsPage.php:253
 msgid "You are not allowed to manage event settings."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:269
+#: src/Admin/EventSettingsPage.php:275
 msgid "Configure the native event archive. Visitors can still switch between upcoming, past and all events with the archive filter."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:280
+#: src/Admin/EventSettingsPage.php:286
 msgid "One URL segment without slashes. This also changes individual event URLs; existing links are not redirected. Saving a changed slug rebuilds WordPress permalink rules once."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:291
+#: src/Admin/EventSettingsPage.php:297
 msgid "Between 1 and 50 public events per archive page."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:303
+#: src/Admin/EventSettingsPage.php:309
 msgid "Upcoming and active events"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:304
+#: src/Admin/EventSettingsPage.php:310
 msgid "All events, including past events"
 msgstr ""
 
 #. translators: %s: configured event archive path.
-#: src/Admin/EventSettingsPage.php:331
+#: src/Admin/EventSettingsPage.php:337
 #, php-format
 msgid "The event archive and an existing WordPress page both use /%s/. Keep this slug to use the native event archive at that address, or change it below so the page can use the address."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:343
+#: src/Admin/EventSettingsPage.php:349
 msgid "Control plugin output that may overlap with your theme or SEO plugin."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:355
+#: src/Admin/EventSettingsPage.php:361
 msgid "New events capture this timezone. Existing events keep the timezone saved with them when the WordPress setting changes."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:357
+#: src/Admin/EventSettingsPage.php:363
 msgid "This fixed UTC offset does not adjust for daylight saving time."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:360
+#: src/Admin/EventSettingsPage.php:366
 msgid "Change the site timezone in WordPress General Settings"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:375
+#: src/Admin/EventSettingsPage.php:381
 msgid "Show the captured timezone and applicable UTC offset with timed event details."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:377
+#: src/Admin/EventSettingsPage.php:383
 msgid "All-day events omit timezone information. This setting changes presentation only, never saved event dates or times."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:386
+#: src/Admin/EventSettingsPage.php:392
 msgid "Event content is preserved when the plugin is deactivated or deleted unless you explicitly choose otherwise below."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:401
+#: src/Admin/EventSettingsPage.php:407
 msgid "Output JSON-LD on individual public event pages."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:404
+#: src/Admin/EventSettingsPage.php:410
 msgid "Disable this when another SEO plugin already outputs Event structured data."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:419
+#: src/Admin/EventSettingsPage.php:425
 msgid "Permanently delete events, event categories, event tags, plugin settings and event capabilities when the plugin is deleted."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:422
+#: src/Admin/EventSettingsPage.php:428
 msgid "This cannot be undone."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:423
+#: src/Admin/EventSettingsPage.php:429
 msgid " Uploaded media is retained because it may be used elsewhere. Deactivation never deletes data."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:437
+#: src/Admin/EventSettingsPage.php:443
 msgid "Maintenance"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:438
+#: src/Admin/EventSettingsPage.php:444
 msgid "Use these tools only to repair existing event data. They do not change event content or presentation settings."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:442
+#: src/Admin/EventSettingsPage.php:450
 msgid "Repair event capabilities"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:444
+#: src/Admin/EventSettingsPage.php:452
 msgid "Restores the documented event permissions for administrators and editors without changing other role permissions."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:457
+#: src/Admin/EventSettingsPage.php:465
 msgid "Continue rebuilding date indexes"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:458
+#: src/Admin/EventSettingsPage.php:466
 msgid "Rebuild event date indexes"
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:465
+#: src/Admin/EventSettingsPage.php:473
 msgid "Recalculates only derived UTC indexes from validated local event dates, in batches of 50. Invalid events are skipped for manual review."
 msgstr ""
 
-#: src/Admin/EventSettingsPage.php:534
+#: src/Admin/EventSettingsPage.php:485
+msgid "Occurrence index"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:487
+msgid "Healthy"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:487
+#: src/Admin/OccurrenceSiteHealthController.php:67
+msgid "Public events have a complete derived occurrence index."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:489
+msgid "Building"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:489
+msgid "Existing events are being indexed in bounded background batches. Public occurrence features remain unavailable until this finishes."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:491
+msgid "Unavailable"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:491
+msgid "The occurrence storage schema is not ready. Reload this page after WordPress has completed the plugin upgrade."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:493
+msgid "Repair needed"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:493
+msgid "At least one public event has no complete occurrence projection or was marked dirty after an interrupted change."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:508
+msgid "Continue occurrence index repair"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:509
+msgid "Repair occurrence index"
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:516
+msgid "Rebuilds derived occurrence rows from canonical event data in batches of 25. It never changes event content, recurrence rules or publication state."
+msgstr ""
+
+#: src/Admin/EventSettingsPage.php:606
 msgid "Event capabilities were restored for administrators and editors."
 msgstr ""
 
+#. translators: 1: inspected events, 2: repaired events, 3: invalid events, 4: failed writes.
+#: src/Admin/EventSettingsPage.php:618
+#, php-format
+msgid "Occurrence index maintenance inspected %1$d events: %2$d repaired, %3$d invalid and %4$d failed."
+msgstr ""
+
 #. translators: 1: processed events, 2: changed indexes, 3: invalid skipped events, 4: failed writes.
-#: src/Admin/EventSettingsPage.php:545
+#: src/Admin/EventSettingsPage.php:636
 #, php-format
 msgid "Date index maintenance inspected %1$d events: %2$d changed, %3$d skipped as invalid and %4$d write failures."
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:47
+msgid "Event occurrence index"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:65
+msgid "The event occurrence index is healthy"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:70
+msgid "The event occurrence index is building"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:72
+msgid "Existing events are being indexed in bounded background batches."
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:75
+msgid "The event occurrence index needs repair"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:77
+msgid "At least one public event has no complete occurrence projection or is marked dirty."
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:80
+msgid "The event occurrence index is unavailable"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:82
+msgid "The occurrence storage schema is not ready."
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:86
+msgid "Open event maintenance"
+msgstr ""
+
+#: src/Admin/OccurrenceSiteHealthController.php:93
+#: src/Content/EventPostType.php:93
+#: src/Content/EventPostType.php:95
+#: src/Elementor/EventListWidget.php:52
+#: src/Frontend/EventArchiveRenderer.php:61
+msgid "Events"
 msgstr ""
 
 #: src/Application/EventValidationMessages.php:23
@@ -496,97 +621,146 @@ msgstr ""
 msgid "A complete flexible event layout built from individual MiMe Simple Events and Calendar blocks."
 msgstr ""
 
-#: src/Content/EventMeta.php:59
+#: src/Content/EventMeta.php:70
 msgid "Event start"
 msgstr ""
 
-#: src/Content/EventMeta.php:60
+#: src/Content/EventMeta.php:71
 msgid "Canonical local event start."
 msgstr ""
 
-#: src/Content/EventMeta.php:67
+#: src/Content/EventMeta.php:78
 msgid "Event end"
 msgstr ""
 
-#: src/Content/EventMeta.php:68
+#: src/Content/EventMeta.php:79
 msgid "Canonical local event end."
 msgstr ""
 
-#: src/Content/EventMeta.php:75
+#: src/Content/EventMeta.php:86
 msgid "Event start UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:76
+#: src/Content/EventMeta.php:87
 msgid "Internal UTC start timestamp used for sorting."
 msgstr ""
 
-#: src/Content/EventMeta.php:83
+#: src/Content/EventMeta.php:94
 msgid "Event end UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:84
+#: src/Content/EventMeta.php:95
 msgid "Internal inclusive UTC end timestamp used for chronological period queries."
 msgstr ""
 
-#: src/Content/EventMeta.php:92
+#: src/Content/EventMeta.php:103
 msgid "Whether the event uses inclusive dates without visible times."
 msgstr ""
 
-#: src/Content/EventMeta.php:99
+#: src/Content/EventMeta.php:110
 msgid "Event timezone"
 msgstr ""
 
-#: src/Content/EventMeta.php:100
+#: src/Content/EventMeta.php:111
 msgid "IANA timezone or WordPress fixed UTC offset used when the event was saved."
 msgstr ""
 
-#: src/Content/EventMeta.php:108
+#: src/Content/EventMeta.php:119
 msgid "Event location or venue name."
 msgstr ""
 
-#: src/Content/EventMeta.php:116
+#: src/Content/EventMeta.php:127
 msgid "Readable event address."
 msgstr ""
 
-#: src/Content/EventMeta.php:124
+#: src/Content/EventMeta.php:135
 msgid "Optional external HTTP(S) route or location URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:132
+#: src/Content/EventMeta.php:143
 msgid "Optional external HTTP(S) information or registration URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:140
+#: src/Content/EventMeta.php:151
 msgid "Optional plain-text label for the external event link."
 msgstr ""
 
-#: src/Content/EventMeta.php:153
+#: src/Content/EventMeta.php:164
 msgid "Scheduled, cancelled or postponed; separate from publication status."
 msgstr ""
 
-#: src/Content/EventMeta.php:165
+#: src/Content/EventMeta.php:176
 msgid "Copied event dates need review"
 msgstr ""
 
-#: src/Content/EventMeta.php:166
+#: src/Content/EventMeta.php:177
 msgid "Internal editor flag set when event dates were duplicated."
+msgstr ""
+
+#: src/Content/EventMeta.php:184
+msgid "Event series UID"
+msgstr ""
+
+#: src/Content/EventMeta.php:185
+msgid "Internal immutable identity shared by an event series and its occurrences."
+msgstr ""
+
+#: src/Content/EventMeta.php:192
+msgid "Active occurrence generation"
+msgstr ""
+
+#: src/Content/EventMeta.php:193
+msgid "Internal generation token for the complete active occurrence projection."
+msgstr ""
+
+#: src/Content/EventMeta.php:200
+msgid "Occurrence index needs repair"
+msgstr ""
+
+#: src/Content/EventMeta.php:201
+msgid "Internal recovery marker set when occurrence projection could not complete."
+msgstr ""
+
+#: src/Content/EventMeta.php:208
+msgid "Occurrence coverage start"
+msgstr ""
+
+#: src/Content/EventMeta.php:209
+msgid "Internal inclusive local start of the active recurring projection."
+msgstr ""
+
+#: src/Content/EventMeta.php:216
+msgid "Occurrence coverage end"
+msgstr ""
+
+#: src/Content/EventMeta.php:217
+msgid "Internal inclusive local end of the active recurring projection."
+msgstr ""
+
+#: src/Content/EventMeta.php:224
+msgid "Occurrence coverage generation"
+msgstr ""
+
+#: src/Content/EventMeta.php:225
+msgid "Internal generation token binding recurring coverage to its active projection."
+msgstr ""
+
+#: src/Content/EventMeta.php:232
+msgid "Event recurrence definition"
+msgstr ""
+
+#: src/Content/EventMeta.php:233
+msgid "Internal versioned recurrence aggregate."
 msgstr ""
 
 #: src/Content/EventPostType.php:45
 msgid "Events with a date, status and optional location."
 msgstr ""
 
-#: src/Content/EventPostType.php:93
-#: src/Content/EventPostType.php:95
-#: src/Elementor/EventListWidget.php:52
-#: src/Frontend/EventArchiveRenderer.php:55
-msgid "Events"
-msgstr ""
-
 #: src/Content/EventPostType.php:94
 #: src/Content/EventPostType.php:96
-#: src/Elementor/AbstractEventFieldWidget.php:210
-#: src/Elementor/EventDetailsWidget.php:87
+#: src/Elementor/AbstractEventFieldWidget.php:221
+#: src/Elementor/EventDetailsWidget.php:86
 msgid "Event"
 msgstr ""
 
@@ -830,50 +1004,50 @@ msgstr ""
 msgid "Back to event tags"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:113
+#: src/Elementor/AbstractEventFieldWidget.php:124
 #: assets/src/js/event-fields-editor.js:291
 msgid "This event field has no public value for the selected or current event."
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:138
+#: src/Elementor/AbstractEventFieldWidget.php:149
 #: assets/src/js/event-fields-editor.js:252
 msgid "Show label"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:140
+#: src/Elementor/AbstractEventFieldWidget.php:151
 msgid "Show"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:141
+#: src/Elementor/AbstractEventFieldWidget.php:152
 msgid "Hide"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:149
+#: src/Elementor/AbstractEventFieldWidget.php:160
 #: assets/src/js/event-fields-editor.js:258
 msgid "Label text"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:203
+#: src/Elementor/AbstractEventFieldWidget.php:214
 #: assets/src/js/event-fields-editor.js:188
 msgid "Event source"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:211
+#: src/Elementor/AbstractEventFieldWidget.php:222
 msgid "Select a public event for a static page, or leave empty to use the current event."
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:246
+#: src/Elementor/AbstractEventFieldWidget.php:259
 msgid "Style"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:255
+#: src/Elementor/AbstractEventFieldWidget.php:268
 #: src/Elementor/EventCalendarWidget.php:198
-#: src/Elementor/EventDetailsWidget.php:200
+#: src/Elementor/EventDetailsWidget.php:199
 #: src/Elementor/EventListWidget.php:233
 msgid "Text color"
 msgstr ""
 
-#: src/Elementor/AbstractEventFieldWidget.php:272
+#: src/Elementor/AbstractEventFieldWidget.php:285
 msgid "Bottom spacing"
 msgstr ""
 
@@ -960,7 +1134,7 @@ msgid "Fallback heading level"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:181
-#: src/Shortcode/CalendarShortcode.php:147
+#: src/Shortcode/CalendarShortcode.php:192
 #: assets/src/js/event-fields-editor.js:527
 #: assets/src/js/event-fields-editor.js:545
 msgid "Month"
@@ -968,7 +1142,7 @@ msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:182
 #: src/Elementor/EventListWidget.php:64
-#: src/Shortcode/CalendarShortcode.php:148
+#: src/Shortcode/CalendarShortcode.php:193
 #: assets/src/js/event-fields-editor.js:457
 #: assets/src/js/event-fields-editor.js:528
 #: assets/src/js/event-fields-editor.js:546
@@ -984,7 +1158,7 @@ msgid "Accent text color"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:222
-#: src/Elementor/EventDetailsWidget.php:216
+#: src/Elementor/EventDetailsWidget.php:215
 msgid "Border color"
 msgstr ""
 
@@ -1057,7 +1231,7 @@ msgid "Categories"
 msgstr ""
 
 #: src/Elementor/EventCategoriesWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:270
+#: src/Frontend/EventFieldRenderer.php:283
 #: assets/src/js/event-fields-editor.js:168
 msgid "Categories:"
 msgstr ""
@@ -1077,189 +1251,189 @@ msgid "Date and time"
 msgstr ""
 
 #: src/Elementor/EventDateTimeWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:103
+#: src/Frontend/EventFieldRenderer.php:105
 #: assets/src/js/event-fields-editor.js:84
 msgid "Date and time:"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:65
+#: src/Elementor/EventDetailsWidget.php:64
 #: assets/src/js/event-fields-editor.js:411
 msgid "Event Details"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:94
+#: src/Elementor/EventDetailsWidget.php:93
 msgid "Preview event"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:95
+#: src/Elementor/EventDetailsWidget.php:94
 msgid "Optional. On an event template, leave empty to use the current event."
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:104
+#: src/Elementor/EventDetailsWidget.php:103
 #: src/Elementor/EventListWidget.php:183
 #: assets/src/js/event-fields-editor.js:501
 #: assets/src/js/event-fields-editor.js:580
 msgid "Show title"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:105
+#: src/Elementor/EventDetailsWidget.php:104
 #: src/Elementor/EventListWidget.php:182
 #: assets/src/js/event-fields-editor.js:500
 #: assets/src/js/event-fields-editor.js:581
 msgid "Show image"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:106
+#: src/Elementor/EventDetailsWidget.php:105
 #: src/Elementor/EventListWidget.php:184
 #: assets/src/js/event-fields-editor.js:502
 #: assets/src/js/event-fields-editor.js:582
 msgid "Show date and time"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:107
+#: src/Elementor/EventDetailsWidget.php:106
 #: assets/src/js/event-fields-editor.js:583
 msgid "Show event status"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:108
+#: src/Elementor/EventDetailsWidget.php:107
 #: assets/src/js/event-fields-editor.js:584
 msgid "Show location details"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:109
+#: src/Elementor/EventDetailsWidget.php:108
 #: assets/src/js/event-fields-editor.js:585
 msgid "Show content"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:110
+#: src/Elementor/EventDetailsWidget.php:109
 #: assets/src/js/event-fields-editor.js:586
 msgid "Show external action"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:111
+#: src/Elementor/EventDetailsWidget.php:110
 #: assets/src/js/event-fields-editor.js:587
 msgid "Show categories and tags"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:127
+#: src/Elementor/EventDetailsWidget.php:126
 #: src/Elementor/EventListWidget.php:148
 #: assets/src/js/event-fields-editor.js:492
 #: assets/src/js/event-fields-editor.js:596
 msgid "Title heading level"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:143
+#: src/Elementor/EventDetailsWidget.php:142
 #: assets/src/js/event-fields-editor.js:602
 msgid "Date label"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:144
+#: src/Elementor/EventDetailsWidget.php:143
 #: assets/src/js/event-fields-editor.js:603
 msgid "Venue label"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:145
+#: src/Elementor/EventDetailsWidget.php:144
 #: assets/src/js/event-fields-editor.js:604
 msgid "Location link text"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:146
+#: src/Elementor/EventDetailsWidget.php:145
 #: assets/src/js/event-fields-editor.js:605
 msgid "External action text"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:147
+#: src/Elementor/EventDetailsWidget.php:146
 #: assets/src/js/event-fields-editor.js:606
 msgid "Categories label"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:148
+#: src/Elementor/EventDetailsWidget.php:147
 #: assets/src/js/event-fields-editor.js:607
 msgid "Tags label"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:156
+#: src/Elementor/EventDetailsWidget.php:155
 msgid "Use event default"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:178
+#: src/Elementor/EventDetailsWidget.php:177
 msgid "Select a public event for this preview, or use the widget in an Event template."
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:208
+#: src/Elementor/EventDetailsWidget.php:207
 #: src/Elementor/EventListWidget.php:241
 msgid "Secondary text color"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:224
+#: src/Elementor/EventDetailsWidget.php:223
 #: src/Elementor/EventListWidget.php:257
 msgid "Spacing"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:233
+#: src/Elementor/EventDetailsWidget.php:232
 msgid "Summary background color"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:241
+#: src/Elementor/EventDetailsWidget.php:240
 msgid "Summary padding"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:257
+#: src/Elementor/EventDetailsWidget.php:256
 msgid "Summary border radius"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:266
+#: src/Elementor/EventDetailsWidget.php:265
 #: src/Elementor/EventListWidget.php:304
 msgid "Image aspect ratio"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:269
+#: src/Elementor/EventDetailsWidget.php:268
 #: src/Elementor/EventFeaturedImageWidget.php:141
 #: src/Elementor/EventListWidget.php:307
 msgid "Original"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:270
+#: src/Elementor/EventDetailsWidget.php:269
 #: src/Elementor/EventFeaturedImageWidget.php:142
 #: src/Elementor/EventListWidget.php:308
 msgid "Landscape 16:9"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:271
+#: src/Elementor/EventDetailsWidget.php:270
 #: src/Elementor/EventFeaturedImageWidget.php:143
 #: src/Elementor/EventListWidget.php:309
 msgid "Landscape 3:2"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:272
+#: src/Elementor/EventDetailsWidget.php:271
 #: src/Elementor/EventFeaturedImageWidget.php:144
 #: src/Elementor/EventListWidget.php:310
 msgid "Square 1:1"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:273
+#: src/Elementor/EventDetailsWidget.php:272
 #: src/Elementor/EventFeaturedImageWidget.php:145
 #: src/Elementor/EventListWidget.php:311
 msgid "Portrait 4:5"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:281
+#: src/Elementor/EventDetailsWidget.php:280
 msgid "Image border radius"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:290
+#: src/Elementor/EventDetailsWidget.php:289
 msgid "Action background color"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:298
+#: src/Elementor/EventDetailsWidget.php:297
 msgid "Action text color"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:306
+#: src/Elementor/EventDetailsWidget.php:305
 msgid "Action padding"
 msgstr ""
 
-#: src/Elementor/EventDetailsWidget.php:322
+#: src/Elementor/EventDetailsWidget.php:321
 msgid "Action border radius"
 msgstr ""
 
@@ -1274,6 +1448,7 @@ msgid "External Event Action"
 msgstr ""
 
 #: src/Elementor/EventExternalActionWidget.php:47
+#: assets/src/js/recurrence-editor.js:1761
 msgid "External action"
 msgstr ""
 
@@ -1524,7 +1699,7 @@ msgid "Link text"
 msgstr ""
 
 #: src/Elementor/EventLocationLinkWidget.php:55
-#: src/Frontend/EventFieldRenderer.php:178
+#: src/Frontend/EventFieldRenderer.php:180
 #: assets/src/js/event-fields-editor.js:270
 msgid "View location"
 msgstr ""
@@ -1535,7 +1710,7 @@ msgid "Event Status"
 msgstr ""
 
 #: src/Elementor/EventTagsWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:291
+#: src/Frontend/EventFieldRenderer.php:304
 #: assets/src/js/event-fields-editor.js:182
 msgid "Tags:"
 msgstr ""
@@ -1556,8 +1731,8 @@ msgid "Event Venue"
 msgstr ""
 
 #: src/Elementor/EventVenueWidget.php:50
-#: src/Frontend/EventFieldRenderer.php:151
-#: src/Frontend/EventRenderer.php:101
+#: src/Frontend/EventFieldRenderer.php:153
+#: src/Frontend/EventRenderer.php:105
 #: assets/src/js/event-fields-editor.js:106
 msgid "Location:"
 msgstr ""
@@ -1592,13 +1767,13 @@ msgid "Apply filters"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:82
-#: src/Shortcode/CalendarShortcode.php:144
+#: src/Shortcode/CalendarShortcode.php:189
 #: src/Shortcode/EventListControls.php:102
 msgid "Previous"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:83
-#: src/Shortcode/CalendarShortcode.php:145
+#: src/Shortcode/CalendarShortcode.php:190
 #: src/Shortcode/EventListControls.php:103
 msgid "Next"
 msgstr ""
@@ -1630,17 +1805,17 @@ msgstr ""
 msgid "%1$s (UTC%2$s → UTC%3$s)"
 msgstr ""
 
-#: src/Frontend/EventFieldRenderer.php:247
+#: src/Frontend/EventFieldRenderer.php:260
+#: src/Rest/OccurrenceRestSerializer.php:116
 msgid "More event information"
 msgstr ""
 
-#: src/Frontend/EventListRenderer.php:56
-#: src/Shortcode/CalendarShortcode.php:150
+#: src/Frontend/EventListRenderer.php:101
+#: src/Shortcode/CalendarShortcode.php:195
 msgid "No events match your selection."
 msgstr ""
 
 #: src/Frontend/EventPresentationFactory.php:44
-#: src/Frontend/EventRenderer.php:60
 msgid "Untitled event"
 msgstr ""
 
@@ -1648,31 +1823,40 @@ msgstr ""
 msgid "MiMe Simple Events and Calendar must currently be activated separately on each site in a multisite network."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:86
+#: src/Lifecycle/Activator.php:34
+msgid "MiMe Simple Events and Calendar could not create its occurrence index. No event content was changed. Check the database permissions and try activation again."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:99
 msgid "The requested calendar period is invalid or exceeds four hundred days."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:121
+#: src/Rest/CalendarFeedController.php:146
+#: src/Rest/CalendarFeedController.php:159
+msgid "The occurrence calendar is temporarily unavailable."
+msgstr ""
+
+#: src/Rest/CalendarFeedController.php:182
 msgid "Inclusive local-midnight ISO 8601 calendar start with timezone."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:127
+#: src/Rest/CalendarFeedController.php:188
 msgid "Exclusive local-midnight ISO 8601 calendar end with timezone."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:133
+#: src/Rest/CalendarFeedController.php:194
 msgid "Comma-separated event category slugs."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:140
+#: src/Rest/CalendarFeedController.php:201
 msgid "Comma-separated event tag slugs."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:147
+#: src/Rest/CalendarFeedController.php:208
 msgid "Current result page."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:154
+#: src/Rest/CalendarFeedController.php:215
 msgid "Maximum events per result page."
 msgstr ""
 
@@ -1680,12 +1864,94 @@ msgstr ""
 msgid "The event could not be saved because its details are invalid."
 msgstr ""
 
+#: src/Rest/OccurrenceRestController.php:56
+msgid "Canonical public event post ID."
+msgstr ""
+
+#: src/Rest/OccurrenceRestController.php:63
+msgid "Stable lowercase public occurrence key."
+msgstr ""
+
+#: src/Rest/OccurrenceRestController.php:131
+msgid "The requested event occurrence was not found."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:430
+msgid "Canonical event post ID."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:450
+msgid "Complete versioned recurrence aggregate."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:456
+msgid "Explicit recurrence edit scope."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:462
+msgid "Selected recurrence identity, or an empty string for complete-series edits."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:469
+#: src/Rest/RecurrenceEditorController.php:549
+#: src/Rest/RecurrenceEditorController.php:579
+msgid "Exact canonical recurrence revision used by the editor."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:478
+msgid "Server-signed confirmation for this exact preview."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:496
+msgid "Inclusive canonical preview start date."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:502
+msgid "Inclusive canonical preview end date."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:508
+msgid "Maximum projected preview rows."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:525
+msgid "Exact recurrence identity selected for occurrence editing."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:542
+msgid "Generated occurrence identity where the replacement schedule begins."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:555
+msgid "Replacement date template and recurrence definition."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:572
+msgid "Exact recurrence identity retained as a one-off event."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:588
+msgid "Server-signed confirmation for this exact destructive preview."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:693
+msgid "The recurrence request is incomplete or invalid."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:715
+msgid "The recurrence change could not be completed. Reload the event and review the proposed changes."
+msgstr ""
+
+#: src/Rest/RecurrenceEditorController.php:740
+msgid "The recurrence change was not completed. No stale occurrence data will be shown."
+msgstr ""
+
 #: src/Shortcode/CalendarControls.php:50
 msgid "Filter calendar"
 msgstr ""
 
 #: src/Shortcode/CalendarControls.php:65
-#: src/Shortcode/CalendarShortcode.php:87
+#: src/Shortcode/CalendarShortcode.php:108
 #: src/Shortcode/EventListControls.php:71
 msgid "Reset filters"
 msgstr ""
@@ -1695,50 +1961,50 @@ msgstr ""
 msgid "Choose one or more. Leave all unselected to include every available option."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:85
+#: src/Shortcode/CalendarShortcode.php:106
 msgid "Events calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:91
+#: src/Shortcode/CalendarShortcode.php:112
 msgid "Upcoming events"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:146
+#: src/Shortcode/CalendarShortcode.php:191
 msgid "Today"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:149
+#: src/Shortcode/CalendarShortcode.php:194
 msgid "Loading events…"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:151
+#: src/Shortcode/CalendarShortcode.php:196
 msgid "1 event loaded."
 msgstr ""
 
 #. Translators: %d is the number of loaded events.
-#: src/Shortcode/CalendarShortcode.php:153
+#: src/Shortcode/CalendarShortcode.php:198
 #, php-format
 msgid "%d events loaded."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:154
+#: src/Shortcode/CalendarShortcode.php:199
 msgid "The calendar could not be loaded. The event list remains available below."
 msgstr ""
 
 #. Translators: %d is the maximum number of events currently shown.
-#: src/Shortcode/CalendarShortcode.php:156
+#: src/Shortcode/CalendarShortcode.php:201
 #, php-format
 msgid "Only the first %d events are shown. Narrow the calendar period or filters."
 msgstr ""
 
 #. Translators: %d is the number of additional events on a calendar day.
-#: src/Shortcode/CalendarShortcode.php:158
+#: src/Shortcode/CalendarShortcode.php:203
 #, php-format
 msgid "%d more"
 msgstr ""
 
 #. Translators: %s is the translated name of the calendar view.
-#: src/Shortcode/CalendarShortcode.php:160
+#: src/Shortcode/CalendarShortcode.php:205
 #, php-format
 msgid "%s view"
 msgstr ""
@@ -1837,4 +2103,750 @@ msgstr ""
 
 #: assets/src/js/event-fields-editor.js:633
 msgid "No public event output is available for the current settings or context."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:48
+msgid "Monday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:49
+msgid "Tuesday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:50
+msgid "Wednesday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:51
+msgid "Thursday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:52
+msgid "Friday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:53
+msgid "Saturday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:54
+msgid "Sunday"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:165
+msgid "Choose how this event repeats."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:171
+msgid "Repeat interval must be between 1 and 999."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:179
+msgid "Weekly recurrence must include the schedule’s first weekday."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:189
+msgid "Selected dates must include the schedule’s first date."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:195
+msgid "Choose a valid inclusive end date."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:199
+msgid "The recurrence end cannot be before the first event."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:207
+msgid "Number of events must be between 1 and 10,000."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:218
+msgid "day"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:219
+msgid "days"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:222
+msgid "week"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:223
+msgid "weeks"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:226
+msgid "month"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:227
+msgid "months"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:230
+msgid "year"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:231
+msgid "years"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:236
+msgid "This event does not repeat."
+msgstr ""
+
+#. translators: %d: number of selected event dates.
+#: assets/src/js/recurrence-editor.js:246
+#, js-format
+msgid "Repeats on %d selected dates."
+msgstr ""
+
+#. translators: %s: day, week, month or year.
+#: assets/src/js/recurrence-editor.js:256
+#, js-format
+msgid "Repeats every %s"
+msgstr ""
+
+#. translators: 1: interval number, 2: plural unit such as days or weeks.
+#: assets/src/js/recurrence-editor.js:261
+#, js-format
+msgid "Repeats every %1$d %2$s"
+msgstr ""
+
+#. translators: %s: inclusive recurrence end date.
+#: assets/src/js/recurrence-editor.js:269
+#, js-format
+msgid "through %s."
+msgstr ""
+
+#. translators: %d: total number of scheduled occurrences.
+#: assets/src/js/recurrence-editor.js:275
+#, js-format
+msgid "%d times."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:279
+msgid "with no end date."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:331
+msgid "scheduled"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:332
+msgid "cancelled"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:333
+msgid "postponed"
+msgstr ""
+
+#. translators: 1: local event start, 2: event status.
+#: assets/src/js/recurrence-editor.js:338
+#, js-format
+msgid "%1$s — %2$s"
+msgstr ""
+
+#. translators: %d: added events.
+#: assets/src/js/recurrence-editor.js:348
+#, js-format
+msgid "%d added"
+msgstr ""
+
+#. translators: %d: removed events.
+#: assets/src/js/recurrence-editor.js:353
+#, js-format
+msgid "%d removed"
+msgstr ""
+
+#. translators: %d: moved events.
+#: assets/src/js/recurrence-editor.js:358
+#, js-format
+msgid "%d moved"
+msgstr ""
+
+#. translators: %d: events with a changed status.
+#: assets/src/js/recurrence-editor.js:363
+#, js-format
+msgid "%d status changes"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:370
+msgid "added"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:371
+msgid "removed"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:372
+msgid "moved"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:373
+msgid "status changed"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:374
+msgid "source changed"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:382
+msgid "individual fields changed"
+msgstr ""
+
+#. translators: 1: previous local start, 2: new local start, 3: change summary.
+#: assets/src/js/recurrence-editor.js:390
+#, js-format
+msgid "%1$s → %2$s: %3$s"
+msgstr ""
+
+#. translators: 1: effective local start, 2: change summary.
+#: assets/src/js/recurrence-editor.js:399
+#, js-format
+msgid "%1$s: %2$s"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:407
+msgid "Inherited from the series. Editing creates an individual value for this occurrence."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:414
+msgid "The series value is hidden for this occurrence."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:420
+msgid "This occurrence uses an individual value."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:460
+msgid "Use series value"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:485
+#: assets/src/js/recurrence-editor.js:490
+msgid "Featured image"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:510
+msgid "You do not have permission to choose an image."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:526
+msgid "Replace image"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:527
+msgid "Choose image"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:539
+msgid "Hide image for this occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:549
+msgid "Use series image"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:618
+msgid "Does not repeat"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:621
+msgid "Daily"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:622
+msgid "Weekly"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:623
+msgid "Monthly"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:624
+msgid "Yearly"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:626
+msgid "Selected dates"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:678
+msgid "Save valid event dates before configuring recurrence."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:770
+msgid "The occurrences could not be loaded. Reload the event and try again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:839
+msgid "Choose an occurrence to edit."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:876
+msgid "This occurrence could not be loaded. Search again and retry."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:917
+msgid "Choose valid start and end dates."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:918
+msgid "Choose valid start and end times."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:919
+msgid "The occurrence must end after it starts."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:920
+msgid "The edited occurrence must remain inside the loaded search period. Choose a closer date or search a different period first."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:924
+msgid "Choose a valid event status."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:925
+msgid "Enter a plain-text occurrence title within the allowed length."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:926
+msgid "Enter a non-empty plain-text occurrence note within the allowed length."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:927
+msgid "Choose a valid featured image."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:928
+msgid "Enter a plain-text venue within the allowed length."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:929
+msgid "Enter a plain-text address within the allowed length."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:930
+msgid "Enter an HTTP(S) location URL or leave it empty to hide the series link."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:931
+msgid "Enter an HTTP(S) external event URL or leave it empty to hide the series action."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:932
+msgid "Enter a plain-text external action label within the allowed length."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:935
+msgid "Review this occurrence and try again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:941
+msgid "Load an occurrence before editing it."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:958
+msgid "Save the event’s ordinary details before previewing this occurrence change."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:977
+msgid "Make a change before creating the preview."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:991
+msgid "The occurrence preview could not be created. Search again and retry."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1004
+msgid "Load a generated occurrence before changing this and following events."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1032
+msgid "Save the event’s ordinary details before previewing this schedule change."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1068
+msgid "The future schedule preview could not be created. Search again and retry."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1095
+msgid "Choose the occurrence that should remain."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1105
+msgid "Save the event’s ordinary details before previewing recurrence changes."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1131
+msgid "The recurrence preview could not be created. Reload the event and try again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1145
+msgid "The event changed after preview. Save and preview the recurrence again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1196
+msgid "This and following occurrences now use the new schedule."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1223
+msgid "This occurrence was updated."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1229
+msgid "This occurrence was updated. Reload it before making another change."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1237
+msgid "The recurring schedule was updated."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1244
+msgid "The recurrence change was not saved. Reload the event and review it again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1254
+msgid "Preview recurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1257
+msgid "Preview this occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1259
+msgid "Preview this and following"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1263
+msgid "Refresh preview"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1266
+msgid "Refresh occurrence preview"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1268
+msgid "Refresh future schedule preview"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1271
+msgid "Preview stopping recurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1274
+msgid "Apply to complete series"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1277
+msgid "Keep selected event only"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1279
+msgid "Apply to this occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1281
+msgid "Apply to this and following"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1284
+msgid "Editing scope: complete series. You will review every affected date before applying."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1290
+msgid "Editing scope: only this occurrence. Other dates in the series stay unchanged."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1295
+msgid "Editing scope: this and following occurrences. Earlier dates stay unchanged."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1301
+msgid "Edit selected occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1308
+msgid "Reload schedule boundary"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1309
+msgid "Reload selected occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1311
+msgid "Configure new schedule"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1344
+msgid "Repeating event"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1383
+msgid "Edit one occurrence…"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1392
+msgid "Change this and following…"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1406
+msgid "Back to complete series"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1409
+#: assets/src/js/recurrence-editor.js:2042
+msgid "Find occurrences from"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1413
+#: assets/src/js/recurrence-editor.js:2046
+msgid "Searches one bounded 18-month period. Choose another date to find an older or later event."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1434
+#: assets/src/js/recurrence-editor.js:2072
+msgid "Search this period"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1442
+#: assets/src/js/recurrence-editor.js:2080
+msgid "No occurrences were found near today, so the first period of this series is shown."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1453
+#: assets/src/js/recurrence-editor.js:2091
+msgid "No occurrences were found in this period. Choose another start date and search again."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1466
+msgid "This period has no generated occurrence after the first event. Search a later period or edit the complete series."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1478
+msgid "Start the new schedule at"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1479
+msgid "Occurrence to edit"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1495
+#: assets/src/js/recurrence-editor.js:2109
+msgid "Search by the local event date and time."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1521
+msgid "Selected occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1533
+msgid "This occurrence has individual changes. Each inherited field can be restored to the current series value."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1541
+msgid "Content"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1544
+msgid "Occurrence title"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1558
+msgid "Occurrence note"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1591
+msgid "Schedule and status"
+msgstr ""
+
+#. translators: %s: captured event timezone.
+#: assets/src/js/recurrence-editor.js:1646
+#: assets/src/js/recurrence-editor.js:1869
+#, js-format
+msgid "Times use the series timezone: %s."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1664
+msgid "Use series date and time"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1674
+msgid "Cancelled (legacy status)"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1692
+msgid "Use series status"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1695
+msgid "Cancel this occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1699
+msgid "This occurrence stays linked to the series and can be restored later."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1700
+msgid "Only this occurrence will be cancelled; the rest of the series continues."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1780
+msgid "External event action label"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1809
+msgid "New schedule from this occurrence"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1814
+msgid "Every later scheduled change will be replaced. Earlier occurrences stay unchanged. Individual changes are preserved and may become standalone occurrences."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1874
+msgid "Repeats from here"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1882
+#: assets/src/js/recurrence-editor.js:2116
+msgid "Repeat every"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1897
+#: assets/src/js/recurrence-editor.js:2132
+msgid "On these days"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1919
+#: assets/src/js/recurrence-editor.js:2156
+msgid "Monthly pattern"
+msgstr ""
+
+#. translators: %d: event day of month.
+#: assets/src/js/recurrence-editor.js:1926
+#: assets/src/js/recurrence-editor.js:2163
+#, js-format
+msgid "Day %d of the month"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1932
+#: assets/src/js/recurrence-editor.js:2169
+msgid "Same weekday position in the month"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1938
+#: assets/src/js/recurrence-editor.js:2176
+msgid "Last same weekday of the month"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1944
+msgid "Months without this calendar day are skipped; dates are never shifted silently."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1948
+msgid "Event dates from here"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1951
+msgid "Enter one YYYY-MM-DD date per line. Include the new schedule’s first date."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1956
+#: assets/src/js/recurrence-editor.js:2204
+msgid "Ends"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1960
+#: assets/src/js/recurrence-editor.js:2208
+msgid "Never"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1961
+#: assets/src/js/recurrence-editor.js:2210
+msgid "On a date"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1962
+#: assets/src/js/recurrence-editor.js:2214
+msgid "After a number of events"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1969
+#: assets/src/js/recurrence-editor.js:2224
+msgid "Last event date"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1978
+#: assets/src/js/recurrence-editor.js:2234
+msgid "Number of events"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1989
+msgid "New schedule:"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2000
+msgid "This series contains individual changes or a future schedule segment. Simple complete-series editing is locked, but you can still edit one occurrence, change this and following, or stop recurrence and keep one occurrence."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2007
+msgid "Repeats"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2025
+msgid "Stop repeating…"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2036
+msgid "Choose the one occurrence that should become the normal event. Every other occurrence in the complete series will be removed."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2099
+msgid "Keep as the single event"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2183
+msgid "Months without the selected calendar day are skipped; dates are never shifted silently."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2191
+msgid "Event dates"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2194
+msgid "Enter one YYYY-MM-DD date per line. Keep the original start date in the list."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2246
+msgid "Summary:"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2260
+msgid "Review impact"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2271
+msgid "All other occurrences outside this preview window will also be removed."
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:2281
+msgid "The ordinary event keeps the series title, content, image, location and external action. Individual occurrence fields are removed with recurrence."
+msgstr ""
+
+#. translators: %d: individual occurrence exceptions affected by the proposal.
+#: assets/src/js/recurrence-editor.js:2292
+#, js-format
+msgid "%d individual change is affected."
+msgid_plural "%d individual changes are affected."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of changed occurrence identities.
+#: assets/src/js/recurrence-editor.js:2310
+#, js-format
+msgid "Review %d affected dates"
 msgstr ""

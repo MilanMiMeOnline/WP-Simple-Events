@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 19 August 2026
+**Last reviewed:** 25 August 2026
 **Current public release:** 0.3.0
-**Next planned phase:** recurring-events discovery and specification; version target unassigned
+**Active phase:** recurring-event implementation; target 0.4.0
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -15,7 +15,7 @@ of the supported product until its specification, tests and release are complete
 Work proceeds in this order:
 
 1. sharpen the existing one-off event experience and builder integrations;
-2. design and validate a lightweight recurrence model before implementing it;
+2. qualify and release the accepted lightweight recurrence model;
 3. add Divi 5 through the same shared presentation and query services;
 4. reassess broader platform support only when its maintenance cost is justified.
 
@@ -255,27 +255,237 @@ and the CI release artifact is byte-identical to the locally qualified ZIP.
   instances pass manual and automated review.
 - Security, privacy and bounded-query contracts remain unchanged or stronger.
 
-## Phase 2 — recurring-events discovery and specification
+## Phase 2 — recurring-events implementation
 
-Recurrence is not added directly to event posts as a collection of duplicated
-dates. This phase must first produce an ADR, data contract and tested prototype.
+ADR-044 and `RECURRENCE-CONTRACT.md` accept one series post plus a rebuildable
+occurrence projection. Recurrence is not added as duplicated event posts. Its
+editor, projection and public read path are now active in the 0.4.0 development
+branch after one-off parity and fail-closed readiness were proven.
 
-The research must answer:
+The ordered implementation increments are:
 
-- which recurrence rules cover the valuable KISS use cases;
-- how one occurrence, this-and-future occurrences or the full series are edited;
-- how cancellations, exceptions and moved occurrences retain their relationship;
-- how editors navigate between a series and an occurrence without ambiguity;
-- how lists, feeds, calendars, templates, REST and structured data obtain bounded
-  occurrences;
-- how deletion, duplication, timezone changes, DST and migrations behave;
-- whether native posts plus a small occurrence index remain performant, or a
-  dedicated occurrence store is justified.
+- install the occurrence table and immutable occurrence domain without changing
+  public output;
+- index existing one-off events in bounded, recoverable generations;
+- implement and qualify the pure bounded rule engine, including DST, month-end,
+  leap-year, overlap and exhaustion semantics;
+- migrate public chronological reads to occurrence-aware repositories and prove
+  exact one-off parity;
+- add canonical recurrence persistence, manual dates, exclusions, segments and
+  sparse overrides around the qualified engine;
+- add scope-first editor UX, impact previews and occurrence management;
+- add series/occurrence routes, schema, sitemaps and builder context;
+- complete migration, interruption, performance, security and compatibility QA.
 
-The preferred user experience is explicit at every destructive or broad edit:
-**only this event**, **this and future events**, or **the complete series**. The
-prototype must prove that this model stays understandable and lightweight before
-production implementation receives a version target.
+The user experience remains explicit at every destructive or broad edit:
+**only this occurrence**, **this and following occurrences**, or **the complete
+series**. Version 0.4.0 is a candidate target, not a release promise; recurrence
+does not ship until the complete contract and release matrix pass.
+
+**Progress — 20 August 2026:** the occurrence foundation, bounded engine,
+qualified read layer and canonical recurrence aggregate are complete as hidden
+increments.
+One-off saves and the bounded migration populate generation-isolated occurrence
+rows without changing public output. The dependency-free recurrence engine now
+supports daily, selected-weekday weekly, same-day and ordinal-weekday monthly,
+yearly and specific-date schedules. Hard horizon/output/evaluation limits and a
+focused DST/calendar matrix are enforced. A dedicated occurrence repository now
+provides occurrence-level ordering, totals, local-window overlap and canonical
+category/tag filtering while rechecking the parent post and active generation.
+Real WordPress fixtures prove one-off parity for two pages, totals, combined term
+filters, overlap and draft/password exclusion. A strict recurrence schedule codec
+now round-trips every qualified engine variant while rejecting unknown keys, raw
+RRULE input, partial shapes and weak scalar coercion. A versioned aggregate now
+binds that schedule to one immutable series identity, chronological future
+segments, manual additions, reversible exclusions and sparse occurrence
+overrides. Exact nested shapes, strict types, relationship invariants and bounded
+collections fail closed. The complete aggregate now has a protected,
+revision-enabled, canonical JSON metadata envelope and a capability-, identity-
+and timezone-checked replacement service. Changed definitions and restored event
+revisions invalidate the derived projection before it can be trusted. This
+storage remains internal and absent from core REST. Bounded engine-to-projection
+orchestration now reconciles chronological segment hand-offs, generated skips and
+cancellations, sparse date/status changes, manual additions, complete empty
+windows and moved-in identities. Segment seeds and anchors are proven against the
+engine, output identities remain unique and the canonical-first save coordinator
+retries dirty definitions while preserving fail-closed repair state on failure.
+A shared pure occurrence builder now powers both persistence and a server-owned
+impact preview. The preview compares immutable identities, reports added, removed,
+moved, status/source and exception changes, and rejects mutations outside only-
+this or this-and-following scope. Broad reconciliation can retain an orphaned
+modified slot as manual while preserving its generated identity and public key.
+Occurrence maintenance now has an accepted health-and-repair contract: the
+initial migrator and administrator repair must share a type-aware boundary so a
+stored recurrence aggregate can never be rebuilt as a one-off. Administrator
+repair is capped at 25 public events per request, uses the 540-day production
+horizon and keeps corrupt or failed events dirty while allowing later candidates
+to progress.
+Active recurring projections also record their exact local coverage window. A
+bounded daily worker renews below a 450-day buffer, while public readiness
+requires coverage from today through at least 365 days later. Missing, malformed
+or narrow windows fail closed and are eligible for administrator repair.
+The concurrency boundary is implemented below the editor route.
+Canonical snapshot tokens are deterministic, first-time and existing aggregate
+writes use atomic compare-and-replace semantics, and stale editors cannot
+overwrite a newer recurrence definition or reach projection. Dedicated
+capability-checked context, preview and save routes now expose only the exact
+bounded editor contract. Preview confirmations are server-signed across the
+event, editor, revision, complete proposal, scope, target and generation window;
+save revalidates the proposal and rejects stale or altered confirmations. A real
+WordPress REST smoke journey proves anonymous denial, one-off bootstrap, exact
+impact, confirmed projection and stale replay rejection.
+
+The one-off bootstrap context is now complete: canonical stored event metadata is
+revalidated and represented as a one-date specific schedule before an editor can
+preview enabling recurrence. Invalid or incomplete event state fails closed. The
+first scope-first Gutenberg increment is also implemented. Its complete-series
+panel supports daily, weekly, both monthly modes, yearly and selected-date rules;
+respects WordPress' configured week start; preserves last-weekday semantics; and
+requires a bounded review-before-apply cycle. Dirty ordinary post fields and
+series with exceptions or future segments fail closed. A packaged browser journey
+now enables a three-occurrence daily series through the real editor UI.
+
+The inverse explicit **does not repeat** operation is now implemented. It offers
+bounded searchable effective occurrence choices, requires selection of the
+surviving one-off event, previews complete-series destruction honestly, binds the
+choice into server confirmation, compare-and-deletes the exact aggregate and
+rolls back prepared event metadata on conflicts. Real REST and Gutenberg browser
+journeys cover enablement and conversion back to one-off. The next editor
+increment is the **only this occurrence** / **this and following** workflow.
+
+The server foundation for **only this occurrence** now resolves one selected
+identity into current, inherited, override and cancellation state. It handles
+moved generated and manual occurrences whose original date lies outside the
+visible selection window, while retaining the existing complete-aggregate
+preview and save boundary. A pure lossless proposal builder now preserves
+untouched sparse fields and unrelated identities, restores inheritance by key
+removal and keeps cancellation separate. A real WordPress REST journey proves the
+complete only-this context, preview, confirmed save and stable-identity reload.
+The first occurrence-scoped Gutenberg field workflow is now implemented. Editors
+enter **only this occurrence** explicitly, search a bounded period, load one stable
+identity, edit its date/time or status, cancel/restore it and remove date/status
+exceptions through named inheritance actions. The panel shows the captured
+timezone, blocks dirty ordinary post state, preserves unexposed sparse fields and
+requires the existing impact-preview/confirmed-save cycle. Browser coverage moves
+an occurrence and restores its inherited range, changes and restores status,
+cancels and restores the occurrence, and then returns to complete-series editing.
+
+The pure domain layer for **this and following occurrences** is now complete. A
+selected non-root generated identity becomes one replacement segment; earlier
+segments remain canonical, an existing boundary keeps its ID and every later
+scheduled change is replaced. Segment IDs are monotonic. A shared bounded
+membership service rejects date-shaped non-occurrences, while server-side
+exception reconciliation detaches future overrides, cancellations and skips that
+no longer belong to the new rule without changing their immutable identity.
+Detached cancellations and skips remain reversible in the occurrence builder.
+The authenticated proposal endpoint is now complete. It accepts only the selected
+generated boundary, current revision, bounded window and strict replacement
+schedule; the server owns timezone, structural mutation and exception
+reconciliation and returns the exact complete proposal for the existing signed
+save route. Anonymous access, malformed or client-timezone input, skipped/manual/
+root targets, stale revisions, altered confirmations and replay fail closed. A
+real WordPress journey proves preview, preservation of an earlier override,
+detachment of a future cancellation, confirmed persistence and stale replay
+rejection.
+
+The Gutenberg **this and following** workflow is now complete over that proposal
+route. Its boundary picker excludes root, manual and detached occurrences; its
+form starts from generated inheritance rather than copying a one-off exception;
+all supported recurrence patterns, date/time controls and captured timezone are
+available; and its warning names both the preserved past and replaced later
+schedule segments. Every field or boundary change clears confirmation state. A
+real browser journey covers the complete scope sequence and verifies the impact
+before confirmed save.
+
+The remaining only-this presentation controls are now complete. The authorized
+server context supplies normalized inherited title, note, featured image, venue,
+address, location URL, external event URL and action-label values without exposing
+metadata keys. Gutenberg shows explicit individual/inherited ownership for every
+field, supports deliberate hidden inherited values, uses the native media picker,
+and removes sparse keys through named **Use series value** actions. Browser
+validation shares PHP-owned limits while server validation and signed save remain
+authoritative. The isolated WordPress 7.0.1 journey proves write, preview, save and
+inheritance restoration for the new text and action fields.
+
+The first shared public-presentation foundation is now complete but remains
+unregistered. One exact bounded lookup resolves a published, password-free active
+projection row by event ID and stable public key, rejects ambiguity and proves the
+key against the protected aggregate's series identity. One normalized context
+then overlays only that occurrence's title, note, image, location and external
+action fields while retaining series-owned content and taxonomies. Positive and
+negative exact contexts are reused request-locally so multiple widgets cannot
+perform divergent reads.
+
+The initially gated virtual route foundation is also complete. It adds one
+strict occurrence query variable and leaf shape, binds the request to the shared exact context,
+supports plain permalinks and converts malformed, private, stale or missing
+identities to non-cacheable 404 responses without parent redirects. During this
+review, ordinary recurring-event persistence was hardened so a normal WordPress
+save can no longer replace a recurrence projection with one one-off row. Dirty
+recurring parents are excluded from occurrence reads until canonical repair.
+
+The first native presentation adapter is complete. Bundled PHP and block-theme
+single output, the core document title, core
+canonical and plugin Event JSON-LD now consume one effective occurrence
+presentation. It preserves series body, excerpt and taxonomies while applying
+occurrence date, status, title, note, image, location and external action. Until
+builder context is complete, occurrence leaves intentionally use the correct
+native fallback rather than an Elementor template containing series-only values.
+
+Gutenberg occurrence adapter parity is now complete for the existing twelve
+atomic fields and composite Event Details block. Current-context blocks consume
+the exact validated occurrence presentation, while an existing explicit
+`eventId` remains a deterministic public series selection. Query Loop descendants
+for another event retain their own context and an invalid occurrence canonical
+fails closed. A packaged WordPress 6.9/PHP 8.2 smoke journey proves current title
+and date blocks on the exact occurrence leaf.
+
+Elementor occurrence adapter parity is now complete for the existing twelve
+atomic widgets and composite Event Details widget. Reconstructed widget objects
+reuse the request-shared current resolver, explicit event selections remain
+series-owned and the composite shortcode path follows the same rule. An
+applicable Elementor Pro single template may own the occurrence leaf again; the
+exact native output remains the fallback when no display condition matches.
+
+The REST leaf-context increment is complete. It introduces one exact read-only
+`wpse/v2` occurrence resource, sharing the
+same eligibility, effective presentation and canonical URL as the browser leaf.
+It does not alter the backward-compatible `wpse/v1` calendar feed or core event
+REST resource. A real WordPress 6.9/PHP 8.2 journey proves draft-parent denial,
+exact anonymous public output, omission of protected storage fields and one
+generic unknown-identity 404. Third-party canonical adapter parity is also
+complete for the documented Yoast SEO, Rank Math and AIOSEO filters. All three
+consume the same validated occurrence URL without becoming plugin dependencies;
+the real WordPress smoke page proves their exact filter output. The WordPress Core
+sitemap contract is now fixed: only finite active
+projection coverage is listed, pages are capped at 100 rows and every candidate
+must pass the shared exact public resolver. SEO-plugin sitemap replacement
+remains separate optional compatibility work. Exact occurrence browser leaves
+use WordPress' standard no-store/no-cache policy, the de facto
+`DONOTCACHEPAGE` cache boundary and LiteSpeed's documented no-cache action; this
+avoids stale stable-key pages without changing caching for ordinary events or
+collections.
+
+Bounded inactive-generation cleanup is now complete. It
+records an internal creation timestamp and removes only old, inactive rows for a
+clean parent in at most 100-row scheduled batches. It never runs as part of public
+rendering and never changes canonical or active-generation state.
+A real Elementor Pro leaf-template journey remains a release qualification check.
+
+The occurrence-aware list shortcode, calendar fallback, v1 calendar feed and
+native event/taxonomy archives now share occurrence cardinality, effective
+presentation and stable leaf URLs. The archive keeps `WP_Query` only as a
+templateshell and reports exact occurrence totals without collapsing repeated
+series IDs. The native Event details metabox now replaces recurrence-owned
+schedule controls with one explicit scope notice while leaving the inherited
+series status and shared content editable. Public occurrence routing and
+collection reads are now enabled by default for the 0.4.0 release candidate.
+Cache exclusion is qualified against the documented WP Rocket and LiteSpeed
+boundaries. Replacement SEO sitemaps are not a correctness or privacy gate:
+WordPress Core is supported, third-party canonicals are exact, and server-rendered
+collections remain crawlable. The remaining release work is the real Elementor
+Pro leaf-template journey, the full supported-version matrix, Plugin Check and
+release packaging.
 
 ## Phase 3 — Divi 5 integration
 

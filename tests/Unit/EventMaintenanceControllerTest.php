@@ -27,7 +27,7 @@ final class EventMaintenanceControllerTest extends TestCase {
 	}
 
 	/**
-	 * Both state-changing handlers require the authenticated admin-post boundary.
+	 * Every state-changing handler requires the authenticated admin-post boundary.
 	 */
 	public function test_registers_authenticated_maintenance_hooks(): void {
 		$controller = new EventMaintenanceController();
@@ -42,6 +42,11 @@ final class EventMaintenanceControllerTest extends TestCase {
 			array( $controller, 'reindex_events' ),
 			HookRecorder::action( 'admin_post_' . EventMaintenanceController::REINDEX_ACTION )
 		);
+		self::assertSame(
+			array( $controller, 'repair_occurrences' ),
+			HookRecorder::action( 'admin_post_' . EventMaintenanceController::REPAIR_OCCURRENCES_ACTION )
+		);
 		self::assertNull( HookRecorder::action( 'admin_post_nopriv_' . EventMaintenanceController::REINDEX_ACTION ) );
+		self::assertNull( HookRecorder::action( 'admin_post_nopriv_' . EventMaintenanceController::REPAIR_OCCURRENCES_ACTION ) );
 	}
 }

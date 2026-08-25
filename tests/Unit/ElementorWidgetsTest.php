@@ -9,17 +9,20 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
+use Elementor\Widgets_Manager;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Elementor\AbstractEventWidget;
 use MiMe\WPSimpleEvents\Elementor\EventCalendarWidget;
 use MiMe\WPSimpleEvents\Elementor\EventDetailsWidget;
 use MiMe\WPSimpleEvents\Elementor\EventListWidget;
+use MiMe\WPSimpleEvents\Elementor\WidgetRegistrar;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
 use MiMe\WPSimpleEvents\Tests\Support\FakeEditorContext;
 use MiMe\WPSimpleEvents\Tests\Support\FakeShortcodeRenderer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use ReflectionProperty;
 
 #[CoversClass( AbstractEventWidget::class )]
 #[CoversClass( EventListWidget::class )]
@@ -229,6 +232,16 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertSame( 81, $renderer->attributes['id'] ?? null );
 		self::assertTrue( $renderer->attributes['show_title'] ?? false );
 		self::assertSame( 'wpse-event-details', $widget->get_name() );
+	}
+
+	/** Elementor-reconstructed details widgets retain the request-shared adapter. */
+	public function test_reconstructed_details_widget_uses_the_registered_runtime_adapter(): void {
+		$renderer  = new FakeShortcodeRenderer();
+		$registrar = new WidgetRegistrar( details: $renderer );
+		$registrar->register_widgets( new Widgets_Manager() );
+		$property = new ReflectionProperty( AbstractEventWidget::class, 'renderer' );
+
+		self::assertSame( $renderer, $property->getValue( new EventDetailsWidget() ) );
 	}
 
 	/**

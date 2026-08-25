@@ -12,6 +12,8 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Lifecycle\Uninstaller;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
+use MiMe\WPSimpleEvents\Lifecycle\SiteDataCleaner;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceTable;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +44,7 @@ final class UninstallerTest extends TestCase {
 			)
 		);
 
-		( new Uninstaller() )->run();
+		( new Uninstaller( cleaner: new SiteDataCleaner( new FakeOccurrenceTable() ) ) )->run();
 
 		self::assertInstanceOf( WP_Post::class, WordPressState::post( 30 ) );
 		self::assertSame( array(), WordPressState::deleted_post_ids() );
@@ -62,7 +64,7 @@ final class UninstallerTest extends TestCase {
 			)
 		);
 
-		( new Uninstaller() )->run();
+		( new Uninstaller( cleaner: new SiteDataCleaner( new FakeOccurrenceTable() ) ) )->run();
 
 		self::assertSame( array( 31 ), WordPressState::deleted_post_ids() );
 		self::assertFalse( WordPressState::has_option( UninstallSettings::OPTION ) );
@@ -77,7 +79,7 @@ final class UninstallerTest extends TestCase {
 		WordPressState::set_site_option( 1, UninstallSettings::OPTION, false );
 		WordPressState::set_site_option( 101, UninstallSettings::OPTION, true );
 
-		( new Uninstaller() )->run();
+		( new Uninstaller( cleaner: new SiteDataCleaner( new FakeOccurrenceTable() ) ) )->run();
 
 		self::assertSame( $site_ids, WordPressState::switched_site_ids() );
 		self::assertTrue( WordPressState::site_has_option( 1, UninstallSettings::OPTION ) );

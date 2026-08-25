@@ -82,6 +82,7 @@ test( 'accepts a minimal, rooted production archive', () => {
 			'mime-simple-events-calendar/assets/src/css/frontend.css',
 			'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
 			'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
+			'mime-simple-events-calendar/assets/dist/js/recurrence-editor.min.js',
 		] ),
 	);
 } );
@@ -116,6 +117,7 @@ test( 'rejects development files, wrong roots and path traversal', () => {
 					'mime-simple-events-calendar/assets/src/css/frontend.css',
 					'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
 					'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
+					'mime-simple-events-calendar/assets/dist/js/recurrence-editor.min.js',
 					invalidEntry,
 				] ),
 			/Invalid release archive/,
@@ -140,6 +142,7 @@ test( 'rejects an archive with a required production file missing', () => {
 				'mime-simple-events-calendar/assets/src/css/frontend.css',
 				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
 				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/assets/dist/js/recurrence-editor.min.js',
 			] ),
 		/Missing required release path.*languages\/mime-simple-events-calendar\.pot/,
 	);
@@ -161,6 +164,7 @@ test( 'rejects an archive without its complete project license', () => {
 				'mime-simple-events-calendar/assets/src/css/frontend.css',
 				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
 				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/assets/dist/js/recurrence-editor.min.js',
 			] ),
 		/Missing required release path.*LICENSE/,
 	);
@@ -182,6 +186,7 @@ test( 'rejects an archive without its third-party licence notices', () => {
 				'mime-simple-events-calendar/assets/src/css/frontend.css',
 				'mime-simple-events-calendar/assets/dist/js/calendar.min.js',
 				'mime-simple-events-calendar/assets/dist/js/event-fields-editor.min.js',
+				'mime-simple-events-calendar/assets/dist/js/recurrence-editor.min.js',
 			] ),
 		/Missing required release path.*THIRD-PARTY-NOTICES\.txt/,
 	);

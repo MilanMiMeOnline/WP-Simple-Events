@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Elementor;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Widget_Base;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
 use MiMe\WPSimpleEvents\Frontend\EventPresentation;
@@ -36,6 +37,13 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 	protected EventFieldRenderer $fields;
 
 	/**
+	 * Shared current event or occurrence resolver.
+	 *
+	 * @var CurrentEventPresentationResolver
+	 */
+	private CurrentEventPresentationResolver $current;
+
+	/**
 	 * Editor-only placeholder boundary.
 	 *
 	 * @var EditorContext
@@ -52,12 +60,13 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 	/**
 	 * Create an atomic widget while preserving Elementor's constructor contract.
 	 *
-	 * @param mixed                     $data     Elementor widget data.
-	 * @param mixed                     $args     Elementor widget arguments.
-	 * @param EventContextResolver|null $contexts Shared event context resolver.
-	 * @param EventFieldRenderer|null   $fields   Shared field renderer.
-	 * @param EditorContext|null        $editor   Editor-mode boundary.
-	 * @param PreviewEventOptions|null  $previews Bounded public event choices.
+	 * @param mixed                                 $data     Elementor widget data.
+	 * @param mixed                                 $args     Elementor widget arguments.
+	 * @param EventContextResolver|null             $contexts Shared event context resolver.
+	 * @param EventFieldRenderer|null               $fields   Shared field renderer.
+	 * @param EditorContext|null                    $editor   Editor-mode boundary.
+	 * @param PreviewEventOptions|null              $previews Bounded public event choices.
+	 * @param CurrentEventPresentationResolver|null $current Current event or occurrence resolver.
 	 */
 	public function __construct(
 		$data = array(),
@@ -65,12 +74,14 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		?EventContextResolver $contexts = null,
 		?EventFieldRenderer $fields = null,
 		?EditorContext $editor = null,
-		?PreviewEventOptions $previews = null
+		?PreviewEventOptions $previews = null,
+		?CurrentEventPresentationResolver $current = null
 	) { // phpcs:ignore Squiz.Commenting.FunctionComment.IncorrectTypeHint -- The first two parameters mirror Elementor's deliberately untyped API.
 		$this->contexts = $contexts ?? AtomicWidgetRuntime::contexts();
 		$this->fields   = $fields ?? AtomicWidgetRuntime::fields();
 		$this->editor   = $editor ?? new ElementorEditorContext();
 		$this->previews = $previews ?? AtomicWidgetRuntime::previews();
+		$this->current  = $current ?? AtomicWidgetRuntime::current();
 
 		parent::__construct( $data, $args );
 	}
@@ -227,7 +238,9 @@ abstract class AbstractEventFieldWidget extends Widget_Base {
 		$value = $settings['event_id'] ?? '';
 
 		if ( ( is_string( $value ) || is_int( $value ) ) && '' === trim( (string) $value ) ) {
-			return $this->contexts->resolve_current();
+			$event_id = get_queried_object_id();
+
+			return $event_id > 0 ? $this->current->resolve( $event_id ) : null;
 		}
 
 		$event_id = AtomicWidgetSettings::event_id( $value );

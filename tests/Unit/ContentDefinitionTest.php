@@ -95,13 +95,23 @@ final class ContentDefinitionTest extends TestCase {
 			EventMeta::EVENT_URL_LABEL,
 			EventMeta::STATUS,
 			EventMeta::DATES_NEED_REVIEW,
+			EventMeta::SERIES_UID,
+			EventMeta::ACTIVE_GENERATION,
+			EventMeta::INDEX_DIRTY,
+			EventMeta::COVERAGE_FROM,
+			EventMeta::COVERAGE_THROUGH,
+			EventMeta::COVERAGE_GENERATION,
+			EventMeta::RECURRENCE,
 		);
 
 		self::assertSame( $expected, array_keys( $definitions ) );
 
-		foreach ( $definitions as $definition ) {
+		foreach ( $definitions as $key => $definition ) {
 			self::assertTrue( $definition['single'] );
-			self::assertTrue( $definition['revisions_enabled'] );
+			self::assertSame(
+				! in_array( $key, array( EventMeta::COVERAGE_FROM, EventMeta::COVERAGE_THROUGH, EventMeta::COVERAGE_GENERATION ), true ),
+				$definition['revisions_enabled']
+			);
 			self::assertIsCallable( $definition['sanitize_callback'] );
 			self::assertIsCallable( $definition['auth_callback'] );
 		}
@@ -109,6 +119,14 @@ final class ContentDefinitionTest extends TestCase {
 		self::assertFalse( $definitions[ EventMeta::START_UTC ]['show_in_rest'] );
 		self::assertFalse( $definitions[ EventMeta::END_UTC ]['show_in_rest'] );
 		self::assertFalse( $definitions[ EventMeta::DATES_NEED_REVIEW ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::SERIES_UID ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::ACTIVE_GENERATION ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::INDEX_DIRTY ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::COVERAGE_FROM ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::COVERAGE_THROUGH ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::COVERAGE_GENERATION ]['show_in_rest'] );
+		self::assertFalse( $definitions[ EventMeta::RECURRENCE ]['show_in_rest'] );
+		self::assertSame( 'string', $definitions[ EventMeta::RECURRENCE ]['type'] );
 		self::assertSame( EventStatus::SCHEDULED->value, $definitions[ EventMeta::STATUS ]['default'] );
 		self::assertSame(
 			EventStatus::values(),

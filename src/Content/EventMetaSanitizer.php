@@ -18,6 +18,7 @@ use MiMe\WPSimpleEvents\Domain\EventStatus;
  */
 final class EventMetaSanitizer {
 	public const EVENT_URL_LABEL_MAX_LENGTH = 120;
+	private const UUID_PATTERN              = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/D';
 
 	private const URL_MAX_LENGTH      = 2048;
 	private const VENUE_MAX_LENGTH    = 200;
@@ -69,6 +70,17 @@ final class EventMetaSanitizer {
 	}
 
 	/**
+	 * Normalize one canonical local calendar date.
+	 *
+	 * @param mixed $value Raw value.
+	 */
+	public function local_date( mixed $value ): string {
+		$canonical = $this->local_datetime( $value );
+
+		return 10 === strlen( $canonical ) ? $canonical : '';
+	}
+
+	/**
 	 * Normalize a Unix timestamp used for internal sorting.
 	 *
 	 * @param mixed $value Raw value.
@@ -83,6 +95,32 @@ final class EventMetaSanitizer {
 		}
 
 		return (int) $value;
+	}
+
+	/**
+	 * Normalize a positive occurrence-generation token.
+	 *
+	 * @param mixed $value Raw value.
+	 */
+	public function generation( mixed $value ): int {
+		$generation = $this->timestamp( $value );
+
+		return $generation > 0 ? $generation : 0;
+	}
+
+	/**
+	 * Normalize a canonical UUID without accepting arbitrary identifiers.
+	 *
+	 * @param mixed $value Raw value.
+	 */
+	public function uuid( mixed $value ): string {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		$value = strtolower( sanitize_text_field( $value ) );
+
+		return 1 === preg_match( self::UUID_PATTERN, $value ) ? $value : '';
 	}
 
 	/**

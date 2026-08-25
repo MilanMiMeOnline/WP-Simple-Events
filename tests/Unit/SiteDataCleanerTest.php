@@ -20,6 +20,9 @@ use MiMe\WPSimpleEvents\Seo\StructuredDataSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceTable;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use WP_Post;
@@ -78,8 +81,11 @@ final class SiteDataCleanerTest extends TestCase {
 		WordPressState::set_option( EventArchiveSettings::DEFAULT_PERIOD_OPTION, 'all' );
 		WordPressState::set_option( EventArchiveRewriteManager::PENDING_OPTION, 'calendar' );
 		WordPressState::set_option( UninstallSettings::OPTION, true );
+		WordPressState::set_option( OccurrenceIndexMigrationController::COMPLETE_OPTION, true );
+		WordPressState::set_option( OccurrenceProjectionRenewalController::OFFSET_OPTION, 4 );
 
-		$result = ( new SiteDataCleaner() )->clean();
+		$table  = new FakeOccurrenceTable();
+		$result = ( new SiteDataCleaner( $table ) )->clean();
 
 		self::assertTrue( $result );
 		self::assertSame( array( 20 ), WordPressState::deleted_post_ids() );
@@ -95,6 +101,9 @@ final class SiteDataCleanerTest extends TestCase {
 		self::assertFalse( WordPressState::has_option( EventArchiveSettings::DEFAULT_PERIOD_OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveRewriteManager::PENDING_OPTION ) );
 		self::assertFalse( WordPressState::has_option( UninstallSettings::OPTION ) );
+		self::assertFalse( WordPressState::has_option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
+		self::assertFalse( WordPressState::has_option( OccurrenceProjectionRenewalController::OFFSET_OPTION ) );
+		self::assertSame( 1, $table->drop_calls );
 		self::assertSame( array(), $administrator->capabilities() );
 		self::assertSame( array(), $editor->capabilities() );
 	}
@@ -107,11 +116,13 @@ final class SiteDataCleanerTest extends TestCase {
 		WordPressState::set_option( UninstallSettings::OPTION, true );
 		WordPressState::fail_term_operations( true );
 
-		$result = ( new SiteDataCleaner() )->clean();
+		$table  = new FakeOccurrenceTable();
+		$result = ( new SiteDataCleaner( $table ) )->clean();
 
 		self::assertFalse( $result );
 		self::assertTrue( WordPressState::has_option( Installer::VERSION_OPTION ) );
 		self::assertTrue( WordPressState::has_option( UninstallSettings::OPTION ) );
+		self::assertSame( 0, $table->drop_calls );
 	}
 
 	/**
@@ -130,11 +141,31 @@ final class SiteDataCleanerTest extends TestCase {
 			)
 		);
 
-		$result = ( new SiteDataCleaner() )->clean();
+		$table  = new FakeOccurrenceTable();
+		$result = ( new SiteDataCleaner( $table ) )->clean();
 
 		self::assertFalse( $result );
 		self::assertTrue( WordPressState::has_option( Installer::VERSION_OPTION ) );
 		self::assertTrue( WordPressState::has_option( UninstallSettings::OPTION ) );
 		self::assertInstanceOf( WP_Post::class, WordPressState::post( 31 ) );
+		self::assertSame( 0, $table->drop_calls );
+	}
+
+	/**
+	 * A table cleanup failure keeps options and capabilities as recovery evidence.
+	 */
+	public function test_retains_options_and_capabilities_when_occurrence_table_drop_fails(): void {
+		$administrator = WordPressState::add_role( 'administrator' );
+		( new RoleManager() )->grant();
+		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
+		WordPressState::set_option( UninstallSettings::OPTION, true );
+		$table = new FakeOccurrenceTable( drop_result: false );
+
+		$result = ( new SiteDataCleaner( $table ) )->clean();
+
+		self::assertFalse( $result );
+		self::assertSame( 1, $table->drop_calls );
+		self::assertTrue( WordPressState::has_option( Installer::VERSION_OPTION ) );
+		self::assertNotSame( array(), $administrator->capabilities() );
 	}
 }

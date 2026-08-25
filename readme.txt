@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Create and publish focused WordPress events with lists, calendars, blocks and op
 
 == Description ==
 
-MiMe Simple Events and Calendar adds a native Events section to WordPress. It is designed for websites that need clear event publishing without recurrence, ticketing, interactive maps or the overhead of a large event suite.
+MiMe Simple Events and Calendar adds a native Events section to WordPress. It is designed for websites that need clear one-off and recurring event publishing without ticketing, interactive maps or the overhead of a large event suite.
 
 = Event publishing =
 
@@ -22,6 +22,14 @@ MiMe Simple Events and Calendar adds a native Events section to WordPress. It is
 * Mark events as scheduled, postponed or cancelled independently of their WordPress publication status.
 * Keep each event's original timezone when the website timezone changes.
 * Use WordPress revisions and a safe Duplicate event action.
+
+= Recurring events =
+
+* Repeat events daily, on selected weekdays, monthly, yearly or on selected dates.
+* End a repeating schedule on a date, after a fixed number of occurrences, or keep it open-ended within the plugin's safe projection window.
+* Review the exact impact before applying changes to the complete series or this and following occurrences.
+* Edit, move, postpone, cancel or restore only one occurrence without duplicating the complete event.
+* Convert a repeating series back to one deliberately selected event through a separate confirmation step.
 
 = Display options =
 
@@ -45,6 +53,8 @@ The plugin does not create visitor cookies, collect analytics or telemetry, load
 
 Event content entered by site editors—including dates, venues, addresses and links—is stored in the website's own WordPress database. Published event information can be visible in page HTML, Event JSON-LD, the WordPress REST API and the plugin's bounded calendar feed. Do not publish private information as event content. Draft, private and password-protected event details are excluded from public plugin collections; protected event metadata is also removed from public core REST responses while the WordPress password is still required.
 
+Recurring schedules remain canonical protected WordPress metadata. A local rebuildable occurrence index stores only the bounded dates, status, stable identity and parent event relationship needed for chronological queries. It contains no event body, password, taxonomy copy, visitor data or remote identifier.
+
 External location and event links are contacted only when a visitor chooses them. They open in an isolated new tab without passing a referrer. The destination website has its own privacy practices.
 
 Deactivation never deletes event data. Plugin deletion also preserves events and settings by default. An administrator can explicitly opt into permanent cleanup under Events > Settings; shared media remains untouched.
@@ -61,9 +71,9 @@ The complete source, build instructions and security policy are available at htt
 
 == Frequently Asked Questions ==
 
-= Does the plugin support recurring events? =
+= How do recurring-event edits work? =
 
-No. Recurrence is deliberately outside the first version because a reliable recurrence system needs a separate occurrence model, editing rules and migration design. Duplicating a one-off event creates a draft and marks its dates for review.
+Choose the intended scope before changing a repeating schedule: Only this occurrence, This and following, or Complete series. Broad changes show an impact preview before they can be applied. Individual occurrence changes remain sparse and reversible, so using the series value again does not create copied content.
 
 = Does it include maps, geocoding or ticket sales? =
 
@@ -103,6 +113,14 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.4.0 =
+* Add bounded recurring events for daily, weekly, monthly, yearly and selected-date schedules.
+* Add explicit Complete series, Only this occurrence and This and following edit scopes with review-before-apply confirmations.
+* Add manual occurrences, reversible cancellations and sparse per-occurrence date, status, title, image, venue and action overrides.
+* Make lists, calendars, feeds, archives, Gutenberg blocks, Elementor widgets, REST, canonical URLs and Event JSON-LD occurrence-aware.
+* Add fail-closed occurrence indexing, health checks, bounded repair and renewal, Core sitemap discovery and conservative no-store leaf caching.
+* Preserve one-off event behaviour, established public component identifiers and theme/Elementor template ownership.
 
 = 0.3.0 =
 * Add native Event List / Grid, Event Calendar and complete Event Details blocks for Gutenberg.

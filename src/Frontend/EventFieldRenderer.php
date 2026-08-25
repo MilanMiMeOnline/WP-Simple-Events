@@ -71,7 +71,9 @@ final class EventFieldRenderer {
 
 		$size       = 1 === preg_match( '/^[a-z0-9_-]{1,64}$/D', $size ) ? $size : 'large';
 		$attributes = 'decorative' === $alt_mode ? array( 'alt' => '' ) : array();
-		$image      = wp_kses_post( get_the_post_thumbnail( $presentation->event, $size, $attributes ) );
+		$image      = $presentation->featured_image_id > 0
+			? wp_kses_post( wp_get_attachment_image( $presentation->featured_image_id, $size, false, $attributes ) )
+			: wp_kses_post( get_the_post_thumbnail( $presentation->event, $size, $attributes ) );
 
 		if ( '' === $image ) {
 			return '';
@@ -209,6 +211,17 @@ final class EventFieldRenderer {
 
 		return '' !== $content
 			? '<div class="wpse-single-event-content">' . wp_kses_post( $content ) . '</div>'
+			: '';
+	}
+
+	/**
+	 * Render one bounded occurrence-specific note as plain text.
+	 *
+	 * @param EventPresentation $presentation Resolved event presentation.
+	 */
+	public function note( EventPresentation $presentation ): string {
+		return $this->fields_visible( $presentation ) && '' !== $presentation->note
+			? '<div class="wpse-event-note">' . nl2br( esc_html( $presentation->note ) ) . '</div>'
 			: '';
 	}
 

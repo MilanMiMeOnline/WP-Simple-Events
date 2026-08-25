@@ -15,8 +15,15 @@ use MiMe\WPSimpleEvents\Domain\CalendarView;
 use MiMe\WPSimpleEvents\Domain\EventListView;
 use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
 use MiMe\WPSimpleEvents\Frontend\EventListRenderer;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPage;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
 use MiMe\WPSimpleEvents\Frontend\RenderInstanceIds;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadException;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadiness;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
+use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
 use MiMe\WPSimpleEvents\Query\EventRepository;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteFeature;
 use WP_Post;
 
 /**
@@ -26,18 +33,26 @@ final class CalendarShortcode implements ShortcodeRenderer {
 	/**
 	 * Create the shortcode adapter.
 	 *
-	 * @param EventRepository    $events   Public event repository.
-	 * @param EventListRenderer  $renderer Shared no-JavaScript list renderer.
-	 * @param CalendarControls   $controls Accessible filter controls.
-	 * @param CalendarAssets     $assets   On-demand calendar assets.
-	 * @param CalendarTimeFormat $time_format WordPress-to-calendar time presentation.
+	 * @param EventRepository               $events   Public event repository.
+	 * @param EventListRenderer             $renderer Shared no-JavaScript list renderer.
+	 * @param CalendarControls              $controls Accessible filter controls.
+	 * @param CalendarAssets                $assets   On-demand calendar assets.
+	 * @param CalendarTimeFormat            $time_format WordPress-to-calendar time presentation.
+	 * @param OccurrenceReadRepository      $occurrences Occurrence-level public repository.
+	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
+	 * @param OccurrenceRouteFeature        $occurrence_feature Explicit public recurrence gate.
+	 * @param OccurrenceReadiness           $occurrence_readiness Projection readiness gate.
 	 */
 	public function __construct(
 		private readonly EventRepository $events = new EventRepository(),
 		private readonly EventListRenderer $renderer = new EventListRenderer(),
 		private readonly CalendarControls $controls = new CalendarControls(),
 		private readonly CalendarAssets $assets = new CalendarAssets(),
-		private readonly CalendarTimeFormat $time_format = new CalendarTimeFormat()
+		private readonly CalendarTimeFormat $time_format = new CalendarTimeFormat(),
+		private readonly OccurrenceReadRepository $occurrences = new OccurrenceReadRepository(),
+		private readonly OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
+		private readonly OccurrenceRouteFeature $occurrence_feature = new OccurrenceRouteFeature(),
+		private readonly OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness()
 	) {}
 
 	/**
@@ -61,10 +76,16 @@ final class CalendarShortcode implements ShortcodeRenderer {
 		$request     = $this->request_values();
 		$configured  = CalendarShortcodeAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() );
 		$normalized  = $configured->with_request( $request, $prefix );
-		$query       = $this->events->query( $normalized->fallback_criteria( time() ) );
-		$posts       = array_values(
-			array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
-		);
+		$criteria    = $normalized->fallback_criteria( time() );
+		$occurrences = $this->occurrence_feature->enabled() && $this->occurrence_readiness->ready()
+			? $this->occurrence_page( $criteria )
+			: null;
+		$query       = null === $occurrences ? $this->events->query( $criteria ) : null;
+		$posts       = null === $query
+			? array()
+			: array_values(
+				array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
+			);
 		$config      = wp_json_encode( $this->configuration( $normalized, $configured, $prefix ) );
 
 		if ( ! is_string( $config ) ) {
@@ -90,15 +111,39 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			. esc_attr( $instance_id . '-fallback-title' ) . '">'
 			. esc_html__( 'Upcoming events', 'mime-simple-events-calendar' )
 			. '</' . esc_attr( $normalized->fallback_heading_level ) . '>';
-		$output .= $this->renderer->render(
-			$posts,
-			EventListView::LIST,
-			1,
-			new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level ),
-			$results_id
-		);
+		$options = new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level );
+		$output .= null !== $occurrences
+			? $this->renderer->render_occurrences(
+				$occurrences,
+				EventListView::LIST,
+				1,
+				$options,
+				$results_id
+			)
+			: $this->renderer->render(
+				$posts,
+				EventListView::LIST,
+				1,
+				$options,
+				$results_id
+			);
 
 		return $output . '</div></section>';
+	}
+
+	/**
+	 * Return one complete fallback occurrence page or an empty unavailable state.
+	 *
+	 * @param EventQueryCriteria $criteria Validated fallback list criteria.
+	 */
+	private function occurrence_page( EventQueryCriteria $criteria ): OccurrenceCollectionPage {
+		try {
+			$page = $this->occurrence_presenter->present( $this->occurrences->query( $criteria ) );
+
+			return $page ?? new OccurrenceCollectionPage( array(), 0, 0 );
+		} catch ( OccurrenceReadException ) {
+			return new OccurrenceCollectionPage( array(), 0, 0 );
+		}
 	}
 
 	/**

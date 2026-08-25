@@ -45,6 +45,13 @@ final class EventMetaSanitizerTest extends TestCase {
 		self::assertSame( '', $this->sanitizer->local_datetime( array( '2026-07-01' ) ) );
 	}
 
+	/** Coverage metadata accepts dates only, never date-times or impossible dates. */
+	public function test_local_date_is_strictly_normalized(): void {
+		self::assertSame( '2028-02-29', $this->sanitizer->local_date( '2028-02-29' ) );
+		self::assertSame( '', $this->sanitizer->local_date( '2027-02-29' ) );
+		self::assertSame( '', $this->sanitizer->local_date( '2028-02-29T10:00:00' ) );
+	}
+
 	/**
 	 * Event status uses an explicit allowlist and safe fallback.
 	 */
@@ -102,6 +109,20 @@ final class EventMetaSanitizerTest extends TestCase {
 		self::assertFalse( $this->sanitizer->boolean( 0 ) );
 		self::assertTrue( $this->sanitizer->boolean( 'yes' ) );
 		self::assertFalse( $this->sanitizer->boolean( array() ) );
+	}
+
+	/**
+	 * Internal series and generation identities reject malformed input.
+	 */
+	public function test_occurrence_identity_metadata_is_strict(): void {
+		self::assertSame(
+			'a28e5d8c-5237-4b02-97a4-3f8855a3d5ad',
+			$this->sanitizer->uuid( 'A28E5D8C-5237-4B02-97A4-3F8855A3D5AD' )
+		);
+		self::assertSame( '', $this->sanitizer->uuid( 'not-a-uuid' ) );
+		self::assertSame( 73, $this->sanitizer->generation( '73' ) );
+		self::assertSame( 0, $this->sanitizer->generation( '-1' ) );
+		self::assertSame( 0, $this->sanitizer->generation( 'arbitrary' ) );
 	}
 
 	/**

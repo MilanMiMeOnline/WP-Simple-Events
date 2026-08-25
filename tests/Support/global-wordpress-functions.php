@@ -37,6 +37,18 @@ if ( ! function_exists( 'did_action' ) ) {
 	}
 }
 
+if ( ! function_exists( 'do_action' ) ) {
+	/**
+	 * Record one fired global WordPress action.
+	 *
+	 * @param string $hook_name Hook name.
+	 * @param mixed  ...$args   Action arguments.
+	 */
+	function do_action( string $hook_name, mixed ...$args ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		HookRecorder::fire( $hook_name );
+	}
+}
+
 if ( ! function_exists( 'add_filter' ) ) {
 	/**
 	 * Record a global WordPress filter registration as a callback hook.
@@ -115,6 +127,20 @@ if ( ! function_exists( 'esc_attr' ) ) {
 	}
 }
 
+if ( ! function_exists( 'esc_attr__' ) ) {
+	/**
+	 * Return an escaped translated test attribute string.
+	 *
+	 * @param string $text   Source string.
+	 * @param string $domain Text domain.
+	 */
+	function esc_attr__( string $text, string $domain = 'default' ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $domain );
+
+		return esc_attr( $text );
+	}
+}
+
 if ( ! function_exists( 'esc_attr_e' ) ) {
 	/**
 	 * Echo escaped deterministic test attribute text.
@@ -143,6 +169,17 @@ if ( ! function_exists( 'esc_html_e' ) ) {
 	}
 }
 
+if ( ! function_exists( 'esc_textarea' ) ) {
+	/**
+	 * Escape deterministic textarea text.
+	 *
+	 * @param string $text Source text.
+	 */
+	function esc_textarea( string $text ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return htmlspecialchars( $text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
+	}
+}
+
 if ( ! function_exists( 'selected' ) ) {
 	/**
 	 * Return or echo a deterministic selected attribute.
@@ -159,6 +196,51 @@ if ( ! function_exists( 'selected' ) ) {
 		}
 
 		return $result;
+	}
+}
+
+if ( ! function_exists( 'checked' ) ) {
+	/**
+	 * Return or echo a deterministic checked attribute.
+	 *
+	 * @param mixed $checked Checked value.
+	 * @param mixed $current Current value.
+	 * @param bool  $display Whether to echo the attribute.
+	 */
+	function checked( mixed $checked, mixed $current = true, bool $display = true ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$result = $checked === $current ? ' checked="checked"' : '';
+
+		if ( $display ) {
+			echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Fixed test-only HTML.
+		}
+
+		return $result;
+	}
+}
+
+if ( ! function_exists( 'wp_nonce_field' ) ) {
+	/**
+	 * Render the deterministic nonce field required by metabox tests.
+	 *
+	 * @param int|string $action  Nonce action.
+	 * @param string     $name    Field name.
+	 * @param bool       $referer Whether to include a referer field.
+	 * @param bool       $display Whether to echo the field.
+	 */
+	function wp_nonce_field( int|string $action = -1, string $name = '_wpnonce', bool $referer = true, bool $display = true ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $referer );
+
+		$field = sprintf(
+			'<input type="hidden" name="%s" value="%s">',
+			esc_attr( $name ),
+			esc_attr( 'nonce:' . (string) $action )
+		);
+
+		if ( $display ) {
+			echo $field; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Values were escaped above.
+		}
+
+		return $field;
 	}
 }
 
@@ -253,6 +335,17 @@ if ( ! function_exists( 'get_post' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_post_type_archive_link' ) ) {
+	/**
+	 * Return one deterministic public post-type archive URL.
+	 *
+	 * @param string $post_type Requested post type.
+	 */
+	function get_post_type_archive_link( string $post_type ): string|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return 'wpse_event' === $post_type ? 'https://example.com/events/' : false;
+	}
+}
+
 if ( ! function_exists( 'get_post_type' ) ) {
 	/**
 	 * Return the deterministic post type for an object or identifier.
@@ -313,6 +406,19 @@ if ( ! function_exists( 'wp_is_post_revision' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_save_post_revision' ) ) {
+	/**
+	 * Record explicit revision saves requested by custom metadata workflows.
+	 *
+	 * @param int $post_id Canonical post ID.
+	 */
+	function wp_save_post_revision( int $post_id ): int { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::save_post_revision( $post_id );
+
+		return 2000 + $post_id;
+	}
+}
+
 if ( ! function_exists( 'get_page_by_path' ) ) {
 	/**
 	 * Retrieve one deterministic root-level page by slug.
@@ -336,12 +442,84 @@ if ( ! function_exists( 'flush_rewrite_rules' ) ) {
 	}
 }
 
+if ( ! function_exists( 'add_rewrite_rule' ) ) {
+	/**
+	 * Record one deterministic rewrite rule.
+	 *
+	 * @param string $regex Regular expression without delimiters.
+	 * @param string $query Internal WordPress query mapping.
+	 * @param string $after Rule priority group.
+	 */
+	function add_rewrite_rule( string $regex, string $query, string $after = 'bottom' ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::add_rewrite_rule( $regex, $query, $after );
+	}
+}
+
+if ( ! function_exists( 'status_header' ) ) {
+	/**
+	 * Record a deterministic response status.
+	 *
+	 * @param int    $code        HTTP status code.
+	 * @param string $description Optional status description.
+	 */
+	function status_header( int $code, string $description = '' ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		unset( $description );
+		WordPressState::set_response_status( $code );
+	}
+}
+
+if ( ! function_exists( 'nocache_headers' ) ) {
+	/** Record deterministic no-cache response headers. */
+	function nocache_headers(): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::record_nocache_headers();
+	}
+}
+
 if ( ! function_exists( 'is_admin' ) ) {
 	/**
 	 * Keep isolated query tests on the public request path.
 	 */
 	function is_admin(): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
 		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_schedule_single_event' ) ) {
+	/**
+	 * Record one deterministic cron event.
+	 *
+	 * @param int    $timestamp Scheduled timestamp.
+	 * @param string $hook      Hook name.
+	 */
+	function wp_schedule_single_event( int $timestamp, string $hook ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::schedule_hook( $hook, $timestamp );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_next_scheduled' ) ) {
+	/**
+	 * Return the deterministic next event timestamp.
+	 *
+	 * @param string $hook Hook name.
+	 */
+	function wp_next_scheduled( string $hook ): int|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::next_scheduled( $hook );
+	}
+}
+
+if ( ! function_exists( 'wp_clear_scheduled_hook' ) ) {
+	/**
+	 * Remove deterministic cron events for one hook.
+	 *
+	 * @param string $hook Hook name.
+	 */
+	function wp_clear_scheduled_hook( string $hook ): int|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$count = WordPressState::scheduled_count( $hook );
+		WordPressState::clear_scheduled( $hook );
+
+		return $count;
 	}
 }
 
@@ -353,6 +531,8 @@ if ( ! function_exists( 'get_posts' ) ) {
 	 * @return list<int>
 	 */
 	function get_posts( array $arguments = array() ): array { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::record_get_posts_arguments( $arguments );
+
 		$post_type = is_string( $arguments['post_type'] ?? null ) ? $arguments['post_type'] : 'post';
 		$limit     = is_int( $arguments['posts_per_page'] ?? null ) ? $arguments['posts_per_page'] : 5;
 		$page      = is_int( $arguments['paged'] ?? null ) ? max( 1, $arguments['paged'] ) : 1;
@@ -663,6 +843,45 @@ if ( ! function_exists( 'get_permalink' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_register_sitemap_provider' ) ) {
+	/**
+	 * Register a deterministic WordPress Core sitemap provider.
+	 *
+	 * @param string               $name     Provider name.
+	 * @param WP_Sitemaps_Provider $provider Provider instance.
+	 */
+	function wp_register_sitemap_provider( string $name, WP_Sitemaps_Provider $provider ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return WordPressState::register_sitemap_provider( $name, $provider );
+	}
+}
+
+if ( ! function_exists( 'wp_sitemaps_get_max_urls' ) ) {
+	/**
+	 * Return a deterministic filterable sitemap maximum.
+	 *
+	 * @param string $object_type Provider object type.
+	 */
+	function wp_sitemaps_get_max_urls( string $object_type ): int { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $object_type );
+		$maximum = WordPressState::option( 'wpse_test_sitemap_max_urls' );
+
+		return is_int( $maximum ) ? $maximum : 2000;
+	}
+}
+
+if ( ! function_exists( 'wp_parse_url' ) ) {
+	/**
+	 * Parse one URL through PHP for isolated tests.
+	 *
+	 * @param string $url       URL to parse.
+	 * @param int    $component Optional URL component.
+	 * @return array<string, mixed>|int|string|null|false
+	 */
+	function wp_parse_url( string $url, int $component = -1 ): array|int|string|null|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return parse_url( $url, $component ); // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- This test double implements wp_parse_url() itself.
+	}
+}
+
 if ( ! function_exists( 'get_the_title' ) ) {
 	/**
 	 * Retrieve a configured post title.
@@ -687,6 +906,20 @@ if ( ! function_exists( 'get_the_post_thumbnail_url' ) ) {
 		$url = WordPressState::image_url( $post instanceof WP_Post ? $post->ID : $post );
 
 		return '' === $url ? false : $url;
+	}
+}
+
+if ( ! function_exists( 'get_post_thumbnail_id' ) ) {
+	/**
+	 * Retrieve a configured featured-image attachment ID.
+	 *
+	 * @param WP_Post|int $post Post or post ID.
+	 */
+	function get_post_thumbnail_id( WP_Post|int $post ): int|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$post_id = $post instanceof WP_Post ? $post->ID : $post;
+		$value   = WordPressState::post_meta( $post_id, '_thumbnail_id' );
+
+		return is_numeric( $value ) && (int) $value > 0 ? (int) $value : false;
 	}
 }
 
@@ -727,6 +960,50 @@ if ( ! function_exists( 'get_the_post_thumbnail' ) ) {
 			esc_attr( $class ),
 			esc_attr( $alt )
 		);
+	}
+}
+
+if ( ! function_exists( 'wp_get_attachment_image' ) ) {
+	/**
+	 * Build deterministic attachment-image markup.
+	 *
+	 * @param int                 $attachment_id Attachment post ID.
+	 * @param string|int[]        $size          Requested image size.
+	 * @param bool                $icon          Whether an icon was requested.
+	 * @param array<string,mixed> $attr          Image attributes.
+	 */
+	function wp_get_attachment_image( int $attachment_id, string|array $size = 'thumbnail', bool $icon = false, array $attr = array() ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $icon );
+		$url = WordPressState::image_url( $attachment_id );
+
+		if ( '' === $url ) {
+			return '';
+		}
+
+		$size_name = is_string( $size ) ? $size : 'custom';
+		$class     = is_string( $attr['class'] ?? null ) ? $attr['class'] : 'attachment-' . $size_name . ' size-' . $size_name;
+		$alt       = is_string( $attr['alt'] ?? null ) ? $attr['alt'] : WordPressState::image_alt( $attachment_id );
+
+		return sprintf(
+			'<img src="%1$s" class="%2$s" alt="%3$s">',
+			esc_url( $url ),
+			esc_attr( $class ),
+			esc_attr( $alt )
+		);
+	}
+}
+
+if ( ! function_exists( 'wp_get_attachment_image_url' ) ) {
+	/**
+	 * Retrieve one deterministic attachment image URL.
+	 *
+	 * @param int          $attachment_id Attachment post ID.
+	 * @param string|int[] $size          Requested image size.
+	 */
+	function wp_get_attachment_image_url( int $attachment_id, string|array $size = 'thumbnail' ): string|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		$url = WordPressState::image_url( $attachment_id );
+
+		return '' === $url ? false : $url;
 	}
 }
 
@@ -1087,9 +1364,36 @@ if ( ! function_exists( 'update_post_meta' ) ) {
 	 * @param int    $post_id  Post ID.
 	 * @param string $meta_key Metadata key.
 	 * @param mixed  $value    Metadata value.
+	 * @param mixed  $previous Optional required previous value.
 	 */
-	function update_post_meta( int $post_id, string $meta_key, mixed $value ): int|bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+	function update_post_meta( int $post_id, string $meta_key, mixed $value, mixed $previous = '' ): int|bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
 		if ( WordPressState::meta_operations_fail() ) {
+			return false;
+		}
+
+		if ( 4 === func_num_args() && WordPressState::post_meta( $post_id, $meta_key ) !== $previous ) {
+			return false;
+		}
+
+		WordPressState::update_post_meta( $post_id, $meta_key, $value );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'add_post_meta' ) ) {
+	/**
+	 * Add one deterministic metadata value.
+	 *
+	 * @param int    $post_id  Post ID.
+	 * @param string $meta_key Metadata key.
+	 * @param mixed  $value    Metadata value.
+	 * @param bool   $unique   Whether an existing key blocks the write.
+	 */
+	function add_post_meta( int $post_id, string $meta_key, mixed $value, bool $unique = false ): int|bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		if ( WordPressState::meta_operations_fail()
+			|| ( $unique && WordPressState::has_post_meta( $post_id, $meta_key ) )
+		) {
 			return false;
 		}
 
@@ -1105,15 +1409,14 @@ if ( ! function_exists( 'delete_post_meta' ) ) {
 	 *
 	 * @param int    $post_id  Post ID.
 	 * @param string $meta_key Metadata key.
+	 * @param mixed  $meta_value Optional exact value to remove.
 	 */
-	function delete_post_meta( int $post_id, string $meta_key ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+	function delete_post_meta( int $post_id, string $meta_key, mixed $meta_value = null ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
 		if ( WordPressState::meta_operations_fail() ) {
 			return false;
 		}
 
-		WordPressState::delete_post_meta( $post_id, $meta_key );
-
-		return true;
+		return WordPressState::delete_post_meta( $post_id, $meta_key, $meta_value );
 	}
 }
 
@@ -1126,6 +1429,26 @@ if ( ! function_exists( 'current_user_can' ) ) {
 	 */
 	function current_user_can( string $capability, mixed ...$args ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
 		return WordPressState::current_user_can();
+	}
+}
+
+if ( ! function_exists( 'get_current_user_id' ) ) {
+	/**
+	 * Return one deterministic authenticated user ID.
+	 */
+	function get_current_user_id(): int { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return 7;
+	}
+}
+
+if ( ! function_exists( 'wp_salt' ) ) {
+	/**
+	 * Return a deterministic site-owned test signing secret.
+	 *
+	 * @param string $scheme Requested WordPress salt scheme.
+	 */
+	function wp_salt( string $scheme = 'auth' ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return hash( 'sha256', 'wpse-test-salt:' . $scheme );
 	}
 }
 
@@ -1333,5 +1656,92 @@ if ( ! function_exists( 'add_query_arg' ) ) {
 		$separator = str_contains( $url, '?' ) ? '&' : '?';
 
 		return $url . $separator . $query;
+	}
+}
+
+if ( ! function_exists( 'wp_style_is' ) ) {
+	/**
+	 * Report deterministic style registration state.
+	 *
+	 * @param string $handle Style handle.
+	 * @param string $status Requested registration state.
+	 */
+	function wp_style_is( string $handle, string $status = 'enqueued' ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $handle, $status );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_enqueue_style' ) ) {
+	/**
+	 * Accept one deterministic style enqueue.
+	 *
+	 * @param string $handle Style handle.
+	 */
+	function wp_enqueue_style( string $handle ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $handle );
+	}
+}
+
+if ( ! function_exists( 'wp_script_is' ) ) {
+	/**
+	 * Report deterministic script registration state.
+	 *
+	 * @param string $handle Script handle.
+	 * @param string $status Requested registration state.
+	 */
+	function wp_script_is( string $handle, string $status = 'enqueued' ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $handle, $status );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_enqueue_script' ) ) {
+	/**
+	 * Accept one deterministic script enqueue.
+	 *
+	 * @param string $handle Script handle.
+	 */
+	function wp_enqueue_script( string $handle ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		unset( $handle );
+	}
+}
+
+if ( ! function_exists( 'rest_url' ) ) {
+	/**
+	 * Build one deterministic REST API URL.
+	 *
+	 * @param string $path Relative REST route.
+	 */
+	function rest_url( string $path = '' ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return 'https://example.test/wp-json/' . ltrim( $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'determine_locale' ) ) {
+	/** Return the deterministic test locale. */
+	function determine_locale(): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return 'en_US';
+	}
+}
+
+if ( ! function_exists( 'elementor_theme_do_location' ) ) {
+	/**
+	 * Emit deterministic Elementor Theme Builder output when configured.
+	 *
+	 * @param string $location Core theme location.
+	 */
+	function elementor_theme_do_location( string $location ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Optional Elementor test double.
+		$output = WordPressState::elementor_location( $location );
+
+		if ( null === $output ) {
+			return false;
+		}
+
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Configured trusted test fixture.
+
+		return true;
 	}
 }

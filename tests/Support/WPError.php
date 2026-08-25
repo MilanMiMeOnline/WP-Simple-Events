@@ -28,14 +28,23 @@ if ( ! class_exists( 'WP_Error' ) ) {
 		private string $message;
 
 		/**
+		 * Optional error data.
+		 *
+		 * @var mixed
+		 */
+		private mixed $data;
+
+		/**
 		 * Create one deterministic error.
 		 *
 		 * @param string $code    Error code.
 		 * @param string $message Error message.
+		 * @param mixed  $data    Optional error data.
 		 */
-		public function __construct( string $code = '', string $message = '' ) {
+		public function __construct( string $code = '', string $message = '', mixed $data = null ) {
 			$this->code    = $code;
 			$this->message = $message;
+			$this->data    = $data;
 		}
 
 		/**
@@ -50,6 +59,11 @@ if ( ! class_exists( 'WP_Error' ) ) {
 		 */
 		public function get_error_message(): string {
 			return $this->message;
+		}
+
+		/** Return optional primary error data. */
+		public function get_error_data(): mixed {
+			return $this->data;
 		}
 	}
 	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound

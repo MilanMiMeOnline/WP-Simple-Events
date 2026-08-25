@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Frontend;
 
-use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
 use WP_Post;
 
@@ -20,9 +19,9 @@ final readonly class EventRenderer {
 	/**
 	 * Create the renderer.
 	 *
-	 * @param EventDateFormatter $date_formatter Public event date formatter.
+	 * @param EventPresentationFactory $presentations Normalized presentation factory.
 	 */
-	public function __construct( private EventDateFormatter $date_formatter = new EventDateFormatter() ) {}
+	public function __construct( private EventPresentationFactory $presentations = new EventPresentationFactory() ) {}
 
 	/**
 	 * Render one event card with late contextual escaping.
@@ -31,36 +30,41 @@ final readonly class EventRenderer {
 	 * @param EventCardOptions $options Optional section choices.
 	 */
 	public function card( WP_Post $event, EventCardOptions $options ): string {
-		$presentation = $this->date_formatter->format(
-			$this->integer_meta( $event->ID, EventMeta::START_UTC ),
-			$this->integer_meta( $event->ID, EventMeta::END_UTC ),
-			$this->boolean_meta( $event->ID, EventMeta::ALL_DAY ),
-			$this->string_meta( $event->ID, EventMeta::TIMEZONE )
-		);
+		return $this->card_presentation( $this->presentations->create( $event ), $options );
+	}
 
-		if ( null === $presentation ) {
+	/**
+	 * Render one normalized event or occurrence card with late contextual escaping.
+	 *
+	 * @param EventPresentation $presentation Effective public presentation.
+	 * @param EventCardOptions  $options      Optional section choices.
+	 * @param string            $identity     Optional occurrence identity for unique DOM IDs.
+	 */
+	public function card_presentation(
+		EventPresentation $presentation,
+		EventCardOptions $options,
+		string $identity = ''
+	): string {
+		if ( null === $presentation->date ) {
 			return '';
 		}
 
-		$title        = trim( get_the_title( $event ) );
-		$permalink    = get_permalink( $event );
-		$status       = EventStatus::tryFrom( $this->string_meta( $event->ID, EventMeta::STATUS ) );
+		$event        = $presentation->event;
+		$title        = $presentation->title;
+		$permalink    = $presentation->permalink;
+		$status       = $presentation->status;
 		$status_label = $this->status_label( $status );
 		$status_value = null !== $status ? $status->value : '';
-		$venue        = $this->string_meta( $event->ID, EventMeta::VENUE );
-		$address      = $this->string_meta( $event->ID, EventMeta::ADDRESS );
+		$venue        = $presentation->venue;
+		$address      = $presentation->address;
 		$location     = '' !== $venue ? $venue : $address;
-		$location_url = $this->string_meta( $event->ID, EventMeta::LOCATION_URL );
-		$title_id     = 'wpse-event-' . $event->ID . '-title';
+		$location_url = $presentation->location_url;
+		$title_id     = $this->title_id( $event->ID, $identity );
 		$classes      = array( 'wpse-event-card' );
 		$excerpt      = $options->show_excerpt
 			? trim( wp_trim_words( get_the_excerpt( $event ), $options->excerpt_length ) )
 			: '';
-		if ( '' === $title ) {
-			$title = __( 'Untitled event', 'mime-simple-events-calendar' );
-		}
-
-		$label_attr = $options->show_title
+		$label_attr   = $options->show_title
 			? ' aria-labelledby="' . esc_attr( $title_id ) . '"'
 			: ' aria-label="' . esc_attr( $title ) . '"';
 
@@ -71,17 +75,17 @@ final readonly class EventRenderer {
 		ob_start();
 		?>
 		<article class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"<?php echo $label_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete attribute is escaped above. ?>>
-			<?php if ( $options->show_image && has_post_thumbnail( $event ) ) : ?>
+			<?php if ( $options->show_image && $presentation->featured_image_id > 0 ) : ?>
 				<a class="wpse-event-card-image-link" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
-					<?php echo wp_kses_post( get_the_post_thumbnail( $event, 'medium_large', array( 'class' => 'wpse-event-card-image' ) ) ); ?>
+					<?php echo wp_kses_post( wp_get_attachment_image( $presentation->featured_image_id, 'medium_large', false, array( 'class' => 'wpse-event-card-image' ) ) ); ?>
 				</a>
 			<?php endif; ?>
 
 			<div class="wpse-event-card-body">
 				<?php if ( $options->show_date ) : ?>
 					<div class="wpse-event-card-date">
-						<time datetime="<?php echo esc_attr( $presentation->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->end_iso ); ?>">
-							<?php echo esc_html( $presentation->label ); ?>
+						<time datetime="<?php echo esc_attr( $presentation->date->start_iso ); ?>" data-wpse-end="<?php echo esc_attr( $presentation->date->end_iso ); ?>">
+							<?php echo esc_html( $presentation->date->label ); ?>
 						</time>
 					</div>
 				<?php endif; ?>
@@ -119,6 +123,20 @@ final readonly class EventRenderer {
 	}
 
 	/**
+	 * Build one stable card heading ID without trusting adapter-provided text.
+	 *
+	 * @param int    $event_id Canonical event post ID.
+	 * @param string $identity Optional occurrence identity.
+	 */
+	private function title_id( int $event_id, string $identity ): string {
+		$identity = strtolower( $identity );
+		$identity = preg_replace( '/[^a-z0-9_-]/', '', $identity );
+		$identity = is_string( $identity ) ? substr( $identity, 0, 64 ) : '';
+
+		return 'wpse-event-' . $event_id . ( '' !== $identity ? '-' . $identity : '' ) . '-title';
+	}
+
+	/**
 	 * Return the public label for exceptional event statuses.
 	 *
 	 * @param EventStatus|null $status Validated event status.
@@ -129,42 +147,5 @@ final readonly class EventRenderer {
 			EventStatus::POSTPONED => __( 'Postponed', 'mime-simple-events-calendar' ),
 			default => '',
 		};
-	}
-
-	/**
-	 * Read one scalar metadata value as a string.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function string_meta( int $post_id, string $meta_key ): string {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return is_scalar( $value ) ? (string) $value : '';
-	}
-
-	/**
-	 * Read one numeric metadata value as an integer.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function integer_meta( int $post_id, string $meta_key ): int {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return is_numeric( $value ) ? (int) $value : 0;
-	}
-
-	/**
-	 * Read one boolean metadata value safely.
-	 *
-	 * @param int    $post_id  Event post ID.
-	 * @param string $meta_key Registered meta key.
-	 */
-	private function boolean_meta( int $post_id, string $meta_key ): bool {
-		$value = get_post_meta( $post_id, $meta_key, true );
-
-		return ( is_bool( $value ) || is_string( $value ) || is_int( $value ) )
-			&& rest_sanitize_boolean( $value );
 	}
 }

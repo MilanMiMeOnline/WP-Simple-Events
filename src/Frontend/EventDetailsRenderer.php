@@ -80,7 +80,7 @@ final class EventDetailsRenderer {
 	 * @param EventPresentation|null $presentation Resolved event presentation.
 	 * @param EventDetailsOptions    $options      Bounded presentation choices.
 	 */
-	private function render_presentation( ?EventPresentation $presentation, EventDetailsOptions $options ): string {
+	public function render_presentation( ?EventPresentation $presentation, EventDetailsOptions $options = new EventDetailsOptions() ): string {
 		if ( null === $presentation ) {
 			return '';
 		}
@@ -123,6 +123,7 @@ final class EventDetailsRenderer {
 		$address    = $options->show_location ? $this->fields->address( $presentation ) : '';
 		$location   = $options->show_location ? $this->fields->location_action( $presentation, $options->location_label ) : '';
 		$content    = $options->show_content ? $this->fields->content( $presentation ) : '';
+		$note       = $options->show_content ? $this->fields->note( $presentation ) : '';
 		$action     = $options->show_action ? $this->fields->external_action( $presentation, $options->action_label ) : '';
 		$categories = $options->show_terms ? $this->fields->categories( $presentation, true, $options->categories_label ) : '';
 		$tags       = $options->show_terms ? $this->fields->tags( $presentation, true, $options->tags_label ) : '';
@@ -132,7 +133,7 @@ final class EventDetailsRenderer {
 			? '<header class="wpse-single-event-header">' . $title . $image . '</header>'
 			: '';
 
-		if ( '' === $header . $summary . $content . $action . $terms ) {
+		if ( '' === $header . $summary . $content . $note . $action . $terms ) {
 			return '';
 		}
 
@@ -144,6 +145,7 @@ final class EventDetailsRenderer {
 			. $header
 			. $summary
 			. $content
+			. $note
 			. $action
 			. $terms
 			. '</article>';

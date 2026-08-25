@@ -68,7 +68,8 @@ final readonly class EventPresentationFactory {
 			$this->sanitizer->url( $this->meta( $event->ID, EventMeta::EVENT_URL ) ),
 			$this->sanitizer->event_url_label( $this->meta( $event->ID, EventMeta::EVENT_URL_LABEL ) ),
 			$this->terms( $event->ID, EventTaxonomies::CATEGORY ),
-			$this->terms( $event->ID, EventTaxonomies::TAG )
+			$this->terms( $event->ID, EventTaxonomies::TAG ),
+			max( 0, (int) get_post_thumbnail_id( $event ) )
 		);
 	}
 

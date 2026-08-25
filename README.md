@@ -2,7 +2,7 @@
 
 ![MiMe Simple Events and Calendar](.wordpress-org/banner-1544x500.png)
 
-MiMe Simple Events and Calendar is a focused, native event plugin for WordPress. It provides one-off event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
+MiMe Simple Events and Calendar is a focused, native event plugin for WordPress. It provides one-off and recurring event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
 
 The plugin is free software licensed under GPL-2.0-or-later. Its public WordPress.org identity is `mime-simple-events-calendar`; established internal `wpse_*` storage and content identifiers remain stable.
 
@@ -10,6 +10,9 @@ The plugin is free software licensed under GPL-2.0-or-later. Its public WordPres
 
 - A dedicated Events area using the familiar WordPress editor.
 - Timed, all-day, same-day and multi-day events with captured timezones.
+- Bounded daily, weekly, monthly, yearly and selected-date recurrence.
+- Explicit complete-series, only-this and this-and-following edit scopes with impact review.
+- Manual occurrences, reversible cancellations and sparse occurrence overrides.
 - Event-specific categories, tags and scheduled, postponed or cancelled states.
 - Venue, address, location link and customizable external action link.
 - Native single and archive templates for classic and block themes.
@@ -20,7 +23,7 @@ The plugin is free software licensed under GPL-2.0-or-later. Its public WordPres
 - Safe Event JSON-LD for eligible individual events.
 - Default-safe data retention and explicit administrator maintenance tools.
 
-Recurrence, interactive maps, geocoding, ticketing and external calendar synchronization are deliberate non-goals for version 1.
+Interactive maps, geocoding, ticketing and external calendar synchronization remain deliberate non-goals. Recurrence intentionally excludes multiple simultaneous generated rules and hourly or minutely patterns.
 
 ## Requirements
 
@@ -60,7 +63,8 @@ The runtime plugin:
 - collects no analytics or telemetry;
 - loads no remote scripts, fonts, images or tracking pixels;
 - sends no information to MiMe or another external service;
-- uses no custom database table;
+- stores canonical event content in WordPress posts and metadata;
+- uses one rebuildable local occurrence index for bounded chronological reads;
 - keeps calendar requests on the same WordPress installation.
 
 Event content entered by editors is stored as native WordPress content and metadata. Published event details can be exposed through front-end HTML, Event JSON-LD, core REST and the bounded calendar feed. Drafts, private events and protected event details are excluded from public plugin queries. The core REST response also removes registered event metadata while a post password is required.

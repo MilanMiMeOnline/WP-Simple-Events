@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
 
 /**
@@ -19,12 +20,14 @@ final readonly class EventDetailsShortcode implements ShortcodeRenderer {
 	/**
 	 * Create the shortcode adapter.
 	 *
-	 * @param EventDetailsRenderer $renderer Shared complete event renderer.
-	 * @param FrontendAssets       $assets   Scoped front-end assets.
+	 * @param EventDetailsRenderer             $renderer Shared complete event renderer.
+	 * @param FrontendAssets                   $assets   Scoped front-end assets.
+	 * @param CurrentEventPresentationResolver $current Current event or occurrence resolver.
 	 */
 	public function __construct(
 		private EventDetailsRenderer $renderer = new EventDetailsRenderer(),
-		private FrontendAssets $assets = new FrontendAssets()
+		private FrontendAssets $assets = new FrontendAssets(),
+		private CurrentEventPresentationResolver $current = new CurrentEventPresentationResolver()
 	) {}
 
 	/**
@@ -49,7 +52,7 @@ final readonly class EventDetailsShortcode implements ShortcodeRenderer {
 
 		$output = $normalized->has_explicit_id
 			? $this->renderer->render_public( $event_id, $normalized->options )
-			: $this->renderer->render( $event_id, $normalized->options );
+			: $this->renderer->render_presentation( $this->current->resolve( $event_id ), $normalized->options );
 
 		if ( '' === $output ) {
 			return '';

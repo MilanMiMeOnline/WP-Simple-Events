@@ -12,6 +12,9 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Lifecycle\Deactivator;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceGenerationCleanupController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalController;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -34,6 +37,10 @@ final class DeactivatorTest extends TestCase {
 	public function test_unregisters_the_event_post_type_before_flushing(): void {
 		( new EventPostType() )->register();
 		( new EventTaxonomies() )->register();
+		WordPressState::schedule_hook( OccurrenceIndexMigrationController::HOOK, time() + 30 );
+		WordPressState::schedule_hook( OccurrenceGenerationCleanupController::HOOK, time() + 30 );
+		WordPressState::schedule_hook( OccurrenceProjectionRenewalController::HOOK, time() + 30 );
+		WordPressState::set_option( OccurrenceProjectionRenewalController::OFFSET_OPTION, 2 );
 
 		Deactivator::deactivate();
 
@@ -44,6 +51,10 @@ final class DeactivatorTest extends TestCase {
 			WordPressState::unregistered_taxonomies()
 		);
 		self::assertSame( 1, WordPressState::rewrite_flushes() );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceGenerationCleanupController::HOOK ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceProjectionRenewalController::HOOK ) );
+		self::assertFalse( WordPressState::has_option( OccurrenceProjectionRenewalController::OFFSET_OPTION ) );
 	}
 
 	/**

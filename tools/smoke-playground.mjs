@@ -13,6 +13,7 @@ import {
 const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
 const requestedCore = process.env.WPSE_SMOKE_CORE;
 const requestedPhp = process.env.WPSE_SMOKE_PHP;
+const keepFailedEnvironment = process.env.WPSE_SMOKE_KEEP_ENV === '1';
 const smokeIdentifier = `${ requestedCore ?? 'configured' }-${
 	requestedPhp ?? 'configured'
 }`.replace(
@@ -52,6 +53,9 @@ async function prepareSmokeConfiguration() {
 
 	configuration.plugins = [ smokePluginPath ];
 	configuration.themes = smokeThemePaths;
+	configuration.config = {
+		...configuration.config,
+	};
 
 	if ( requestedPhp ) {
 		configuration.phpVersion = requestedPhp;
@@ -93,7 +97,7 @@ function runWpEnv(
 	} );
 }
 
-async function fetchHealthyPage( url, options = {} ) {
+async function requestPage( url, options = {} ) {
 	let response = await fetch( url, { ...options, redirect: 'manual' } );
 	let redirectTarget = response.headers.get( 'location' );
 
@@ -112,6 +116,12 @@ async function fetchHealthyPage( url, options = {} ) {
 	}
 
 	const body = await response.text();
+
+	return { body, redirectTarget, response };
+}
+
+async function fetchHealthyPage( url, options = {} ) {
+	const { body, redirectTarget, response } = await requestPage( url, options );
 
 	if ( redirectTarget ) {
 		throw new Error( `${ url } redirected to ${ redirectTarget }.` );
@@ -374,7 +384,7 @@ async function editorRestNonce( cookieJar ) {
 	}
 }
 
-async function authenticateAdministrator() {
+async function authenticateAdministrator( loginAttempt = 0 ) {
 	const cookieJar = new Map();
 	const loginUrl = 'http://localhost:8888/wp-login.php';
 	let lastNonceBody = '';
@@ -430,6 +440,12 @@ async function authenticateAdministrator() {
 		if ( attempt < 9 ) {
 			await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
 		}
+	}
+
+	if ( loginAttempt < 2 ) {
+		await new Promise( ( resolve ) => setTimeout( resolve, 500 ) );
+
+		return authenticateAdministrator( loginAttempt + 1 );
 	}
 
 	throw new Error(
@@ -509,6 +525,14 @@ function localDate( dayOffset ) {
 	return `${ values.year }-${ values.month }-${ values.day }`;
 }
 
+function offsetIsoDate( value, dayOffset ) {
+	const date = new Date( `${ value }T12:00:00Z` );
+
+	date.setUTCDate( date.getUTCDate() + dayOffset );
+
+	return date.toISOString().slice( 0, 10 );
+}
+
 async function createPublishedEvent(
 	session,
 	{
@@ -548,6 +572,8 @@ async function createPublishedEvent(
 		} ),
 	} );
 }
+
+const smokeStartedOn = localDate( 0 );
 
 await prepareSmokeConfiguration();
 
@@ -607,6 +633,10 @@ try {
 		'The external event link label REST schema is not bounded to 120 characters.',
 	);
 	requireCondition( ! ( '_wpse_start_utc' in metaSchema ), 'Internal UTC metadata leaked into core REST.' );
+	requireCondition(
+		! ( '_wpse_recurrence_definition' in metaSchema ),
+		'The internal recurrence aggregate leaked into core REST.',
+	);
 
 	const editorResponse = await fetch(
 		'http://localhost:8888/wp-admin/post-new.php?post_type=wpse_event',
@@ -628,10 +658,21 @@ try {
 			editorBody.includes( 'wpseEventFieldBlocks' ),
 		'The shared atomic event-field block editor adapter is unavailable.',
 	);
+	requireCondition(
+		editorBody.includes( 'recurrence-editor.min.js' ) &&
+			editorBody.includes( 'wpseRecurrenceEditor' ) &&
+			/"horizonDays":(?:540|"540")/.test( editorBody ) &&
+			/"maxRows":(?:1000|"1000")/.test( editorBody ),
+		'The bounded Gutenberg recurrence editor adapter is unavailable.',
+	);
 	const publicHomeBody = await fetchHealthyPage( 'http://localhost:8888/' );
 	requireCondition(
 		! publicHomeBody.includes( 'event-fields-editor.min.js' ),
 		'The block editor adapter leaked onto a public page.',
+	);
+	requireCondition(
+		! publicHomeBody.includes( 'recurrence-editor.min.js' ),
+		'The recurrence editor adapter leaked onto a public page.',
 	);
 	const registeredBlocks = await authenticatedRequest(
 		session,
@@ -803,7 +844,7 @@ try {
 	requireCondition( unchangedEvent.response.ok, 'The valid event could not be read after a rejected update.' );
 	requireCondition(
 		unchangedEvent.data.meta._wpse_start_local === `${ localDate( 3 ) }T09:30:00`,
-		'A rejected REST update corrupted existing event data.',
+		`A rejected REST update corrupted existing event data: ${ JSON.stringify( unchangedEvent.data.meta._wpse_start_local ) }.`,
 	);
 
 	const ongoingCreate = await createPublishedEvent(
@@ -945,7 +986,6 @@ try {
 		},
 	);
 	requireCondition( blockReadyEvent.response.ok, 'The atomic block event fixture could not be completed.' );
-
 	const serializedAtomicBlocks = atomicBlockNames.map( ( blockName, index ) => {
 		const attributes = index === 0
 			? {
@@ -1476,6 +1516,875 @@ try {
 	}
 
 	await activateSmokeTheme( session, 'wpse-classic-shell' );
+	const occurrenceParity = await authenticatedRequest(
+		session,
+		`/wp-json/wpse-smoke/v1/occurrence-parity?${ new URLSearchParams( {
+			event_id: String( eventId ),
+			protected_event_id: String( protectedCreate.data.id ),
+			draft_event_id: String( draftCreate.data.id ),
+			window_start: localDate( -10 ),
+			window_end: localDate( 10 ),
+		} ) }`,
+	);
+	requireCondition(
+		occurrenceParity.response.ok,
+		`The administrator-only occurrence parity probe failed: ${ JSON.stringify( occurrenceParity.data ) }`,
+	);
+	requireCondition(
+		occurrenceParity.data.health.generation > 0 &&
+			occurrenceParity.data.health.uid_valid === true &&
+			occurrenceParity.data.health.row_count === 1 &&
+			occurrenceParity.data.health.exact_public_identity === true,
+		`A canonical event save did not activate exactly one occurrence projection: ${ JSON.stringify( occurrenceParity.data.health ) }`,
+	);
+	requireCondition(
+		JSON.stringify( occurrenceParity.data.page_one.legacy_ids ) ===
+			JSON.stringify( occurrenceParity.data.page_one.occurrence_ids ) &&
+			occurrenceParity.data.page_one.legacy_total ===
+				occurrenceParity.data.page_one.occurrence_total &&
+			occurrenceParity.data.page_one.legacy_total_pages ===
+				occurrenceParity.data.page_one.occurrence_total_pages,
+		'Occurrence period ordering or pagination differs from the qualified one-off query.',
+	);
+	requireCondition(
+		JSON.stringify( occurrenceParity.data.page_two.legacy_ids ) ===
+			JSON.stringify( occurrenceParity.data.page_two.occurrence_ids ),
+		'Occurrence page-two membership differs from the qualified one-off query.',
+	);
+	requireCondition(
+		JSON.stringify( occurrenceParity.data.filtered.legacy_ids ) ===
+			JSON.stringify( [ eventId ] ) &&
+			JSON.stringify( occurrenceParity.data.filtered.occurrence_ids ) ===
+				JSON.stringify( [ eventId ] ),
+		'Occurrence category-and-tag filtering differs from the qualified one-off query.',
+	);
+	requireCondition(
+		JSON.stringify( occurrenceParity.data.window.legacy_ids ) ===
+			JSON.stringify( occurrenceParity.data.window.occurrence_ids ) &&
+			occurrenceParity.data.window.occurrence_ids.length === 3 &&
+			occurrenceParity.data.window.protected_parent_excluded === true &&
+			occurrenceParity.data.window.draft_parent_excluded === true,
+		'Occurrence calendar overlap or public-parent filtering differs from the qualified one-off query.',
+	);
+	requireCondition(
+		occurrenceParity.data.ready === true,
+		'The occurrence readiness gate rejected a complete and healthy one-off index.',
+	);
+	requireCondition(
+		occurrenceParity.data.recurrence_meta.registered_as_string === true &&
+			occurrenceParity.data.recurrence_meta.rest_hidden === true &&
+			occurrenceParity.data.recurrence_meta.revisioned === true,
+		'The canonical recurrence metadata is not protected and revision-enabled in WordPress.',
+	);
+
+	const recurrenceDraft = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/wpse_event',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				title: 'Private recurrence projection fixture',
+				status: 'draft',
+				content: '<!-- wp:wpse/event-title /--><!-- wp:wpse/event-date-time /-->',
+				meta: {
+					_wpse_start_local: `${ localDate( 30 ) }T09:30`,
+					_wpse_end_local: `${ localDate( 30 ) }T11:00`,
+					_wpse_all_day: false,
+					_wpse_timezone: 'Europe/Brussels',
+					_wpse_event_status: 'scheduled',
+				},
+			} ),
+		},
+	);
+	requireCondition(
+		recurrenceDraft.response.status === 201,
+		'A private recurrence projection fixture could not be created.',
+	);
+	const unauthorizedRecurrenceContext = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence`,
+	);
+	requireCondition(
+		[ 401, 403 ].includes( unauthorizedRecurrenceContext.response.status ),
+		'An unauthenticated request could read recurrence editor state.',
+	);
+	const recurrenceContext = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence`,
+	);
+	requireCondition(
+		recurrenceContext.response.ok &&
+			recurrenceContext.data.recurring === false &&
+			typeof recurrenceContext.data.revision === 'string' &&
+			recurrenceContext.data.revision.length === 64 &&
+			recurrenceContext.data.aggregate?.segments?.length === 1,
+		'The authorized recurrence context did not bootstrap complete one-off state.',
+	);
+	const recurringProposal = structuredClone(
+		recurrenceContext.data.aggregate,
+	);
+	recurringProposal.segments[ 0 ].definition = {
+		type: 'rule',
+		frequency: 'daily',
+		interval: 1,
+		end: { mode: 'count', count: 3 },
+	};
+	const recurrenceMutation = {
+		aggregate: recurringProposal,
+		scope: 'complete_series',
+		target: '',
+		revision: recurrenceContext.data.revision,
+		from_date: localDate( 30 ),
+		through_date: localDate( 34 ),
+		max_rows: 10,
+	};
+	const recurrencePreview = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/preview`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( recurrenceMutation ),
+		},
+	);
+	requireCondition(
+		recurrencePreview.response.ok &&
+			recurrencePreview.data.impact?.scope === 'complete_series' &&
+			recurrencePreview.data.impact?.added === 2 &&
+			recurrencePreview.data.impact?.removed === 0 &&
+			typeof recurrencePreview.data.confirmation === 'string' &&
+			recurrencePreview.data.confirmation.length === 64,
+		`The recurrence editor preview was incomplete: ${ JSON.stringify( recurrencePreview.data ) }`,
+	);
+	const recurrenceSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				...recurrenceMutation,
+				confirmation: recurrencePreview.data.confirmation,
+			} ),
+		},
+	);
+	requireCondition(
+		recurrenceSave.response.ok &&
+			recurrenceSave.data.changed === true &&
+			recurrenceSave.data.context?.recurring === true &&
+			recurrenceSave.data.context?.revision !==
+				recurrenceContext.data.revision,
+		`The confirmed recurrence editor save failed: ${ JSON.stringify( recurrenceSave.data ) }`,
+	);
+	const staleRecurrenceSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				...recurrenceMutation,
+				confirmation: recurrencePreview.data.confirmation,
+			} ),
+		},
+	);
+	requireCondition(
+		staleRecurrenceSave.response.status === 409 &&
+			staleRecurrenceSave.data.code === 'wpse_recurrence_stale_revision',
+		'A stale recurrence preview was accepted after a newer save.',
+	);
+	const recurrenceProjection = await authenticatedRequest(
+		session,
+		'/wp-json/wpse-smoke/v1/recurrence-projection',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { event_id: recurrenceDraft.data.id } ),
+		},
+	);
+	requireCondition(
+		recurrenceProjection.response.ok,
+		`The complete recurrence projection probe failed: ${ JSON.stringify( recurrenceProjection.data ) }`,
+	);
+	const recurrenceRows = recurrenceProjection.data.rows;
+	requireCondition(
+		recurrenceProjection.data.first_successful === true &&
+			recurrenceProjection.data.first_changed === true &&
+			recurrenceProjection.data.second_successful === true &&
+			recurrenceProjection.data.second_changed === false &&
+			recurrenceProjection.data.generation_unchanged === true &&
+			recurrenceProjection.data.healthy === true &&
+			recurrenceProjection.data.aggregate_loaded === true,
+		'Canonical-first recurrence save or clean no-op coordination failed.',
+	);
+	requireCondition(
+		Array.isArray( recurrenceRows ) &&
+			recurrenceRows.length === 5 &&
+			recurrenceRows.every( ( row ) => /^[a-f0-9]{32}$/.test( row.public_key ) ) &&
+			recurrenceRows.filter( ( row ) => row.source === 'manual' ).length === 1 &&
+			recurrenceRows.filter( ( row ) => row.event_status === 'postponed' ).length === 1 &&
+			recurrenceRows.filter( ( row ) => row.event_status === 'cancelled' ).length === 1 &&
+			recurrenceRows.some(
+				( row ) =>
+					row.recurrence_id === `${ localDate( 32 ) }T09:30:00` &&
+					row.start_local === `${ localDate( 32 ) }T12:00:00`,
+			),
+		'Recurring skip, move, cancellation or manual rows did not reconcile in the real projection table.',
+	);
+	requireCondition(
+		recurrenceProjection.data.coverage_from === localDate( 30 ) &&
+			recurrenceProjection.data.coverage_through === localDate( 34 ) &&
+			recurrenceProjection.data.coverage_generation > 0,
+		`The recurring projection did not record its exact initial coverage window: ${ JSON.stringify( recurrenceProjection.data ) }`,
+	);
+	const privateOccurrenceRest = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v2/events/${ recurrenceDraft.data.id }/occurrences/${ recurrenceRows[ 0 ].public_key }`,
+	);
+	requireCondition(
+		privateOccurrenceRest.response.status === 404 &&
+			privateOccurrenceRest.data.code === 'wpse_occurrence_not_found',
+		'A draft parent was exposed through the public occurrence REST leaf.',
+	);
+	const publishedRecurrence = await authenticatedRequest(
+		session,
+		`/wp-json/wp/v2/wpse_event/${ recurrenceDraft.data.id }`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { status: 'publish' } ),
+		},
+	);
+	requireCondition(
+		publishedRecurrence.response.ok &&
+			publishedRecurrence.data.status === 'publish',
+		'A recurring draft could not be published through the ordinary WordPress save path.',
+	);
+	const recurringOrdinarySaveHealth = await authenticatedRequest(
+		session,
+		`/wp-json/wpse-smoke/v1/recurrence-health?event_id=${ recurrenceDraft.data.id }`,
+	);
+	requireCondition(
+		recurringOrdinarySaveHealth.response.ok &&
+			recurringOrdinarySaveHealth.data.generation > 0 &&
+			recurringOrdinarySaveHealth.data.dirty === false &&
+			[ smokeStartedOn, localDate( 0 ) ].includes(
+				recurringOrdinarySaveHealth.data.coverage_from,
+			) &&
+			recurringOrdinarySaveHealth.data.coverage_through ===
+				offsetIsoDate(
+					recurringOrdinarySaveHealth.data.coverage_from,
+					540,
+				) &&
+			recurringOrdinarySaveHealth.data.coverage_generation ===
+				recurringOrdinarySaveHealth.data.generation &&
+			recurringOrdinarySaveHealth.data.row_count === 10 &&
+			recurringOrdinarySaveHealth.data.first_public_key ===
+				recurrenceRows[ 0 ].public_key &&
+			recurringOrdinarySaveHealth.data.exact_found === true &&
+			recurringOrdinarySaveHealth.data.aggregate_loaded === true,
+		`Publishing did not establish a complete recurring production projection: ${ JSON.stringify( recurringOrdinarySaveHealth.data ) }`,
+	);
+	const narrowedRecurrence = await authenticatedRequest(
+		session,
+		'/wp-json/wpse-smoke/v1/recurrence-repair-needed',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { event_id: recurrenceDraft.data.id } ),
+		},
+	);
+	requireCondition(
+		narrowedRecurrence.response.ok &&
+			narrowedRecurrence.data.marked === true,
+		'The isolated smoke fixture could not prepare a protected manual-repair candidate.',
+	);
+
+	const repairSettingsBody = await fetchHealthyPage(
+		'http://localhost:8888/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
+		{ headers: { cookie: cookieHeader( session.cookieJar ) } },
+	);
+	const occurrenceRepairNonce = adminPostNonce(
+		repairSettingsBody,
+		'wpse_repair_occurrence_index',
+	);
+	requireCondition(
+		repairSettingsBody.includes( 'Repair needed' ) && occurrenceRepairNonce,
+		'The settings screen did not surface the insufficient recurring projection window or its protected repair action.',
+	);
+	const forgedOccurrenceRepair = await fetch(
+		'http://localhost:8888/wp-admin/admin-post.php',
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+				cookie: cookieHeader( session.cookieJar ),
+			},
+			body: new URLSearchParams( {
+				action: 'wpse_repair_occurrence_index',
+				_wpnonce: 'forged-occurrence-repair-nonce',
+			} ),
+			redirect: 'manual',
+		},
+	);
+	requireCondition(
+		forgedOccurrenceRepair.status === 403,
+		'The occurrence index repair endpoint accepted a forged nonce.',
+	);
+	const occurrenceRepair = await fetch(
+		'http://localhost:8888/wp-admin/admin-post.php',
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+				cookie: cookieHeader( session.cookieJar ),
+			},
+			body: new URLSearchParams( {
+				action: 'wpse_repair_occurrence_index',
+				_wpnonce: occurrenceRepairNonce,
+				wpse_occurrence_offset: '0',
+				wpse_occurrence_processed: '0',
+				wpse_occurrence_indexed: '0',
+				wpse_occurrence_invalid: '0',
+				wpse_occurrence_failed: '0',
+			} ),
+			redirect: 'manual',
+		},
+	);
+	const occurrenceRepairLocation = occurrenceRepair.headers.get( 'location' );
+	requireCondition(
+		occurrenceRepair.status === 302 &&
+			occurrenceRepairLocation?.includes(
+				'wpse_maintenance=occurrence_repair_complete',
+			) &&
+			/[?&]wpse_occurrence_processed=1(?:&|$)/.test(
+				occurrenceRepairLocation,
+			) &&
+			/[?&]wpse_occurrence_indexed=1(?:&|$)/.test(
+				occurrenceRepairLocation,
+			),
+		'The bounded occurrence repair did not return privacy-safe completion counters.',
+	);
+	const occurrenceRepairFeedback = await fetchHealthyPage(
+		new URL(
+			occurrenceRepairLocation,
+			'http://localhost:8888/wp-admin/',
+		),
+		{ headers: { cookie: cookieHeader( session.cookieJar ) } },
+	);
+	requireCondition(
+		occurrenceRepairFeedback.includes(
+			'Occurrence index maintenance inspected 1 events: 1 repaired, 0 invalid and 0 failed.',
+		) && occurrenceRepairFeedback.includes( 'Healthy' ),
+		'The occurrence repair did not return a healthy, privacy-safe administrator result.',
+	);
+	const repairedRecurrenceHealth = await authenticatedRequest(
+		session,
+		`/wp-json/wpse-smoke/v1/recurrence-health?event_id=${ recurrenceDraft.data.id }`,
+	);
+	requireCondition(
+		repairedRecurrenceHealth.response.ok &&
+			repairedRecurrenceHealth.data.dirty === false &&
+			repairedRecurrenceHealth.data.aggregate_loaded === true &&
+			[ smokeStartedOn, localDate( 0 ) ].includes(
+				repairedRecurrenceHealth.data.coverage_from,
+			) &&
+			repairedRecurrenceHealth.data.coverage_through ===
+				offsetIsoDate( repairedRecurrenceHealth.data.coverage_from, 540 ) &&
+			repairedRecurrenceHealth.data.coverage_generation ===
+				repairedRecurrenceHealth.data.generation &&
+			repairedRecurrenceHealth.data.row_count === 10 &&
+			repairedRecurrenceHealth.data.exact_found === true,
+		`Type-aware administrator repair did not rebuild the recurring production horizon: ${ JSON.stringify( repairedRecurrenceHealth.data ) }`,
+	);
+	const bufferedRenewal = await authenticatedRequest(
+		session,
+		'/wp-json/wpse-smoke/v1/recurrence-renewal',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { event_id: recurrenceDraft.data.id } ),
+		},
+	);
+	requireCondition(
+		bufferedRenewal.response.ok &&
+			bufferedRenewal.data.ready_before === true &&
+			bufferedRenewal.data.processed === 1 &&
+			bufferedRenewal.data.indexed === 1 &&
+			bufferedRenewal.data.invalid === 0 &&
+			bufferedRenewal.data.failed === 0 &&
+			[ smokeStartedOn, localDate( 0 ) ].includes(
+				bufferedRenewal.data.coverage_from,
+			) &&
+			bufferedRenewal.data.coverage_through ===
+				offsetIsoDate( bufferedRenewal.data.coverage_from, 540 ) &&
+			bufferedRenewal.data.coverage_generation > 0,
+		`Buffered recurring projection renewal failed or disabled still-valid public coverage: ${ JSON.stringify( bufferedRenewal.data ) }`,
+	);
+	const generationCleanup = await authenticatedRequest(
+		session,
+		'/wp-json/wpse-smoke/v1/generation-cleanup',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { event_id: recurrenceDraft.data.id } ),
+		},
+	);
+	requireCondition(
+		generationCleanup.response.ok &&
+			generationCleanup.data.inactive_before >= 1 &&
+			generationCleanup.data.dirty_removed === 0 &&
+			generationCleanup.data.dirty_retained ===
+				generationCleanup.data.inactive_before &&
+			generationCleanup.data.clean_removed ===
+				Math.min( 100, generationCleanup.data.inactive_before ) &&
+			generationCleanup.data.inactive_after ===
+				generationCleanup.data.inactive_before -
+					generationCleanup.data.clean_removed &&
+			generationCleanup.data.active_after >= 500 &&
+			generationCleanup.data.active_after <= 1_000,
+		`Inactive-generation cleanup was not bounded by age, active generation and dirty state: ${ JSON.stringify( generationCleanup.data ) }`,
+	);
+	const sitemapIndex = await fetchHealthyPage(
+		'http://localhost:8888/wp-sitemap.xml',
+	);
+	requireCondition(
+		sitemapIndex.includes( 'wp-sitemap-occurrences-1.xml' ),
+		'The WordPress Core sitemap index omitted the occurrence provider.',
+	);
+	const occurrenceSitemap = await fetchHealthyPage(
+		'http://localhost:8888/wp-sitemap-occurrences-1.xml',
+	);
+	requireCondition(
+		recurrenceRows.every( ( row ) =>
+			occurrenceSitemap.includes( row.public_key ),
+		) &&
+			! occurrenceSitemap.includes( '_wpse_recurrence_aggregate' ) &&
+			! occurrenceSitemap.includes( '<lastmod>' ),
+		'The bounded occurrence sitemap omitted active leaves or exposed protected/unsupported data.',
+	);
+	const occurrenceLeafUrl = new URL( publishedRecurrence.data.link );
+	occurrenceLeafUrl.searchParams.set(
+		'wpse_occurrence',
+		recurrenceRows[ 0 ].public_key,
+	);
+	const occurrenceLeafRequest = await requestPage( occurrenceLeafUrl );
+	const occurrenceLeaf = occurrenceLeafRequest.response;
+	requireCondition(
+		occurrenceLeaf.status === 200 &&
+			! occurrenceLeafRequest.redirectTarget &&
+			occurrenceLeaf.headers.get( 'cache-control' )?.includes( 'no-store' ),
+		`An ordinary recurring-event save replaced or redirected its exact occurrence route: ${ JSON.stringify( {
+			status: occurrenceLeaf.status,
+			location: occurrenceLeafRequest.redirectTarget,
+			redirectedBy: occurrenceLeaf.headers.get( 'x-redirect-by' ),
+			cacheControl: occurrenceLeaf.headers.get( 'cache-control' ),
+			url: occurrenceLeafUrl.toString(),
+		} ) }`,
+	);
+	requireCondition(
+		occurrenceLeafRequest.body.includes( 'class="wpse-single-event"' ) &&
+			occurrenceLeafRequest.body.includes( 'class="wpse-event-date"' ) &&
+			occurrenceLeafRequest.body.includes( 'wpse-event-field-block-event-title' ) &&
+			occurrenceLeafRequest.body.includes( 'wpse-event-field-block-event-date-time' ) &&
+			occurrenceLeafRequest.body.includes( '<script type="application/ld+json">' ) &&
+			occurrenceLeafRequest.body.includes( 'rel="canonical"' ) &&
+			occurrenceLeafRequest.body.includes( recurrenceRows[ 0 ].public_key ),
+		`The exact occurrence leaf did not render native details, schema and its occurrence canonical: ${ JSON.stringify( {
+			details: occurrenceLeafRequest.body.includes( 'class="wpse-single-event"' ),
+			date: occurrenceLeafRequest.body.includes( 'class="wpse-event-date"' ),
+			blockTitle: occurrenceLeafRequest.body.includes( 'wpse-event-field-block-event-title' ),
+			blockDate: occurrenceLeafRequest.body.includes( 'wpse-event-field-block-event-date-time' ),
+			schema: occurrenceLeafRequest.body.includes( '<script type="application/ld+json">' ),
+			canonical: occurrenceLeafRequest.body.includes( 'rel="canonical"' ),
+			key: occurrenceLeafRequest.body.includes( recurrenceRows[ 0 ].public_key ),
+		} ) }`,
+	);
+	const upcomingOccurrenceArchive = await fetchHealthyPage(
+		'http://localhost:8888/events/?wpse_period=upcoming',
+	);
+	const visibleArchiveRows = recurrenceRows.filter(
+		( row ) => row.event_status !== 'cancelled',
+	);
+	const cancelledArchiveRows = recurrenceRows.filter(
+		( row ) => row.event_status === 'cancelled',
+	);
+	requireCondition(
+		visibleArchiveRows.length > 1 &&
+			visibleArchiveRows.every( ( row ) =>
+				upcomingOccurrenceArchive.includes( row.public_key ),
+			) &&
+			cancelledArchiveRows.every( ( row ) =>
+				! upcomingOccurrenceArchive.includes( row.public_key ),
+			),
+		'The native upcoming archive collapsed repeated series occurrences or exposed a cancelled occurrence.',
+	);
+	for ( const seoPlugin of [ 'yoast', 'rank-math', 'aioseo' ] ) {
+		const marker = new RegExp(
+			`name="wpse-smoke-${ seoPlugin }-canonical" content="([^"]+)"`,
+		).exec( occurrenceLeafRequest.body );
+
+		requireCondition(
+			marker?.[ 1 ]?.includes( recurrenceRows[ 0 ].public_key ),
+			`The ${ seoPlugin } canonical filter did not use the exact occurrence URL.`,
+		);
+	}
+	const occurrenceRest = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v2/events/${ recurrenceDraft.data.id }/occurrences/${ recurrenceRows[ 0 ].public_key }`,
+	);
+	const occurrenceRestShape = {
+		response_ok: occurrenceRest.response.ok,
+		schema_version: occurrenceRest.data.schema_version === 1,
+		event_id: occurrenceRest.data.event_id === recurrenceDraft.data.id,
+		occurrence_key:
+			occurrenceRest.data.occurrence_key === recurrenceRows[ 0 ].public_key,
+		canonical:
+			typeof occurrenceRest.data.canonical_url === 'string' &&
+			occurrenceRest.data.canonical_url.includes( recurrenceRows[ 0 ].public_key ),
+		title:
+			occurrenceRest.data.title === 'Private recurrence projection fixture',
+		start_local:
+			occurrenceRest.data.date?.start_local === recurrenceRows[ 0 ].start_local,
+		timezone: occurrenceRest.data.date?.timezone === 'Europe/Brussels',
+		status: occurrenceRest.data.status === recurrenceRows[ 0 ].event_status,
+		optional_values:
+			occurrenceRest.data.featured_image === null &&
+			occurrenceRest.data.external_action === null,
+	};
+	requireCondition(
+		Object.values( occurrenceRestShape ).every( Boolean ),
+		`The exact occurrence REST leaf diverged from its public presentation (${ JSON.stringify( occurrenceRestShape ) }): ${ JSON.stringify( occurrenceRest.data ) }`,
+	);
+	const occurrenceRestJson = JSON.stringify( occurrenceRest.data );
+	requireCondition(
+		! occurrenceRestJson.includes( 'recurrence_id' ) &&
+			! occurrenceRestJson.includes( 'generation' ) &&
+			! occurrenceRestJson.includes( 'segment_id' ) &&
+			! occurrenceRestJson.includes( '_wpse_' ) &&
+			! occurrenceRestJson.includes( 'aggregate' ),
+		'The public occurrence REST leaf exposed protected recurrence internals.',
+	);
+	const missingOccurrenceUrl = new URL( publishedRecurrence.data.link );
+	missingOccurrenceUrl.searchParams.set(
+		'wpse_occurrence',
+		'ffffffffffffffffffffffffffffffff',
+	);
+	const missingOccurrenceRequest = await requestPage( missingOccurrenceUrl );
+	const missingOccurrence = missingOccurrenceRequest.response;
+	requireCondition(
+		missingOccurrence.status === 404 &&
+			! missingOccurrenceRequest.redirectTarget,
+		'An unknown occurrence identity did not remain a non-redirecting 404.',
+	);
+	const missingOccurrenceRest = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v2/events/${ recurrenceDraft.data.id }/occurrences/ffffffffffffffffffffffffffffffff`,
+	);
+	requireCondition(
+		missingOccurrenceRest.response.status === 404 &&
+			missingOccurrenceRest.data.code === 'wpse_occurrence_not_found',
+		'An unknown occurrence REST identity did not return the generic public 404.',
+	);
+	const occurrenceEditQuery = new URLSearchParams( {
+		from_date: localDate( 30 ),
+		through_date: localDate( 34 ),
+		max_rows: '10',
+		target: `${ localDate( 32 ) }T09:30:00`,
+	} );
+	const unauthorizedOccurrenceEdit = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/occurrence?${ occurrenceEditQuery.toString() }`,
+	);
+	requireCondition(
+		[ 401, 403 ].includes( unauthorizedOccurrenceEdit.response.status ),
+		'An unauthenticated request could read occurrence edit state.',
+	);
+	const occurrenceEditContext = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/occurrence?${ occurrenceEditQuery.toString() }`,
+	);
+	const occurrenceEditChecks = {
+		response_ok: occurrenceEditContext.response.ok,
+		target:
+			occurrenceEditContext.data.target === `${ localDate( 32 ) }T09:30:00`,
+		current_start:
+			occurrenceEditContext.data.current?.start_local ===
+			`${ localDate( 32 ) }T12:00:00`,
+		current_status:
+			occurrenceEditContext.data.current?.status === 'postponed',
+		inherited_start:
+			occurrenceEditContext.data.inherited?.start_local ===
+			`${ localDate( 32 ) }T09:30:00`,
+		inherited_status:
+			occurrenceEditContext.data.inherited?.status === 'scheduled',
+		override_start:
+			occurrenceEditContext.data.override_fields?.date_range?.start_local ===
+			`${ localDate( 32 ) }T12:00:00`,
+		override_status:
+			occurrenceEditContext.data.override_fields?.status === 'postponed',
+		inherited_title:
+			occurrenceEditContext.data.inherited_fields?.title ===
+			'Private recurrence projection fixture',
+		inherited_note:
+			occurrenceEditContext.data.inherited_fields?.note === '',
+		inherited_featured_image:
+			occurrenceEditContext.data.inherited_fields?.featured_image_id === 0,
+		inherited_location:
+			occurrenceEditContext.data.inherited_fields?.venue === '' &&
+			occurrenceEditContext.data.inherited_fields?.address === '' &&
+			occurrenceEditContext.data.inherited_fields?.location_url === '' &&
+			occurrenceEditContext.data.inherited_fields?.event_url === '' &&
+			occurrenceEditContext.data.inherited_fields?.event_url_label === '',
+		exclusion_action: occurrenceEditContext.data.exclusion_action === null,
+		revision_type:
+			typeof occurrenceEditContext.data.context?.revision === 'string',
+		revision_length:
+			occurrenceEditContext.data.context?.revision?.length === 64,
+	};
+	requireCondition(
+		Object.values( occurrenceEditChecks ).every( Boolean ),
+		`The occurrence edit context was incomplete (${ JSON.stringify( occurrenceEditChecks ) }): ${ JSON.stringify( occurrenceEditContext.data ) }`,
+	);
+	const onlyThisProposal = structuredClone(
+		occurrenceEditContext.data.context.aggregate,
+	);
+	const onlyThisOverride = onlyThisProposal.overrides.find(
+		( override ) => override.recurrence_id === occurrenceEditContext.data.target,
+	);
+	requireCondition(
+		onlyThisOverride?.fields,
+		'The occurrence edit fixture omitted its target override.',
+	);
+	onlyThisOverride.fields.title = 'Occurrence-only smoke title';
+	const onlyThisMutation = {
+		aggregate: onlyThisProposal,
+		scope: 'only_this',
+		target: occurrenceEditContext.data.target,
+		revision: occurrenceEditContext.data.context.revision,
+		...occurrenceEditContext.data.window,
+	};
+	const onlyThisPreview = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/preview`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( onlyThisMutation ),
+		},
+	);
+	requireCondition(
+		onlyThisPreview.response.ok &&
+			onlyThisPreview.data.impact?.scope === 'only_this' &&
+			onlyThisPreview.data.impact?.target === occurrenceEditContext.data.target &&
+			onlyThisPreview.data.impact?.exception_affected === 1 &&
+			onlyThisPreview.data.impact?.items?.length === 1 &&
+			typeof onlyThisPreview.data.confirmation === 'string',
+		`The occurrence-only preview was incomplete: ${ JSON.stringify( onlyThisPreview.data ) }`,
+	);
+	const onlyThisSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				...onlyThisMutation,
+				confirmation: onlyThisPreview.data.confirmation,
+			} ),
+		},
+	);
+	requireCondition(
+		onlyThisSave.response.ok &&
+			onlyThisSave.data.changed === true &&
+			onlyThisSave.data.context?.revision !== occurrenceEditContext.data.context.revision,
+		`The confirmed occurrence-only save failed: ${ JSON.stringify( onlyThisSave.data ) }`,
+	);
+	const savedOccurrenceEditContext = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/occurrence?${ occurrenceEditQuery.toString() }`,
+	);
+	requireCondition(
+		savedOccurrenceEditContext.response.ok &&
+			savedOccurrenceEditContext.data.override_fields?.title === 'Occurrence-only smoke title' &&
+			savedOccurrenceEditContext.data.current?.start_local === `${ localDate( 32 ) }T12:00:00` &&
+			savedOccurrenceEditContext.data.context?.revision === onlyThisSave.data.context.revision,
+		`The saved occurrence-only state could not be reloaded: ${ JSON.stringify( savedOccurrenceEditContext.data ) }`,
+	);
+	const followingTarget = `${ localDate( 33 ) }T09:30:00`;
+	const followingMutation = {
+		target: followingTarget,
+		revision: onlyThisSave.data.context.revision,
+		from_date: localDate( 30 ),
+		through_date: localDate( 37 ),
+		max_rows: 10,
+		replacement: {
+			template: {
+				start_local: `${ localDate( 33 ) }T10:30:00`,
+				end_local: `${ localDate( 33 ) }T12:00:00`,
+				all_day: false,
+			},
+			definition: {
+				type: 'rule',
+				frequency: 'daily',
+				interval: 2,
+				end: { mode: 'count', count: 2 },
+			},
+		},
+	};
+	const unauthorizedFollowingPreview = await requestJson(
+		`http://localhost:8888/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/following/preview`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( followingMutation ),
+		},
+	);
+	requireCondition(
+		[ 401, 403 ].includes( unauthorizedFollowingPreview.response.status ),
+		'An unauthenticated request could preview a following-scope schedule split.',
+	);
+	const followingPreview = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/following/preview`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( followingMutation ),
+		},
+	);
+	requireCondition(
+		followingPreview.response.ok &&
+			followingPreview.data.impact?.scope === 'this_and_following' &&
+			followingPreview.data.impact?.target === followingTarget &&
+			followingPreview.data.proposal?.segments?.length === 2 &&
+			followingPreview.data.proposal?.overrides?.some(
+				( override ) =>
+					override.recurrence_id === occurrenceEditContext.data.target &&
+					override.fields?.title === 'Occurrence-only smoke title',
+			) &&
+			followingPreview.data.proposal?.manuals?.some(
+				( manual ) =>
+					manual.recurrence_id === `${ localDate( 34 ) }T09:30:00` &&
+					manual.status === 'scheduled',
+			) &&
+			followingPreview.data.proposal?.exclusions?.some(
+				( exclusion ) =>
+					exclusion.recurrence_id === `${ localDate( 34 ) }T09:30:00` &&
+					exclusion.action === 'cancel',
+			) &&
+			typeof followingPreview.data.confirmation === 'string',
+		`The server-built following preview was incomplete: ${ JSON.stringify( followingPreview.data ) }`,
+	);
+	const followingSaveMutation = {
+		aggregate: followingPreview.data.proposal,
+		scope: 'this_and_following',
+		target: followingTarget,
+		revision: followingMutation.revision,
+		from_date: followingMutation.from_date,
+		through_date: followingMutation.through_date,
+		max_rows: followingMutation.max_rows,
+		confirmation: followingPreview.data.confirmation,
+	};
+	const followingSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( followingSaveMutation ),
+		},
+	);
+	requireCondition(
+		followingSave.response.ok &&
+			followingSave.data.changed === true &&
+			followingSave.data.context?.revision !== followingMutation.revision,
+		`The confirmed following-scope save failed: ${ JSON.stringify( followingSave.data ) }`,
+	);
+	const staleFollowingSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( followingSaveMutation ),
+		},
+	);
+	requireCondition(
+		staleFollowingSave.response.status === 409 &&
+			staleFollowingSave.data.code === 'wpse_recurrence_stale_revision',
+		'A saved following-scope confirmation could be replayed.',
+	);
+	const disableContext = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence`,
+	);
+	const occurrenceQuery = new URLSearchParams( {
+		from_date: localDate( 30 ),
+		through_date: localDate( 34 ),
+		max_rows: '10',
+	} );
+	const survivorChoices = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/occurrences?${ occurrenceQuery.toString() }`,
+	);
+	const survivor = survivorChoices.data.occurrences?.[ 0 ];
+	requireCondition(
+		disableContext.response.ok &&
+			disableContext.data.recurring === true &&
+			survivorChoices.response.ok &&
+			typeof survivor?.recurrence_id === 'string',
+		`The recurrence-disable survivor choices were incomplete: ${ JSON.stringify( survivorChoices.data ) }`,
+	);
+	const disableMutation = {
+		target: survivor.recurrence_id,
+		revision: disableContext.data.revision,
+		from_date: localDate( 30 ),
+		through_date: localDate( 34 ),
+		max_rows: 10,
+	};
+	const disablePreview = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/disable/preview`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( disableMutation ),
+		},
+	);
+	requireCondition(
+		disablePreview.response.ok &&
+			disablePreview.data.survivor?.recurrence_id === survivor.recurrence_id &&
+			disablePreview.data.impact?.outside_window_removed === true &&
+			disablePreview.data.impact?.source_changed === 1 &&
+			typeof disablePreview.data.confirmation === 'string',
+		`The recurrence-disable preview was incomplete: ${ JSON.stringify( disablePreview.data ) }`,
+	);
+	const disableSave = await authenticatedRequest(
+		session,
+		`/wp-json/wpse/v1/events/${ recurrenceDraft.data.id }/recurrence/disable/save`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				...disableMutation,
+				confirmation: disablePreview.data.confirmation,
+			} ),
+		},
+	);
+	requireCondition(
+		disableSave.response.ok &&
+			disableSave.data.changed === true &&
+			disableSave.data.context?.recurring === false &&
+			disableSave.data.context?.aggregate?.segments?.[ 0 ]?.template
+				?.start_local === survivor.start_local,
+		`The confirmed recurrence-disable conversion failed: ${ JSON.stringify( disableSave.data ) }`,
+	);
+	const recurrenceDelete = await authenticatedRequest(
+		session,
+		`/wp-json/wp/v2/wpse_event/${ recurrenceDraft.data.id }?force=true`,
+		{ method: 'DELETE' },
+	);
+	requireCondition(
+		recurrenceDelete.response.ok,
+		'The private recurrence projection fixture could not be removed.',
+	);
 
 	const protectedSingleBody = await fetchHealthyPage( protectedCreate.data.link );
 	requireCondition(
@@ -1929,7 +2838,11 @@ try {
 		);
 	}
 } finally {
-	await runWpEnv( [ 'stop' ], { allowFailure: true } );
-	await rm( smokeConfigDirectory, { force: true, recursive: true } );
-	await rm( smokeWpEnvHome, { force: true, recursive: true } );
+	if ( keepFailedEnvironment ) {
+		process.stderr.write( `Retained smoke environment at ${ smokeWpEnvHome }.\n` );
+	} else {
+		await runWpEnv( [ 'stop' ], { allowFailure: true } );
+		await rm( smokeConfigDirectory, { force: true, recursive: true } );
+		await rm( smokeWpEnvHome, { force: true, recursive: true } );
+	}
 }

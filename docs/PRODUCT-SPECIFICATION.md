@@ -1,8 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 19 August 2026
-**Current release candidate:** 0.3.0
+**Last reviewed:** 25 August 2026
+**Current development target:** 0.4.0 recurring-events release candidate; public 0.3.0 remains one-off only
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -48,18 +48,21 @@ platform.
 - Optional Elementor composite and atomic widgets.
 - Event JSON-LD on eligible public event pages.
 - Safe duplication and explicit uninstall-data ownership controls.
+- Recurring series with bounded daily, weekly, monthly, yearly and specific-date schedules.
+- Manual occurrences, reversible cancellations and explicit occurrence edit scopes.
 
-### Deliberately excluded from version 1
+### Deliberately excluded from the current product plan
 
-- Recurring events or occurrence editing.
 - Interactive maps, geocoding, coordinates or map providers.
 - Ticketing, registration, payments or attendee management.
 - External calendar synchronization.
-- A custom database table.
+- Multiple simultaneous recurrence rules or hourly/minutely recurrence.
+- Patterned recurrence exclusions and a separate builder body per occurrence.
 
-A repeated real-world event is represented by separate WordPress event posts.
-The duplicate action may help editors create them, but it must never invent a
-recurrence model.
+The recurrence implementation follows ADR-044 and
+[RECURRENCE-CONTRACT.md](RECURRENCE-CONTRACT.md). The 0.4.0 development branch now
+enables its fail-closed occurrence read path by default; the published 0.3.0
+release continues to represent repeated real-world events as separate posts.
 
 ## 3. Platform and identity
 
@@ -75,6 +78,7 @@ recurrence model.
 | Tag taxonomy | `wpse_event_tag` |
 | Event meta prefix | `_wpse_` |
 | REST namespace | `wpse/v1` |
+| Occurrence REST namespace | `wpse/v2` |
 | Minimum WordPress | 6.9 |
 | Minimum PHP | 8.2 |
 | Optional Elementor minimum | 3.35 |
@@ -85,8 +89,9 @@ notice, break activation or disable core event functionality.
 
 ## 4. Native WordPress content model
 
-Events use WordPress posts rather than a custom table. Standard content maps as
-follows:
+Events use WordPress posts as canonical series content. A rebuildable occurrence
+table may index chronological dates but never owns title, body, taxonomy or
+publication eligibility. Standard content maps as follows:
 
 | Content | WordPress field |
 |---|---|
@@ -425,7 +430,8 @@ batched through WordPress APIs. The complete contract is in
 
 ## 18. Performance and maintainability
 
-- No custom table is introduced for version 1.
+- One rebuildable occurrence table supports bounded chronological queries. The
+  event post and registered metadata remain canonical.
 - Date comparison uses normalized metadata indices.
 - Public queries are bounded and avoid unbounded `posts_per_page=-1` behaviour.
 - Assets load only where their component is rendered or administered.
@@ -480,6 +486,8 @@ The version 1 product contract is satisfied when:
 8. protected, private and unpublished details remain private;
 9. uninstall behaviour is explicit and safe by default;
 10. all release gates and supported-version checks pass.
+11. recurring occurrences preserve stable identity, bounded queries and explicit
+    edit scope without changing one-off event behaviour.
 
 ## 21. Post-version-1 roadmap boundary
 
@@ -487,8 +495,8 @@ Future work is prioritized in [ROADMAP.md](ROADMAP.md). The next development
 cycle sharpens the existing one-off event, presentation and builder experience
 before adding a new event model or page-builder adapter.
 
-Recurrence requires a separate occurrence model, migration design and explicit
-series/occurrence editing contract before implementation. Divi 5 compatibility
+Recurrence follows the accepted occurrence model, migration design and explicit
+series/occurrence editing contract in ADR-044. Divi 5 compatibility
 must reuse the shared presentation and query services rather than forking event
 logic. Interactive maps remain outside the roadmap. No roadmap item changes the
 supported product until its specification, tests and release are complete.

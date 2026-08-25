@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Blocks;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcode;
 use MiMe\WPSimpleEvents\Shortcode\EventListShortcode;
@@ -22,14 +23,16 @@ final readonly class EventCompositeBlockRenderer {
 	/**
 	 * Create the adapter with request-shared native renderers.
 	 *
-	 * @param ShortcodeRenderer    $event_list Native event-list adapter.
-	 * @param ShortcodeRenderer    $calendar   Native calendar adapter.
-	 * @param EventDetailsRenderer $details    Shared complete-event renderer.
+	 * @param ShortcodeRenderer                $event_list Native event-list adapter.
+	 * @param ShortcodeRenderer                $calendar   Native calendar adapter.
+	 * @param EventDetailsRenderer             $details    Shared complete-event renderer.
+	 * @param CurrentEventPresentationResolver $current Current event or occurrence resolver.
 	 */
 	public function __construct(
 		private ShortcodeRenderer $event_list = new EventListShortcode(),
 		private ShortcodeRenderer $calendar = new CalendarShortcode(),
-		private EventDetailsRenderer $details = new EventDetailsRenderer()
+		private EventDetailsRenderer $details = new EventDetailsRenderer(),
+		private CurrentEventPresentationResolver $current = new CurrentEventPresentationResolver()
 	) {}
 
 	/**
@@ -84,7 +87,9 @@ final readonly class EventCompositeBlockRenderer {
 			$output   = null === $event_id ? '' : $this->details->render_public( $event_id, $details->options );
 		} else {
 			$event_id = $this->context_event_id( $block );
-			$output   = null === $event_id ? '' : $this->details->render( $event_id, $details->options );
+			$output   = null === $event_id
+				? ''
+				: $this->details->render_presentation( $this->current->resolve( $event_id ), $details->options );
 		}
 
 		return $output;

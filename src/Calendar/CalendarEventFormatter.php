@@ -13,6 +13,7 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionItem;
 use WP_Post;
 use WP_Term;
 
@@ -82,6 +83,62 @@ final readonly class CalendarEventFormatter {
 			'allDay'        => $all_day,
 			'status'        => $status->value,
 			'url'           => $permalink,
+			'extendedProps' => $extended,
+		);
+	}
+
+	/**
+	 * Format one presentation-ready occurrence without rereading series schedule fields.
+	 *
+	 * @param OccurrenceCollectionItem $item Exact occurrence and effective presentation.
+	 * @return array<string, mixed>|null
+	 */
+	public function format_occurrence( OccurrenceCollectionItem $item ): ?array {
+		$event      = $item->presentation->event;
+		$occurrence = $item->occurrence;
+		$range      = $occurrence->date_range;
+
+		if ( EventPostType::POST_TYPE !== $event->post_type || $event->ID !== $occurrence->event_id ) {
+			return null;
+		}
+
+		$dates = $this->dates->format(
+			$range->start_local(),
+			$range->end_local(),
+			$range->start_utc(),
+			$range->end_utc(),
+			$range->all_day(),
+			$range->timezone()
+		);
+		$title = trim( wp_strip_all_tags( $item->presentation->title, true ) );
+		$url   = $item->presentation->permalink;
+
+		if ( null === $dates || '' === $title || '' === $url ) {
+			return null;
+		}
+
+		$extended = array(
+			'categories' => $this->category_slugs( $event->ID ),
+			'timezone'   => $dates['timezone'],
+		);
+
+		if ( null !== $dates['start_instant'] && null !== $dates['end_instant'] ) {
+			$extended['startInstant'] = $dates['start_instant'];
+			$extended['endInstant']   = $dates['end_instant'];
+		}
+
+		if ( '' !== $item->presentation->venue ) {
+			$extended['venue'] = $item->presentation->venue;
+		}
+
+		return array(
+			'id'            => $occurrence->public_key,
+			'title'         => $title,
+			'start'         => $dates['start'],
+			'end'           => $dates['end'],
+			'allDay'        => $range->all_day(),
+			'status'        => $occurrence->status->value,
+			'url'           => $url,
 			'extendedProps' => $extended,
 		);
 	}

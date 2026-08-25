@@ -6,7 +6,11 @@ export default [
   },
   ...wordpress.configs[ 'recommended-with-formatting' ],
   {
-    files: [ 'assets/src/js/calendar.js' ],
+    files: [
+      'assets/src/js/calendar.js',
+      'assets/src/js/recurrence-editor.js',
+      'assets/src/js/recurrence-editor-utils.mjs',
+    ],
     // esbuild resolves these package exports during every build. The WordPress
     // preset's TypeScript resolver reports an invalid-interface error for them.
     rules: {

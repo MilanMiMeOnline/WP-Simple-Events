@@ -25,6 +25,7 @@ final class EventQueryArguments {
 	 * @return array<string, mixed>
 	 */
 	public function build( EventQueryCriteria $criteria ): array {
+		$direction = EventPeriod::PAST === $criteria->period ? 'DESC' : 'ASC';
 		$arguments = array(
 			'post_type'              => EventPostType::POST_TYPE,
 			'post_status'            => 'publish',
@@ -37,8 +38,11 @@ final class EventQueryArguments {
 			'update_post_term_cache' => true,
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Public event queries are bounded and intentionally ordered by registered date metadata.
 			'meta_key'               => EventMeta::START_UTC,
-			'orderby'                => 'meta_value_num',
-			'order'                  => EventPeriod::PAST === $criteria->period ? 'DESC' : 'ASC',
+			'orderby'                => array(
+				'meta_value_num' => $direction,
+				'ID'             => 'ASC',
+			),
+			'order'                  => $direction,
 		);
 
 		$meta_query = $this->meta_query( $criteria );
@@ -77,7 +81,10 @@ final class EventQueryArguments {
 			'update_post_term_cache' => true,
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Calendar feeds are bounded and intentionally ordered by registered local date metadata.
 			'meta_key'               => EventMeta::START_LOCAL,
-			'orderby'                => 'meta_value',
+			'orderby'                => array(
+				'meta_value' => 'ASC',
+				'ID'         => 'ASC',
+			),
 			'order'                  => 'ASC',
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- The bounded calendar feed must select events overlapping its requested window.
 			'meta_query'             => array(

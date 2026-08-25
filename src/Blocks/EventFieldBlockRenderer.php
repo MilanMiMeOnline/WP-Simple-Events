@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Blocks;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
 use MiMe\WPSimpleEvents\Frontend\EventPresentation;
@@ -20,12 +21,14 @@ final readonly class EventFieldBlockRenderer {
 	/**
 	 * Create a request-shared block adapter.
 	 *
-	 * @param EventContextResolver $contexts Shared event context resolver.
-	 * @param EventFieldRenderer   $fields   Shared named-field renderer.
+	 * @param EventContextResolver             $contexts Shared event context resolver.
+	 * @param EventFieldRenderer               $fields   Shared named-field renderer.
+	 * @param CurrentEventPresentationResolver $current Current event or occurrence resolver.
 	 */
 	public function __construct(
 		private EventContextResolver $contexts = new EventContextResolver(),
-		private EventFieldRenderer $fields = new EventFieldRenderer()
+		private EventFieldRenderer $fields = new EventFieldRenderer(),
+		private CurrentEventPresentationResolver $current = new CurrentEventPresentationResolver()
 	) {}
 
 	/**
@@ -82,14 +85,14 @@ final readonly class EventFieldBlockRenderer {
 			$post_type = is_string( $context['postType'] ?? null ) ? $context['postType'] : '';
 
 			return null !== $post_id && EventPostType::POST_TYPE === $post_type
-				? $this->contexts->resolve_current( $post_id )
+				? $this->current->resolve( $post_id )
 				: null;
 		}
 
 		$queried_id = get_queried_object_id();
 
 		return $queried_id > 0 && EventPostType::POST_TYPE === get_post_type( $queried_id )
-			? $this->contexts->resolve_current( $queried_id )
+			? $this->current->resolve( $queried_id )
 			: null;
 	}
 

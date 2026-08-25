@@ -32,6 +32,8 @@ final readonly class EventPresentation {
 	 * @param string                     $event_url_label    Normalized custom action label.
 	 * @param EventTermPresentation[]    $categories         Public category destinations.
 	 * @param EventTermPresentation[]    $tags               Public tag destinations.
+	 * @param int                        $featured_image_id  Effective image attachment ID, or zero.
+	 * @param string                     $note               Optional occurrence-specific plain-text note.
 	 */
 	public function __construct(
 		public WP_Post $event,
@@ -46,6 +48,8 @@ final readonly class EventPresentation {
 		public string $event_url,
 		public string $event_url_label,
 		public array $categories,
-		public array $tags
+		public array $tags,
+		public int $featured_image_id = 0,
+		public string $note = ''
 	) {}
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Frontend;
 
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
 use WP_Block;
 use WP_Query;
 
@@ -19,12 +20,16 @@ final readonly class NativeTemplateRenderer {
 	/**
 	 * Create the native template controller.
 	 *
-	 * @param EventDetailsRenderer $single  Complete single-event renderer.
-	 * @param EventArchiveRenderer $archive Native archive renderer.
+	 * @param EventDetailsRenderer               $single                   Complete single-event renderer.
+	 * @param EventArchiveRenderer               $archive                  Native archive renderer.
+	 * @param OccurrenceRouteController          $occurrences              Current exact route context.
+	 * @param OccurrenceEventPresentationFactory $occurrence_presentations Effective occurrence adapter.
 	 */
 	public function __construct(
 		private EventDetailsRenderer $single = new EventDetailsRenderer(),
-		private EventArchiveRenderer $archive = new EventArchiveRenderer()
+		private EventArchiveRenderer $archive = new EventArchiveRenderer(),
+		private OccurrenceRouteController $occurrences = new OccurrenceRouteController(),
+		private OccurrenceEventPresentationFactory $occurrence_presentations = new OccurrenceEventPresentationFactory()
 	) {}
 
 	/**
@@ -83,6 +88,17 @@ final readonly class NativeTemplateRenderer {
 
 		if ( null !== $elementor ) {
 			return $elementor;
+		}
+
+		$occurrence = $this->occurrences->current();
+
+		if ( null !== $occurrence ) {
+			$presentation = $this->occurrence_presentations->create(
+				$occurrence,
+				$this->occurrences->canonical_url( $occurrence )
+			);
+
+			return $this->single->render_presentation( $presentation );
 		}
 
 		return $this->single->render( get_queried_object_id() );

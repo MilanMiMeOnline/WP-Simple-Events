@@ -37,6 +37,13 @@ final class EventQueryArgumentsTest extends TestCase {
 		self::assertSame( 'publish', $arguments['post_status'] );
 		self::assertFalse( $arguments['has_password'] );
 		self::assertSame( EventMeta::START_UTC, $arguments['meta_key'] );
+		self::assertSame(
+			array(
+				'meta_value_num' => 'ASC',
+				'ID'             => 'ASC',
+			),
+			$arguments['orderby']
+		);
 		self::assertSame( 'ASC', $arguments['order'] );
 		self::assertSame( 12, $arguments['posts_per_page'] );
 		self::assertSame( 2, $arguments['paged'] );
@@ -108,7 +115,13 @@ final class EventQueryArgumentsTest extends TestCase {
 		self::assertFalse( $arguments['has_password'] );
 		self::assertSame( 'AND', $arguments['meta_query']['relation'] );
 		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_key'] );
-		self::assertSame( 'meta_value', $arguments['orderby'] );
+		self::assertSame(
+			array(
+				'meta_value' => 'ASC',
+				'ID'         => 'ASC',
+			),
+			$arguments['orderby']
+		);
 		self::assertSame( EventMeta::END_LOCAL, $arguments['meta_query'][0]['key'] );
 		self::assertSame( '>=', $arguments['meta_query'][0]['compare'] );
 		self::assertSame( '2027-01-15', $arguments['meta_query'][0]['value'] );

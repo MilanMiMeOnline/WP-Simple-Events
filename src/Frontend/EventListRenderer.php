@@ -49,6 +49,51 @@ final readonly class EventListRenderer {
 			}
 		}
 
+		return $this->collection( $cards, $view, $columns, $results_id );
+	}
+
+	/**
+	 * Render presentation-ready occurrence items without collapsing parent IDs.
+	 *
+	 * @param OccurrenceCollectionPage $page       Complete occurrence presentation page.
+	 * @param EventListView            $view       List or grid layout.
+	 * @param int                      $columns    Desktop grid columns.
+	 * @param EventCardOptions         $options    Card section choices.
+	 * @param string                   $results_id Stable instance results ID.
+	 */
+	public function render_occurrences(
+		OccurrenceCollectionPage $page,
+		EventListView $view,
+		int $columns,
+		EventCardOptions $options,
+		string $results_id
+	): string {
+		$cards = array();
+
+		foreach ( $page->items as $item ) {
+			$card = $this->events->card_presentation(
+				$item->presentation,
+				$options,
+				$item->occurrence->public_key
+			);
+
+			if ( '' !== $card ) {
+				$cards[] = $card;
+			}
+		}
+
+		return $this->collection( $cards, $view, $columns, $results_id );
+	}
+
+	/**
+	 * Wrap complete card markup in its accessible collection or empty state.
+	 *
+	 * @param string[]      $cards      Complete escaped card markup.
+	 * @param EventListView $view       List or grid layout.
+	 * @param int           $columns    Desktop grid columns.
+	 * @param string        $results_id Stable instance results ID.
+	 */
+	private function collection( array $cards, EventListView $view, int $columns, string $results_id ): string {
 		if ( array() === $cards ) {
 			return sprintf(
 				'<div id="%1$s" class="wpse-events-empty" role="status"><p>%2$s</p></div>',

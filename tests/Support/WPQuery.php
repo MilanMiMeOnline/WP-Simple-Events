@@ -14,6 +14,13 @@ if ( ! class_exists( 'WP_Query' ) ) {
 	 */
 	final class WP_Query {
 		/**
+		 * Whether the query has been converted to a 404.
+		 *
+		 * @var bool
+		 */
+		public bool $is_404 = false;
+
+		/**
 		 * Public result posts.
 		 *
 		 * @var array<int, mixed>
@@ -26,6 +33,13 @@ if ( ! class_exists( 'WP_Query' ) ) {
 		 * @var int
 		 */
 		public int $max_num_pages = 0;
+
+		/**
+		 * Exact public result count.
+		 *
+		 * @var int
+		 */
+		public int $found_posts = 0;
 
 		/**
 		 * Stored query variables.
@@ -75,6 +89,30 @@ if ( ! class_exists( 'WP_Query' ) ) {
 			$allowed  = is_array( $taxonomies ) ? $taxonomies : array( $taxonomies );
 
 			return is_string( $taxonomy ) && in_array( $taxonomy, $allowed, true );
+		}
+
+		/**
+		 * Match a deterministic singular post-type request.
+		 *
+		 * @param string|string[] $post_types Requested post types.
+		 */
+		public function is_singular( string|array $post_types = '' ): bool {
+			$allowed = is_array( $post_types ) ? $post_types : array( $post_types );
+
+			return 'singular' === $this->get( 'wpse_test_request' )
+				&& in_array( $this->get( 'post_type' ), $allowed, true );
+		}
+
+		/** Return the deterministic queried post ID. */
+		public function get_queried_object_id(): int {
+			$post_id = $this->get( 'p' );
+
+			return is_int( $post_id ) ? $post_id : 0;
+		}
+
+		/** Convert the deterministic query to a 404. */
+		public function set_404(): void {
+			$this->is_404 = true;
 		}
 
 		/**

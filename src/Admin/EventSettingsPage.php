@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceHealthMonitor;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceHealthStatus;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSlugConflictDetector;
 use MiMe\WPSimpleEvents\Seo\StructuredDataSettings;
@@ -31,6 +33,8 @@ final class EventSettingsPage {
 		'capabilities_repaired',
 		'reindex_progress',
 		'reindex_complete',
+		'occurrence_repair_progress',
+		'occurrence_repair_complete',
 	);
 
 	/**
@@ -39,11 +43,13 @@ final class EventSettingsPage {
 	 * @param EventArchiveSettings             $archive_settings Validated archive settings.
 	 * @param EventArchiveSlugConflictDetector $slug_conflicts   Page conflict detector.
 	 * @param EventTimezoneDisplaySettings     $timezone_display Global timezone-display setting.
+	 * @param OccurrenceHealthMonitor          $occurrence_health Derived occurrence health monitor.
 	 */
 	public function __construct(
 		private readonly EventArchiveSettings $archive_settings = new EventArchiveSettings(),
 		private readonly EventArchiveSlugConflictDetector $slug_conflicts = new EventArchiveSlugConflictDetector(),
-		private readonly EventTimezoneDisplaySettings $timezone_display = new EventTimezoneDisplaySettings()
+		private readonly EventTimezoneDisplaySettings $timezone_display = new EventTimezoneDisplaySettings(),
+		private readonly OccurrenceHealthMonitor $occurrence_health = new OccurrenceHealthMonitor()
 	) {}
 
 	/**
@@ -436,6 +442,8 @@ final class EventSettingsPage {
 		<hr>
 		<h2><?php esc_html_e( 'Maintenance', 'mime-simple-events-calendar' ); ?></h2>
 		<p><?php esc_html_e( 'Use these tools only to repair existing event data. They do not change event content or presentation settings.', 'mime-simple-events-calendar' ); ?></p>
+		<?php $this->render_occurrence_health( $state ); ?>
+
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
 			<input type="hidden" name="action" value="<?php echo esc_attr( EventMaintenanceController::REPAIR_CAPABILITIES_ACTION ); ?>">
 			<?php wp_nonce_field( EventMaintenanceController::REPAIR_CAPABILITIES_ACTION ); ?>
@@ -467,9 +475,53 @@ final class EventSettingsPage {
 	}
 
 	/**
+	 * Render one clear occurrence-index state and only the applicable action.
+	 *
+	 * @param array<string, int|string> $state Parsed maintenance continuation state.
+	 */
+	private function render_occurrence_health( array $state ): void {
+		$health = $this->occurrence_health->status();
+		?>
+		<h3><?php esc_html_e( 'Occurrence index', 'mime-simple-events-calendar' ); ?></h3>
+		<?php if ( OccurrenceHealthStatus::HEALTHY === $health ) : ?>
+			<p><strong><?php esc_html_e( 'Healthy', 'mime-simple-events-calendar' ); ?></strong> — <?php esc_html_e( 'Public events have a complete derived occurrence index.', 'mime-simple-events-calendar' ); ?></p>
+		<?php elseif ( OccurrenceHealthStatus::BUILDING === $health ) : ?>
+			<p><strong><?php esc_html_e( 'Building', 'mime-simple-events-calendar' ); ?></strong> — <?php esc_html_e( 'Existing events are being indexed in bounded background batches. Public occurrence features remain unavailable until this finishes.', 'mime-simple-events-calendar' ); ?></p>
+		<?php elseif ( OccurrenceHealthStatus::UNAVAILABLE === $health ) : ?>
+			<p><strong><?php esc_html_e( 'Unavailable', 'mime-simple-events-calendar' ); ?></strong> — <?php esc_html_e( 'The occurrence storage schema is not ready. Reload this page after WordPress has completed the plugin upgrade.', 'mime-simple-events-calendar' ); ?></p>
+		<?php else : ?>
+			<p><strong><?php esc_html_e( 'Repair needed', 'mime-simple-events-calendar' ); ?></strong> — <?php esc_html_e( 'At least one public event has no complete occurrence projection or was marked dirty after an interrupted change.', 'mime-simple-events-calendar' ); ?></p>
+		<?php endif; ?>
+
+		<?php if ( OccurrenceHealthStatus::REPAIR_NEEDED === $health ) : ?>
+			<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+				<input type="hidden" name="action" value="<?php echo esc_attr( EventMaintenanceController::REPAIR_OCCURRENCES_ACTION ); ?>">
+				<input type="hidden" name="wpse_occurrence_offset" value="<?php echo esc_attr( (string) $state['occurrence_offset'] ); ?>">
+				<input type="hidden" name="wpse_occurrence_processed" value="<?php echo esc_attr( (string) $state['occurrence_processed'] ); ?>">
+				<input type="hidden" name="wpse_occurrence_indexed" value="<?php echo esc_attr( (string) $state['occurrence_indexed'] ); ?>">
+				<input type="hidden" name="wpse_occurrence_invalid" value="<?php echo esc_attr( (string) $state['occurrence_invalid'] ); ?>">
+				<input type="hidden" name="wpse_occurrence_failed" value="<?php echo esc_attr( (string) $state['occurrence_failed'] ); ?>">
+				<?php wp_nonce_field( EventMaintenanceController::REPAIR_OCCURRENCES_ACTION ); ?>
+				<?php
+				submit_button(
+					'occurrence_repair_progress' === $state['status']
+						? __( 'Continue occurrence index repair', 'mime-simple-events-calendar' )
+						: __( 'Repair occurrence index', 'mime-simple-events-calendar' ),
+					'secondary',
+					'submit',
+					false
+				);
+				?>
+			</form>
+			<p class="description"><?php esc_html_e( 'Rebuilds derived occurrence rows from canonical event data in batches of 25. It never changes event content, recurrence rules or publication state.', 'mime-simple-events-calendar' ); ?></p>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
 	 * Parse allowlisted read-only maintenance feedback and bounded counters.
 	 *
-	 * @return array{status: string, page: int, processed: int, changed: int, skipped: int, failed: int}
+	 * @return array{status: string, page: int, processed: int, changed: int, skipped: int, failed: int, occurrence_offset: int, occurrence_processed: int, occurrence_indexed: int, occurrence_invalid: int, occurrence_failed: int}
 	 */
 	private function maintenance_state(): array {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only feedback after protected admin-post redirects; values are allowlisted and bounded.
@@ -479,12 +531,17 @@ final class EventSettingsPage {
 		$status = in_array( $status, self::MAINTENANCE_STATES, true ) ? $status : '';
 
 		return array(
-			'status'    => $status,
-			'page'      => $this->query_counter( 'wpse_page', 1, 1_000_000 ),
-			'processed' => $this->query_counter( 'wpse_processed', 0, 1_000_000_000 ),
-			'changed'   => $this->query_counter( 'wpse_changed', 0, 1_000_000_000 ),
-			'skipped'   => $this->query_counter( 'wpse_skipped', 0, 1_000_000_000 ),
-			'failed'    => $this->query_counter( 'wpse_failed', 0, 1_000_000_000 ),
+			'status'               => $status,
+			'page'                 => $this->query_counter( 'wpse_page', 1, 1_000_000 ),
+			'processed'            => $this->query_counter( 'wpse_processed', 0, 1_000_000_000 ),
+			'changed'              => $this->query_counter( 'wpse_changed', 0, 1_000_000_000 ),
+			'skipped'              => $this->query_counter( 'wpse_skipped', 0, 1_000_000_000 ),
+			'failed'               => $this->query_counter( 'wpse_failed', 0, 1_000_000_000 ),
+			'occurrence_offset'    => $this->query_counter( 'wpse_occurrence_offset', 0, 1_000_000_000 ),
+			'occurrence_processed' => $this->query_counter( 'wpse_occurrence_processed', 0, 1_000_000_000 ),
+			'occurrence_indexed'   => $this->query_counter( 'wpse_occurrence_indexed', 0, 1_000_000_000 ),
+			'occurrence_invalid'   => $this->query_counter( 'wpse_occurrence_invalid', 0, 1_000_000_000 ),
+			'occurrence_failed'    => $this->query_counter( 'wpse_occurrence_failed', 0, 1_000_000_000 ),
 		);
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
@@ -514,6 +571,21 @@ final class EventSettingsPage {
 			'wpse_failed' => isset( $_GET['wpse_failed'] ) && is_string( $_GET['wpse_failed'] )
 				? sanitize_text_field( wp_unslash( $_GET['wpse_failed'] ) )
 				: '',
+			'wpse_occurrence_offset' => isset( $_GET['wpse_occurrence_offset'] ) && is_string( $_GET['wpse_occurrence_offset'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_occurrence_offset'] ) )
+				: '',
+			'wpse_occurrence_processed' => isset( $_GET['wpse_occurrence_processed'] ) && is_string( $_GET['wpse_occurrence_processed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_occurrence_processed'] ) )
+				: '',
+			'wpse_occurrence_indexed' => isset( $_GET['wpse_occurrence_indexed'] ) && is_string( $_GET['wpse_occurrence_indexed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_occurrence_indexed'] ) )
+				: '',
+			'wpse_occurrence_invalid' => isset( $_GET['wpse_occurrence_invalid'] ) && is_string( $_GET['wpse_occurrence_invalid'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_occurrence_invalid'] ) )
+				: '',
+			'wpse_occurrence_failed' => isset( $_GET['wpse_occurrence_failed'] ) && is_string( $_GET['wpse_occurrence_failed'] )
+				? sanitize_text_field( wp_unslash( $_GET['wpse_occurrence_failed'] ) )
+				: '',
 			default => '',
 		};
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
@@ -526,7 +598,7 @@ final class EventSettingsPage {
 	/**
 	 * Render maintenance feedback with no event titles or personal data.
 	 *
-	 * @param array{status: string, page: int, processed: int, changed: int, skipped: int, failed: int} $state Maintenance state.
+	 * @param array{status: string, page: int, processed: int, changed: int, skipped: int, failed: int, occurrence_offset: int, occurrence_processed: int, occurrence_indexed: int, occurrence_invalid: int, occurrence_failed: int} $state Maintenance state.
 	 */
 	private function render_maintenance_notice( array $state ): void {
 		if ( 'capabilities_repaired' === $state['status'] ) {
@@ -537,6 +609,25 @@ final class EventSettingsPage {
 		}
 
 		if ( ! in_array( $state['status'], array( 'reindex_progress', 'reindex_complete' ), true ) ) {
+			if ( ! in_array( $state['status'], array( 'occurrence_repair_progress', 'occurrence_repair_complete' ), true ) ) {
+				return;
+			}
+
+			$message = sprintf(
+				/* translators: 1: inspected events, 2: repaired events, 3: invalid events, 4: failed writes. */
+				__( 'Occurrence index maintenance inspected %1$d events: %2$d repaired, %3$d invalid and %4$d failed.', 'mime-simple-events-calendar' ),
+				$state['occurrence_processed'],
+				$state['occurrence_indexed'],
+				$state['occurrence_invalid'],
+				$state['occurrence_failed']
+			);
+			$class = 'occurrence_repair_complete' === $state['status']
+				&& 0 === $state['occurrence_invalid']
+				&& 0 === $state['occurrence_failed']
+				? 'notice notice-success inline'
+				: 'notice notice-warning inline';
+
+			echo '<div class="' . esc_attr( $class ) . '"><p>' . esc_html( $message ) . '</p></div>';
 			return;
 		}
 

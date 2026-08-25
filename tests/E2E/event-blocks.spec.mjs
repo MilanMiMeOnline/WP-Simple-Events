@@ -170,6 +170,240 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	expect( contract.preview ).toContain( 'E2E Atomic Hall' );
 } );
 
+test( 'previews and applies a complete-series recurrence in Gutenberg', async ( {
+	page,
+} ) => {
+	test.setTimeout( 180_000 );
+	await login( page );
+	await page.goto( '/wp-admin/edit.php?post_type=wpse_event' );
+	const editUrl = await page.locator( 'a.row-title' ).first().getAttribute( 'href' );
+
+	expect( editUrl ).toBeTruthy();
+	await page.goto( editUrl );
+	await expect.poll( () =>
+		page.evaluate( () =>
+			Boolean(
+				window.wpseRecurrenceEditor &&
+					window.wp?.plugins?.getPlugin( 'wpse-recurrence-editor' ),
+			),
+		),
+	).toBe( true );
+	const welcomeDialog = page.getByRole( 'dialog', { name: 'Welcome to the editor' } );
+	let welcomeVisible = false;
+
+	try {
+		await welcomeDialog.waitFor( { state: 'visible', timeout: 3000 } );
+		welcomeVisible = true;
+	} catch {
+		// The guide has already been dismissed for this isolated test user.
+	}
+
+	if ( welcomeVisible ) {
+		// Let persisted editor preferences finish hydrating before changing them;
+		// otherwise a late hydration can reopen the guide during an isolated run.
+		await page.waitForTimeout( 1000 );
+		await page.evaluate( async () => {
+			const preferences = window.wp?.data?.dispatch( 'core/preferences' );
+			const result = preferences?.set?.(
+				'core/edit-post',
+				'welcomeGuide',
+				false,
+			);
+
+			if ( result && typeof result.then === 'function' ) {
+				await result;
+			}
+		} );
+		await expect( welcomeDialog ).toBeHidden();
+	}
+
+	const toggle = page.getByRole( 'button', { name: 'Repeating event' } );
+
+	await expect( toggle ).toBeVisible();
+
+	if ( await toggle.getAttribute( 'aria-expanded' ) === 'false' ) {
+		await toggle.click();
+	}
+
+	const panel = page.locator( '.wpse-recurrence-editor' );
+	const eventFields = page.locator( '[data-wpse-event-fields]' );
+	const ordinarySchedule = eventFields.locator( '[data-wpse-schedule-fields]' );
+	const scheduleNotice = eventFields.locator(
+		'[data-wpse-recurrence-schedule-notice]',
+	);
+
+	await expect( panel ).toBeVisible();
+	await expect( ordinarySchedule ).not.toHaveAttribute( 'hidden', '' );
+	await expect( scheduleNotice ).toHaveAttribute( 'hidden', '' );
+	await expect( panel ).toContainText( 'Editing scope: complete series' );
+	await panel.getByLabel( 'Repeats', { exact: true } ).selectOption( 'daily' );
+	await panel.getByLabel( 'Ends', { exact: true } ).selectOption( 'count' );
+	await panel.getByLabel( 'Number of events', { exact: true } ).fill( '3' );
+	await panel.getByRole( 'button', { name: 'Preview recurrence' } ).click();
+	await expect( panel ).toContainText( 'Review impact' );
+	await expect( panel ).toContainText( '2 added' );
+	await panel.getByRole( 'button', { name: 'Apply to complete series' } ).click();
+	await expect( panel ).toContainText( 'The recurring schedule was updated.' );
+	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'daily' );
+	await expect( ordinarySchedule ).toHaveAttribute( 'hidden', '' );
+	await expect( scheduleNotice ).not.toHaveAttribute( 'hidden', '' );
+	await expect( scheduleNotice ).toContainText(
+		'This event’s schedule is managed in the block editor.',
+	);
+	await expect( eventFields.locator( '#wpse-status' ) ).toBeEnabled();
+	await expect( eventFields.locator( '#wpse-venue' ) ).toBeEnabled();
+
+	await panel.getByRole( 'button', { name: 'Edit one occurrence…' } ).click();
+	await expect( panel ).toContainText( 'Editing scope: only this occurrence' );
+	await expect( panel.getByLabel( 'Occurrence to edit' ) ).toBeVisible();
+	await panel.getByRole( 'button', { name: 'Edit selected occurrence' } ).click();
+	await expect( panel.getByRole( 'group', { name: 'Selected occurrence' } ) ).toBeVisible();
+	await expect( panel ).toContainText( 'Times use the series timezone:' );
+	await panel.getByLabel( 'Occurrence title' ).fill( 'E2E occurrence title' );
+	await panel.getByLabel( 'Occurrence note' ).fill( 'E2E occurrence note' );
+	await panel.getByLabel( 'Venue', { exact: true } ).fill( 'E2E side hall' );
+	await panel.getByLabel( 'Address', { exact: true } ).fill( 'E2E side entrance' );
+	await panel.getByLabel( 'Location URL', { exact: true } ).fill(
+		'https://example.com/e2e-location',
+	);
+	await panel.getByLabel( 'External event URL', { exact: true } ).fill(
+		'https://example.com/e2e-occurrence',
+	);
+	await panel.getByLabel( 'External event action label', { exact: true } ).fill(
+		'E2E tickets',
+	);
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await expect( panel ).toContainText( '1 individual change is affected.' );
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByLabel( 'Occurrence title' ) ).toHaveValue(
+		'E2E occurrence title',
+	);
+
+	for ( const label of [
+		'Occurrence title',
+		'Occurrence note',
+		'Venue',
+		'Address',
+		'Location URL',
+		'External event URL',
+		'External event action label',
+	] ) {
+		const field = panel
+			.locator( '.wpse-occurrence-override-field' )
+			.filter( { has: page.getByLabel( label, { exact: true } ) } );
+
+		await field.getByRole( 'button', { name: 'Use series value' } ).click();
+	}
+
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByRole( 'button', { name: 'Use series value' } ) ).toHaveCount( 0 );
+	const startDateControl = panel.getByLabel( 'Start date' );
+	const endDateControl = panel.getByLabel( 'End date' );
+	const originalStartDate = await startDateControl.inputValue();
+	const originalEndDate = await endDateControl.inputValue();
+	const movedStart = new Date( `${ originalStartDate }T12:00:00Z` );
+	const movedEnd = new Date( `${ originalEndDate }T12:00:00Z` );
+
+	movedStart.setUTCDate( movedStart.getUTCDate() + 1 );
+	movedEnd.setUTCDate( movedEnd.getUTCDate() + 1 );
+	await startDateControl.fill( movedStart.toISOString().slice( 0, 10 ) );
+	await endDateControl.fill( movedEnd.toISOString().slice( 0, 10 ) );
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await expect( panel ).toContainText( '1 moved' );
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByLabel( 'Occurrence to edit' ) ).toHaveValue(
+		new RegExp( movedStart.toISOString().slice( 0, 10 ) ),
+	);
+	await expect( panel.getByRole( 'button', { name: 'Use series date and time' } ) ).toBeVisible();
+	await panel.getByRole( 'button', { name: 'Use series date and time' } ).click();
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByRole( 'button', { name: 'Use series date and time' } ) ).toHaveCount( 0 );
+	await expect( panel.getByLabel( 'Occurrence to edit' ) ).toHaveValue(
+		new RegExp( originalStartDate ),
+	);
+
+	await panel.getByLabel( 'Event status' ).selectOption( 'postponed' );
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await expect( panel ).toContainText( '1 status changes' );
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel ).toContainText( 'This occurrence was updated.' );
+	await expect( panel.getByRole( 'button', { name: 'Use series status' } ) ).toBeVisible();
+
+	await panel.getByRole( 'button', { name: 'Use series status' } ).click();
+	await panel.getByLabel( 'Cancel this occurrence' ).check();
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await expect( panel ).toContainText( 'Review impact' );
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByLabel( 'Cancel this occurrence' ) ).toBeChecked();
+
+	await panel.getByLabel( 'Cancel this occurrence' ).uncheck();
+	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
+	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
+	await expect( panel.getByLabel( 'Cancel this occurrence' ) ).not.toBeChecked();
+	const backToSeries = panel.getByRole( 'button', { name: 'Back to complete series' } );
+
+	await expect( backToSeries ).toBeEnabled();
+	await backToSeries.click();
+	await expect( panel ).toContainText( 'Editing scope: complete series' );
+	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeEnabled();
+
+	await panel.getByRole( 'button', { name: 'Change this and following…' } ).click();
+	await expect( panel ).toContainText( 'Editing scope: this and following occurrences' );
+	await expect( panel.getByLabel( 'Start the new schedule at' ) ).toBeVisible();
+	await panel.getByRole( 'button', { name: 'Configure new schedule' } ).click();
+	const followingFields = panel.getByRole( 'group', {
+		name: 'New schedule from this occurrence',
+	} );
+
+	await expect( followingFields ).toBeVisible();
+	await expect( followingFields ).toContainText(
+		'Every later scheduled change will be replaced.',
+	);
+	await followingFields.getByLabel( 'Repeat every' ).fill( '2' );
+	await followingFields.getByLabel( 'Ends', { exact: true } ).selectOption( 'count' );
+	await followingFields.getByLabel( 'Number of events', { exact: true } ).fill( '2' );
+	await panel.getByRole( 'button', { name: 'Preview this and following' } ).click();
+	await expect( panel ).toContainText( 'Review impact' );
+	await expect( panel ).toContainText( '1 added' );
+	await expect( panel ).toContainText( '1 removed' );
+	await panel.getByRole( 'button', { name: 'Apply to this and following' } ).click();
+	await expect( panel ).toContainText(
+		'This and following occurrences now use the new schedule.',
+	);
+	await expect( panel ).toContainText( 'Editing scope: complete series' );
+
+	await panel.getByRole( 'button', { name: 'Stop repeating…' } ).click();
+	const searchStart = panel.getByLabel( 'Find occurrences from' );
+	const loadedStart = await searchStart.inputValue();
+
+	await searchStart.fill( '2099-01-01' );
+	await panel.getByRole( 'button', { name: 'Search this period' } ).click();
+	await expect( panel ).toContainText( 'No occurrences were found in this period.' );
+	await searchStart.fill( loadedStart );
+	await panel.getByRole( 'button', { name: 'Search this period' } ).click();
+	await expect( panel.getByLabel( 'Keep as the single event' ) ).toBeVisible();
+	await panel.getByRole( 'button', { name: 'Preview stopping recurrence' } ).click();
+	await expect( panel ).toContainText( 'Every other occurrence in the complete series will be removed.' );
+	await expect( panel ).toContainText( 'outside this preview window will also be removed' );
+
+	const reloaded = page.waitForEvent(
+		'framenavigated',
+		( frame ) => frame === page.mainFrame(),
+	);
+	await panel.getByRole( 'button', { name: 'Keep selected event only' } ).click();
+	await reloaded;
+	await expect( page.locator( '.wpse-recurrence-editor' ).getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'once' );
+	await expect( page.locator( '[data-wpse-schedule-fields]' ) ).not.toHaveAttribute(
+		'hidden',
+		'',
+	);
+	await expect(
+		page.locator( '[data-wpse-recurrence-schedule-notice]' ),
+	).toHaveAttribute( 'hidden', '' );
+} );
+
 test( 'registers, serializes and previews the primary event components in Gutenberg', async ( {
 	page,
 } ) => {

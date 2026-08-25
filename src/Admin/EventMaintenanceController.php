@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Admin;
 
 use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Maintenance\EventDateIndexBatchProcessor;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceRepairBatchProcessor;
 
 /**
  * Handles administrator-only capability repair and bounded UTC reindexing.
@@ -18,6 +19,7 @@ use MiMe\WPSimpleEvents\Maintenance\EventDateIndexBatchProcessor;
 final readonly class EventMaintenanceController {
 	public const REPAIR_CAPABILITIES_ACTION = 'wpse_repair_event_capabilities';
 	public const REINDEX_ACTION             = 'wpse_reindex_event_dates';
+	public const REPAIR_OCCURRENCES_ACTION  = 'wpse_repair_occurrence_index';
 
 	private const MAX_COUNTER = 1_000_000_000;
 	private const MAX_PAGE    = 1_000_000;
@@ -25,12 +27,14 @@ final readonly class EventMaintenanceController {
 	/**
 	 * Create the maintenance controller.
 	 *
-	 * @param RoleManager                  $roles     Event role manager.
-	 * @param EventDateIndexBatchProcessor $processor Bounded UTC repair processor.
+	 * @param RoleManager                    $roles       Event role manager.
+	 * @param EventDateIndexBatchProcessor   $processor   Bounded UTC repair processor.
+	 * @param OccurrenceRepairBatchProcessor $occurrences Bounded occurrence repair processor.
 	 */
 	public function __construct(
 		private RoleManager $roles = new RoleManager(),
-		private EventDateIndexBatchProcessor $processor = new EventDateIndexBatchProcessor()
+		private EventDateIndexBatchProcessor $processor = new EventDateIndexBatchProcessor(),
+		private OccurrenceRepairBatchProcessor $occurrences = new OccurrenceRepairBatchProcessor()
 	) {}
 
 	/**
@@ -39,6 +43,7 @@ final readonly class EventMaintenanceController {
 	public function register(): void {
 		add_action( 'admin_post_' . self::REPAIR_CAPABILITIES_ACTION, array( $this, 'repair_capabilities' ) );
 		add_action( 'admin_post_' . self::REINDEX_ACTION, array( $this, 'reindex_events' ) );
+		add_action( 'admin_post_' . self::REPAIR_OCCURRENCES_ACTION, array( $this, 'repair_occurrences' ) );
 	}
 
 	/**
@@ -70,6 +75,33 @@ final readonly class EventMaintenanceController {
 				'wpse_changed'   => min( self::MAX_COUNTER, $changed + $result->changed ),
 				'wpse_skipped'   => min( self::MAX_COUNTER, $skipped + $result->skipped ),
 				'wpse_failed'    => min( self::MAX_COUNTER, $failed + $result->failed ),
+			)
+		);
+	}
+
+	/**
+	 * Process one bounded public occurrence repair page.
+	 */
+	public function repair_occurrences(): void {
+		$this->authorize( self::REPAIR_OCCURRENCES_ACTION );
+		$offset    = $this->request_integer( 'wpse_occurrence_offset', 0, self::MAX_COUNTER );
+		$processed = $this->request_integer( 'wpse_occurrence_processed', 0, self::MAX_COUNTER );
+		$indexed   = $this->request_integer( 'wpse_occurrence_indexed', 0, self::MAX_COUNTER );
+		$invalid   = $this->request_integer( 'wpse_occurrence_invalid', 0, self::MAX_COUNTER );
+		$failed    = $this->request_integer( 'wpse_occurrence_failed', 0, self::MAX_COUNTER );
+		$result    = $this->occurrences->process( $offset );
+
+		$this->redirect(
+			$result->has_more ? 'occurrence_repair_progress' : 'occurrence_repair_complete',
+			array(
+				'wpse_occurrence_offset'    => min(
+					self::MAX_COUNTER,
+					$offset + $result->skipped_invalid + $result->failed
+				),
+				'wpse_occurrence_processed' => min( self::MAX_COUNTER, $processed + $result->processed ),
+				'wpse_occurrence_indexed'   => min( self::MAX_COUNTER, $indexed + $result->indexed ),
+				'wpse_occurrence_invalid'   => min( self::MAX_COUNTER, $invalid + $result->skipped_invalid ),
+				'wpse_occurrence_failed'    => min( self::MAX_COUNTER, $failed + $result->failed ),
 			)
 		);
 	}

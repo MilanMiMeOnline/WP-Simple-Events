@@ -42,6 +42,13 @@ final class WordPressState {
 	private static array $posts = array();
 
 	/**
+	 * Last arguments submitted to get_posts().
+	 *
+	 * @var array<string, mixed>
+	 */
+	private static array $last_get_posts_arguments = array();
+
+	/**
 	 * Public post URLs keyed by ID.
 	 *
 	 * @var array<int, string>
@@ -196,6 +203,20 @@ final class WordPressState {
 	private static array $registered_block_templates = array();
 
 	/**
+	 * Core sitemap providers registered during a test.
+	 *
+	 * @var array<string, \WP_Sitemaps_Provider>
+	 */
+	private static array $sitemap_providers = array();
+
+	/**
+	 * Elementor Theme Builder output keyed by core location.
+	 *
+	 * @var array<string, string>
+	 */
+	private static array $elementor_locations = array();
+
+	/**
 	 * Current queried post ID.
 	 *
 	 * @var int
@@ -215,6 +236,13 @@ final class WordPressState {
 	 * @var list<int>
 	 */
 	private static array $deleted_post_ids = array();
+
+	/**
+	 * Post IDs for which an explicit revision save was requested.
+	 *
+	 * @var list<int>
+	 */
+	private static array $saved_post_revision_ids = array();
 
 	/**
 	 * Stored taxonomy term IDs keyed by post and taxonomy.
@@ -259,6 +287,34 @@ final class WordPressState {
 	private static int $rewrite_flushes = 0;
 
 	/**
+	 * Registered rewrite rules in call order.
+	 *
+	 * @var list<array{regex: string, query: string, after: string}>
+	 */
+	private static array $rewrite_rules = array();
+
+	/**
+	 * Last HTTP response status selected by a test request.
+	 *
+	 * @var int
+	 */
+	private static int $response_status = 200;
+
+	/**
+	 * Number of non-cacheable response-header requests.
+	 *
+	 * @var int
+	 */
+	private static int $nocache_headers = 0;
+
+	/**
+	 * Scheduled one-off timestamps keyed by hook.
+	 *
+	 * @var array<string, list<int>>
+	 */
+	private static array $scheduled_hooks = array();
+
+	/**
 	 * Deterministically registered post type keys.
 	 *
 	 * @var array<string, true>
@@ -294,6 +350,7 @@ final class WordPressState {
 		self::$current_user_can           = false;
 		self::$post_meta                  = array();
 		self::$posts                      = array();
+		self::$last_get_posts_arguments   = array();
 		self::$permalinks                 = array();
 		self::$image_urls                 = array();
 		self::$image_alts                 = array();
@@ -316,19 +373,44 @@ final class WordPressState {
 		self::$block_template_calls       = array();
 		self::$registered_block_types     = array();
 		self::$registered_block_templates = array();
+		self::$sitemap_providers          = array();
+		self::$elementor_locations        = array();
 		self::$queried_object_id          = 0;
 		self::$inserted_post_data         = array();
 		self::$deleted_post_ids           = array();
+		self::$saved_post_revision_ids    = array();
 		self::$post_terms                 = array();
 		self::$taxonomy_terms             = array();
 		self::$deleted_terms              = array();
 		self::$fail_term_operations       = false;
 		self::$fail_meta_operations       = false;
 		self::$rewrite_flushes            = 0;
+		self::$rewrite_rules              = array();
+		self::$response_status            = 200;
+		self::$nocache_headers            = 0;
+		self::$scheduled_hooks            = array();
 		self::$registered_post_types      = array();
 		self::$unregistered_post_types    = array();
 		self::$registered_taxonomies      = array();
 		self::$unregistered_taxonomies    = array();
+	}
+
+	/**
+	 * Record one deterministic get_posts() request.
+	 *
+	 * @param array<string, mixed> $arguments Query arguments.
+	 */
+	public static function record_get_posts_arguments( array $arguments ): void {
+		self::$last_get_posts_arguments = $arguments;
+	}
+
+	/**
+	 * Return the last deterministic get_posts() request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function last_get_posts_arguments(): array {
+		return self::$last_get_posts_arguments;
 	}
 
 	/**
@@ -371,6 +453,24 @@ final class WordPressState {
 	 */
 	public static function deleted_post_ids(): array {
 		return self::$deleted_post_ids;
+	}
+
+	/**
+	 * Record an explicit post revision save.
+	 *
+	 * @param int $post_id Canonical post ID.
+	 */
+	public static function save_post_revision( int $post_id ): void {
+		self::$saved_post_revision_ids[] = $post_id;
+	}
+
+	/**
+	 * Return post IDs sent through the revision boundary.
+	 *
+	 * @return list<int>
+	 */
+	public static function saved_post_revision_ids(): array {
+		return self::$saved_post_revision_ids;
 	}
 
 	/**
@@ -534,6 +634,31 @@ final class WordPressState {
 	}
 
 	/**
+	 * Register one deterministic Core sitemap provider.
+	 *
+	 * @param string                $name     Provider name.
+	 * @param \WP_Sitemaps_Provider $provider Provider instance.
+	 */
+	public static function register_sitemap_provider( string $name, \WP_Sitemaps_Provider $provider ): bool {
+		if ( '' === $name || isset( self::$sitemap_providers[ $name ] ) ) {
+			return false;
+		}
+
+		self::$sitemap_providers[ $name ] = $provider;
+
+		return true;
+	}
+
+	/**
+	 * Retrieve one deterministic Core sitemap provider.
+	 *
+	 * @param string $name Provider name.
+	 */
+	public static function sitemap_provider( string $name ): ?\WP_Sitemaps_Provider {
+		return self::$sitemap_providers[ $name ] ?? null;
+	}
+
+	/**
 	 * Retrieve one configured post.
 	 *
 	 * @param int $post_id Post ID.
@@ -570,6 +695,93 @@ final class WordPressState {
 	 */
 	public static function rewrite_flushes(): int {
 		return self::$rewrite_flushes;
+	}
+
+	/**
+	 * Record one deterministic rewrite rule.
+	 *
+	 * @param string $regex Regular expression without delimiters.
+	 * @param string $query Internal WordPress query mapping.
+	 * @param string $after Rule priority group.
+	 */
+	public static function add_rewrite_rule( string $regex, string $query, string $after ): void {
+		self::$rewrite_rules[] = array(
+			'regex' => $regex,
+			'query' => $query,
+			'after' => $after,
+		);
+	}
+
+	/**
+	 * Return registered deterministic rewrite rules.
+	 *
+	 * @return list<array{regex: string, query: string, after: string}>
+	 */
+	public static function rewrite_rules(): array {
+		return self::$rewrite_rules;
+	}
+
+	/**
+	 * Record one deterministic HTTP status.
+	 *
+	 * @param int $status HTTP status code.
+	 */
+	public static function set_response_status( int $status ): void {
+		self::$response_status = $status;
+	}
+
+	/** Return the deterministic HTTP status. */
+	public static function response_status(): int {
+		return self::$response_status;
+	}
+
+	/** Record one non-cacheable header request. */
+	public static function record_nocache_headers(): void {
+		++self::$nocache_headers;
+	}
+
+	/** Return the number of non-cacheable header requests. */
+	public static function nocache_header_requests(): int {
+		return self::$nocache_headers;
+	}
+
+	/**
+	 * Record one scheduled event.
+	 *
+	 * @param string $hook      Scheduled hook.
+	 * @param int    $timestamp Unix timestamp.
+	 */
+	public static function schedule_hook( string $hook, int $timestamp ): void {
+		self::$scheduled_hooks[ $hook ][] = $timestamp;
+	}
+
+	/**
+	 * Return the earliest timestamp for one hook, or false.
+	 *
+	 * @param string $hook Scheduled hook.
+	 */
+	public static function next_scheduled( string $hook ): int|false {
+		$timestamps = self::$scheduled_hooks[ $hook ] ?? array();
+
+		return array() === $timestamps ? false : min( $timestamps );
+	}
+
+	/**
+	 * Remove every scheduled event for one hook.
+	 *
+	 * @param string $hook Scheduled hook.
+	 */
+	public static function clear_scheduled( string $hook ): void {
+		unset( self::$scheduled_hooks[ $hook ] );
+	}
+
+	/**
+	 * Count scheduled events for one hook.
+	 *
+	 * @param string $hook Scheduled hook.
+	 */
+	public static function scheduled_count( string $hook ): int {
+		return count( self::$scheduled_hooks[ $hook ] ?? array() );
 	}
 
 	/**
@@ -1019,6 +1231,25 @@ final class WordPressState {
 	}
 
 	/**
+	 * Configure deterministic Elementor Theme Builder output.
+	 *
+	 * @param string $location Core theme location.
+	 * @param string $output Captured builder output.
+	 */
+	public static function set_elementor_location( string $location, string $output ): void {
+		self::$elementor_locations[ $location ] = $output;
+	}
+
+	/**
+	 * Return configured Elementor output, or null when no template handles it.
+	 *
+	 * @param string $location Core theme location.
+	 */
+	public static function elementor_location( string $location ): ?string {
+		return self::$elementor_locations[ $location ] ?? null;
+	}
+
+	/**
 	 * Return the configured queried post ID.
 	 */
 	public static function queried_object_id(): int {
@@ -1078,9 +1309,16 @@ final class WordPressState {
 	 *
 	 * @param int    $post_id  Post ID.
 	 * @param string $meta_key Metadata key.
+	 * @param mixed  $meta_value Optional exact value to remove.
 	 */
-	public static function delete_post_meta( int $post_id, string $meta_key ): void {
+	public static function delete_post_meta( int $post_id, string $meta_key, mixed $meta_value = null ): bool {
+		if ( null !== $meta_value && self::post_meta( $post_id, $meta_key ) !== $meta_value ) {
+			return false;
+		}
+
 		unset( self::$post_meta[ $post_id ][ $meta_key ] );
+
+		return true;
 	}
 
 	/**

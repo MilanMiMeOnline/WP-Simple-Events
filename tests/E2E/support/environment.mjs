@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import {
@@ -58,7 +58,7 @@ async function seedOfflineVersionCache() {
 	}
 
 	const configHash = createHash( 'md5' )
-		.update( configFilePath )
+		.update( realpathSync( configFilePath ) )
 		.digest( 'hex' )
 		.slice( 0, 8 );
 	const workDirectory = join(

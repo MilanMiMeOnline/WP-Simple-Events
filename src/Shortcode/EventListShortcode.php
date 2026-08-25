@@ -11,8 +11,15 @@ namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Frontend\EventListRenderer;
 use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPage;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
 use MiMe\WPSimpleEvents\Frontend\RenderInstanceIds;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadException;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadiness;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
+use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
 use MiMe\WPSimpleEvents\Query\EventRepository;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteFeature;
 use WP_Post;
 
 /**
@@ -22,16 +29,24 @@ final class EventListShortcode implements ShortcodeRenderer {
 	/**
 	 * Create the shortcode adapter.
 	 *
-	 * @param EventRepository   $events   Public event repository.
-	 * @param EventListRenderer $renderer Shared collection renderer.
-	 * @param EventListControls $controls Filter and pagination renderer.
-	 * @param FrontendAssets    $assets   Scoped front-end assets.
+	 * @param EventRepository               $events   Public event repository.
+	 * @param EventListRenderer             $renderer Shared collection renderer.
+	 * @param EventListControls             $controls Filter and pagination renderer.
+	 * @param FrontendAssets                $assets   Scoped front-end assets.
+	 * @param OccurrenceReadRepository      $occurrences Occurrence-level public repository.
+	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
+	 * @param OccurrenceRouteFeature        $occurrence_feature Explicit public recurrence gate.
+	 * @param OccurrenceReadiness           $occurrence_readiness Projection readiness gate.
 	 */
 	public function __construct(
 		private readonly EventRepository $events = new EventRepository(),
 		private readonly EventListRenderer $renderer = new EventListRenderer(),
 		private readonly EventListControls $controls = new EventListControls(),
-		private readonly FrontendAssets $assets = new FrontendAssets()
+		private readonly FrontendAssets $assets = new FrontendAssets(),
+		private readonly OccurrenceReadRepository $occurrences = new OccurrenceReadRepository(),
+		private readonly OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
+		private readonly OccurrenceRouteFeature $occurrence_feature = new OccurrenceRouteFeature(),
+		private readonly OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness()
 	) {}
 
 	/**
@@ -54,10 +69,16 @@ final class EventListShortcode implements ShortcodeRenderer {
 		$request     = $this->request_values();
 		$normalized  = EventListAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() )
 			->with_request( $request, $prefix );
-		$query       = $this->events->query( $normalized->criteria( time() ) );
-		$posts       = array_values(
-			array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
-		);
+		$criteria    = $normalized->criteria( time() );
+		$occurrences = $this->occurrence_feature->enabled() && $this->occurrence_readiness->ready()
+			? $this->occurrence_page( $criteria )
+			: null;
+		$query       = null === $occurrences ? $this->events->query( $criteria ) : null;
+		$posts       = null === $query
+			? array()
+			: array_values(
+				array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
+			);
 
 		$this->assets->enqueue();
 
@@ -67,23 +88,46 @@ final class EventListShortcode implements ShortcodeRenderer {
 			$output .= $this->controls->filters( $normalized, $prefix, $results_id, $request );
 		}
 
-		$output .= $this->renderer->render(
-			$posts,
-			$normalized->view,
-			$normalized->columns,
-			$normalized->card_options(),
-			$results_id
-		);
+		$output .= null !== $occurrences
+			? $this->renderer->render_occurrences(
+				$occurrences,
+				$normalized->view,
+				$normalized->columns,
+				$normalized->card_options(),
+				$results_id
+			)
+			: $this->renderer->render(
+				$posts,
+				$normalized->view,
+				$normalized->columns,
+				$normalized->card_options(),
+				$results_id
+			);
 
 		if ( $normalized->pagination ) {
 			$output .= $this->controls->pagination(
 				$normalized->page,
-				(int) $query->max_num_pages,
+				null !== $occurrences ? $occurrences->total_pages : (int) $query->max_num_pages,
 				$prefix . '_page'
 			);
 		}
 
 		return $output . '</div>';
+	}
+
+	/**
+	 * Return one complete occurrence page, using an empty unavailable state on failure.
+	 *
+	 * @param EventQueryCriteria $criteria Validated list criteria.
+	 */
+	private function occurrence_page( EventQueryCriteria $criteria ): OccurrenceCollectionPage {
+		try {
+			$page = $this->occurrence_presenter->present( $this->occurrences->query( $criteria ) );
+
+			return $page ?? new OccurrenceCollectionPage( array(), 0, 0 );
+		} catch ( OccurrenceReadException ) {
+			return new OccurrenceCollectionPage( array(), 0, 0 );
+		}
 	}
 
 	/**

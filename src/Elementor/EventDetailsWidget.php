@@ -12,7 +12,6 @@ namespace MiMe\WPSimpleEvents\Elementor;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
-use MiMe\WPSimpleEvents\Shortcode\EventDetailsShortcode;
 use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 
 /**
@@ -182,7 +181,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 
 	/** Create a renderer when Elementor reconstructs the widget. */
 	protected function default_renderer(): ShortcodeRenderer {
-		return new EventDetailsShortcode();
+		return AtomicWidgetRuntime::details();
 	}
 
 	/** Register theme-inheriting visual controls. */

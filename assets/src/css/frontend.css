@@ -93,6 +93,7 @@
 }
 
 .wpse-single-event-content,
+.wpse-event-note,
 .wpse-event-action,
 .wpse-event-taxonomies {
 	margin-block: calc(var(--wpse-spacing) * 1.5);

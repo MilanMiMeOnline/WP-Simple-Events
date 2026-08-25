@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Admin;
 
 use MiMe\WPSimpleEvents\Application\EventInput;
+use MiMe\WPSimpleEvents\Application\RecurrenceScheduleOwnership;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Content\EventPostType;
@@ -22,6 +23,15 @@ use WP_Post;
 final class EventMetaBox {
 	public const NONCE_ACTION = 'wpse_save_event';
 	public const NONCE_NAME   = 'wpse_event_nonce';
+
+	/**
+	 * Create the native editor boundary.
+	 *
+	 * @param RecurrenceScheduleOwnership $schedule_ownership Protected schedule ownership boundary.
+	 */
+	public function __construct(
+		private readonly RecurrenceScheduleOwnership $schedule_ownership = new RecurrenceScheduleOwnership()
+	) {}
 
 	/**
 	 * Register editor hooks.
@@ -54,14 +64,39 @@ final class EventMetaBox {
 	 * @param WP_Post $post Current event post.
 	 */
 	public function render( WP_Post $post ): void {
-		$input = $this->stored_input( $post->ID );
+		$input          = $this->stored_input( $post->ID );
+		$schedule_owned = $this->schedule_ownership->owns( $post->ID );
 
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME );
 		?>
-		<div class="wpse-event-fields" data-wpse-event-fields>
-			<p class="wpse-event-fields-intro">
+		<div
+			class="wpse-event-fields"
+			data-wpse-event-fields
+			data-wpse-schedule-owner="<?php echo $schedule_owned ? 'recurrence' : 'event'; ?>"
+		>
+			<p class="wpse-event-fields-intro" data-wpse-schedule-intro
+				<?php
+				if ( $schedule_owned ) :
+					?>
+					hidden<?php endif; ?>
+			>
 				<?php esc_html_e( 'A start is required before an event can be published. Drafts may remain incomplete.', 'mime-simple-events-calendar' ); ?>
 			</p>
+
+			<div
+				class="notice notice-info inline wpse-event-schedule-notice"
+				data-wpse-recurrence-schedule-notice
+				role="status"
+				<?php
+				if ( ! $schedule_owned ) :
+					?>
+					hidden<?php endif; ?>
+			>
+				<p>
+					<strong><?php esc_html_e( 'This event’s schedule is managed in the block editor.', 'mime-simple-events-calendar' ); ?></strong>
+					<?php esc_html_e( 'Dates, times, the all-day setting and timezone are managed in the Repeating event panel in the block editor. Choose Complete series, Only this occurrence, or This and following there. The event status below applies to the complete series.', 'mime-simple-events-calendar' ); ?>
+				</p>
+			</div>
 
 			<?php if ( $this->dates_need_review( $post->ID ) ) : ?>
 				<div class="notice notice-warning inline wpse-event-date-review" role="status">
@@ -69,36 +104,58 @@ final class EventMetaBox {
 				</div>
 			<?php endif; ?>
 
-			<p class="wpse-event-fields-all-day">
-				<label for="wpse-all-day">
-					<input type="checkbox" id="wpse-all-day" name="wpse_event[all_day]" value="1" <?php checked( $input->all_day ); ?>>
-					<?php esc_html_e( 'All-day event', 'mime-simple-events-calendar' ); ?>
-				</label>
-			</p>
+			<div data-wpse-schedule-fields
+				<?php
+				if ( $schedule_owned ) :
+					?>
+					hidden<?php endif; ?>
+			>
+				<p class="wpse-event-fields-all-day">
+					<label for="wpse-all-day">
+						<input type="checkbox" id="wpse-all-day" name="wpse_event[all_day]" value="1" <?php checked( $input->all_day ); ?>
+							<?php
+							if ( $schedule_owned ) :
+								?>
+								disabled<?php endif; ?>
+						>
+						<?php esc_html_e( 'All-day event', 'mime-simple-events-calendar' ); ?>
+					</label>
+				</p>
 
-			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'start-date', 'start_date', __( 'Start date', 'mime-simple-events-calendar' ), 'date', $input->start_date ); ?>
-				<div data-wpse-time-field>
-					<?php $this->render_input( 'start-time', 'start_time', __( 'Start time', 'mime-simple-events-calendar' ), 'time', $input->start_time, '60' ); ?>
+				<div class="wpse-event-fields-grid">
+					<?php $this->render_input( 'start-date', 'start_date', __( 'Start date', 'mime-simple-events-calendar' ), 'date', $input->start_date, null, null, '', $schedule_owned ); ?>
+					<div data-wpse-time-field>
+						<?php $this->render_input( 'start-time', 'start_time', __( 'Start time', 'mime-simple-events-calendar' ), 'time', $input->start_time, '60', null, '', $schedule_owned ); ?>
+					</div>
+					<?php $this->render_input( 'end-date', 'end_date', __( 'End date', 'mime-simple-events-calendar' ), 'date', $input->end_date, null, null, '', $schedule_owned ); ?>
+					<div data-wpse-time-field>
+						<?php $this->render_input( 'end-time', 'end_time', __( 'End time', 'mime-simple-events-calendar' ), 'time', $input->end_time, '60', null, '', $schedule_owned ); ?>
+					</div>
 				</div>
-				<?php $this->render_input( 'end-date', 'end_date', __( 'End date', 'mime-simple-events-calendar' ), 'date', $input->end_date ); ?>
-				<div data-wpse-time-field>
-					<?php $this->render_input( 'end-time', 'end_time', __( 'End time', 'mime-simple-events-calendar' ), 'time', $input->end_time, '60' ); ?>
-				</div>
+
+				<p class="description wpse-event-fields-timezone">
+					<?php
+					printf(
+						/* translators: %s: Event timezone identifier. */
+						esc_html__( 'Timezone: %s. Existing events keep their saved timezone.', 'mime-simple-events-calendar' ),
+						esc_html( $input->timezone )
+					);
+					?>
+				</p>
+				<p class="description wpse-event-fields-time-format">
+					<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'mime-simple-events-calendar' ); ?>
+				</p>
 			</div>
 
-			<p class="description wpse-event-fields-timezone">
-				<?php
-				printf(
-					/* translators: %s: Event timezone identifier. */
-					esc_html__( 'Timezone: %s. Existing events keep their saved timezone.', 'mime-simple-events-calendar' ),
-					esc_html( $input->timezone )
-				);
-				?>
-			</p>
-			<p class="description wpse-event-fields-time-format">
-				<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'mime-simple-events-calendar' ); ?>
-			</p>
+			<?php if ( $schedule_owned ) : ?>
+				<div data-wpse-schedule-shadow hidden>
+					<input type="hidden" name="wpse_event[all_day]" value="<?php echo $input->all_day ? '1' : '0'; ?>">
+					<input type="hidden" name="wpse_event[start_date]" value="<?php echo esc_attr( $input->start_date ); ?>">
+					<input type="hidden" name="wpse_event[start_time]" value="<?php echo esc_attr( $input->start_time ); ?>">
+					<input type="hidden" name="wpse_event[end_date]" value="<?php echo esc_attr( $input->end_date ); ?>">
+					<input type="hidden" name="wpse_event[end_time]" value="<?php echo esc_attr( $input->end_time ); ?>">
+				</div>
+			<?php endif; ?>
 
 			<div class="wpse-event-fields-grid">
 				<?php $this->render_input( 'venue', 'venue', __( 'Venue', 'mime-simple-events-calendar' ), 'text', $input->venue, null, 200 ); ?>
@@ -161,6 +218,7 @@ final class EventMetaBox {
 	 * @param string|null $step        Optional time step.
 	 * @param int|null    $max_length  Optional maximum length.
 	 * @param string      $description Optional translated description.
+	 * @param bool        $disabled    Whether recurrence owns this control.
 	 */
 	private function render_input(
 		string $id,
@@ -170,7 +228,8 @@ final class EventMetaBox {
 		string $value,
 		?string $step = null,
 		?int $max_length = null,
-		string $description = ''
+		string $description = '',
+		bool $disabled = false
 	): void {
 		$field_id = 'wpse-' . $id;
 		?>
@@ -190,6 +249,10 @@ final class EventMetaBox {
 				if ( null !== $max_length ) :
 					?>
 					maxlength="<?php echo esc_attr( (string) $max_length ); ?>"<?php endif; ?>
+				<?php
+				if ( $disabled ) :
+					?>
+					disabled<?php endif; ?>
 			>
 			<?php if ( '' !== $description ) : ?>
 				<span class="description"><?php echo esc_html( $description ); ?></span>

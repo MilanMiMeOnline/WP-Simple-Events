@@ -12,8 +12,13 @@ namespace MiMe\WPSimpleEvents\Rest;
 use InvalidArgumentException;
 use MiMe\WPSimpleEvents\Calendar\CalendarEventFormatter;
 use MiMe\WPSimpleEvents\Domain\CalendarWindow;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadException;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadiness;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
 use MiMe\WPSimpleEvents\Query\EventRepository;
 use MiMe\WPSimpleEvents\Query\EventWindowCriteria;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteFeature;
 use WP_Error;
 use WP_Post;
 use WP_REST_Request;
@@ -30,12 +35,20 @@ final readonly class CalendarFeedController {
 	/**
 	 * Create the feed controller.
 	 *
-	 * @param EventRepository        $events    Public event repository.
-	 * @param CalendarEventFormatter $formatter Text-only feed formatter.
+	 * @param EventRepository               $events    Public event repository.
+	 * @param CalendarEventFormatter        $formatter Text-only feed formatter.
+	 * @param OccurrenceReadRepository      $occurrences Occurrence-level public repository.
+	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
+	 * @param OccurrenceRouteFeature        $occurrence_feature Explicit public recurrence gate.
+	 * @param OccurrenceReadiness           $occurrence_readiness Projection readiness gate.
 	 */
 	public function __construct(
 		private EventRepository $events = new EventRepository(),
-		private CalendarEventFormatter $formatter = new CalendarEventFormatter()
+		private CalendarEventFormatter $formatter = new CalendarEventFormatter(),
+		private OccurrenceReadRepository $occurrences = new OccurrenceReadRepository(),
+		private OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
+		private OccurrenceRouteFeature $occurrence_feature = new OccurrenceRouteFeature(),
+		private OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness()
 	) {}
 
 	/**
@@ -88,6 +101,10 @@ final readonly class CalendarFeedController {
 			);
 		}
 
+		if ( $this->occurrence_feature->enabled() && $this->occurrence_readiness->ready() ) {
+			return $this->occurrence_items( $criteria );
+		}
+
 		$query = $this->events->query_window( $criteria );
 		$items = array();
 
@@ -106,6 +123,50 @@ final readonly class CalendarFeedController {
 		$response = new WP_REST_Response( $items );
 		$response->header( 'X-WP-Total', (string) $query->found_posts );
 		$response->header( 'X-WP-TotalPages', (string) $query->max_num_pages );
+
+		return $response;
+	}
+
+	/**
+	 * Return one exact occurrence page or a non-cacheable unavailable response.
+	 *
+	 * @param EventWindowCriteria $criteria Validated calendar window criteria.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	private function occurrence_items( EventWindowCriteria $criteria ): WP_REST_Response|WP_Error {
+		try {
+			$page = $this->occurrence_presenter->present( $this->occurrences->query_window( $criteria ) );
+		} catch ( OccurrenceReadException ) {
+			$page = null;
+		}
+
+		if ( null === $page ) {
+			return new WP_Error(
+				'wpse_occurrence_calendar_unavailable',
+				__( 'The occurrence calendar is temporarily unavailable.', 'mime-simple-events-calendar' ),
+				array( 'status' => 503 )
+			);
+		}
+
+		$items = array();
+
+		foreach ( $page->items as $item ) {
+			$formatted = $this->formatter->format_occurrence( $item );
+
+			if ( null === $formatted ) {
+				return new WP_Error(
+					'wpse_occurrence_calendar_unavailable',
+					__( 'The occurrence calendar is temporarily unavailable.', 'mime-simple-events-calendar' ),
+					array( 'status' => 503 )
+				);
+			}
+
+			$items[] = $formatted;
+		}
+
+		$response = new WP_REST_Response( $items );
+		$response->header( 'X-WP-Total', (string) $page->total );
+		$response->header( 'X-WP-TotalPages', (string) $page->total_pages );
 
 		return $response;
 	}

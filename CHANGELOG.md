@@ -2,6 +2,44 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [0.4.0] - 2026-08-25
+
+### Added
+
+- Add bounded daily, selected-weekday weekly, monthly, yearly and specific-date recurrence with captured timezone and deterministic DST behaviour.
+- Add explicit **Complete series**, **Only this occurrence** and **This and following** editor scopes with server-owned impact previews and signed review-before-apply confirmations.
+- Add manual occurrences, reversible skips and cancellations, future schedule segments and sparse occurrence overrides for date, status, title, note, image, venue, address, location and external actions.
+- Add a rebuildable generation-isolated occurrence index, bounded migration, health reporting, administrator repair, inactive-generation cleanup and scheduled projection renewal.
+- Add stable occurrence routes, exact read-only occurrence REST resources and bounded WordPress Core sitemap discovery.
+
+### Changed
+
+- Make event lists, calendars, the calendar feed, native event and taxonomy archives, Gutenberg blocks and Elementor widgets occurrence-aware while preserving one-off output and established component identifiers.
+- Make native, block-theme and Elementor Theme Builder single-event presentation resolve the same effective occurrence context, including core and third-party canonicals and Event JSON-LD.
+- Replace stale ordinary date/time controls on recurring events with an explicit schedule-ownership notice while keeping inherited series status and shared event content editable.
+- Use fail-closed projection readiness: incomplete, stale, corrupt, unpublished or protected recurrence state never falls back to a misleading series date.
+
+### Security and privacy
+
+- Keep recurrence aggregates protected and absent from public core REST, while the disposable occurrence index stores no event body, password, taxonomy copy, visitor data or remote identifier.
+- Keep every public occurrence lookup exact, bounded and parent-eligibility checked; malformed, ambiguous and inaccessible identities return the same non-cacheable not-found response.
+- Prevent stale virtual leaves through WordPress no-store headers, the de facto `DONOTCACHEPAGE` boundary and LiteSpeed Cache's documented no-cache action without weakening ordinary page caching.
+
+### Fixed
+
+- Schedule one late soft rewrite flush after a successful schema upgrade so existing installations recognize occurrence URLs with both default and custom event archive slugs without resaving Permalinks.
+- Preserve nullable canonical values from Yoast SEO, Rank Math and AIOSEO so Elementor Theme Builder previews cannot fail before an occurrence context exists.
+- Repair a missing, dirty or insufficient occurrence projection synchronously when an event first becomes public, including publication through Classic Editor and WP-Cron.
+- Describe recurrence-owned schedules accurately in the native metabox even while the protected comparison aggregate still represents a one-off event.
+
+### Testing
+
+- Add deterministic unit coverage for recurrence rules, calendar boundaries, DST, immutable identity, aggregate validation, editor concurrency, scope reconciliation, projection lifecycle, occurrence queries, presentation, REST, SEO, caching and upgrade behaviour.
+- Add real WordPress REST, smoke and Gutenberg browser journeys for recurrence enablement, editing scopes, disablement, repair, renewal, archives, collections, exact leaves, schema, canonicals and protected-content denial.
+- Add a production Elementor Pro qualification journey for exact recurring leaves, Theme Builder output, occurrence-specific canonicals and schema, plus regressions for nullable SEO canonicals and publication-time projection repair.
+- Qualify the corrected package on Taranartos with Elementor 4.2.3 and Elementor Pro 4.2.2: Theme Builder preview loads without a canonical-filter failure, Classic Editor publication immediately creates a healthy three-occurrence projection, all exact leaves render, and permanent cleanup removes every temporary public route.
+- Qualify the complete smoke journey on WordPress 6.9 and 7.0.1 with PHP 8.2.
+
 ## [0.3.0] - 2026-08-19
 
 ### Added

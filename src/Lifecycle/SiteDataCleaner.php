@@ -13,6 +13,10 @@ use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceTable;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceTableLifecycle;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalController;
 use MiMe\WPSimpleEvents\Seo\StructuredDataSettings;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
@@ -22,6 +26,15 @@ use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
  */
 final class SiteDataCleaner {
 	private const BATCH_SIZE = 100;
+
+	/**
+	 * Create the cleaner with the plugin-owned derived-table boundary.
+	 *
+	 * @param OccurrenceTableLifecycle $occurrences Occurrence table lifecycle.
+	 */
+	public function __construct(
+		private readonly OccurrenceTableLifecycle $occurrences = new OccurrenceTable()
+	) {}
 
 	/**
 	 * Delete current-site plugin data through WordPress APIs.
@@ -35,12 +48,13 @@ final class SiteDataCleaner {
 		$events_deleted = $this->delete_events();
 		$terms_deleted  = $events_deleted && $this->delete_taxonomy_terms( EventTaxonomies::CATEGORY );
 		$terms_deleted  = $terms_deleted && $this->delete_taxonomy_terms( EventTaxonomies::TAG );
+		$table_deleted  = $terms_deleted && $this->occurrences->drop();
 
-		( new RoleManager() )->revoke();
-
-		if ( ! $events_deleted || ! $terms_deleted ) {
+		if ( ! $events_deleted || ! $terms_deleted || ! $table_deleted ) {
 			return false;
 		}
+
+		( new RoleManager() )->revoke();
 
 		foreach ( $this->option_names() as $option_name ) {
 			delete_option( $option_name );
@@ -173,6 +187,8 @@ final class SiteDataCleaner {
 			StructuredDataSettings::OPTION,
 			EventTimezoneDisplaySettings::OPTION,
 			UninstallSettings::OPTION,
+			OccurrenceIndexMigrationController::COMPLETE_OPTION,
+			OccurrenceProjectionRenewalController::OFFSET_OPTION,
 		);
 	}
 }

@@ -19,14 +19,19 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
+use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrencePresentationProvider;
+use MiMe\WPSimpleEvents\Tests\Support\OccurrencePresentationFixture;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WP_Block;
 use WP_Post;
+use WP_Query;
 use WP_Term;
 
 #[CoversClass( EventFieldBlockDefinitions::class )]
@@ -108,6 +113,69 @@ final class EventFieldBlocksTest extends TestCase {
 			$renderer->render( $settings, '', $block )
 		);
 		self::assertStringContainsString( 'Place now:', $renderer->render( $settings, '', $block ) );
+	}
+
+	/** Current blocks use exact occurrence fields while explicit IDs remain series sources. */
+	public function test_current_occurrence_and_explicit_series_sources_remain_distinct(): void {
+		WordPressState::set_option( 'date_format', 'Y-m-d' );
+		WordPressState::set_option( 'time_format', 'H:i' );
+		$contexts = new EventContextResolver();
+		$route    = $this->occurrence_route( 191, $contexts );
+		$renderer = new EventFieldBlockRenderer(
+			$contexts,
+			new EventFieldRenderer(),
+			new CurrentEventPresentationResolver( $contexts, $route )
+		);
+		$context  = array(
+			'postId'   => 191,
+			'postType' => EventPostType::POST_TYPE,
+		);
+		$output   = '';
+
+		foreach (
+			array(
+				'event-title',
+				'event-featured-image',
+				'event-date-time',
+				'event-status',
+				'event-venue',
+				'event-address',
+				'event-location-link',
+				'event-content',
+				'event-excerpt',
+				'event-external-action',
+				'event-categories',
+				'event-tags',
+			) as $slug
+		) {
+			$output .= $renderer->render(
+				array(),
+				'',
+				new WP_Block( array( 'blockName' => 'wpse/' . $slug ), $context )
+			);
+		}
+
+		self::assertStringContainsString( 'Occurrence block title', $output );
+		self::assertStringContainsString( '2027-01-05, 19:00 – 21:00', $output );
+		self::assertStringContainsString( 'wpse-event-status-postponed', $output );
+		self::assertStringContainsString( 'Occurrence block venue', $output );
+		self::assertStringContainsString( 'Occurrence block address', $output );
+		self::assertStringContainsString( 'https://example.com/occurrence-location', $output );
+		self::assertStringContainsString( 'https://example.com/occurrence-action', $output );
+		self::assertStringContainsString( 'Complete description', $output );
+		self::assertStringContainsString( 'Short summary', $output );
+		self::assertStringContainsString( 'Music', $output );
+		self::assertStringContainsString( 'Live', $output );
+		self::assertStringNotContainsString( 'poster.jpg', $output );
+
+		$explicit = $renderer->render(
+			array( 'eventId' => 191 ),
+			'',
+			new WP_Block( array( 'blockName' => 'wpse/event-title' ), $context )
+		);
+
+		self::assertStringContainsString( 'Block event', $explicit );
+		self::assertStringNotContainsString( 'Occurrence block title', $explicit );
 	}
 
 	/** Invalid explicit sources and non-event context fail closed without fallback. */
@@ -234,6 +302,34 @@ final class EventFieldBlocksTest extends TestCase {
 	/** Create a block renderer with request-shared presentation services. */
 	private function renderer(): EventFieldBlockRenderer {
 		return new EventFieldBlockRenderer( new EventContextResolver(), new EventFieldRenderer() );
+	}
+
+	/**
+	 * Resolve one deterministic occurrence route over an existing public event.
+	 *
+	 * @param int                  $event_id Event post ID.
+	 * @param EventContextResolver $contexts Shared series resolver.
+	 */
+	private function occurrence_route( int $event_id, EventContextResolver $contexts ): OccurrenceRouteController {
+		$key      = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+		$series   = $contexts->resolve_public( $event_id );
+		$provider = new FakeOccurrencePresentationProvider();
+
+		self::assertNotNull( $series );
+		$provider->context = OccurrencePresentationFixture::create( $series, $key );
+		$route             = new OccurrenceRouteController( $provider );
+		$query             = new WP_Query(
+			array(
+				'wpse_test_request'                  => 'singular',
+				'post_type'                          => EventPostType::POST_TYPE,
+				'p'                                  => $event_id,
+				OccurrenceRouteController::QUERY_VAR => $key,
+			)
+		);
+
+		self::assertNotNull( $route->resolve( $query ) );
+
+		return $route;
 	}
 
 	/**

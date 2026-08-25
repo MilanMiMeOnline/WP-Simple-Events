@@ -101,6 +101,7 @@ final class EventFieldRendererTest extends TestCase {
 		);
 		self::assertStringContainsString( 'Route plan', $fields->location_action( $presentation, 'Route plan' ) );
 		self::assertSame( '<div class="wpse-single-event-content"><p>Full <strong>details</strong></p></div>', $fields->content( $presentation ) );
+		self::assertSame( '', $fields->note( $presentation ) );
 		self::assertStringContainsString( 'Short <strong>summary</strong>', $fields->excerpt( $presentation ) );
 		self::assertStringContainsString(
 			'<a class="wpse-event-action-link" href="https://example.com/register/" target="_blank" rel="noopener noreferrer">Register now</a>',
@@ -143,6 +144,7 @@ final class EventFieldRendererTest extends TestCase {
 		self::assertSame( '', $fields->address( $presentation ) );
 		self::assertSame( '', $fields->location_action( $presentation ) );
 		self::assertSame( '', $fields->content( $presentation ) );
+		self::assertSame( '', $fields->note( $presentation ) );
 		self::assertSame( '', $fields->excerpt( $presentation ) );
 		self::assertSame( '', $fields->external_action( $presentation ) );
 		self::assertSame( '', $fields->categories( $presentation ) );
@@ -200,6 +202,7 @@ final class EventFieldRendererTest extends TestCase {
 		self::assertSame( '', $fields->address( $presentation ) );
 		self::assertSame( '', $fields->location_action( $presentation ) );
 		self::assertSame( '', $fields->content( $presentation ) );
+		self::assertSame( '', $fields->note( $presentation ) );
 		self::assertSame( '', $fields->excerpt( $presentation ) );
 		self::assertSame( '', $fields->external_action( $presentation ) );
 		self::assertSame( '', $fields->categories( $presentation ) );

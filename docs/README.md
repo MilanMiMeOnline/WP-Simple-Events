@@ -16,6 +16,7 @@ for MiMe Simple Events and Calendar.
 ## Architecture and behaviour
 
 - [Data contract](DATA-CONTRACT.md)
+- [Recurrence and occurrence contract](RECURRENCE-CONTRACT.md)
 - [Public query contract](PUBLIC-QUERY-CONTRACT.md)
 - [Presentation contract](PRESENTATION-CONTRACT.md)
 - [Template contract](TEMPLATE-CONTRACT.md)
@@ -40,8 +41,12 @@ evidence. They are not user documentation and are excluded from the installable
 plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
-The active candidate evidence is [QA report 0.3.0](QA-REPORT-0.3.0.md). The last
-public release evidence is [QA report 0.2.5](QA-REPORT-0.2.5.md).
+The last public release evidence is [QA report 0.3.0](QA-REPORT-0.3.0.md).
+
+The active recurrence-development evidence starts with
+[QA report 0.4.0 occurrence foundation](QA-REPORT-0.4.0-FOUNDATION.md). It does not
+change the public release contract until the complete recurrence migration and
+read-side gates pass.
 
 ## Releases and WordPress.org
 

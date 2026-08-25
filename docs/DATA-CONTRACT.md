@@ -43,8 +43,111 @@ The boolean `wpse_show_event_timezone` option is disabled by default. When stric
 | `_wpse_event_url_label` | string | empty | yes | Optional plain-text external-link label, maximum 120 characters |
 | `_wpse_event_status` | string | `scheduled` | yes | `scheduled`, `cancelled` or `postponed` |
 | `_wpse_dates_need_review` | boolean | `false` | no | Internal editor warning after event duplication |
+| `_wpse_series_uid` | canonical UUID | empty until indexed | no | Immutable series/occurrence identity seed |
+| `_wpse_occurrence_generation` | positive integer | `0` | no | Complete active occurrence-table generation |
+| `_wpse_occurrence_index_dirty` | boolean | `false` | no | Repair marker after an incomplete projection write |
+| `_wpse_occurrence_coverage_from` | canonical `Y-m-d` | empty | no | Inclusive local start of the active recurring projection |
+| `_wpse_occurrence_coverage_through` | canonical `Y-m-d` | empty | no | Inclusive local end of the active recurring projection |
+| `_wpse_occurrence_coverage_generation` | positive integer | `0` | no | Generation token binding coverage to its active recurring projection |
+| `_wpse_recurrence_definition` | canonical JSON string | empty | no | Internal version-one recurrence aggregate, maximum 2 MiB |
 
-Every field is single-value, typed, sanitized, capability-protected and revision-enabled. The derived UTC indexes are deliberately absent from core REST so clients cannot overwrite query indexes independently of the local date range. A later custom event feed may expose calculated dates without exposing writable index metadata.
+Every field is single-value, typed, sanitized and capability-protected. Coverage
+dates and their generation binding are disposable derived state and deliberately
+excluded from revisions; the other listed metadata remains revision-enabled. The
+derived UTC indexes are absent from core REST so clients cannot overwrite query
+indexes independently of the local date range. A later custom event feed may
+expose calculated dates without exposing writable index metadata.
+
+The plugin-owned `{$wpdb->prefix}wpse_event_occurrences` table is a rebuildable
+projection governed by [RECURRENCE-CONTRACT.md](RECURRENCE-CONTRACT.md). It stores
+only identity, date, timezone, source, generation, an internal UTC row-creation
+timestamp and effective status fields.
+Titles, content, passwords, taxonomies and publication eligibility always remain
+in canonical WordPress tables. The store sets dirty before derived mutation. The
+active generation is switched only after every row in that generation has been
+inserted, and dirty is cleared only after activation and recurring coverage agree
+twice. A dirty marker does not alter canonical event data or the established
+one-off public read path; it records that the future occurrence read path must
+repair or fail closed.
+
+The hidden occurrence repository returns occurrence rows rather than `WP_Post`
+objects so multiple dates from one series cannot be deduplicated accidentally.
+Every public SQL plan joins the canonical parent at read time, requires a published
+password-free `wpse_event`, matches only its active generation and applies event
+category/tag filters through the canonical WordPress taxonomy tables. Result and
+count statements share the exact same predicates. Equal start values use ascending
+event ID and occurrence key as stable tie-breakers; the established post-meta
+queries now use the same ascending event-ID tie-breaker. Stored projection rows are
+revalidated against `EventDateRange` before use. A missing table, incomplete
+migration, public event without a healthy active generation, invalid row or
+inconsistent total keeps the public read-side switch disabled.
+
+Inactive projection rows are storage garbage, not history. A scheduled worker
+removes them in batches of at most 100 only after 24 hours, only while their
+generation differs from the active metadata marker and only when the parent has
+no dirty marker. The delete repeats those eligibility checks after selecting the
+bounded row IDs. Cleanup never changes canonical event metadata or decides which
+generation is active.
+
+The recurrence engine does not read request data or WordPress globals. It accepts
+only an `EventDateRange`, a factory-validated plugin-owned rule/specific-date value
+and an explicit `RecurrenceGenerationWindow`. It returns immutable recurrence
+slots whose identity is the original generated local start.
+
+The complete recurrence aggregate is persisted as one protected, single-value,
+revision-enabled `_wpse_recurrence_definition` JSON string. JSON is a bounded
+WordPress storage envelope rather than a second domain model: decoding must pass
+the exact versioned aggregate codec, and encoding always returns the same ordered
+shape. The value is limited to 2 MiB and is absent from core REST. A dedicated
+application service requires an event post, `edit_post`, an exact stored series
+UID and the event's captured timezone. It marks the derived projection dirty
+before replacing changed canonical data; a failed guard or failed write therefore
+cannot leave a falsely healthy occurrence index. Restoring any event revision
+also marks the projection dirty. The canonical-first save coordinator then builds
+one complete bounded generation from canonical event status, segments, exceptions
+and manual additions. It retries unchanged dirty aggregates, accepts a complete
+empty generation and leaves dirty-marker clearing to the verified storage
+boundary.
+Projection failure leaves canonical storage intact and read eligibility disabled.
+A pure recurrence-impact service compares current and proposed complete
+aggregates through the same bounded occurrence builder used for persistence. It
+keys changes by immutable recurrence identity, reports additions, removals,
+moves, status/source changes and exception mutations, and rejects scope leakage
+before any write. New manual additions use random manual identities; a modified
+generated occurrence detached by broad reconciliation retains its generated
+identity so its public key does not change. Editor input and public recurrence
+output remain disabled until the scope-first UX and public occurrence context are
+complete.
+
+Interactive recurrence writes use a SHA-256 revision token derived from a
+plugin-specific context plus the exact canonical JSON (or a dedicated one-off
+sentinel). The token is an identifier, not a secret. WordPress storage uses the
+current raw metadata value as `update_post_meta()`'s compare value, or a unique
+`add_post_meta()` when recurrence is first enabled. Stale tokens fail without
+replacing canonical data; the dirty-before-write invariant remains stronger than
+editor convenience during a race.
+
+The dedicated recurrence editor API is authenticated and capability checked. It
+exposes only a validated editor context, a bounded impact preview and a confirmed
+save operation. Mutations require the complete exact aggregate, explicit scope,
+target, generation window and current revision. A server HMAC binds the preview
+to that event, editor, proposal and window; save revalidates the full proposal and
+uses atomic compare-and-replace. The signature is never persisted, is not an
+authorization substitute and cannot be replayed after the canonical revision
+changes. A successful canonical change explicitly invokes WordPress' post-
+revision boundary so recurrence metadata participates in the event's revision
+history even though the dedicated route does not update the post record itself.
+An unchanged aggregate creates no revision noise. Core REST never receives the
+protected aggregate.
+
+Occurrence-scoped editing adds one read-only context boundary. A selected target
+must exist in the supplied bounded occurrence window. The response carries its
+effective occurrence, its inherited occurrence with only target exceptions
+removed, its complete sparse override, its cancellation action and the canonical
+revision. Moved targets receive one bounded identity-local fallback lookup at the
+original generated or manual date. This response never writes partial metadata;
+the existing complete-aggregate preview and confirmed save remain the only
+mutation boundary.
 
 ## Write and publication rules
 
@@ -79,9 +182,13 @@ Current event context may include a non-public event only when WordPress grants 
 
 ## Lifecycle
 
-Activation registers content before flushing rewrite rules, grants capabilities idempotently and stores `wpse_schema_version`. Normal boot reruns installation only when that version changes. Deactivation flushes rewrite rules but does not delete events, metadata, terms, capabilities or options.
+Activation registers content, creates or upgrades the occurrence projection table
+and only then grants capabilities and stores `wpse_schema_version`. A failed table
+creation does not claim the schema version, so normal boot can retry safely.
+Deactivation flushes rewrite rules but does not delete events, metadata, terms,
+capabilities, options or the projection table.
 
-Uninstall also preserves all data by default. Destructive cleanup runs only when the per-site `wpse_delete_data_on_uninstall` option is strictly `true`, `1` or `'1'`. That path permanently deletes `wpse_event` posts (including their metadata, revisions, comments and term relationships through WordPress core), all terms in the two event taxonomies, the explicitly allowlisted plugin-owned options and the capabilities granted to administrator/editor. Attachments are deliberately retained because featured media can be shared. Posts and terms are processed in batches of 100 without direct SQL; options are removed last and remain if content cleanup cannot complete. In multisite, every site is visited in batches and its own opt-in is evaluated independently.
+Uninstall also preserves all data by default. Destructive cleanup runs only when the per-site `wpse_delete_data_on_uninstall` option is strictly `true`, `1` or `'1'`. That path permanently deletes `wpse_event` posts (including their metadata, revisions, comments and term relationships through WordPress core), all terms in the two event taxonomies, the occurrence projection table, the explicitly allowlisted plugin-owned options and the capabilities granted to administrator/editor. Attachments are deliberately retained because featured media can be shared. Posts and terms are processed in batches of 100; direct SQL is confined to dropping the plugin-owned derived table. Options are removed last and remain if content or table cleanup cannot complete. In multisite, every site is visited in batches and its own opt-in is evaluated independently.
 
 Network-wide multisite activation is explicitly blocked in this version; individual sites can activate the plugin separately. This prevents a partial capability installation that would appear successful across a network.
 
