@@ -1,7 +1,7 @@
-# QA report — 0.4.0 recurring-events release candidate
+# QA report — 0.4.0 recurring-events release qualification
 
-**Status:** source, packaged and production Elementor Pro qualification complete;
-official CI Plugin Check remains the final release gate
+**Status:** complete — source, packaged, production Elementor Pro and official CI
+qualification passed
 **Reviewed:** 25 August 2026
 
 ## Scope
@@ -666,14 +666,16 @@ successful recurrence-disable reload before its five-second editor-hydration
 assertion. ADR-077 narrows and documents the unavoidable database suppressions;
 the release metadata and compatibility matrix now target WordPress 7.1; and the
 browser regression waits for the registered editor integration after navigation.
-All corrected local gates above pass. A new strict official CI run remains the
-publication gate.
+All corrected local gates above pass. GitHub Actions run
+[`32849753528`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/32849753528)
+then passed all ten jobs for commit `b7c6a7e`, including strict official Plugin
+Check, PHP 8.2–8.5, WordPress 6.9 and 7.1, the release archive and all twenty
+browser journeys.
 
-## Residual work before 0.4.0 can be released
-
-- official strict WordPress Plugin Check in CI.
+## Release gate result
 
 The source and packaged WordPress/PHP compatibility matrix, dependency audits,
-translation catalogue, reproducible archive, release notes and corrected-package
-production journey are qualified. No public 0.4.0 release claim is permitted until
-the remaining official CI check passes.
+translation catalogue, reproducible archive, release notes, corrected-package
+production journey and official strict Plugin Check are qualified. No known
+security, privacy, compatibility or WordPress.org compliance blocker remains for
+the 0.4.0 publication.

@@ -279,8 +279,8 @@ The ordered implementation increments are:
 
 The user experience remains explicit at every destructive or broad edit:
 **only this occurrence**, **this and following occurrences**, or **the complete
-series**. Version 0.4.0 is a candidate target, not a release promise; recurrence
-does not ship until the complete contract and release matrix pass.
+series**. Recurrence ships in version 0.4.0 only after the complete contract and
+release matrix pass.
 
 **Progress — 20 August 2026:** the occurrence foundation, bounded engine,
 qualified read layer and canonical recurrence aggregate are complete as hidden
@@ -479,13 +479,16 @@ templateshell and reports exact occurrence totals without collapsing repeated
 series IDs. The native Event details metabox now replaces recurrence-owned
 schedule controls with one explicit scope notice while leaving the inherited
 series status and shared content editable. Public occurrence routing and
-collection reads are now enabled by default for the 0.4.0 release candidate.
+collection reads are enabled by default for the 0.4.0 release.
 Cache exclusion is qualified against the documented WP Rocket and LiteSpeed
 boundaries. Replacement SEO sitemaps are not a correctness or privacy gate:
 WordPress Core is supported, third-party canonicals are exact, and server-rendered
-collections remain crawlable. The remaining release work is the real Elementor
-Pro leaf-template journey, the full supported-version matrix, Plugin Check and
-release packaging.
+collections remain crawlable.
+
+**Completion — 25 August 2026:** the production Elementor Pro leaf-template
+journey, complete PHP 8.2–8.5 matrix, packaged WordPress 6.9/7.1 smoke journeys,
+twenty browser regressions, reproducible packaging and strict official Plugin
+Check all pass. The 0.4.0 recurrence phase is qualified for publication.
 
 ## Phase 3 — Divi 5 integration
 

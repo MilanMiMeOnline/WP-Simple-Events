@@ -2,7 +2,7 @@
 
 **Status:** normative product and technical contract
 **Last reviewed:** 25 August 2026
-**Current development target:** 0.4.0 recurring-events release candidate; public 0.3.0 remains one-off only
+**Current release:** 0.4.0 recurring events, qualified for WordPress.org publication
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
