@@ -2,7 +2,7 @@
 Contributors: mimeonline
 Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.2
 Stable tag: 0.4.0
 License: GPLv2 or later

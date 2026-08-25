@@ -149,7 +149,7 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 			return false;
 		}
 
-		$deleted = $wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- This is the dedicated adapter for the plugin-owned projection table.
+		$deleted = $wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- This mutation belongs to the dedicated adapter for the rebuildable plugin-owned projection; a cached deletion result would be incorrect.
 			$this->table->table_name(),
 			array( 'event_id' => $event_id ),
 			array( '%d' )
@@ -307,7 +307,7 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 			return;
 		}
 
-		$wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Failure cleanup inside the dedicated projection adapter.
+		$wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Failure cleanup mutates the rebuildable plugin-owned projection and cannot use a cached result.
 			$this->table->table_name(),
 			array(
 				'event_id'   => $event_id,

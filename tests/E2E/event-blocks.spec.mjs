@@ -394,7 +394,21 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	);
 	await panel.getByRole( 'button', { name: 'Keep selected event only' } ).click();
 	await reloaded;
-	await expect( page.locator( '.wpse-recurrence-editor' ).getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'once' );
+	await expect.poll(
+		() =>
+			page.evaluate( () =>
+				Boolean(
+					window.wpseRecurrenceEditor &&
+						window.wp?.plugins?.getPlugin( 'wpse-recurrence-editor' ),
+				),
+			),
+		{ timeout: 30_000 },
+	).toBe( true );
+	await expect(
+		page
+			.locator( '.wpse-recurrence-editor' )
+			.getByLabel( 'Repeats', { exact: true } ),
+	).toHaveValue( 'once' );
 	await expect( page.locator( '[data-wpse-schedule-fields]' ) ).not.toHaveAttribute(
 		'hidden',
 		'',

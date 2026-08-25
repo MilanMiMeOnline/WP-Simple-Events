@@ -605,7 +605,7 @@ npm run qa                                         pass
   JS/CSS lint                                      pass
 npm run audit                                      pass (0 vulnerabilities)
 npm run i18n:check                                 pass
-WordPress 7.0.1 targeted recurrence E2E            pass
+WordPress 7.1 targeted recurrence E2E              pass
   enable, preview and complete-series save         pass
   only-this move and inherited-date restore        pass
   only-this status override and inheritance        pass
@@ -621,9 +621,9 @@ Playwright package browser matrix: 20 journeys     pass
   Gutenberg block registration and previews         pass
 npm run test:smoke                                 pass
   source: WordPress 6.9 / PHP 8.2 Playground       pass
-  source: WordPress 7.0.1 / PHP 8.2 Playground     pass
+  source: WordPress 7.0.1 / PHP 8.2 Playground     pass (earlier qualification)
   package: WordPress 6.9 / PHP 8.2 Playground      pass
-  package: WordPress 7.0.1 / PHP 8.2 Playground    pass
+  package: WordPress 7.1 / PHP 8.2 Playground      pass
   occurrence edit-context auth/inheritance         pass
   only-this preview/save/reload                     pass
   following preview/save/reconciliation/replay      pass
@@ -652,9 +652,22 @@ release archive verification                       pass
   content and production dependency boundary       pass
   shipped PHP syntax and production autoloader     pass
   checksum integrity and reproducible second build pass
-  final SHA-256                                     3c27c3c74ea6aac7a6618a1fbe18da4fe907ea36be42161eb9b4a5e80ad17bce
+  final SHA-256                                     5be06d352fa5c3a818999565738390593376c5cd2074e0c485948872eceb4ea3
 translation catalogue synchronization              pass
 ```
+
+The first official GitHub release run for commit `0d6f3ff` completed the PHP
+8.2–8.5 matrix, JavaScript/CSS, translation and WordPress smoke jobs, but correctly
+blocked publication. Strict Plugin Check could not infer the existing typed SQL
+compiler for the rebuildable occurrence table, required explicit no-cache
+justification on its mutations, flagged the bounded legacy metadata sort and
+reported the obsolete `Tested up to: 7.0` header. The browser job also reached a
+successful recurrence-disable reload before its five-second editor-hydration
+assertion. ADR-077 narrows and documents the unavoidable database suppressions;
+the release metadata and compatibility matrix now target WordPress 7.1; and the
+browser regression waits for the registered editor integration after navigation.
+All corrected local gates above pass. A new strict official CI run remains the
+publication gate.
 
 ## Residual work before 0.4.0 can be released
 

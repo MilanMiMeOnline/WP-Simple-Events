@@ -22,7 +22,7 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 
    ```sh
    WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
-   WPSE_SMOKE_CORE='WordPress/WordPress#7.0.1' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
+   WPSE_SMOKE_CORE='WordPress/WordPress#7.1' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    ```
 
 7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/mime-simple-events-calendar` and uploads the verified zip and checksum as one CI artifact.

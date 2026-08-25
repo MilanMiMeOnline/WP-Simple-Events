@@ -38,7 +38,7 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 - Add real WordPress REST, smoke and Gutenberg browser journeys for recurrence enablement, editing scopes, disablement, repair, renewal, archives, collections, exact leaves, schema, canonicals and protected-content denial.
 - Add a production Elementor Pro qualification journey for exact recurring leaves, Theme Builder output, occurrence-specific canonicals and schema, plus regressions for nullable SEO canonicals and publication-time projection repair.
 - Qualify the corrected package on Taranartos with Elementor 4.2.3 and Elementor Pro 4.2.2: Theme Builder preview loads without a canonical-filter failure, Classic Editor publication immediately creates a healthy three-occurrence projection, all exact leaves render, and permanent cleanup removes every temporary public route.
-- Qualify the complete smoke journey on WordPress 6.9 and 7.0.1 with PHP 8.2.
+- Qualify the complete smoke journey on WordPress 6.9 and 7.1 with PHP 8.2.
 
 ## [0.3.0] - 2026-08-19
 

@@ -22,7 +22,7 @@ These verify registrations, capabilities, metadata authorization, persistence, q
 
 ### End-to-end tests
 
-The Playground smoke journey covers activation, creating, editing, publishing, filtering and opening events; admin actions and forged nonces; REST validation and visibility; settings and maintenance; list, details and calendar shortcodes; archive routing; structured data; and graceful native behaviour without Elementor or WooCommerce. Release candidates run the packaged staging directory on WordPress 6.9 and 7.0.1 with PHP 8.2. The PHP quality matrix additionally covers every supported minor from 8.2 through 8.5.
+The Playground smoke journey covers activation, creating, editing, publishing, filtering and opening events; admin actions and forged nonces; REST validation and visibility; settings and maintenance; list, details and calendar shortcodes; archive routing; structured data; and graceful native behaviour without Elementor or WooCommerce. Release candidates run the packaged staging directory on WordPress 6.9 and 7.1 with PHP 8.2. The PHP quality matrix additionally covers every supported minor from 8.2 through 8.5.
 
 A separate Playwright suite exercises browser-only layout, responsive, keyboard and interaction behaviour against a disposable Playground site. It uses the exact pinned `@playwright/test` development dependency and a separately installed Chromium build. Assertions target stable component semantics and geometry rather than theme-wide screenshots. Playwright and its browser binaries are never shipped in the plugin archive.
 

@@ -1427,3 +1427,31 @@ production horizon as manual maintenance. Public requests may still use the safe
 one-off fallback while a failed projection is repaired, but a successful ordinary
 publication must not leave administrators with a manual **Repair occurrence
 index** step.
+
+## ADR-077: Occurrence-table queries use narrow documented Plugin Check suppressions
+
+**Status:** Accepted
+
+WordPress has no metadata or query API that can represent repeated event IDs with
+exact occurrence pagination. The occurrence index is therefore a deliberately
+small, rebuildable plugin-owned table behind dedicated read, projection,
+maintenance and lifecycle adapters. Direct-database and no-cache warnings are
+suppressed only on those exact calls: reads require current projection state,
+mutations and destructive uninstall cannot return a cached result, and no other
+production class may inherit those suppressions.
+
+Dynamic read and cleanup SQL may originate only from `OccurrenceSqlQuery`. That
+value object validates the complete internal template, accepts only `%d`, `%f`
+and `%s`, proves one strictly typed value per placeholder and rejects every
+unexpected percent sequence. The adapters then pass every value through a
+literal `wpdb::prepare()` format before execution. Plugin Check cannot trace this
+custom compiler and reports its final local SQL variable as unescaped, so the
+corresponding warning is suppressed at the four execution calls with the exact
+security invariant documented inline. Public eligibility, bounds and active
+generation predicates remain mandatory in the query builders and their tests.
+
+The legacy one-off calendar fallback intentionally sorts registered local date
+metadata in a bounded WordPress query. Its slow-meta-value warning is likewise
+suppressed only at the exact `orderby` value; recurring collections use the
+indexed occurrence projection. These suppressions do not exempt the code from
+strict official Plugin Check on every release candidate.

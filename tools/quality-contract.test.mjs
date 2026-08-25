@@ -29,6 +29,10 @@ const smokeRunner = await readFile(
 	new URL( './smoke-playground.mjs', import.meta.url ),
 	'utf8',
 );
+const wpEnvConfig = await readFile(
+	new URL( '../.wp-env.json', import.meta.url ),
+	'utf8',
+);
 const wordpressOrgAssets = new URL( '../.wordpress-org/', import.meta.url );
 
 test( 'keeps non-PHP dependency trees optional for PHP-only CI jobs', () => {
@@ -75,7 +79,9 @@ test( 'keeps external WordPress QA inputs deterministic and available', () => {
 		/wordpress\/plugin-check-action@[a-f0-9]{40}[\s\S]*?wp-version: trunk/,
 	);
 	assert.match( qualityWorkflow, /^\s+- wordpress: '6\.9'$/m );
-	assert.match( qualityWorkflow, /^\s+- wordpress: '7\.0\.1'$/m );
+	assert.match( qualityWorkflow, /^\s+- wordpress: '7\.1'$/m );
+	assert.match( publicReadme, /^Tested up to: 7\.1$/m );
+	assert.match( wpEnvConfig, /"core": "WordPress\/WordPress#7\.1"/ );
 	assert.match(
 		qualityWorkflow,
 		/https:\/\/github\.com\/wp-cli\/wp-cli\/releases\/download\/v2\.12\.0\/wp-cli-2\.12\.0\.phar/,

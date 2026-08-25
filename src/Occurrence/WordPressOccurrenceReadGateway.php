@@ -29,7 +29,7 @@ final class WordPressOccurrenceReadGateway implements OccurrenceReadGateway {
 
 		$sql = $this->compile( $wpdb, $query );
 
-		$rows = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated adapter for the disposable projection; SQL was prepared immediately above and parent visibility is rechecked by the query.
+		$rows = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated adapter for the disposable projection; the strictly typed internal query contract was prepared immediately above and parent visibility is rechecked by the query.
 
 		if ( '' !== $wpdb->last_error || null === $rows ) {
 			throw new OccurrenceReadException( 'The occurrence row query failed.' );
@@ -69,7 +69,7 @@ final class WordPressOccurrenceReadGateway implements OccurrenceReadGateway {
 
 		$sql = $this->compile( $wpdb, $query );
 
-		$count = $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated adapter for the disposable projection; SQL was prepared immediately above and exact totals cannot be served from object cache.
+		$count = $wpdb->get_var( $sql ); // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated adapter for the disposable projection; the strictly typed internal query contract was prepared immediately above and exact totals cannot be served from object cache.
 
 		if ( '' !== $wpdb->last_error || ! is_string( $count ) ) {
 			throw new OccurrenceReadException( 'The occurrence count query returned an invalid total.' );

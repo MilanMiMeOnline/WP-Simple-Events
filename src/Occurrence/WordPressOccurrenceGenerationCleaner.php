@@ -48,7 +48,7 @@ final class WordPressOccurrenceGenerationCleaner implements OccurrenceGeneration
 			return null;
 		}
 
-		$raw_ids = $wpdb->get_col( $select ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated bounded maintenance adapter; SQL was validated and prepared immediately above.
+		$raw_ids = $wpdb->get_col( $select ); // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Dedicated bounded maintenance adapter; the strictly typed internal query contract was validated and prepared immediately above.
 
 		if ( $this->has_database_error( $wpdb ) ) {
 			return null;
@@ -76,7 +76,7 @@ final class WordPressOccurrenceGenerationCleaner implements OccurrenceGeneration
 			return null;
 		}
 
-		$deleted = $wpdb->query( $delete ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared -- Guarded deletion repeats active-generation, dirty-marker, age and bounded-ID predicates.
+		$deleted = $wpdb->query( $delete ); // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- Guarded uncached deletion uses a strictly typed prepared contract and repeats active-generation, dirty-marker, age and bounded-ID predicates.
 
 		return is_int( $deleted ) && ! $this->has_database_error( $wpdb ) ? $deleted : null;
 	}

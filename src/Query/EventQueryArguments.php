@@ -82,6 +82,7 @@ final class EventQueryArguments {
 			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Calendar feeds are bounded and intentionally ordered by registered local date metadata.
 			'meta_key'               => EventMeta::START_LOCAL,
 			'orderby'                => array(
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- The bounded legacy one-off feed intentionally sorts registered local date metadata; recurring reads use the indexed occurrence projection.
 				'meta_value' => 'ASC',
 				'ID'         => 'ASC',
 			),

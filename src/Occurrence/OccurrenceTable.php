@@ -48,7 +48,7 @@ final class OccurrenceTable implements OccurrenceTableLifecycle {
 		$table_name = $this->table_name();
 		$query      = $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name );
 
-		if ( ! is_string( $query ) || false === $wpdb->query( $query ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared -- Query was prepared with the trusted identifier immediately above; plugin-owned table lifecycle has no WordPress API.
+		if ( ! is_string( $query ) || false === $wpdb->query( $query ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared -- The destructive uninstall query was prepared with the trusted identifier immediately above; plugin-owned table lifecycle has no WordPress API or meaningful cache.
 			return false;
 		}
 
