@@ -92,6 +92,22 @@ component's configured initial values and preserves only bounded, allowlisted
 state for other component instances. Calendar JavaScript mirrors the same state
 transition and URL cleanup; it does not replace the server baseline.
 
+The 0.6 filter renderer keeps that transport contract but presents category and
+tag choices as semantic checkbox groups inside progressive disclosures. Active
+choices are repeated as removable chips outside a closed group. Group clear,
+clear-all and restore-default actions are distinct operations: clear-all removes
+visitor term selections and restores the configured period, while restore brings
+back the component's initial term constraints. Every operation preserves safe
+state belonging to other component instances. JavaScript enhances disclosure,
+chip removal, calendar refresh and history only; the complete form remains a
+valid no-JavaScript GET workflow.
+
+Taxonomy archives do not render this cross-taxonomy form because their routed
+term is fixed. Their visible H1 is plugin-owned plain text built from an
+allowlisted queried `WP_Term`; the generic WordPress archive-title span is not
+reused. A malformed or substituted queried object falls back to the neutral
+`Events` heading without broadening the archive query.
+
 ## Shared style boundary
 
 The production stylesheet exposes component-scoped custom properties on the
@@ -112,3 +128,13 @@ the browser viewport. A feature-detected viewport fallback preserves the same
 two-, three- and four-column behaviour in browsers without container-query
 support. Existing shortcode attributes, widget IDs, component classes and saved
 control IDs remain unchanged.
+
+Optional category and event colors are editorial presentation data. Resolution
+is deterministic: valid event override, valid explicitly selected assigned
+category, one unambiguous assigned colored category, component fallback. Several
+different automatic category colors produce the fallback, never an arbitrary
+first term. The renderer exposes only normalized background and derived
+black/white foreground values. Calendar title, time, status and optional legend
+or visible filters preserve non-color meaning. All projected occurrences inherit
+their canonical series color; occurrence-only color overrides are not part of
+0.6.

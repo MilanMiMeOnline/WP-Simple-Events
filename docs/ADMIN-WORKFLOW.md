@@ -74,4 +74,22 @@ Deliberately not copied:
 
 Any required copy-step failure permanently removes only the newly created partial draft. The source event is never modified.
 
-Copied dates set the internal `_wpse_dates_need_review` flag. The editor shows a prominent warning until a save passes the shared event validator and persistence gateway. This provides the fast workflow expected as the version-1 replacement for recurrence without silently treating an old date as confirmed.
+Copied dates set the internal `_wpse_dates_need_review` flag. The editor shows a prominent warning until a save passes the shared event validator and persistence gateway. This prevents a copied historical date from being treated as deliberately confirmed.
+
+## Event colors (0.6 contract)
+
+An event category may store one optional normalized hexadecimal background color.
+Term creation and editing use the normal taxonomy capability and nonce boundaries;
+invalid values fail validation and removing the value deletes the term metadata.
+The category list shows a labelled swatch in addition to text.
+
+An event may keep automatic color resolution, force the component fallback,
+select one assigned colored category as its display source, or save one custom
+normalized color. An unassigned/deleted category, corrupt color or ambiguous set
+of differently colored categories falls back safely. The choice belongs to the
+complete canonical series. An individual recurring occurrence cannot receive a
+different color in 0.6.
+
+Public black or white foreground text is derived from the normalized background;
+editors do not store arbitrary text colors or CSS. Existing events receive no new
+appearance until a category/event color is deliberately configured.

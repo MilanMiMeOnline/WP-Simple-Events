@@ -669,7 +669,10 @@ msgstr ""
 #: src/Content/EventPostType.php:95
 #: src/Divi/DiviEditorTranslations.php:60
 #: src/Elementor/EventListWidget.php:52
-#: src/Frontend/EventArchiveRenderer.php:61
+#: src/Frontend/EventArchiveRenderer.php:65
+#: src/Frontend/EventArchiveTitle.php:35
+#: src/Frontend/EventArchiveTitle.php:41
+#: src/Frontend/EventArchiveTitle.php:47
 msgid "Events"
 msgstr ""
 
@@ -2341,25 +2344,41 @@ msgstr ""
 msgid "Apply filters"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:82
+#: src/Frontend/EventArchiveControls.php:54
+msgid "Clear filters"
+msgstr ""
+
+#: src/Frontend/EventArchiveControls.php:83
 #: src/Shortcode/CalendarShortcode.php:192
 #: src/Shortcode/EventListControls.php:102
 msgid "Previous"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:83
+#: src/Frontend/EventArchiveControls.php:84
 #: src/Shortcode/CalendarShortcode.php:193
 #: src/Shortcode/EventListControls.php:103
 msgid "Next"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:92
+#: src/Frontend/EventArchiveControls.php:93
 #: src/Shortcode/EventListControls.php:112
 msgid "Events pagination"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:133
+#: src/Frontend/EventArchiveControls.php:134
 msgid "Select one or more."
+msgstr ""
+
+#. translators: %s: event category name.
+#: src/Frontend/EventArchiveTitle.php:53
+#, php-format
+msgid "Events in “%s”"
+msgstr ""
+
+#. translators: %s: event tag name.
+#: src/Frontend/EventArchiveTitle.php:60
+#, php-format
+msgid "Events tagged “%s”"
 msgstr ""
 
 #. translators: %s: Numeric timezone offset such as +02:00.

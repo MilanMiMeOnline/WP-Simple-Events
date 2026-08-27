@@ -110,6 +110,11 @@ if ( ! class_exists( 'WP_Query' ) ) {
 			return is_int( $post_id ) ? $post_id : 0;
 		}
 
+		/** Return the deterministic queried object. */
+		public function get_queried_object(): mixed {
+			return $this->get( 'queried_object' );
+		}
+
 		/** Convert the deterministic query to a 404. */
 		public function set_404(): void {
 			$this->is_404 = true;

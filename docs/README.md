@@ -49,7 +49,9 @@ normative historical evidence for the recurring-events contract retained by
 0.5.0. The post-release UX findings and their qualified maintenance candidate
 are documented in the
 [0.5.0 exploratory report](QA-REPORT-0.5.0-EXPLORATORY.md) and
-[0.5.1 release-candidate report](QA-REPORT-0.5.1.md).
+[0.5.1 release-candidate report](QA-REPORT-0.5.1.md). The frozen 0.6.0 filter and
+color baseline is recorded in the
+[FCR-0 QA evidence](QA-REPORT-0.6.0-FCR-0.md).
 
 ## Releases and WordPress.org
 

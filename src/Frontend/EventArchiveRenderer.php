@@ -27,12 +27,14 @@ final readonly class EventArchiveRenderer {
 	 * @param EventArchiveControls          $controls             Native filter and pagination controls.
 	 * @param EventArchiveQuery             $query                Native query and occurrence-page adapter.
 	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
+	 * @param EventArchiveTitle             $title                Plain-text archive heading resolver.
 	 */
 	public function __construct(
 		private EventListRenderer $events = new EventListRenderer(),
 		private EventArchiveControls $controls = new EventArchiveControls(),
 		private EventArchiveQuery $query = new EventArchiveQuery(),
-		private OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter()
+		private OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
+		private EventArchiveTitle $title = new EventArchiveTitle()
 	) {}
 
 	/**
@@ -54,7 +56,9 @@ final readonly class EventArchiveRenderer {
 		);
 		$page_value          = $query->get( 'paged' );
 		$page                = is_numeric( $page_value ) ? max( 1, (int) $page_value ) : 1;
-		$title               = $is_taxonomy_archive ? get_the_archive_title() : post_type_archive_title( '', false );
+		$title               = $is_taxonomy_archive
+			? $this->title->taxonomy( $query )
+			: post_type_archive_title( '', false );
 		$occurrence_page     = $this->query->occurrence_page( $query );
 
 		if ( ! is_string( $title ) || '' === trim( $title ) ) {

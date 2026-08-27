@@ -277,7 +277,9 @@ async function assertEventThemeShell(
 	);
 	requireCondition(
 		taxonomyPage.includes( 'wpse-event-archive' ) &&
-			taxonomyPage.includes( 'Future smoke event' ),
+			taxonomyPage.includes( 'Future smoke event' ) &&
+			taxonomyPage.includes( 'Events in “Archive smoke category”' ) &&
+			! taxonomyPage.includes( '&lt;span&gt;' ),
 		`${ theme } lost the event taxonomy archive inside its theme shell.`,
 	);
 	requireExactlyOnce(
@@ -1382,7 +1384,11 @@ try {
 		'http://localhost:8888/event-category/archive-smoke/',
 	);
 	requireCondition( categoryArchiveBody.includes( 'wpse-event-archive' ), 'The event category archive did not use event presentation.' );
-	requireCondition( categoryArchiveBody.includes( 'Archive smoke category' ), 'The event category archive omitted its term title.' );
+	requireCondition(
+		categoryArchiveBody.includes( 'Events in “Archive smoke category”' ) &&
+			! categoryArchiveBody.includes( '&lt;span&gt;' ),
+		'The event category archive omitted its plain-text term title.',
+	);
 	requireCondition( categoryArchiveBody.includes( 'frontend.css' ), 'The event category archive omitted component styling.' );
 	requireCondition( categoryArchiveBody.includes( 'Past smoke event' ), 'The event category archive omitted a public past event.' );
 	requireCondition( categoryArchiveBody.includes( 'Ongoing smoke event' ), 'The event category archive omitted a public active event.' );
@@ -1399,7 +1405,11 @@ try {
 		'http://localhost:8888/event-tag/block-smoke/',
 	);
 	requireCondition( tagArchiveBody.includes( 'wpse-event-archive' ), 'The event tag archive did not use event presentation.' );
-	requireCondition( tagArchiveBody.includes( 'Block smoke tag' ), 'The event tag archive omitted its term title.' );
+	requireCondition(
+		tagArchiveBody.includes( 'Events tagged “Block smoke tag”' ) &&
+			! tagArchiveBody.includes( '&lt;span&gt;' ),
+		'The event tag archive omitted its plain-text term title.',
+	);
 	requireCondition( tagArchiveBody.includes( 'Future smoke event' ), 'The event tag archive omitted its public event.' );
 	requireCondition( ! tagArchiveBody.includes( 'wpse-event-archive-filters' ), 'The fixed event tag archive exposed cross-archive filters.' );
 

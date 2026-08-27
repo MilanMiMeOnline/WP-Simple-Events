@@ -780,6 +780,10 @@ dimensions, arbitrary CSS, maps, ticketing, facet counts or remote services.
 
 ### FCR-0 — Specification and failing evidence
 
+**Status:** completed locally on 2026-08-27. The normative contracts, frozen
+compatibility surface and red-green evidence are recorded in
+`QA-REPORT-0.6.0-FCR-0.md`.
+
 1. Add the accepted filter and color behaviour to the normative specification,
    public query contract, decision log and administrator workflow.
 2. Freeze existing request names, block names, shortcode attributes, Elementor
@@ -793,6 +797,9 @@ clear-versus-restore and color-precedence semantics are testable without editor-
 specific interpretation.
 
 ### FCR-1 — Taxonomy title hotfix
+
+**Status:** implemented locally; final WordPress smoke qualification remains part
+of the FCR-1 handoff gate.
 
 1. Resolve the queried event term through an allowlisted taxonomy boundary.
 2. Build translated plain-text category and tag headings from its escaped name.

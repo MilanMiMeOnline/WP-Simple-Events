@@ -1679,3 +1679,31 @@ sparse overrides cannot always be represented truthfully by one RRULE. A stable
 occurrence-aware UID, captured timezone, bounded escaped/folded text, safe content
 headers, cache/privacy review and Apple/Google/Outlook interoperability tests are
 release requirements for this phase.
+
+## ADR-086: Filter modernization preserves transport and host identities
+
+**Status:** Accepted
+
+The 0.6 filter redesign changes semantic presentation, not public query meaning.
+Existing shortcode attributes (`period`, `category`, `tag`, `filters`), native
+archive request names, `wpse_N_*` and `wpse_calendar_N_*` namespaces and their
+explicit apply markers remain compatible. The `wpse/event-list` and
+`wpse/event-calendar` block names, `wpse-event-list` and `wpse-event-calendar`
+Elementor widget names, corresponding Divi module identities, established
+component classes and current `--wpse-filter-*` and `--wpse-calendar-*` fallback
+variables are not renamed. New controls and variables may be added only through
+the shared renderer and adapter layers.
+
+Checkbox disclosures, active chips and clear/restore actions all serialize to
+the same bounded GET state. An intentionally empty submitted selection remains
+different from untouched initial constraints. Clear-all restores the configured
+period while removing visitor term selections; restore-defaults re-applies the
+component's initial term constraints and therefore appears separately when those
+outcomes differ. Unknown, malformed and oversized request values remain ignored
+or safely normalized at the established boundary.
+
+Calendar colors are resolved presentation, not a filter and not eligibility
+data. Builder-owned event colors remain the component fallback beneath explicit
+event and deterministic category choices. No host may fork public filter markup,
+choose the first category by incidental order or store arbitrary CSS in event or
+term metadata.

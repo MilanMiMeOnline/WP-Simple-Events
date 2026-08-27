@@ -35,14 +35,22 @@ if ( ! class_exists( 'WP_Term' ) ) {
 		public string $slug;
 
 		/**
+		 * Taxonomy name.
+		 *
+		 * @var string
+		 */
+		public string $taxonomy;
+
+		/**
 		 * Construct one deterministic term object.
 		 *
-		 * @param array{term_id?: int, name?: string, slug?: string} $data Term field overrides.
+		 * @param array{term_id?: int, name?: string, slug?: string, taxonomy?: string} $data Term field overrides.
 		 */
 		public function __construct( array $data = array() ) {
-			$this->term_id = $data['term_id'] ?? 0;
-			$this->name    = $data['name'] ?? '';
-			$this->slug    = $data['slug'] ?? '';
+			$this->term_id  = $data['term_id'] ?? 0;
+			$this->name     = $data['name'] ?? '';
+			$this->slug     = $data['slug'] ?? '';
+			$this->taxonomy = $data['taxonomy'] ?? '';
 		}
 	}
 	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound

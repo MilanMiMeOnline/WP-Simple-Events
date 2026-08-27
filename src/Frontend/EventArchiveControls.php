@@ -51,6 +51,7 @@ final class EventArchiveControls {
 
 			<p class="wpse-events-filter-submit">
 				<button type="submit" aria-controls="wpse-archive-results"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
+				<a href="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>"><?php esc_html_e( 'Clear filters', 'mime-simple-events-calendar' ); ?></a>
 			</p>
 		</form>
 		<?php

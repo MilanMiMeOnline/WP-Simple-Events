@@ -29,13 +29,17 @@ The main `wpse_event` archive query uses the archive settings documented in `ARC
 
 The adapter changes only the front-end main event archive. It does not alter admin, blog, WooCommerce, secondary or unrelated taxonomy queries.
 
-The native archive renderer consumes this main query directly and adds an accessible filter form for `wpse_period`, `wpse_category` and `wpse_tag`. It does not create a duplicate query. Classic and block-theme presentation details are frozen in `TEMPLATE-CONTRACT.md`.
+The native archive renderer consumes this main query directly and adds an accessible filter form for `wpse_period`, `wpse_category` and `wpse_tag`. It does not create a duplicate query. Its clear action returns to the archive action URL and therefore cannot preserve stale visitor filters. Classic and block-theme presentation details are frozen in `TEMPLATE-CONTRACT.md`.
 
 ## Event taxonomy archives
 
 The front-end main archives for `wpse_event_category` and `wpse_event_tag` are also known event collections. They preserve WordPress' resolved term constraint, expose only published events without a post password, use the bounded archive page size and order all matching events by `_wpse_start_utc` ascending. They deliberately include past, active and future events so a term archive remains a complete archive rather than inheriting the configurable upcoming-only landing-page default.
 
-Term archives use the term title, shared event cards and native pagination. They do not render the general archive filter form: accepting category or tag filters there could replace the fixed term constraint and let a request escape the archive it represents. Front-end component styles are enqueued for these two taxonomies.
+Term archives use a plugin-owned, plain-text heading from the allowlisted queried
+event term, shared event cards and native pagination. They do not render the
+general archive filter form: accepting category or tag filters there could
+replace the fixed term constraint and let a request escape the archive it
+represents. Front-end component styles are enqueued for these two taxonomies.
 
 No query or date filter is attached to blog categories, post tags, product archives, site search or mixed post-type search. Mixed search therefore retains WordPress relevance ordering and the active theme's normal publication-date presentation.
 
@@ -60,6 +64,13 @@ Default attributes are:
 Unknown attributes are ignored. Invalid enum, integer and boolean values use documented safe defaults; no raw meta query, SQL, callback or post-status argument is accepted.
 
 Each rendered shortcode receives a deterministic request namespace based on render order, such as `wpse_1_period` and `wpse_1_page`. Filter forms preserve only allowlisted state belonging to other MiMe Simple Events and Calendar instances. This prevents one list from reading or overwriting another list's filters or pagination.
+
+The 0.6 semantic control update does not rename `wpse_period`,
+`wpse_category[]`, `wpse_tag[]`, their `wpse_N_*` and `wpse_calendar_N_*`
+instance variants, or the existing explicit apply markers. Checkbox values are
+normalized through the same maximum-20 slug boundary as the former multiple
+select. Chip and clear actions are presentation shortcuts to a valid namespaced
+GET state; they cannot add query dimensions or bypass eligibility checks.
 
 The shortcode returns HTML and does not mutate the global WordPress loop. It uses the shared repository, date formatter and card renderer also consumed by native templates and Elementor adapters.
 
@@ -105,6 +116,13 @@ venue and category slugs. Draft/private state, content, addresses, internal
 metadata keys and write capabilities are not exposed. Corrupt event date
 records are omitted. `X-WP-Total` and `X-WP-TotalPages` describe the bounded
 public query.
+
+The 0.6 feed may additionally expose one resolved normalized background and one
+derived black/white foreground color. These are presentation values only. The
+feed never exposes raw metadata, an unassigned category source or arbitrary CSS,
+and color resolution cannot change eligibility, ordering, pagination or dates.
+Relevant post, relationship and term metadata must be primed for the bounded
+result set so repeated occurrences do not cause one metadata query per item.
 
 For timed events, top-level `start` and `end` are floating canonical local ISO
 values used only for calendar placement; FullCalendar must not convert them to

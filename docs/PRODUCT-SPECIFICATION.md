@@ -255,6 +255,12 @@ draft, private and password-protected events are excluded. Their fixed term scop
 cannot be replaced by the general event-archive filters. Blog, product and mixed
 search queries keep normal WordPress ordering and date semantics.
 
+The plugin owns the visible event-taxonomy heading as plain text. Categories use
+`Events in “Name”` and tags use `Events tagged “Name”`. Decorative markup from
+WordPress' generic archive-title helper is never escaped into visible source or
+trusted as plugin markup. This heading rule does not replace the document title
+owned by WordPress, the active theme or an SEO plugin.
+
 ### Template ownership
 
 The plugin supplies safe native fallbacks for classic, hybrid classic and full
@@ -286,6 +292,16 @@ state. A submitted empty term selection is distinct from untouched initial
 constraints. Reset restores the current instance's configured values without
 removing another instance's bounded request state.
 
+The accepted 0.6 filter interaction preserves these GET and namespace rules while
+replacing modifier-key multiple selects with labelled checkbox disclosures.
+Selected values appear as individually removable chips. A group clear affects
+only that taxonomy, **Clear all** removes all visitor term selections while
+restoring the configured period, and **Restore defaults** appears separately
+when the component's initial term constraints differ from an empty selection.
+Applying remains an explicit valid form submission without JavaScript. Mobile
+may collapse the form behind one labelled disclosure with an active count; focus,
+result announcements and back/forward history remain deterministic.
+
 ## 11. Calendar
 
 `[wpse_calendar]` provides responsive month and list views. Desktop and mobile
@@ -305,7 +321,17 @@ Calendar requirements:
 - clear loading, empty and error states;
 - localized start, continuation and end language for timed multi-day segments in
   list view, without relabelling genuine all-day events;
+- optional deterministic event colors that never become the sole carrier of
+  title, time, status or category meaning;
 - no remote JavaScript, stylesheet, font or map dependency.
+
+For 0.6, color resolves as explicit event color, explicitly selected assigned
+colored category, one unambiguous assigned category color, then component
+fallback. Several assigned categories with different colors never use incidental
+term order. Category colors are optional normalized hexadecimal values; public
+text is derived as black or white for contrast. Event color selection belongs to
+the canonical series, not an individual occurrence. Existing events retain the
+current component fallback until an editor deliberately assigns color data.
 
 The calendar library is bundled locally. Its licence, version and removal cost are
 recorded in the third-party notices and decision log.
@@ -381,6 +407,13 @@ Required accessibility behaviour includes:
 
 Elementor style controls may override plugin variables within the widget scope.
 They must not create global button or typography rules.
+
+The shared filter presentation exposes separately scoped states for its panel,
+disclosure trigger, option groups, checkboxes, active chips, apply/clear/restore
+actions and result status. Gutenberg, Elementor and Divi map their bounded design
+controls to this same semantic markup and CSS-variable layer. Event and category
+colors override only resolved calendar event presentation; builder calendar
+colors remain the component fallback.
 
 ## 15. SEO and structured data
 
