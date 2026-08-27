@@ -2,7 +2,7 @@
 
 **Status:** normative product and technical contract
 **Last reviewed:** 27 August 2026
-**Current release candidate:** 0.5.0 with optional native Divi 5 integration
+**Current public release:** 0.5.0 with optional native Divi 5 integration
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it

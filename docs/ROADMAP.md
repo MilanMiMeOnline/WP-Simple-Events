@@ -2,8 +2,8 @@
 
 **Status:** active planning contract
 **Last reviewed:** 27 August 2026
-**Current public release:** 0.4.0
-**Active phase:** 0.5.0 release freeze after completed Divi 5 real-host qualification
+**Current public release:** 0.5.0
+**Active phase:** Phase 4 compatibility and maintenance
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -649,11 +649,17 @@ users and occurrence rows were all removed after qualification.
 Divi browser journeys, reproducible packaging and the senior developer/security/
 QA reviews all pass. Only then may Divi 5 support be advertised publicly.
 
-**Current evidence — 27 August 2026:** the full real-host Divi 5.11.1 matrix,
+**Completion — 27 August 2026:** the full real-host Divi 5.11.1 matrix,
 protected-content and role checks, packaged browser suite, WordPress 6.9/7.1
 smokes, dependency audits, reproducible archive and senior developer/security/QA
-reviews pass locally. The 0.5.0 candidate now awaits the official post-commit CI
-matrix and strict Plugin Check before tagging and publication.
+reviews pass. GitHub Actions run
+[`33057715576`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33057715576)
+then passed all ten jobs for release commit `3e688ab`, including strict official
+Plugin Check, PHP 8.2–8.5, WordPress 6.9 and 7.1, the release archive and all 21
+browser journeys. The CI archive is byte-identical to the locally qualified
+package with SHA-256
+`4b489c0c499cc86f4ba3ba21f821930be2a37a72d7415124820b042d3c69ecd0`.
+Phase 3 is qualified for publication as 0.5.0.
 
 ## Phase 4 — compatibility and maintenance
 

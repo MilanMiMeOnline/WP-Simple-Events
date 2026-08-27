@@ -42,11 +42,11 @@ evidence. They are not user documentation and are excluded from the installable
 plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
-The last public release evidence is
-[QA report 0.4.0](QA-REPORT-0.4.0-FOUNDATION.md). The
-[0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) records the
-current release candidate; final publication still requires the official
-post-commit CI and Plugin Check gates.
+The current public release evidence is the
+[0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md). The
+[0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remains the
+normative historical evidence for the recurring-events contract retained by
+0.5.0.
 
 ## Releases and WordPress.org
 

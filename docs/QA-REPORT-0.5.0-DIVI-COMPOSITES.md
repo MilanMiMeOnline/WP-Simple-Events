@@ -1,6 +1,6 @@
 # QA report — 0.5.0 Divi composites and Theme Builder
 
-**Status:** real-host qualification passed; final post-commit release gates pending
+**Status:** qualified for public release
 
 **Reviewed:** 27 August 2026
 
@@ -211,12 +211,17 @@ including both previously interrupted cases. No product code or timeout was
 changed to obtain the passing result.
 
 Official strict Plugin Check is deliberately a pinned GitHub Actions release gate;
-this checkout has no local replacement script. It must pass on the final 0.5.0
-commit before publication.
+this checkout has no local replacement script. GitHub Actions run
+[`33057715576`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33057715576)
+passed all ten jobs for release commit `3e688ab`: strict Plugin Check, the release
+archive, translations, JavaScript/CSS, PHP 8.2–8.5, WordPress 6.9 and 7.1 on PHP
+8.2, and all 21 browser journeys. The downloaded CI archive is byte-identical to
+the locally qualified archive with SHA-256
+`4b489c0c499cc86f4ba3ba21f821930be2a37a72d7415124820b042d3c69ecd0`.
 
-This is intentionally not yet the final 0.5.0 release sign-off. Real-host Divi
-qualification is complete. The remaining mandatory gate is official Plugin Check
-and the complete supported CI matrix after the final 0.5.0 commit is frozen.
+Real-host Divi qualification and every mandatory automated release gate are
+complete. No known security, privacy, compatibility or WordPress.org compliance
+blocker remains for the 0.5.0 publication.
 
 Divi 5.11.1 is now the explicit supported floor and current-tested package. The
 version boundary rejects earlier Divi 5 builds and all unqualified Divi 6 builds
@@ -235,5 +240,5 @@ The orphan-repair defect is fixed and its retained local rows are removed. The
 final Divi matrix still repeats permanent deletion through the real browser UI so
 that this lifecycle regression remains covered at both API and user-flow levels.
 
-Until those checks pass, documentation and release metadata must not advertise
-Divi 5 as qualified public support.
+Divi 5 may therefore be advertised as qualified optional public support from
+version 0.5.0 onward.
