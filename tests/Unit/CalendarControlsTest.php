@@ -46,6 +46,8 @@ final class CalendarControlsTest extends TestCase {
 
 		self::assertStringContainsString( 'data-wpse-calendar-filters', $output );
 		self::assertStringContainsString( 'data-wpse-calendar-filter="category"', $output );
+		self::assertStringContainsString( 'type="checkbox"', $output );
+		self::assertStringNotContainsString( 'multiple', $output );
 		self::assertStringContainsString( 'value="workshops"', $output );
 		self::assertStringNotContainsString( 'data-wpse-calendar-filter="tag"', $output );
 		self::assertStringContainsString( 'Apply filters', $output );
@@ -65,8 +67,8 @@ final class CalendarControlsTest extends TestCase {
 		self::assertStringContainsString( 'value="family"', $output );
 	}
 
-	/** Both taxonomies preserve selections and other calendar instance state. */
-	public function test_both_term_types_render_with_get_state_and_reset(): void {
+	/** Both taxonomies preserve selections and expose independently removable choices. */
+	public function test_both_term_types_render_with_get_state_and_clear_actions(): void {
 		WordPressState::set_taxonomy_terms(
 			EventTaxonomies::CATEGORY,
 			array( $this->term( 3, 'Workshops', 'workshops' ) )
@@ -89,9 +91,10 @@ final class CalendarControlsTest extends TestCase {
 			)
 		);
 
-		self::assertSame( 2, substr_count( $output, 'selected="selected"' ) );
+		self::assertSame( 2, substr_count( $output, 'checked="checked"' ) );
 		self::assertStringContainsString( 'name="wpse_calendar_2_tag[]" value="online"', $output );
-		self::assertStringContainsString( 'Reset filters', $output );
+		self::assertStringContainsString( 'Clear all', $output );
+		self::assertSame( 2, substr_count( $output, 'data-wpse-filter-remove' ) );
 		self::assertStringContainsString( 'name="wpse_calendar_1_apply" value="1"', $output );
 		self::assertStringContainsString( 'method="get"', $output );
 		self::assertStringContainsString( 'aria-controls="wpse-calendar-1-canvas"', $output );
@@ -116,18 +119,50 @@ final class CalendarControlsTest extends TestCase {
 		self::assertStringNotContainsString( 'name="wpse_calendar_2_apply[]"', $output );
 	}
 
+	/** Restore defaults stays distinct from clearing visitor taxonomy choices. */
+	public function test_changed_initial_preset_exposes_clear_and_restore_actions(): void {
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::CATEGORY,
+			array( $this->term( 3, 'Workshops', 'workshops' ) )
+		);
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::TAG,
+			array( $this->term( 7, 'Family', 'family' ) )
+		);
+		$configured = CalendarShortcodeAttributes::from_shortcode(
+			array( 'category' => 'workshops' )
+		);
+		$request    = array(
+			'wpse_calendar_1_apply'    => '1',
+			'wpse_calendar_1_category' => array( 'workshops' ),
+			'wpse_calendar_1_tag'      => array( 'family' ),
+		);
+		$normalized = $configured->with_request( $request, 'wpse_calendar_1' );
+		$output     = $this->render( $normalized, $request, $configured );
+
+		self::assertStringContainsString( 'Clear all', $output );
+		self::assertStringContainsString( 'Restore defaults', $output );
+		self::assertStringContainsString( 'data-wpse-filter-restore', $output );
+	}
+
 	/**
 	 * Render controls with optional normalized state.
 	 *
 	 * @param CalendarShortcodeAttributes|null $attributes Current filter state.
 	 * @param array<string, mixed>             $request    Public request state.
+	 * @param CalendarShortcodeAttributes|null $configured Original defaults.
 	 */
-	private function render( ?CalendarShortcodeAttributes $attributes = null, array $request = array() ): string {
+	private function render(
+		?CalendarShortcodeAttributes $attributes = null,
+		array $request = array(),
+		?CalendarShortcodeAttributes $configured = null
+	): string {
 		return ( new CalendarControls() )->render(
 			$attributes ?? CalendarShortcodeAttributes::from_shortcode( array() ),
 			'wpse_calendar_1',
 			'wpse-calendar-1-canvas',
-			$request
+			$request,
+			$configured
 		);
 	}
 

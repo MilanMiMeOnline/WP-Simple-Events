@@ -17,6 +17,13 @@
 	--wpse-grid-column-gap: calc(var(--wpse-spacing) * 1.5);
 	--wpse-filter-padding: 0;
 	--wpse-filter-gap: var(--wpse-spacing);
+	--wpse-filter-option-gap: 0.5rem;
+	--wpse-filter-accent: currentcolor;
+	--wpse-filter-chip-background: transparent;
+	--wpse-filter-chip-border: currentcolor;
+	--wpse-filter-chip-text: inherit;
+	--wpse-filter-chip-radius: 999px;
+	--wpse-filter-chip-padding: 0.35em 0.7em;
 	--wpse-pagination-padding: 0;
 	--wpse-pagination-gap: 0.5rem;
 	--wpse-summary-padding: var(--wpse-spacing);
@@ -197,8 +204,81 @@
 }
 
 .wpse-events-filter-field,
+.wpse-events-filter-group,
 .wpse-events-filter-submit {
 	margin: 0;
+}
+
+.wpse-events-filter-group {
+	min-width: min(100%, 12rem);
+	padding: 0;
+	border: 0;
+}
+
+.wpse-events-filter-group legend {
+	margin-bottom: 0.25rem;
+	padding: 0;
+	font-weight: 600;
+}
+
+.wpse-events-filter-options {
+	display: grid;
+	gap: var(--wpse-filter-option-gap);
+}
+
+.wpse-events-filter-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+.wpse-events-filter-option input {
+	flex: 0 0 auto;
+	width: 1rem;
+	height: 1rem;
+	margin: 0.2em 0 0;
+	accent-color: var(--wpse-filter-accent);
+}
+
+.wpse-events-active-filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+	margin-block: 0 1rem;
+}
+
+.wpse-events-active-filters-label {
+	font-weight: 600;
+}
+
+.wpse-events-filter-chips,
+.wpse-events-filter-group-actions,
+.wpse-events-filter-global-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.wpse-events-filter-chips {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpse-events-filter-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: var(--wpse-filter-chip-padding);
+	border: 1px solid var(--wpse-filter-chip-border);
+	border-radius: var(--wpse-filter-chip-radius);
+	background: var(--wpse-filter-chip-background);
+	color: var(--wpse-filter-chip-text);
+	line-height: 1.2;
+	text-decoration: none;
 }
 
 .wpse-events-filter-field label {
@@ -238,6 +318,7 @@
 .wpse-event-action-link:focus-visible,
 .wpse-event-categories a:focus-visible,
 .wpse-event-tags a:focus-visible,
+.wpse-events-filters input:focus-visible,
 .wpse-events-filters select:focus-visible,
 .wpse-events-filters button:focus-visible,
 .wpse-events-filters a:focus-visible,

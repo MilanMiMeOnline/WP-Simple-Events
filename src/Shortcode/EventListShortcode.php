@@ -67,8 +67,8 @@ final class EventListShortcode implements ShortcodeRenderer {
 		$results_id  = $instance_id . '-results';
 		$prefix      = 'wpse_' . $instance;
 		$request     = $this->request_values();
-		$normalized  = EventListAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() )
-			->with_request( $request, $prefix );
+		$configured  = EventListAttributes::from_shortcode( is_array( $attributes ) ? $attributes : array() );
+		$normalized  = $configured->with_request( $request, $prefix );
 		$criteria    = $normalized->criteria( time() );
 		$occurrences = $this->occurrence_feature->enabled() && $this->occurrence_readiness->ready()
 			? $this->occurrence_page( $criteria )
@@ -85,7 +85,7 @@ final class EventListShortcode implements ShortcodeRenderer {
 		$output = '<div id="' . esc_attr( $instance_id ) . '" class="wpse-events">';
 
 		if ( $normalized->filters ) {
-			$output .= $this->controls->filters( $normalized, $prefix, $results_id, $request );
+			$output .= $this->controls->filters( $normalized, $prefix, $results_id, $request, $configured );
 		}
 
 		$output .= null !== $occurrences

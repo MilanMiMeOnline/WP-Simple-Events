@@ -24,15 +24,25 @@ const formatNumber = ( template, value ) =>
  * @return {Array<string>} Selected slugs.
  */
 const selectedValues = ( root, type, fallback = [] ) => {
-	const select = root.querySelector(
+	const controls = root.querySelectorAll(
 		`[data-wpse-calendar-filter="${ type }"]`,
 	);
 
-	if ( ! select ) {
+	if ( ! controls.length ) {
 		return Array.isArray( fallback ) ? fallback : [];
 	}
 
-	return Array.from( select.selectedOptions, ( option ) => option.value );
+	return Array.from( controls ).flatMap( ( control ) => {
+		if ( control.tagName === 'SELECT' ) {
+			return Array.from( control.selectedOptions, ( option ) => option.value );
+		}
+
+		if ( control.matches( 'input[type="checkbox"]' ) && control.checked ) {
+			return [ control.value ];
+		}
+
+		return [];
+	} );
 };
 
 /**
@@ -136,15 +146,20 @@ const updateUrl = ( config, root, submitted = true ) => {
  * @param {HTMLElement} root   Calendar root.
  */
 const restoreInitialFilters = ( config, root ) => {
-	root.querySelectorAll( '[data-wpse-calendar-filter]' ).forEach( ( select ) => {
-		const type = select.dataset.wpseCalendarFilter;
+	root.querySelectorAll( '[data-wpse-calendar-filter]' ).forEach( ( control ) => {
+		const type = control.dataset.wpseCalendarFilter;
 		const initial = type === 'category'
 			? config.initialCategories
 			: config.initialTags;
+		const selected = Array.isArray( initial ) && initial.includes( control.value );
 
-		Array.from( select.options ).forEach( ( option ) => {
-			option.selected = Array.isArray( initial ) && initial.includes( option.value );
-		} );
+		if ( control.tagName === 'SELECT' ) {
+			Array.from( control.options ).forEach( ( option ) => {
+				option.selected = Array.isArray( initial ) && initial.includes( option.value );
+			} );
+		} else if ( control.matches( 'input[type="checkbox"]' ) ) {
+			control.checked = selected;
+		}
 	} );
 };
 
@@ -260,7 +275,6 @@ const initializeCalendar = ( root ) => {
 	}
 
 	const filters = root.querySelector( '[data-wpse-calendar-filters]' );
-	const resetLink = root.querySelector( '[data-wpse-calendar-reset]' );
 	let lastResult = { events: [], truncated: false };
 	let loadFailed = false;
 	const initialView =
@@ -454,7 +468,6 @@ const initializeCalendar = ( root ) => {
 	}
 
 	emptyActionButton?.addEventListener( 'click', handleReset );
-	resetLink?.addEventListener( 'click', handleReset );
 
 	const instance = {
 		calendar,
@@ -464,7 +477,6 @@ const initializeCalendar = ( root ) => {
 			stopObservingSize();
 			filters?.removeEventListener( 'submit', handleFilterSubmit );
 			emptyActionButton?.removeEventListener( 'click', handleReset );
-			resetLink?.removeEventListener( 'click', handleReset );
 			calendar.destroy();
 
 			if ( calendarInstances.get( root ) === instance ) {

@@ -98,21 +98,24 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			. esc_attr( $config ) . '">';
 
 		if ( $normalized->filters ) {
-			$output .= $this->controls->render( $normalized, $prefix, $canvas_id, $request );
+			$output .= $this->controls->render( $normalized, $prefix, $canvas_id, $request, $configured );
 		}
 
-		$output .= '<p class="wpse-calendar-status" role="status" aria-live="polite" data-wpse-calendar-status></p>';
-		$output .= '<div id="' . esc_attr( $canvas_id ) . '" class="wpse-calendar-canvas" aria-label="'
+		$output            .= '<p class="wpse-calendar-status" role="status" aria-live="polite" data-wpse-calendar-status></p>';
+		$output            .= '<div id="' . esc_attr( $canvas_id ) . '" class="wpse-calendar-canvas" aria-label="'
 			. esc_attr__( 'Events calendar', 'mime-simple-events-calendar' ) . '" data-wpse-calendar-canvas hidden></div>';
-		$output .= '<p class="wpse-calendar-empty-action" data-wpse-calendar-empty-action hidden><button type="button">'
-			. esc_html__( 'Reset filters', 'mime-simple-events-calendar' ) . '</button></p>';
-		$output .= '<div class="wpse-calendar-fallback" aria-labelledby="' . esc_attr( $instance_id . '-fallback-title' ) . '">';
-		$output .= '<' . esc_attr( $normalized->fallback_heading_level ) . ' id="'
+		$empty_action_label = array() !== $configured->category_slugs || array() !== $configured->tag_slugs
+			? __( 'Restore defaults', 'mime-simple-events-calendar' )
+			: __( 'Clear all', 'mime-simple-events-calendar' );
+		$output            .= '<p class="wpse-calendar-empty-action" data-wpse-calendar-empty-action hidden><button type="button">'
+			. esc_html( $empty_action_label ) . '</button></p>';
+		$output            .= '<div class="wpse-calendar-fallback" aria-labelledby="' . esc_attr( $instance_id . '-fallback-title' ) . '">';
+		$output            .= '<' . esc_attr( $normalized->fallback_heading_level ) . ' id="'
 			. esc_attr( $instance_id . '-fallback-title' ) . '">'
 			. esc_html__( 'Upcoming events', 'mime-simple-events-calendar' )
 			. '</' . esc_attr( $normalized->fallback_heading_level ) . '>';
-		$options = new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level );
-		$output .= null !== $occurrences
+		$options            = new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level );
+		$output            .= null !== $occurrences
 			? $this->renderer->render_occurrences(
 				$occurrences,
 				EventListView::LIST,

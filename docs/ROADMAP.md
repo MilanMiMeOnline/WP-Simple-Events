@@ -798,8 +798,9 @@ specific interpretation.
 
 ### FCR-1 — Taxonomy title hotfix
 
-**Status:** implemented locally; final WordPress smoke qualification remains part
-of the FCR-1 handoff gate.
+**Status:** completed locally on 2026-08-27. Unit, static-analysis and packaged
+WordPress smoke qualification passed; the implementation is recorded in
+`QA-REPORT-0.6.0-FCR-0.md`.
 
 1. Resolve the queried event term through an allowlisted taxonomy boundary.
 2. Build translated plain-text category and tag headings from its escaped name.
@@ -811,6 +812,11 @@ of the FCR-1 handoff gate.
 additional markup is trusted merely to preserve WordPress' decorative span.
 
 ### FCR-2 — Shared filter state and semantic markup
+
+**Status:** completed locally on 2026-08-27. The shared no-JavaScript contract,
+bounded URL-state handling, checkbox groups and removable active choices passed
+the full repository and packaged WordPress gates. Detailed evidence is recorded
+in `QA-REPORT-0.6.0-FCR-2.md`.
 
 1. Extract one immutable filter view model and one bounded URL-state builder.
 2. Preserve the existing namespaced apply marker that distinguishes untouched

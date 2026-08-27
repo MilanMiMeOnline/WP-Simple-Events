@@ -110,14 +110,14 @@ const buttonState = ( button ) => button.evaluate( ( element ) => {
 } );
 
 /**
- * Return all selected values from a multiple select.
+ * Return all checked values from one semantic filter group.
  *
- * @param {import('@playwright/test').Locator} select Multiple select control.
- * @return {Promise<Array<string>>} Selected option values.
+ * @param {import('@playwright/test').Locator} controls Checkbox controls.
+ * @return {Promise<Array<string>>} Checked values.
  */
-const selectedOptions = ( select ) =>
-	select.evaluate( ( element ) =>
-		Array.from( element.selectedOptions, ( option ) => option.value ),
+const checkedValues = ( controls ) =>
+	controls.evaluateAll( ( elements ) =>
+		elements.filter( ( element ) => element.checked ).map( ( element ) => element.value ),
 	);
 
 test( 'loads the progressively enhanced public calendar', async ( { page } ) => {
@@ -194,13 +194,16 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 		'[data-wpse-calendar-filter="category"]',
 	);
 	const tag = filters.locator( '[data-wpse-calendar-filter="tag"]' );
+	const requestedTag = filters.locator(
+		'[data-wpse-calendar-filter="tag"][value="wpse-e2e-tag"]',
+	);
 
 	await expect( filters ).toBeVisible();
 	await expect( filters ).toHaveAttribute( 'method', 'get' );
-	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+	await expect.poll( () => checkedValues( category ) ).toEqual( [
 		'wpse-e2e-category',
 	] );
-	await expect.poll( () => selectedOptions( tag ) ).toEqual( [] );
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
 	await expect(
 		filters.getByRole( 'button', { name: 'Apply filters' } ),
 	).toHaveAttribute( 'aria-controls', 'wpse-calendar-1-canvas' );
@@ -210,7 +213,7 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 		'3 events loaded.',
 	);
 
-	await tag.selectOption( 'wpse-e2e-tag' );
+	await requestedTag.check();
 	await filters.getByRole( 'button', { name: 'Apply filters' } ).click();
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
 		'2 events loaded.',
@@ -230,10 +233,10 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 	} );
 
 	await page.reload();
-	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+	await expect.poll( () => checkedValues( category ) ).toEqual( [
 		'wpse-e2e-category',
 	] );
-	await expect.poll( () => selectedOptions( tag ) ).toEqual( [
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [
 		'wpse-e2e-tag',
 	] );
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
@@ -241,14 +244,14 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 	);
 	const reset = calendar
 		.locator( '[data-wpse-calendar-empty-action]' )
-		.getByRole( 'button', { name: 'Reset filters' } );
+		.getByRole( 'button', { name: 'Restore defaults' } );
 
 	await expect( reset ).toBeVisible();
 	await reset.click();
-	await expect.poll( () => selectedOptions( category ) ).toEqual( [
+	await expect.poll( () => checkedValues( category ) ).toEqual( [
 		'wpse-e2e-category',
 	] );
-	await expect.poll( () => selectedOptions( tag ) ).toEqual( [] );
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
 	await expect.poll( () => {
 		const url = new URL( page.url() );
 

@@ -20,6 +20,17 @@ use WP_Term;
  */
 final class EventArchiveControls {
 	/**
+	 * Create native archive controls.
+	 *
+	 * @param EventFilterTermGroup     $term_group Shared semantic taxonomy choices.
+	 * @param EventFilterActiveChoices $active_choices Removable active choices.
+	 */
+	public function __construct(
+		private readonly EventFilterTermGroup $term_group = new EventFilterTermGroup(),
+		private readonly EventFilterActiveChoices $active_choices = new EventFilterActiveChoices()
+	) {}
+
+	/**
 	 * Render period, category and tag filters.
 	 *
 	 * @param EventListAttributes $attributes Current normalized archive filters.
@@ -28,10 +39,37 @@ final class EventArchiveControls {
 		$categories = $this->terms( EventTaxonomies::CATEGORY );
 		$tags       = $this->terms( EventTaxonomies::TAG );
 		$action     = get_post_type_archive_link( EventPostType::POST_TYPE );
+		$action     = is_string( $action ) ? $action : '';
+		$current    = array( 'wpse_period' => $attributes->period->value );
+
+		if ( array() !== $attributes->category_slugs ) {
+			$current['wpse_category'] = $attributes->category_slugs;
+		}
+
+		if ( array() !== $attributes->tag_slugs ) {
+			$current['wpse_tag'] = $attributes->tag_slugs;
+		}
+
+		$active = $this->active_choices->render(
+			new EventFilterViewModel(
+				$action,
+				array(),
+				$current,
+				'wpse_category',
+				'wpse_tag',
+				$categories,
+				$tags,
+				$attributes->category_slugs,
+				$attributes->tag_slugs,
+				$action,
+				'',
+				true
+			)
+		);
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters wpse-event-archive-filters" method="get" action="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
+		<form class="wpse-events-filters wpse-event-archive-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
 			<p class="wpse-events-filter-field">
 				<label for="wpse-archive-period"><?php esc_html_e( 'Period', 'mime-simple-events-calendar' ); ?></label>
 				<select id="wpse-archive-period" name="wpse_period">
@@ -42,22 +80,24 @@ final class EventArchiveControls {
 			</p>
 
 			<?php if ( array() !== $categories ) : ?>
-				<?php $this->term_select( $categories, 'wpse_category', 'wpse-archive-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs ); ?>
+				<?php echo $this->term_group->render( $categories, 'wpse_category', 'wpse-archive-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>
-				<?php $this->term_select( $tags, 'wpse_tag', 'wpse-archive-tag', __( 'Tags', 'mime-simple-events-calendar' ), $attributes->tag_slugs ); ?>
+				<?php echo $this->term_group->render( $tags, 'wpse_tag', 'wpse-archive-tag', __( 'Tags', 'mime-simple-events-calendar' ), $attributes->tag_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<p class="wpse-events-filter-submit">
 				<button type="submit" aria-controls="wpse-archive-results"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
-				<a href="<?php echo esc_url( is_string( $action ) ? $action : '' ); ?>"><?php esc_html_e( 'Clear filters', 'mime-simple-events-calendar' ); ?></a>
+				<?php if ( '' === $active ) : ?>
+					<a href="<?php echo esc_url( $action ); ?>" data-wpse-filter-clear><?php esc_html_e( 'Clear all', 'mime-simple-events-calendar' ); ?></a>
+				<?php endif; ?>
 			</p>
 		</form>
 		<?php
 		$output = ob_get_clean();
 
-		return false === $output ? '' : $output;
+		return $active . ( false === $output ? '' : $output );
 	}
 
 	/**
@@ -116,28 +156,5 @@ final class EventArchiveControls {
 		}
 
 		return array_values( $terms );
-	}
-
-	/**
-	 * Render one multiple term selector.
-	 *
-	 * @param WP_Term[] $terms    Available terms.
-	 * @param string    $name     Request field name.
-	 * @param string    $id       Input ID.
-	 * @param string    $label    Translated label.
-	 * @param string[]  $selected Selected slugs.
-	 */
-	private function term_select( array $terms, string $name, string $id, string $label, array $selected ): void {
-		?>
-		<p class="wpse-events-filter-field">
-			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Select one or more.', 'mime-simple-events-calendar' ); ?></span>
-			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>">
-				<?php foreach ( $terms as $term ) : ?>
-					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>
-				<?php endforeach; ?>
-			</select>
-		</p>
-		<?php
 	}
 }

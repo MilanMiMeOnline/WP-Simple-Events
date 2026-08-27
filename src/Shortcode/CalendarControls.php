@@ -10,6 +10,10 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Frontend\EventFilterActiveChoices;
+use MiMe\WPSimpleEvents\Frontend\EventFilterTermGroup;
+use MiMe\WPSimpleEvents\Frontend\EventFilterUrlState;
+use MiMe\WPSimpleEvents\Frontend\EventFilterViewModel;
 use WP_Term;
 
 /**
@@ -17,19 +21,35 @@ use WP_Term;
  */
 final readonly class CalendarControls {
 	/**
+	 * Create the calendar controls.
+	 *
+	 * @param EventFilterTermGroup     $term_group Shared semantic taxonomy choices.
+	 * @param EventFilterUrlState      $url_state  Bounded cross-instance URL state.
+	 * @param EventFilterActiveChoices $active_choices Removable active choices.
+	 */
+	public function __construct(
+		private EventFilterTermGroup $term_group = new EventFilterTermGroup(),
+		private EventFilterUrlState $url_state = new EventFilterUrlState(),
+		private EventFilterActiveChoices $active_choices = new EventFilterActiveChoices()
+	) {}
+
+	/**
 	 * Render one progressively enhanced GET filter form.
 	 *
-	 * @param CalendarShortcodeAttributes $attributes Current normalized filters.
-	 * @param string                      $prefix     Instance request prefix.
-	 * @param string                      $canvas_id  Controlled calendar canvas ID.
-	 * @param array<string, mixed>        $request    Current public request values.
+	 * @param CalendarShortcodeAttributes      $attributes Current normalized filters.
+	 * @param string                           $prefix     Instance request prefix.
+	 * @param string                           $canvas_id  Controlled calendar canvas ID.
+	 * @param array<string, mixed>             $request    Current public request values.
+	 * @param CalendarShortcodeAttributes|null $configured Original component defaults.
 	 */
 	public function render(
 		CalendarShortcodeAttributes $attributes,
 		string $prefix,
 		string $canvas_id,
-		array $request
+		array $request,
+		?CalendarShortcodeAttributes $configured = null
 	): string {
+		$configured = $configured ?? $attributes;
 		$categories = $this->terms( EventTaxonomies::CATEGORY );
 		$tags       = $this->terms( EventTaxonomies::TAG );
 
@@ -39,37 +59,73 @@ final readonly class CalendarControls {
 
 		$action    = get_permalink( get_queried_object_id() );
 		$action    = is_string( $action ) ? $action : '';
-		$selected  = array_key_exists( $prefix . '_apply', $request )
+		$submitted = array_key_exists( $prefix . '_apply', $request )
 			|| array_key_exists( $prefix . '_category', $request )
 			|| array_key_exists( $prefix . '_tag', $request );
-		$preserved = $this->preserved_instance_values( $request, $prefix );
-		$reset_url = add_query_arg( $preserved, $action );
+		$preserved = $this->url_state->preserved( $request, $prefix );
+		$current   = array( $prefix . '_apply' => '1' );
+
+		if ( array() !== $attributes->category_slugs ) {
+			$current[ $prefix . '_category' ] = $attributes->category_slugs;
+		}
+
+		if ( array() !== $attributes->tag_slugs ) {
+			$current[ $prefix . '_tag' ] = $attributes->tag_slugs;
+		}
+
+		$clear_url    = $this->url_state->url(
+			$action,
+			array_merge( $preserved, array( $prefix . '_apply' => '1' ) )
+		);
+		$has_defaults = array() !== $configured->category_slugs || array() !== $configured->tag_slugs;
+		$differs      = $attributes->category_slugs !== $configured->category_slugs
+			|| $attributes->tag_slugs !== $configured->tag_slugs;
+		$restore_url  = $has_defaults && $differs ? $this->url_state->url( $action, $preserved ) : '';
+		$active       = $this->active_choices->render(
+			new EventFilterViewModel(
+				$action,
+				$preserved,
+				$current,
+				$prefix . '_category',
+				$prefix . '_tag',
+				$categories,
+				$tags,
+				$attributes->category_slugs,
+				$attributes->tag_slugs,
+				$clear_url,
+				$restore_url,
+				$submitted
+			)
+		);
 
 		ob_start();
 		?>
 		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'mime-simple-events-calendar' ); ?>" data-wpse-calendar-filters>
-			<?php echo $this->preserved_instance_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The method escapes every hidden value and attribute. ?>
+			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
 			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
 
 			<?php if ( array() !== $categories ) : ?>
-				<?php $this->term_select( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs, 'category' ); ?>
+				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs, 'category' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>
-				<?php $this->term_select( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'mime-simple-events-calendar' ), $attributes->tag_slugs, 'tag' ); ?>
+				<?php echo $this->term_group->render( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'mime-simple-events-calendar' ), $attributes->tag_slugs, 'tag' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<p class="wpse-events-filter-submit">
 				<button type="submit" aria-controls="<?php echo esc_attr( $canvas_id ); ?>"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
-				<?php if ( $selected ) : ?>
-					<a href="<?php echo esc_url( $reset_url ); ?>" data-wpse-calendar-reset><?php esc_html_e( 'Reset filters', 'mime-simple-events-calendar' ); ?></a>
+				<?php if ( '' === $active && $submitted ) : ?>
+					<a href="<?php echo esc_url( $clear_url ); ?>" data-wpse-filter-clear><?php esc_html_e( 'Clear all', 'mime-simple-events-calendar' ); ?></a>
+					<?php if ( '' !== $restore_url ) : ?>
+						<a href="<?php echo esc_url( $restore_url ); ?>" data-wpse-filter-restore><?php esc_html_e( 'Restore defaults', 'mime-simple-events-calendar' ); ?></a>
+					<?php endif; ?>
 				<?php endif; ?>
 			</p>
 		</form>
 		<?php
 		$output = ob_get_clean();
 
-		return false === $output ? '' : $output;
+		return $active . ( false === $output ? '' : $output );
 	}
 
 	/**
@@ -90,102 +146,5 @@ final readonly class CalendarControls {
 		);
 
 		return is_wp_error( $terms ) ? array() : array_values( $terms );
-	}
-
-	/**
-	 * Render one multiple term selector.
-	 *
-	 * @param WP_Term[] $terms       Available terms.
-	 * @param string    $name        Request field name.
-	 * @param string    $id          Input ID.
-	 * @param string    $label       Translated label.
-	 * @param string[]  $selected    Selected slugs.
-	 * @param string    $filter_type Stable JavaScript filter type.
-	 */
-	private function term_select(
-		array $terms,
-		string $name,
-		string $id,
-		string $label,
-		array $selected,
-		string $filter_type
-	): void {
-		?>
-		<p class="wpse-events-filter-field">
-			<label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $label ); ?></label>
-			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Choose one or more. Leave all unselected to include every available option.', 'mime-simple-events-calendar' ); ?></span>
-			<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>[]" multiple size="<?php echo esc_attr( (string) min( 4, max( 2, count( $terms ) ) ) ); ?>" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>" data-wpse-calendar-filter="<?php echo esc_attr( $filter_type ); ?>">
-				<?php foreach ( $terms as $term ) : ?>
-					<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( in_array( $term->slug, $selected, true ) ); ?>><?php echo esc_html( $term->name ); ?></option>
-				<?php endforeach; ?>
-			</select>
-		</p>
-		<?php
-	}
-
-	/**
-	 * Render allowlisted state belonging to other calendar instances.
-	 *
-	 * @param array<string, string|string[]> $values Normalized values by request key.
-	 */
-	private function preserved_instance_fields( array $values ): string {
-		$fields = array();
-
-		foreach ( $values as $key => $value ) {
-			$items = is_array( $value ) ? $value : array( $value );
-
-			foreach ( $items as $item ) {
-				$field_name = is_array( $value ) ? $key . '[]' : $key;
-				$fields[]   = sprintf(
-					'<input type="hidden" name="%1$s" value="%2$s">',
-					esc_attr( $field_name ),
-					esc_attr( $item )
-				);
-			}
-		}
-
-		return implode( '', $fields );
-	}
-
-	/**
-	 * Normalize allowlisted state belonging to other calendar instances.
-	 *
-	 * @param array<string, mixed> $request Current public request values.
-	 * @param string               $prefix  Current instance prefix.
-	 * @return array<string, string|string[]>
-	 */
-	private function preserved_instance_values( array $request, string $prefix ): array {
-		$preserved = array();
-		$count     = 0;
-
-		foreach ( $request as $key => $value ) {
-			if ( $count >= 40
-				|| str_starts_with( $key, $prefix . '_' )
-				|| 1 !== preg_match( '/^wpse_calendar_\d+_(?:apply|category|tag)$/D', $key ) ) {
-				continue;
-			}
-
-			$is_multiple = is_array( $value );
-			$items       = $is_multiple ? array_slice( $value, 0, 20 ) : array( $value );
-
-			foreach ( $items as $item ) {
-				if ( ! is_scalar( $item ) || $count >= 40 ) {
-					continue;
-				}
-
-				$clean = substr( sanitize_text_field( (string) $item ), 0, 200 );
-
-				if ( $is_multiple ) {
-					$existing          = is_array( $preserved[ $key ] ?? null ) ? $preserved[ $key ] : array();
-					$existing[]        = $clean;
-					$preserved[ $key ] = $existing;
-				} else {
-					$preserved[ $key ] = $clean;
-				}
-				++$count;
-			}
-		}
-
-		return $preserved;
 	}
 }

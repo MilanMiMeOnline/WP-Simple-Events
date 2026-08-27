@@ -240,7 +240,7 @@ msgstr ""
 #: src/Divi/DiviEditorDataProvider.php:73
 #: src/Frontend/EventFieldRenderer.php:130
 #: src/Frontend/EventRenderer.php:146
-#: src/Shortcode/CalendarShortcode.php:209
+#: src/Shortcode/CalendarShortcode.php:212
 msgid "Cancelled"
 msgstr ""
 
@@ -249,7 +249,7 @@ msgstr ""
 #: src/Divi/DiviEditorDataProvider.php:74
 #: src/Frontend/EventFieldRenderer.php:131
 #: src/Frontend/EventRenderer.php:147
-#: src/Shortcode/CalendarShortcode.php:210
+#: src/Shortcode/CalendarShortcode.php:213
 #: assets/src/js/recurrence-editor.js:1687
 msgid "Postponed"
 msgstr ""
@@ -263,8 +263,8 @@ msgid "All events"
 msgstr ""
 
 #: src/Admin/EventListTable.php:159
-#: src/Frontend/EventArchiveControls.php:38
-#: src/Shortcode/EventListControls.php:54
+#: src/Frontend/EventArchiveControls.php:76
+#: src/Shortcode/EventListControls.php:117
 msgid "Upcoming and active"
 msgstr ""
 
@@ -1180,8 +1180,8 @@ msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:21
 #: src/Elementor/EventListWidget.php:77
-#: src/Frontend/EventArchiveControls.php:40
-#: src/Shortcode/EventListControls.php:56
+#: src/Frontend/EventArchiveControls.php:78
+#: src/Shortcode/EventListControls.php:119
 #: assets/src/js/event-fields-editor.js:468
 msgid "All"
 msgstr ""
@@ -1201,9 +1201,9 @@ msgstr ""
 #: src/Divi/DiviEditorTranslations.php:25
 #: src/Elementor/EventCategoriesWidget.php:46
 #: src/Elementor/EventListWidget.php:112
-#: src/Frontend/EventArchiveControls.php:45
-#: src/Shortcode/CalendarControls.php:55
-#: src/Shortcode/EventListControls.php:61
+#: src/Frontend/EventArchiveControls.php:83
+#: src/Shortcode/CalendarControls.php:108
+#: src/Shortcode/EventListControls.php:124
 #: assets/src/js/event-fields-editor.js:488
 msgid "Categories"
 msgstr ""
@@ -1482,7 +1482,7 @@ msgstr ""
 #: src/Divi/DiviEditorTranslations.php:89
 #: src/Elementor/EventCalendarWidget.php:184
 #: src/Elementor/EventListWidget.php:64
-#: src/Shortcode/CalendarShortcode.php:196
+#: src/Shortcode/CalendarShortcode.php:199
 #: assets/src/js/event-fields-editor.js:457
 #: assets/src/js/event-fields-editor.js:528
 #: assets/src/js/event-fields-editor.js:546
@@ -1513,7 +1513,7 @@ msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:95
 #: src/Elementor/EventCalendarWidget.php:183
-#: src/Shortcode/CalendarShortcode.php:195
+#: src/Shortcode/CalendarShortcode.php:198
 #: assets/src/js/event-fields-editor.js:527
 #: assets/src/js/event-fields-editor.js:545
 msgid "Month"
@@ -1538,16 +1538,16 @@ msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:100
 #: src/Elementor/EventListWidget.php:76
-#: src/Frontend/EventArchiveControls.php:39
-#: src/Shortcode/EventListControls.php:55
+#: src/Frontend/EventArchiveControls.php:77
+#: src/Shortcode/EventListControls.php:118
 #: assets/src/js/event-fields-editor.js:467
 msgid "Past"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:101
 #: src/Elementor/EventListWidget.php:71
-#: src/Frontend/EventArchiveControls.php:36
-#: src/Shortcode/EventListControls.php:52
+#: src/Frontend/EventArchiveControls.php:74
+#: src/Shortcode/EventListControls.php:115
 #: assets/src/js/event-fields-editor.js:463
 msgid "Period"
 msgstr ""
@@ -1699,9 +1699,9 @@ msgstr ""
 #: src/Divi/DiviEditorTranslations.php:138
 #: src/Elementor/EventListWidget.php:123
 #: src/Elementor/EventTagsWidget.php:46
-#: src/Frontend/EventArchiveControls.php:49
-#: src/Shortcode/CalendarControls.php:59
-#: src/Shortcode/EventListControls.php:65
+#: src/Frontend/EventArchiveControls.php:87
+#: src/Shortcode/CalendarControls.php:112
+#: src/Shortcode/EventListControls.php:128
 #: assets/src/js/event-fields-editor.js:489
 msgid "Tags"
 msgstr ""
@@ -2333,40 +2333,40 @@ msgstr ""
 msgid "Native event-archive fallback from MiMe Simple Events and Calendar."
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:34
-#: src/Shortcode/EventListControls.php:47
+#: src/Frontend/EventArchiveControls.php:72
+#: src/Shortcode/EventListControls.php:110
 msgid "Filter events"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:53
-#: src/Shortcode/CalendarControls.php:63
-#: src/Shortcode/EventListControls.php:69
+#: src/Frontend/EventArchiveControls.php:91
+#: src/Shortcode/CalendarControls.php:116
+#: src/Shortcode/EventListControls.php:132
 msgid "Apply filters"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:54
-msgid "Clear filters"
+#: src/Frontend/EventArchiveControls.php:93
+#: src/Frontend/EventFilterActiveChoices.php:77
+#: src/Shortcode/CalendarControls.php:118
+#: src/Shortcode/CalendarShortcode.php:109
+#: src/Shortcode/EventListControls.php:134
+msgid "Clear all"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:83
-#: src/Shortcode/CalendarShortcode.php:192
-#: src/Shortcode/EventListControls.php:102
+#: src/Frontend/EventArchiveControls.php:123
+#: src/Shortcode/CalendarShortcode.php:195
+#: src/Shortcode/EventListControls.php:168
 msgid "Previous"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:84
-#: src/Shortcode/CalendarShortcode.php:193
-#: src/Shortcode/EventListControls.php:103
+#: src/Frontend/EventArchiveControls.php:124
+#: src/Shortcode/CalendarShortcode.php:196
+#: src/Shortcode/EventListControls.php:169
 msgid "Next"
 msgstr ""
 
-#: src/Frontend/EventArchiveControls.php:93
-#: src/Shortcode/EventListControls.php:112
+#: src/Frontend/EventArchiveControls.php:133
+#: src/Shortcode/EventListControls.php:178
 msgid "Events pagination"
-msgstr ""
-
-#: src/Frontend/EventArchiveControls.php:134
-msgid "Select one or more."
 msgstr ""
 
 #. translators: %s: event category name.
@@ -2399,8 +2399,49 @@ msgstr ""
 msgid "%1$s (UTC%2$s → UTC%3$s)"
 msgstr ""
 
+#: src/Frontend/EventFilterActiveChoices.php:32
+msgid "Category"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:33
+msgid "Tag"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:42
+msgid "Active filters"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:43
+msgid "Active filters:"
+msgstr ""
+
+#. translators: %s: active filter label and value.
+#: src/Frontend/EventFilterActiveChoices.php:61
+#, php-format
+msgid "Remove %s"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:70
+msgid "Clear categories"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:73
+msgid "Clear tags"
+msgstr ""
+
+#: src/Frontend/EventFilterActiveChoices.php:79
+#: src/Shortcode/CalendarControls.php:120
+#: src/Shortcode/CalendarShortcode.php:108
+#: src/Shortcode/EventListControls.php:136
+msgid "Restore defaults"
+msgstr ""
+
+#: src/Frontend/EventFilterTermGroup.php:42
+msgid "Choose any that apply. Leave all unchecked to include every available option."
+msgstr ""
+
 #: src/Frontend/EventListRenderer.php:101
-#: src/Shortcode/CalendarShortcode.php:198
+#: src/Shortcode/CalendarShortcode.php:201
 msgid "No events match your selection."
 msgstr ""
 
@@ -2555,81 +2596,70 @@ msgstr ""
 msgid "The recurrence change was not completed. No stale occurrence data will be shown."
 msgstr ""
 
-#: src/Shortcode/CalendarControls.php:50
+#: src/Shortcode/CalendarControls.php:103
 msgid "Filter calendar"
-msgstr ""
-
-#: src/Shortcode/CalendarControls.php:65
-#: src/Shortcode/CalendarShortcode.php:108
-#: src/Shortcode/EventListControls.php:71
-msgid "Reset filters"
-msgstr ""
-
-#: src/Shortcode/CalendarControls.php:116
-#: src/Shortcode/EventListControls.php:153
-msgid "Choose one or more. Leave all unselected to include every available option."
 msgstr ""
 
 #: src/Shortcode/CalendarShortcode.php:106
 msgid "Events calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:112
+#: src/Shortcode/CalendarShortcode.php:115
 msgid "Upcoming events"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:194
+#: src/Shortcode/CalendarShortcode.php:197
 msgid "Today"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:197
+#: src/Shortcode/CalendarShortcode.php:200
 msgid "Loading events…"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:199
+#: src/Shortcode/CalendarShortcode.php:202
 msgid "1 event loaded."
 msgstr ""
 
 #. Translators: %d is the number of loaded events.
-#: src/Shortcode/CalendarShortcode.php:201
+#: src/Shortcode/CalendarShortcode.php:204
 #, php-format
 msgid "%d events loaded."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:202
+#: src/Shortcode/CalendarShortcode.php:205
 msgid "The calendar could not be loaded. The event list remains available below."
 msgstr ""
 
 #. Translators: %d is the maximum number of events currently shown.
-#: src/Shortcode/CalendarShortcode.php:204
+#: src/Shortcode/CalendarShortcode.php:207
 #, php-format
 msgid "Only the first %d events are shown. Narrow the calendar period or filters."
 msgstr ""
 
 #. Translators: %d is the number of additional events on a calendar day.
-#: src/Shortcode/CalendarShortcode.php:206
+#: src/Shortcode/CalendarShortcode.php:209
 #, php-format
 msgid "%d more"
 msgstr ""
 
 #. Translators: %s is the translated name of the calendar view.
-#: src/Shortcode/CalendarShortcode.php:208
+#: src/Shortcode/CalendarShortcode.php:211
 #, php-format
 msgid "%s view"
 msgstr ""
 
 #. Translators: %s is the displayed start time.
-#: src/Shortcode/CalendarShortcode.php:212
+#: src/Shortcode/CalendarShortcode.php:215
 #, php-format
 msgid "Starts at %s"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:213
+#: src/Shortcode/CalendarShortcode.php:216
 msgid "Continues"
 msgstr ""
 
 #. Translators: %s is the displayed end time.
-#: src/Shortcode/CalendarShortcode.php:215
+#: src/Shortcode/CalendarShortcode.php:218
 #, php-format
 msgid "Ends at %s"
 msgstr ""

@@ -51,7 +51,9 @@ are documented in the
 [0.5.0 exploratory report](QA-REPORT-0.5.0-EXPLORATORY.md) and
 [0.5.1 release-candidate report](QA-REPORT-0.5.1.md). The frozen 0.6.0 filter and
 color baseline is recorded in the
-[FCR-0 QA evidence](QA-REPORT-0.6.0-FCR-0.md).
+[FCR-0 QA evidence](QA-REPORT-0.6.0-FCR-0.md); the shared semantic filter and
+bounded URL-state implementation is qualified in the
+[FCR-2 QA evidence](QA-REPORT-0.6.0-FCR-2.md).
 
 ## Releases and WordPress.org
 

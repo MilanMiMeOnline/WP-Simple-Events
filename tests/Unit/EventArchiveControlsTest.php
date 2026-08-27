@@ -9,11 +9,13 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\EventArchiveControls;
 use MiMe\WPSimpleEvents\Shortcode\EventListAttributes;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use WP_Term;
 
 /**
  * Protects the native archive's no-JavaScript filter escape path.
@@ -38,10 +40,36 @@ final class EventArchiveControlsTest extends TestCase {
 		);
 
 		self::assertStringContainsString( 'Apply filters', $output );
-		self::assertStringContainsString( 'Clear filters', $output );
+		self::assertStringContainsString( 'Clear all', $output );
 		self::assertStringContainsString( 'href="https://example.com/events/"', $output );
 		self::assertStringNotContainsString( 'wpse_period=', $output );
 		self::assertStringNotContainsString( 'wpse_category=', $output );
 		self::assertStringNotContainsString( 'wpse_tag=', $output );
+	}
+
+	/** The native archive shares the accessible taxonomy checkbox interaction. */
+	public function test_category_filter_does_not_use_a_multiple_select(): void {
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::CATEGORY,
+			array(
+				new WP_Term(
+					array(
+						'term_id'  => 4,
+						'name'     => 'Workshops',
+						'slug'     => 'workshops',
+						'taxonomy' => EventTaxonomies::CATEGORY,
+					)
+				),
+			)
+		);
+
+		$output = ( new EventArchiveControls() )->filters(
+			EventListAttributes::from_shortcode( array( 'category' => 'workshops' ) )
+		);
+
+		self::assertStringContainsString( '<legend>Categories</legend>', $output );
+		self::assertStringContainsString( 'type="checkbox"', $output );
+		self::assertStringContainsString( 'name="wpse_category[]"', $output );
+		self::assertStringNotContainsString( 'multiple', $output );
 	}
 }
