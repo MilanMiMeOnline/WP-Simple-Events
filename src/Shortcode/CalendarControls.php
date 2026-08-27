@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\EventFilterActiveChoices;
+use MiMe\WPSimpleEvents\Frontend\EventFilterDisclosure;
 use MiMe\WPSimpleEvents\Frontend\EventFilterTermGroup;
 use MiMe\WPSimpleEvents\Frontend\EventFilterUrlState;
 use MiMe\WPSimpleEvents\Frontend\EventFilterViewModel;
@@ -26,11 +27,13 @@ final readonly class CalendarControls {
 	 * @param EventFilterTermGroup     $term_group Shared semantic taxonomy choices.
 	 * @param EventFilterUrlState      $url_state  Bounded cross-instance URL state.
 	 * @param EventFilterActiveChoices $active_choices Removable active choices.
+	 * @param EventFilterDisclosure    $disclosure Progressive panel markup.
 	 */
 	public function __construct(
 		private EventFilterTermGroup $term_group = new EventFilterTermGroup(),
 		private EventFilterUrlState $url_state = new EventFilterUrlState(),
-		private EventFilterActiveChoices $active_choices = new EventFilterActiveChoices()
+		private EventFilterActiveChoices $active_choices = new EventFilterActiveChoices(),
+		private EventFilterDisclosure $disclosure = new EventFilterDisclosure()
 	) {}
 
 	/**
@@ -100,10 +103,6 @@ final readonly class CalendarControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'mime-simple-events-calendar' ); ?>" data-wpse-calendar-filters>
-			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
-			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
-
 			<?php if ( array() !== $categories ) : ?>
 				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs, 'category' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
@@ -121,6 +120,16 @@ final readonly class CalendarControls {
 					<?php endif; ?>
 				<?php endif; ?>
 			</p>
+		<?php
+		$panel = ob_get_clean();
+		$panel = false === $panel ? '' : $panel;
+
+		ob_start();
+		?>
+		<form class="wpse-events-filters wpse-calendar-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter calendar', 'mime-simple-events-calendar' ); ?>" data-wpse-event-filters data-wpse-filter-submitted="<?php echo $submitted ? '1' : '0'; ?>" data-wpse-calendar-filters>
+			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
+			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
+			<?php echo $this->disclosure->render( $prefix . '-filter-panel', $panel, count( $attributes->category_slugs ) + count( $attributes->tag_slugs ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared disclosure and fields own contextual escaping. ?>
 		</form>
 		<?php
 		$output = ob_get_clean();

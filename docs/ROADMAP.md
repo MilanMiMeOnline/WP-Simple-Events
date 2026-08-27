@@ -833,8 +833,14 @@ work without JavaScript and cannot broaden public eligibility rules.
 
 ### FCR-3 — Progressive interaction and responsive presentation
 
-1. Enhance compact disclosures, Escape/close behaviour, chip removal and calendar
-   refresh without replacing the GET form.
+**Status:** completed locally on 2026-08-27. Component-width disclosure,
+deterministic history, bounded option search and dynamic Elementor/Divi preview
+initialization passed the full repository, browser and packaged WordPress gates.
+Detailed evidence is recorded in `QA-REPORT-0.6.0-FCR-3.md`.
+
+1. Enhance compact disclosures, Escape/close behaviour and calendar refresh
+   without replacing the GET form. Chip removal deliberately remains a valid
+   server-authoritative GET navigation so its visible labels cannot become stale.
 2. Maintain shareable URLs and browser back/forward state after enhanced changes.
 3. Return focus predictably and announce result/loading/empty/error changes.
 4. Add component-scoped variables for panel, trigger, option list, checkbox,

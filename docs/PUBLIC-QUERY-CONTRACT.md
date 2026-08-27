@@ -72,6 +72,15 @@ normalized through the same maximum-20 slug boundary as the former multiple
 select. Chip and clear actions are presentation shortcuts to a valid namespaced
 GET state; they cannot add query dimensions or bypass eligibility checks.
 
+Responsive disclosure and long-option search do not add request parameters.
+Compact state is derived from the rendered component width and remains browser-
+local presentation only. Client-side option search appears only when a taxonomy
+group contains more than 10 rendered choices, never changes checkbox values and
+therefore cannot broaden or narrow the server query until the valid GET form is
+submitted. Calendar-enhanced submissions add a browser-history entry; back and
+forward restore only the matching namespaced selection before performing the
+same bounded public feed request.
+
 The shortcode returns HTML and does not mutate the global WordPress loop. It uses the shared repository, date formatter and card renderer also consumed by native templates and Elementor adapters.
 
 ## `[wpse_event_details]` shortcode

@@ -53,7 +53,8 @@ are documented in the
 color baseline is recorded in the
 [FCR-0 QA evidence](QA-REPORT-0.6.0-FCR-0.md); the shared semantic filter and
 bounded URL-state implementation is qualified in the
-[FCR-2 QA evidence](QA-REPORT-0.6.0-FCR-2.md).
+[FCR-2 QA evidence](QA-REPORT-0.6.0-FCR-2.md); and the responsive progressive
+interaction is qualified in [FCR-3 QA evidence](QA-REPORT-0.6.0-FCR-3.md).
 
 ## Releases and WordPress.org
 

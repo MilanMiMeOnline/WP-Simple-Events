@@ -300,7 +300,11 @@ restoring the configured period, and **Restore defaults** appears separately
 when the component's initial term constraints differ from an empty selection.
 Applying remains an explicit valid form submission without JavaScript. Mobile
 may collapse the form behind one labelled disclosure with an active count; focus,
-result announcements and back/forward history remain deterministic.
+result announcements and back/forward history remain deterministic. The compact
+layout is based on the component's own width at 599 CSS pixels or less rather
+than the browser viewport. Category or tag groups with more than 10 options gain
+a client-side search field; checked options stay visible while searching and the
+complete option list remains available without JavaScript.
 
 ## 11. Calendar
 

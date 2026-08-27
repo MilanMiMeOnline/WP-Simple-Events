@@ -19,6 +19,8 @@ use WP_Post;
 final class FrontendAssets {
 	public const STYLE_HANDLE = 'wpse-frontend';
 
+	public const SCRIPT_HANDLE = 'wpse-event-filters';
+
 	/**
 	 * Register front-end asset discovery.
 	 */
@@ -31,6 +33,7 @@ final class FrontendAssets {
 	 */
 	public function register_and_maybe_enqueue(): void {
 		$this->register_style();
+		$this->register_script();
 
 		global $post;
 
@@ -39,9 +42,15 @@ final class FrontendAssets {
 				|| has_shortcode( $post->post_content, 'wpse_event_details' )
 				|| has_shortcode( $post->post_content, 'wpse_calendar' ) );
 
-		if ( is_post_type_archive( EventPostType::POST_TYPE )
-			|| is_singular( EventPostType::POST_TYPE )
+		$is_filter_view = is_post_type_archive( EventPostType::POST_TYPE )
 			|| is_tax( array( EventTaxonomies::CATEGORY, EventTaxonomies::TAG ) )
+			|| ( $post instanceof WP_Post
+				&& ( has_shortcode( $post->post_content, 'wpse_events' )
+					|| has_shortcode( $post->post_content, 'wpse_calendar' ) ) );
+
+		if ( $is_filter_view ) {
+			$this->enqueue_filters();
+		} elseif ( is_singular( EventPostType::POST_TYPE )
 			|| $contains_shortcode ) {
 			$this->enqueue();
 		}
@@ -59,6 +68,19 @@ final class FrontendAssets {
 	}
 
 	/**
+	 * Enqueue the stylesheet and lightweight filter enhancement together.
+	 */
+	public function enqueue_filters(): void {
+		$this->enqueue();
+
+		if ( ! wp_script_is( self::SCRIPT_HANDLE, 'registered' ) ) {
+			$this->register_script();
+		}
+
+		wp_enqueue_script( self::SCRIPT_HANDLE );
+	}
+
+	/**
 	 * Register the component-scoped stylesheet.
 	 */
 	public function register_style(): void {
@@ -68,5 +90,19 @@ final class FrontendAssets {
 			array(),
 			WPSE_VERSION
 		);
+	}
+
+	/**
+	 * Register the dependency-free public filter enhancement.
+	 */
+	public function register_script(): void {
+		wp_register_script(
+			self::SCRIPT_HANDLE,
+			plugin_dir_url( WPSE_PLUGIN_FILE ) . 'assets/dist/js/event-filters.min.js',
+			array(),
+			WPSE_VERSION,
+			true
+		);
+		wp_script_add_data( self::SCRIPT_HANDLE, 'strategy', 'defer' );
 	}
 }

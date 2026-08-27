@@ -48,6 +48,7 @@ test( 'keeps atomic choices local and composite previews on the Divi REST client
 	assert.match( editorSource, /component\.props\.options\s*=\s*eventOptions/ );
 	assert.match( editorSource, /window\.divi\?\.rest\?\.useFetch/ );
 	assert.match( editorSource, /restRoute: '\/wpse\/v1\/divi-preview'/ );
+	assert.match( editorSource, /initializeEventFilters\( previewRef\.current \)/ );
 	assert.match( editorSource, /initializeCalendars\( previewRef\.current \)/ );
 	assert.doesNotMatch( editorSource, /window\.fetch/ );
 	assert.doesNotMatch( editorSource, /structuredClone/ );

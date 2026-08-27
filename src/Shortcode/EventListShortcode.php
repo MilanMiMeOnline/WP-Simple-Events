@@ -80,7 +80,7 @@ final class EventListShortcode implements ShortcodeRenderer {
 				array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post )
 			);
 
-		$this->assets->enqueue();
+		$this->assets->enqueue_filters();
 
 		$output = '<div id="' . esc_attr( $instance_id ) . '" class="wpse-events">';
 

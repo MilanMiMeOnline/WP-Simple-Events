@@ -1,4 +1,5 @@
 import { initializeCalendars } from './calendar.js';
+import { initializeEventFilters } from './event-filters.js';
 import { namespacePreviewHtml } from './divi-editor-utils.mjs';
 
 /* global WPSE_DIVI_COMPOSITE_MODULES, WPSE_DIVI_EVENT_TITLE_METADATA, WPSE_DIVI_MODULE_FIELDS, WPSE_DIVI_MODULE_METADATA */
@@ -568,12 +569,12 @@ const compositeModules = WPSE_DIVI_COMPOSITE_MODULES;
 		}, [ id, serializedAttrs ] );
 
 		React.useEffect( () => {
-			if (
-				component === 'calendar' &&
-				html &&
-				previewRef.current
-			) {
-				initializeCalendars( previewRef.current );
+			if ( html && previewRef.current ) {
+				initializeEventFilters( previewRef.current );
+
+				if ( component === 'calendar' ) {
+					initializeCalendars( previewRef.current );
+				}
 			}
 		}, [ html ] );
 

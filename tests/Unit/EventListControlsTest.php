@@ -93,6 +93,9 @@ final class EventListControlsTest extends TestCase {
 		);
 
 		self::assertStringContainsString( '<fieldset class="wpse-events-filter-group"', $output );
+		self::assertStringContainsString( 'data-wpse-event-filters', $output );
+		self::assertStringContainsString( 'data-wpse-filter-toggle', $output );
+		self::assertStringContainsString( 'data-wpse-filter-panel', $output );
 		self::assertStringContainsString( '<legend>Categories</legend>', $output );
 		self::assertStringContainsString( 'type="checkbox"', $output );
 		self::assertStringContainsString( 'name="wpse_1_category[]"', $output );

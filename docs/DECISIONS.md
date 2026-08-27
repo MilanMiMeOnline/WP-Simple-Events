@@ -1707,3 +1707,26 @@ data. Builder-owned event colors remain the component fallback beneath explicit
 event and deterministic category choices. No host may fork public filter markup,
 choose the first category by incidental order or store arbitrary CSS in event or
 term metadata.
+
+## ADR-087: Progressive filter behaviour is component-responsive and optional
+
+**Status:** Accepted
+
+The shared server-rendered GET form remains complete and visible when JavaScript
+is unavailable. When enhancement loads, a filter component whose own rendered
+width is 599 CSS pixels or less uses one collapsed disclosure with a selected-
+taxonomy count. Wider components keep the panel open. Escape closes an open
+compact panel and restores focus to its trigger. This component boundary avoids
+incorrect mobile behaviour when a narrow builder column sits in a wide viewport.
+
+Category and tag groups receive client-side search only when they contain more
+than 10 choices. Search changes presentation only, preserves checked choices in
+view and uses server-supplied translated labels; it never adds query variables or
+becomes required to reach an option. Each form owns independent enhancement state
+and dynamic Elementor and Divi previews reinitialize through the same shared
+module rather than duplicating host-specific filter logic.
+
+Enhanced calendar submissions create normal browser-history entries. Back and
+forward restore only the calendar's namespaced allowlisted values and refetch only
+when that selection changed. No cookie, local storage, remote service or new
+state-changing endpoint is introduced.

@@ -68,6 +68,9 @@ final class EventArchiveControlsTest extends TestCase {
 		);
 
 		self::assertStringContainsString( '<legend>Categories</legend>', $output );
+		self::assertStringContainsString( 'data-wpse-event-filters', $output );
+		self::assertStringContainsString( 'data-wpse-filter-toggle', $output );
+		self::assertStringContainsString( 'data-wpse-filter-panel', $output );
 		self::assertStringContainsString( 'type="checkbox"', $output );
 		self::assertStringContainsString( 'name="wpse_category[]"', $output );
 		self::assertStringNotContainsString( 'multiple', $output );

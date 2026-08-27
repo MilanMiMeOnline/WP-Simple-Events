@@ -37,7 +37,7 @@ final readonly class EventFilterTermGroup {
 
 		ob_start();
 		?>
-		<fieldset class="wpse-events-filter-group" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>">
+		<fieldset class="wpse-events-filter-group" aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>" data-wpse-filter-group data-wpse-filter-search-label="<?php esc_attr_e( 'Search options', 'mime-simple-events-calendar' ); ?>" data-wpse-filter-search-empty="<?php esc_attr_e( 'No matching options.', 'mime-simple-events-calendar' ); ?>">
 			<legend><?php echo esc_html( $label ); ?></legend>
 			<span class="wpse-events-filter-help" id="<?php echo esc_attr( $id . '-help' ); ?>"><?php esc_html_e( 'Choose any that apply. Leave all unchecked to include every available option.', 'mime-simple-events-calendar' ); ?></span>
 			<div class="wpse-events-filter-options">

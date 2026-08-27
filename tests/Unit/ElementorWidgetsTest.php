@@ -55,6 +55,7 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertSame( 6, $renderer->attributes['limit'] );
 		self::assertFalse( $renderer->attributes['pagination'] );
 		self::assertSame( array( FrontendAssets::STYLE_HANDLE ), $widget->get_style_depends() );
+		self::assertSame( array( FrontendAssets::SCRIPT_HANDLE ), $widget->get_script_depends() );
 		self::assertSame( 'wpse-event-list', $widget->get_name() );
 	}
 
@@ -70,7 +71,10 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertIsArray( $renderer->attributes );
 		self::assertSame( 'list', $renderer->attributes['initial_view'] );
 		self::assertSame( array( FrontendAssets::STYLE_HANDLE ), $widget->get_style_depends() );
-		self::assertSame( array( CalendarAssets::SCRIPT_HANDLE ), $widget->get_script_depends() );
+		self::assertSame(
+			array( FrontendAssets::SCRIPT_HANDLE, CalendarAssets::SCRIPT_HANDLE ),
+			$widget->get_script_depends()
+		);
 		self::assertSame( 'wpse-event-calendar', $widget->get_name() );
 	}
 

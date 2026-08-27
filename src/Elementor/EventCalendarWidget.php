@@ -14,6 +14,7 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcode;
 use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 
@@ -51,7 +52,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 	 * @return string[]
 	 */
 	public function get_script_depends(): array {
-		return array( CalendarAssets::SCRIPT_HANDLE );
+		return array( FrontendAssets::SCRIPT_HANDLE, CalendarAssets::SCRIPT_HANDLE );
 	}
 
 	/** Register content and style controls. */

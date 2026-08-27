@@ -45,6 +45,9 @@ final class CalendarControlsTest extends TestCase {
 		$output = $this->render();
 
 		self::assertStringContainsString( 'data-wpse-calendar-filters', $output );
+		self::assertStringContainsString( 'data-wpse-event-filters', $output );
+		self::assertStringContainsString( 'data-wpse-filter-toggle', $output );
+		self::assertStringContainsString( 'data-wpse-filter-panel', $output );
 		self::assertStringContainsString( 'data-wpse-calendar-filter="category"', $output );
 		self::assertStringContainsString( 'type="checkbox"', $output );
 		self::assertStringNotContainsString( 'multiple', $output );

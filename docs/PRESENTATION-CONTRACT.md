@@ -99,8 +99,18 @@ clear-all and restore-default actions are distinct operations: clear-all removes
 visitor term selections and restores the configured period, while restore brings
 back the component's initial term constraints. Every operation preserves safe
 state belonging to other component instances. JavaScript enhances disclosure,
-chip removal, calendar refresh and history only; the complete form remains a
-valid no-JavaScript GET workflow.
+calendar refresh and history and may later enhance chip removal; every chip stays
+a server-authoritative GET link so visible state cannot become stale. The
+complete form remains a valid no-JavaScript GET workflow.
+
+Each filter component owns its responsive boundary. At 599 CSS pixels or less,
+one labelled trigger exposes or hides the complete panel and reports the number
+of selected taxonomy values. Escape closes an open compact panel and returns
+focus to its trigger. Wider components keep the panel visible. Taxonomy groups
+with more than 10 choices receive a client-side search field; checked choices
+remain visible even when they do not match the query, and zero matches are
+announced without replacing the server-rendered option list. Multiple components
+on one page retain independent disclosure, search and URL state.
 
 Taxonomy archives do not render this cross-taxonomy form because their routed
 term is fixed. Their visible H1 is plugin-owned plain text built from an

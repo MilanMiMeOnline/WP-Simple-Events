@@ -107,11 +107,12 @@ const fetchEvents = async ( config, root, range ) => {
 /**
  * Reflect active filters in the URL without reloading the page.
  *
- * @param {Object}      config    Calendar configuration.
- * @param {HTMLElement} root      Calendar root.
- * @param {boolean}     submitted Whether visitor choices should be encoded.
+ * @param {Object}           config      Calendar configuration.
+ * @param {HTMLElement}      root        Calendar root.
+ * @param {boolean}          submitted   Whether visitor choices should be encoded.
+ * @param {'push'|'replace'} historyMode Browser-history operation.
  */
-const updateUrl = ( config, root, submitted = true ) => {
+const updateUrl = ( config, root, submitted = true, historyMode = 'push' ) => {
 	const url = new URL( window.location.href );
 	const filterKeys = [
 		[ config.categoryKey, 'category' ],
@@ -136,7 +137,54 @@ const updateUrl = ( config, root, submitted = true ) => {
 		} );
 	} );
 
-	window.history.replaceState( {}, '', url );
+	if ( url.href !== window.location.href ) {
+		const method = historyMode === 'replace' ? 'replaceState' : 'pushState';
+
+		window.history[ method ]( {}, '', url );
+	}
+};
+
+/**
+ * Synchronize one calendar's controls from its namespaced browser URL state.
+ *
+ * @param {Object}      config Calendar configuration.
+ * @param {HTMLElement} root   Calendar root.
+ * @return {boolean} Whether this calendar's selection changed.
+ */
+const restoreFiltersFromUrl = ( config, root ) => {
+	const before = {
+		category: selectedValues( root, 'category', config.categories ),
+		tag: selectedValues( root, 'tag', config.tags ),
+	};
+	const params = new URL( window.location.href ).searchParams;
+	const submitted = params.has( config.applyKey ) || params.has( `${ config.applyKey }[]` );
+	const selections = {
+		category: submitted
+			? [ ...params.getAll( config.categoryKey ), ...params.getAll( `${ config.categoryKey }[]` ) ]
+			: config.initialCategories,
+		tag: submitted
+			? [ ...params.getAll( config.tagKey ), ...params.getAll( `${ config.tagKey }[]` ) ]
+			: config.initialTags,
+	};
+
+	root.querySelectorAll( '[data-wpse-calendar-filter]' ).forEach( ( control ) => {
+		const selected = selections[ control.dataset.wpseCalendarFilter ] || [];
+
+		if ( control.tagName === 'SELECT' ) {
+			Array.from( control.options ).forEach( ( option ) => {
+				option.selected = selected.includes( option.value );
+			} );
+		} else if ( control.matches( 'input[type="checkbox"]' ) ) {
+			control.checked = selected.includes( control.value );
+		}
+	} );
+
+	root.querySelector( '[data-wpse-event-filters]' )?.dispatchEvent(
+		new CustomEvent( 'wpse:filters-updated' ),
+	);
+
+	return ! sameSelection( before.category, selections.category ) ||
+		! sameSelection( before.tag, selections.tag );
 };
 
 /**
@@ -459,8 +507,14 @@ const initializeCalendar = ( root ) => {
 	const handleReset = ( event ) => {
 		event?.preventDefault();
 		restoreInitialFilters( config, root );
+		filters?.dispatchEvent( new CustomEvent( 'wpse:filters-updated' ) );
 		updateUrl( config, root, false );
 		calendar.refetchEvents();
+	};
+	const handleHistoryChange = () => {
+		if ( restoreFiltersFromUrl( config, root ) ) {
+			calendar.refetchEvents();
+		}
 	};
 
 	if ( filters ) {
@@ -468,6 +522,7 @@ const initializeCalendar = ( root ) => {
 	}
 
 	emptyActionButton?.addEventListener( 'click', handleReset );
+	window.addEventListener( 'popstate', handleHistoryChange );
 
 	const instance = {
 		calendar,
@@ -477,6 +532,7 @@ const initializeCalendar = ( root ) => {
 			stopObservingSize();
 			filters?.removeEventListener( 'submit', handleFilterSubmit );
 			emptyActionButton?.removeEventListener( 'click', handleReset );
+			window.removeEventListener( 'popstate', handleHistoryChange );
 			calendar.destroy();
 
 			if ( calendarInstances.get( root ) === instance ) {

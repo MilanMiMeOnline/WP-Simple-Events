@@ -5,6 +5,7 @@
 .wpse-events,
 .wpse-single-event,
 .wpse-calendar,
+.wpse-event-archive,
 .wpse-template {
 	--wpse-color-border: currentcolor;
 	--wpse-color-muted: currentcolor;
@@ -18,6 +19,19 @@
 	--wpse-filter-padding: 0;
 	--wpse-filter-gap: var(--wpse-spacing);
 	--wpse-filter-option-gap: 0.5rem;
+	--wpse-filter-panel-background: transparent;
+	--wpse-filter-panel-border: transparent;
+	--wpse-filter-panel-radius: var(--wpse-radius);
+	--wpse-filter-panel-padding: 0;
+	--wpse-filter-trigger-background: transparent;
+	--wpse-filter-trigger-text: inherit;
+	--wpse-filter-trigger-border: currentcolor;
+	--wpse-filter-trigger-radius: var(--wpse-radius);
+	--wpse-filter-trigger-padding: 0.6em 0.9em;
+	--wpse-filter-options-max-height: 18rem;
+	--wpse-filter-checkbox-size: 1rem;
+	--wpse-filter-action-background: var(--wpse-control-background, transparent);
+	--wpse-filter-action-text: var(--wpse-control-text, inherit);
 	--wpse-filter-accent: currentcolor;
 	--wpse-filter-chip-background: transparent;
 	--wpse-filter-chip-border: currentcolor;
@@ -36,7 +50,13 @@
 
 .wpse-events {
 	container-type: inline-size;
-	container-name: wpse-events;
+	container-name: wpse-events wpse-filter-host;
+}
+
+.wpse-calendar,
+.wpse-event-archive {
+	container-type: inline-size;
+	container-name: wpse-filter-host;
 }
 
 .wpse-single-event,
@@ -194,13 +214,48 @@
 }
 
 .wpse-events-filters {
+	display: block;
+	margin: 0 0 calc(var(--wpse-spacing) * 1.5);
+	padding: var(--wpse-filter-padding);
+	background: var(--wpse-filter-background);
+}
+
+.wpse-events-filter-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5em;
+	width: 100%;
+	margin-bottom: var(--wpse-filter-gap);
+	padding: var(--wpse-filter-trigger-padding);
+	border: 1px solid var(--wpse-filter-trigger-border);
+	border-radius: var(--wpse-filter-trigger-radius);
+	background: var(--wpse-filter-trigger-background);
+	color: var(--wpse-filter-trigger-text);
+	font: inherit;
+	font-weight: 600;
+	text-align: start;
+}
+
+.wpse-events-filter-toggle[hidden],
+.wpse-events-filter-panel[hidden] {
+	display: none;
+}
+
+.wpse-events-filter-panel {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: end;
 	gap: var(--wpse-filter-gap);
-	margin: 0 0 calc(var(--wpse-spacing) * 1.5);
-	padding: var(--wpse-filter-padding);
-	background: var(--wpse-filter-background);
+	padding: var(--wpse-filter-panel-padding);
+	border: 1px solid var(--wpse-filter-panel-border);
+	border-radius: var(--wpse-filter-panel-radius);
+	background: var(--wpse-filter-panel-background);
+}
+
+.wpse-filters-compact .wpse-events-filter-panel:not([hidden]) {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
 }
 
 .wpse-events-filter-field,
@@ -224,6 +279,9 @@
 .wpse-events-filter-options {
 	display: grid;
 	gap: var(--wpse-filter-option-gap);
+	max-height: var(--wpse-filter-options-max-height);
+	overflow: auto;
+	overscroll-behavior: contain;
 }
 
 .wpse-events-filter-option {
@@ -233,10 +291,14 @@
 	cursor: pointer;
 }
 
+.wpse-events-filter-option[hidden] {
+	display: none;
+}
+
 .wpse-events-filter-option input {
 	flex: 0 0 auto;
-	width: 1rem;
-	height: 1rem;
+	width: var(--wpse-filter-checkbox-size);
+	height: var(--wpse-filter-checkbox-size);
 	margin: 0.2em 0 0;
 	accent-color: var(--wpse-filter-accent);
 }
@@ -286,6 +348,29 @@
 	margin-bottom: 0.25rem;
 }
 
+.wpse-events-filter-search {
+	margin-bottom: 0.5rem;
+}
+
+.wpse-events-filter-search input {
+	box-sizing: border-box;
+	width: 100%;
+	font: inherit;
+}
+
+.wpse-screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	border: 0;
+	white-space: nowrap;
+}
+
 .wpse-events-filter-help {
 	display: block;
 	margin-bottom: 0.25rem;
@@ -306,8 +391,8 @@
 }
 
 .wpse-events-filter-submit button {
-	background-color: var(--wpse-control-background);
-	color: var(--wpse-control-text);
+	background-color: var(--wpse-filter-action-background);
+	color: var(--wpse-filter-action-text);
 }
 
 .wpse-event-card a:focus-visible,

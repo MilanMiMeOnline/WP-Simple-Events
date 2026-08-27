@@ -38,6 +38,11 @@ function wpse_e2e_seed_calendar_page(): void {
 		'[wpse_calendar category="wpse-e2e-category" filters="false"][wpse_calendar tag="wpse-e2e-tag" filters="false"]'
 	);
 	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-filter-multiple',
+		'Multiple Calendar Filter Harness',
+		'[wpse_calendar category="wpse-e2e-category" filters="true"][wpse_calendar tag="wpse-e2e-tag" filters="true"]'
+	);
+	wpse_e2e_insert_page(
 		'wpse-e2e-calendar-hidden',
 		'Hidden Calendar Harness',
 		'[wpse_e2e_hidden_calendar]'
@@ -72,12 +77,21 @@ function wpse_e2e_seed_calendar_page(): void {
 		return;
 	}
 
-	$empty_category = wpse_e2e_term_id( 'wpse_event_category', 'E2E Empty', 'wpse-e2e-empty' );
-	$category_only  = wpse_e2e_term_id( 'wpse_event_category', 'E2E Category', 'wpse-e2e-category' );
-	$tag_only       = wpse_e2e_term_id( 'wpse_event_tag', 'E2E Tag', 'wpse-e2e-tag' );
-	$wall_time      = wpse_e2e_term_id( 'wpse_event_category', 'E2E Wall Time', 'wpse-e2e-wall-time' );
+	$empty_category    = wpse_e2e_term_id( 'wpse_event_category', 'E2E Empty', 'wpse-e2e-empty' );
+	$category_only     = wpse_e2e_term_id( 'wpse_event_category', 'E2E Category', 'wpse-e2e-category' );
+	$tag_only          = wpse_e2e_term_id( 'wpse_event_tag', 'E2E Tag', 'wpse-e2e-tag' );
+	$wall_time         = wpse_e2e_term_id( 'wpse_event_category', 'E2E Wall Time', 'wpse-e2e-wall-time' );
+	$search_categories = array();
 
-	if ( 0 === $empty_category || 0 === $category_only || 0 === $tag_only || 0 === $wall_time ) {
+	for ( $index = 1; $index <= 11; ++$index ) {
+		$search_categories[] = wpse_e2e_term_id(
+			'wpse_event_category',
+			sprintf( 'E2E Filter Option %02d', $index ),
+			sprintf( 'wpse-e2e-filter-%02d', $index )
+		);
+	}
+
+	if ( 0 === $empty_category || 0 === $category_only || 0 === $tag_only || 0 === $wall_time || in_array( 0, $search_categories, true ) ) {
 		return;
 	}
 
@@ -89,7 +103,7 @@ function wpse_e2e_seed_calendar_page(): void {
 		false,
 		'Europe/Brussels',
 		'scheduled',
-		array( $category_only ),
+		array_merge( array( $category_only ), $search_categories ),
 		array()
 	);
 	wpse_e2e_insert_event(
@@ -160,7 +174,7 @@ function wpse_e2e_seed_calendar_page(): void {
 	);
 
 	// Keep hide_empty filter fixtures deterministic after same-request seeding.
-	wp_update_term_count( array( $empty_category, $category_only, $wall_time ), 'wpse_event_category', true );
+	wp_update_term_count( array_merge( array( $empty_category, $category_only, $wall_time ), $search_categories ), 'wpse_event_category', true );
 	wp_update_term_count( array( $tag_only ), 'wpse_event_tag', true );
 
 	$event_slugs = array(

@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Shortcode;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Frontend\EventFilterActiveChoices;
+use MiMe\WPSimpleEvents\Frontend\EventFilterDisclosure;
 use MiMe\WPSimpleEvents\Frontend\EventFilterTermGroup;
 use MiMe\WPSimpleEvents\Frontend\EventFilterUrlState;
 use MiMe\WPSimpleEvents\Frontend\EventFilterViewModel;
@@ -27,11 +28,13 @@ final class EventListControls {
 	 * @param EventFilterTermGroup     $term_group Shared semantic taxonomy choices.
 	 * @param EventFilterUrlState      $url_state  Bounded cross-instance URL state.
 	 * @param EventFilterActiveChoices $active_choices Removable active choices.
+	 * @param EventFilterDisclosure    $disclosure Progressive panel markup.
 	 */
 	public function __construct(
 		private readonly EventFilterTermGroup $term_group = new EventFilterTermGroup(),
 		private readonly EventFilterUrlState $url_state = new EventFilterUrlState(),
-		private readonly EventFilterActiveChoices $active_choices = new EventFilterActiveChoices()
+		private readonly EventFilterActiveChoices $active_choices = new EventFilterActiveChoices(),
+		private readonly EventFilterDisclosure $disclosure = new EventFilterDisclosure()
 	) {}
 
 	/**
@@ -107,10 +110,6 @@ final class EventListControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
-			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
-			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
-
 			<p class="wpse-events-filter-field">
 				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php esc_html_e( 'Period', 'mime-simple-events-calendar' ); ?></label>
 				<select id="<?php echo esc_attr( $prefix . '-period' ); ?>" name="<?php echo esc_attr( $prefix . '_period' ); ?>">
@@ -137,6 +136,16 @@ final class EventListControls {
 					<?php endif; ?>
 				<?php endif; ?>
 			</p>
+		<?php
+		$panel = ob_get_clean();
+		$panel = false === $panel ? '' : $panel;
+
+		ob_start();
+		?>
+		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>" data-wpse-event-filters data-wpse-filter-submitted="<?php echo $submitted ? '1' : '0'; ?>">
+			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
+			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
+			<?php echo $this->disclosure->render( $prefix . '-filter-panel', $panel, count( $attributes->category_slugs ) + count( $attributes->tag_slugs ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared disclosure and fields own contextual escaping. ?>
 		</form>
 		<?php
 		$output = ob_get_clean();

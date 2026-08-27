@@ -24,10 +24,12 @@ final class EventArchiveControls {
 	 *
 	 * @param EventFilterTermGroup     $term_group Shared semantic taxonomy choices.
 	 * @param EventFilterActiveChoices $active_choices Removable active choices.
+	 * @param EventFilterDisclosure    $disclosure Progressive panel markup.
 	 */
 	public function __construct(
 		private readonly EventFilterTermGroup $term_group = new EventFilterTermGroup(),
-		private readonly EventFilterActiveChoices $active_choices = new EventFilterActiveChoices()
+		private readonly EventFilterActiveChoices $active_choices = new EventFilterActiveChoices(),
+		private readonly EventFilterDisclosure $disclosure = new EventFilterDisclosure()
 	) {}
 
 	/**
@@ -69,7 +71,6 @@ final class EventArchiveControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters wpse-event-archive-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>">
 			<p class="wpse-events-filter-field">
 				<label for="wpse-archive-period"><?php esc_html_e( 'Period', 'mime-simple-events-calendar' ); ?></label>
 				<select id="wpse-archive-period" name="wpse_period">
@@ -93,6 +94,14 @@ final class EventArchiveControls {
 					<a href="<?php echo esc_url( $action ); ?>" data-wpse-filter-clear><?php esc_html_e( 'Clear all', 'mime-simple-events-calendar' ); ?></a>
 				<?php endif; ?>
 			</p>
+		<?php
+		$panel = ob_get_clean();
+		$panel = false === $panel ? '' : $panel;
+
+		ob_start();
+		?>
+		<form class="wpse-events-filters wpse-event-archive-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>" data-wpse-event-filters data-wpse-filter-submitted="1">
+			<?php echo $this->disclosure->render( 'wpse-archive-filter-panel', $panel, count( $attributes->category_slugs ) + count( $attributes->tag_slugs ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared disclosure and fields own contextual escaping. ?>
 		</form>
 		<?php
 		$output = ob_get_clean();

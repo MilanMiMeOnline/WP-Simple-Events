@@ -13,6 +13,7 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
 use MiMe\WPSimpleEvents\Shortcode\EventListShortcode;
 use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 
@@ -20,6 +21,15 @@ use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
  * Maps Elementor controls to the native event-list renderer.
  */
 final class EventListWidget extends AbstractEventWidget {
+	/**
+	 * Declare the lightweight public filter enhancement.
+	 *
+	 * @return string[]
+	 */
+	public function get_script_depends(): array {
+		return array( FrontendAssets::SCRIPT_HANDLE );
+	}
+
 	/** Return the stable widget identifier. */
 	public function get_name(): string {
 		return 'wpse-event-list';

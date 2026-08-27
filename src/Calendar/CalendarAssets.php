@@ -42,7 +42,7 @@ final readonly class CalendarAssets {
 	 * Enqueue the shared CSS and calendar JavaScript bundle.
 	 */
 	public function enqueue(): void {
-		$this->frontend->enqueue();
+		$this->frontend->enqueue_filters();
 
 		if ( ! wp_script_is( self::SCRIPT_HANDLE, 'registered' ) ) {
 			$this->register();

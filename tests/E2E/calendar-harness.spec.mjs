@@ -232,6 +232,28 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 		tags: [ 'wpse-e2e-tag' ],
 	} );
 
+	await requestedTag.uncheck();
+	await filters.getByRole( 'button', { name: 'Apply filters' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
+
+	await page.goBack();
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [ 'wpse-e2e-tag' ] );
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'2 events loaded.',
+	);
+
+	await page.goForward();
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
+
+	await page.goBack();
+	await expect.poll( () => checkedValues( tag ) ).toEqual( [ 'wpse-e2e-tag' ] );
+
 	await page.reload();
 	await expect.poll( () => checkedValues( category ) ).toEqual( [
 		'wpse-e2e-category',
@@ -261,6 +283,142 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 			...url.searchParams.getAll( 'wpse_calendar_1_tag[]' ),
 		];
 	} ).toEqual( [] );
+} );
+
+test( 'uses an accessible compact disclosure and bounded option search', async ( {
+	page,
+} ) => {
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+
+	const filters = page.locator( '[data-wpse-calendar-filters]' );
+	const toggle = filters.locator( '[data-wpse-filter-toggle]' );
+	const panel = filters.locator( '[data-wpse-filter-panel]' );
+
+	await expect( toggle ).toBeVisible();
+	await expect( toggle ).toContainText( 'Filters' );
+	await expect( toggle ).toContainText( '(1)' );
+	await expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+	await expect( panel ).not.toBeVisible();
+
+	await toggle.click();
+	await expect( panel ).toBeVisible();
+	await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+
+	const search = filters.getByRole( 'searchbox', { name: 'Search options' } ).first();
+
+	await expect( search ).toBeVisible();
+	await search.fill( 'Filter Option 11' );
+	await expect( filters.getByLabel( 'E2E Category' ) ).toBeVisible();
+	await expect( filters.getByLabel( 'E2E Filter Option 11' ) ).toBeVisible();
+	await expect( filters.getByLabel( 'E2E Filter Option 01' ) ).not.toBeVisible();
+	await filters.getByLabel( 'E2E Filter Option 11' ).check();
+	await expect( toggle ).toContainText( '(2)' );
+
+	await search.press( 'Escape' );
+	await expect( panel ).not.toBeVisible();
+	await expect( toggle ).toBeFocused();
+
+	await page.setViewportSize( { width: 800, height: 900 } );
+	await expect( toggle ).not.toBeVisible();
+	await expect( panel ).toBeVisible();
+} );
+
+test( 'keeps compact filter disclosures independent across calendars', async ( {
+	page,
+} ) => {
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filter-multiple' );
+
+	const calendars = page.locator( '[data-wpse-calendar]' );
+	const firstToggle = calendars.nth( 0 ).locator( '[data-wpse-filter-toggle]' );
+	const secondToggle = calendars.nth( 1 ).locator( '[data-wpse-filter-toggle]' );
+	const firstPanel = calendars.nth( 0 ).locator( '[data-wpse-filter-panel]' );
+	const secondPanel = calendars.nth( 1 ).locator( '[data-wpse-filter-panel]' );
+
+	await expect( firstToggle ).toBeVisible();
+	await expect( secondToggle ).toBeVisible();
+	await expect( firstPanel ).not.toBeVisible();
+	await expect( secondPanel ).not.toBeVisible();
+
+	await firstToggle.click();
+	await expect( firstPanel ).toBeVisible();
+	await expect( secondPanel ).not.toBeVisible();
+	await secondToggle.click();
+	await expect( firstPanel ).toBeVisible();
+	await expect( secondPanel ).toBeVisible();
+
+	await secondPanel.getByRole( 'searchbox', { name: 'Search options' } ).first().press( 'Escape' );
+	await expect( firstPanel ).toBeVisible();
+	await expect( secondPanel ).not.toBeVisible();
+	await expect( secondToggle ).toBeFocused();
+} );
+
+test( 'keeps compact filters usable with touch, reduced motion and enlarged text', async ( {
+	browser,
+} ) => {
+	const context = await browser.newContext( {
+		baseURL: 'http://localhost:8888',
+		hasTouch: true,
+		reducedMotion: 'reduce',
+		viewport: { width: 780, height: 900 },
+	} );
+	const page = await context.newPage();
+
+	try {
+		await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+		const calendar = page.locator( '[data-wpse-calendar]' );
+
+		await calendar.evaluate( ( element ) => {
+			element.style.fontSize = '200%';
+			element.style.width = '560px';
+			element.style.maxWidth = '100%';
+		} );
+
+		const toggle = calendar.locator( '[data-wpse-filter-toggle]' );
+		const panel = calendar.locator( '[data-wpse-filter-panel]' );
+
+		await expect( toggle ).toBeVisible();
+		await expect( panel ).not.toBeVisible();
+		await toggle.tap();
+		await expect( panel ).toBeVisible();
+		await expect.poll( () => panel.evaluate(
+			( element ) => element.scrollWidth <= element.clientWidth,
+		) ).toBe( true );
+	} finally {
+		await context.close();
+	}
+} );
+
+test( 'keeps the complete namespaced filter form usable without JavaScript', async ( {
+	browser,
+} ) => {
+	const context = await browser.newContext( {
+		baseURL: 'http://localhost:8888',
+		javaScriptEnabled: false,
+		viewport: { width: 390, height: 844 },
+	} );
+	const page = await context.newPage();
+
+	try {
+		await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+		const filters = page.locator( '[data-wpse-calendar-filters]' );
+
+		await expect( filters.locator( '[data-wpse-filter-toggle]' ) ).not.toBeVisible();
+		await expect( filters.locator( '[data-wpse-filter-panel]' ) ).toBeVisible();
+		await filters.getByLabel( 'E2E Tag' ).check();
+		await Promise.all( [
+			page.waitForNavigation(),
+			filters.getByRole( 'button', { name: 'Apply filters' } ).click(),
+		] );
+
+		await expect( page.locator( '[data-wpse-calendar-filters]' ).getByLabel( 'E2E Tag' ) ).toBeChecked();
+		await expect.poll( () => new URL( page.url() ).searchParams.getAll(
+			'wpse_calendar_1_tag[]',
+		) ).toEqual( [ 'wpse-e2e-tag' ] );
+	} finally {
+		await context.close();
+	}
 } );
 
 test( 'labels timed multi-day segments clearly in list view', async ( { page } ) => {
