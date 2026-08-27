@@ -477,6 +477,12 @@ series-only. Featured-image IDs are never printed and must resolve through a
 WordPress attachment API. The native fallback remains authoritative whenever no
 builder template handles the current single location.
 
+On that native fallback, an exact occurrence leaf identifies its canonical
+series and offers previous/next active occurrence links when available. The
+neighbours come from two bounded active-projection reads and never from expanding
+a recurrence rule on the visitor request. Builder-owned single locations remain
+unchanged; they may compose their own navigation.
+
 The Gutenberg adapter uses the same request-local current-presentation resolver
 for the existing atomic blocks and composite Event Details block. A block with
 current event context renders the exact occurrence leaf; the existing positive

@@ -18,12 +18,18 @@ The optional **Public event timezone** setting is off by default. When enabled, 
 
 The native **Events → All Events** table keeps WordPress' selection and title columns and adds:
 
+- a concise recurrence summary that distinguishes one-off events, selected
+  dates, generated schedules and unavailable recurrence state;
 - start and end in the event's captured timezone;
 - all-day state;
 - venue and address;
 - event categories;
 - scheduled, cancelled or postponed event status;
 - the separate WordPress publication status.
+
+The recurrence column describes the canonical series rule and its meaningful end
+condition. It never expands occurrences in wp-admin, performs unbounded public
+queries or treats corrupt recurrence state as a one-off event.
 
 Start and end headers are sortable through `_wpse_start_utc` and `_wpse_end_utc` as numeric values. Empty date and location cells contain both a visible dash and screen-reader text. The overview does not query arbitrary metadata.
 

@@ -46,7 +46,10 @@ The current public release evidence is the
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md). The
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remains the
 normative historical evidence for the recurring-events contract retained by
-0.5.0.
+0.5.0. The post-release UX findings and their qualified maintenance candidate
+are documented in the
+[0.5.0 exploratory report](QA-REPORT-0.5.0-EXPLORATORY.md) and
+[0.5.1 release-candidate report](QA-REPORT-0.5.1.md).
 
 ## Releases and WordPress.org
 

@@ -3,7 +3,8 @@
 **Status:** active planning contract
 **Last reviewed:** 27 August 2026
 **Current public release:** 0.5.0
-**Active phase:** Phase 4 compatibility and maintenance
+**Active phase:** Phase 4 maintenance qualification, followed by Phase 5 filter
+and calendar discoverability
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -14,10 +15,14 @@ of the supported product until its specification, tests and release are complete
 
 Work proceeds in this order:
 
-1. sharpen the existing one-off event experience and builder integrations;
-2. qualify and release the accepted lightweight recurrence model;
-3. add Divi 5 through the same shared presentation and query services;
-4. reassess broader platform support only when its maintenance cost is justified.
+1. publish the already-qualified post-0.5 maintenance improvements;
+2. replace the functional but dated visitor filters with one modern shared
+   interaction and add predictable event/category colors;
+3. implement bounded one-way “Add to calendar” actions as optional atomic
+   components without accepting import or synchronization scope;
+4. freeze the 1.x contracts and complete a feature-free 1.0 qualification cycle;
+5. reassess broader platform or event-management features only after 1.0 and
+   only when their maintenance cost is justified.
 
 Interactive maps, geocoding, ticketing and attendee management remain outside the
 roadmap. The plugin continues to favor a small, native WordPress core over a broad
@@ -669,6 +674,352 @@ a standing goal: it requires evidence of meaningful user reach, a bounded refact
 and a complete security/compatibility matrix. Compatibility work must never add
 conditional feature loss or weaken input, output or dependency controls.
 
+### Post-0.5 exploratory UX hardening
+
+The first combined maintainer/AI exploratory round is consolidated in
+[QA-REPORT-0.5.0-EXPLORATORY.md](QA-REPORT-0.5.0-EXPLORATORY.md). Fresh
+reproduction closed the apparent Gutenberg-inspector and Divi-activation P1
+reports as local editor-state artefacts; stronger host regressions remain in
+place. The confirmed improvements are implemented and locally qualified:
+
+- the Events overview identifies recurrence without expanding a series;
+- never-ending previews explain their rolling 540-day projection and one-off
+  mode hides stale recurrence termination controls;
+- calendar list view distinguishes timed start, continuation and end segments;
+- Elementor source, taxonomy and typography controls use explicit names;
+- native occurrence leaves link to the series and bounded previous/next dates;
+- calendar feed enhancement uses the active page origin reliably through
+  proxies, aliases and WordPress subdirectory installs.
+
+Versioning and publication of this cohesive maintenance increment require a
+separate release decision and the normal final CI/Plugin Check gates.
+
+### 0.5.x maintenance release gate
+
+The implemented exploratory improvements ship before Phase 5 so filter and color
+work begins from one published, reproducible baseline. This release contains no
+new storage contract and must not absorb the Phase 5 feature work merely to avoid
+a patch release.
+
+**Exit criteria:** the complete PHP/Node gates, packaged WordPress 6.9/current
+smokes, Elementor and Divi host checks, strict Plugin Check, reproducible ZIP and
+updated changelog pass from one commit; GitHub and WordPress.org receive the same
+qualified artifact.
+
+## Phase 5 — 0.6.0 filter and calendar discoverability
+
+### Goal
+
+Make public filtering immediately understandable on desktop, touch and assistive
+technology while retaining the existing shareable GET contract and no-JavaScript
+baseline. Add optional semantic category colors and explicit event overrides so
+busy calendars remain scannable without introducing ambiguous “first category
+wins” behaviour.
+
+This phase also fixes the taxonomy archive title that currently exposes
+WordPress' internal `<span>` wrapper as visible text. It does not add new filter
+dimensions, arbitrary CSS, maps, ticketing, facet counts or remote services.
+
+### Accepted interaction contract
+
+- Period remains a single-choice control where that component supports periods.
+- Categories and tags use labelled checkbox groups instead of native multiple
+  select boxes.
+- Selected values appear as individually removable chips outside a closed group.
+- A group can clear only its own values and “Clear all” removes all visitor term
+  selections while restoring the configured period.
+- When a component has initial category/tag presets, a distinct “Restore defaults”
+  action restores those presets. Clear and restore are never presented as the same
+  action when their results differ.
+- Desktop supports compact, horizontal and stacked arrangements. Mobile uses one
+  collapsed filter disclosure with an active count.
+- Applying filters remains an explicit, valid GET submission. JavaScript may
+  enhance calendar updates, chip removal, disclosure behaviour and history, but
+  can never become required.
+- Filter state remains instance-namespaced, shareable and isolated from other
+  lists or calendars on the same page.
+- Exact option counts are omitted until an occurrence-aware facet-count contract
+  can prove that every displayed count is correct.
+
+### Accepted color contract
+
+- Event colors resolve in this order: explicit event color; explicitly selected
+  assigned color category; one unambiguous assigned category color; component
+  fallback.
+- Multiple assigned categories with different colors never use incidental term
+  order. They require an explicit display category or fall back safely.
+- Categories store one optional strict hexadecimal background color. The public
+  foreground is derived automatically as black or white using contrast ratio;
+  arbitrary CSS and unsafe color strings are not stored.
+- An event may choose automatic resolution, the component fallback, one assigned
+  colored category or one custom color. The choice applies to its complete
+  recurring series; occurrence-specific color overrides remain outside 0.6.0.
+- Month view may use a solid chip; list view may use an accent dot or border.
+  Titles, times, statuses and an automatic/optional category legend keep color
+  from becoming the only information carrier.
+- Builder-wide event colors remain the fallback. Assigning a category or event
+  color is an explicit editorial action and does not rename or invalidate saved
+  widget controls.
+
+### 0.6.0 prioritized backlog
+
+| ID | Priority | Improvement | Acceptance outcome |
+|---|---|---|---|
+| FCR-001 | P1 | Replace escaped WordPress taxonomy archive titles with plugin-owned plain-text titles. | Event categories render as `Events in “Name”` and tags as `Events tagged “Name”`; no literal markup appears in classic, hybrid or block-theme shells. |
+| FCR-002 | P1 | Introduce one shared filter view model and URL-state builder. | Archive, shortcode, Gutenberg, Elementor and Divi hosts share selection, clear, restore and instance-isolation semantics instead of duplicating behaviour. |
+| FCR-003 | P1 | Replace category/tag multiple selects with progressive checkbox disclosures. | Mouse, touch, keyboard and screen-reader users can understand and alter selections without modifier keys; the form still works with JavaScript disabled. |
+| FCR-004 | P1 | Add removable active-filter chips and scoped clear/restore actions. | One value, one group or all visitor selections can be removed without losing unrelated component or page state. |
+| FCR-005 | P1 | Add responsive filter styling and public state feedback. | Desktop and mobile layouts avoid overflow, focus remains visible, result changes are announced and empty results contain a useful clear action. |
+| FCR-006 | P1 | Add optional event-category color metadata and secure term editing. | Authorized category editors can set, preview, remove and audit one normalized color without exposing arbitrary CSS or changing event queries. |
+| FCR-007 | P1 | Add event color source/override controls and deterministic resolution. | Zero, one and multiple-category events resolve predictably; deleted or unassigned source terms fall back without stale presentation. |
+| FCR-008 | P1 | Extend the calendar feed and occurrence presentation with resolved safe colors. | One-off events and every occurrence in a series receive the same bounded color semantics without N+1 metadata queries. |
+| FCR-009 | P2 | Add category swatches and an automatic/optional calendar legend. | Visible text continues explaining category meaning when colors differ; filters do not duplicate an unnecessary legend. |
+| FCR-010 | P1 | Complete Gutenberg, Elementor and Divi filter design parity. | The same content options and CSS variables control panel, trigger, options, checkbox, chip, button, result and responsive states in every supported host. |
+| FCR-011 | P2 | Add a bounded client-side option search for long category/tag groups. | Groups above the documented threshold can be narrowed without hiding selected options; the complete list remains available without JavaScript. |
+| FCR-012 | P1 | Qualify upgrades, security, performance, accessibility and compatibility. | Existing events/pages remain unchanged until a color is assigned; all supported hosts, recurrence paths and release gates pass. |
+
+### FCR-0 — Specification and failing evidence
+
+1. Add the accepted filter and color behaviour to the normative specification,
+   public query contract, decision log and administrator workflow.
+2. Freeze existing request names, block names, shortcode attributes, Elementor
+   control IDs, Divi attribute paths and CSS variables that remain compatible.
+3. Add regressions for the literal taxonomy `<span>`, missing native archive
+   reset, modifier-key multiple selection and ambiguous multi-category color.
+4. Capture baseline screenshots at desktop, narrow component and mobile widths.
+
+**Exit criteria:** every confirmed defect has failing evidence and the intended
+clear-versus-restore and color-precedence semantics are testable without editor-
+specific interpretation.
+
+### FCR-1 — Taxonomy title hotfix
+
+1. Resolve the queried event term through an allowlisted taxonomy boundary.
+2. Build translated plain-text category and tag headings from its escaped name.
+3. Preserve the active theme shell, event chronology and SEO document title.
+4. Cover malformed query objects, special characters and both taxonomies in
+   classic and block-theme smoke journeys.
+
+**Exit criteria:** no public event taxonomy heading exposes HTML source and no
+additional markup is trusted merely to preserve WordPress' decorative span.
+
+### FCR-2 — Shared filter state and semantic markup
+
+1. Extract one immutable filter view model and one bounded URL-state builder.
+2. Preserve the existing namespaced apply marker that distinguishes untouched
+   defaults from an intentionally empty visitor selection.
+3. Render period radios/select, taxonomy fieldsets, checkbox labels, active chips,
+   group clear, clear-all and conditional restore-default actions semantically.
+4. Keep taxonomy archives fixed to their routed term; the general cross-taxonomy
+   filter form remains omitted there by design.
+5. Preserve unrelated safe query parameters and other component instances while
+   rejecting unknown, oversized or malformed values.
+
+**Exit criteria:** list, calendar and native archive filters share one behaviour,
+work without JavaScript and cannot broaden public eligibility rules.
+
+### FCR-3 — Progressive interaction and responsive presentation
+
+1. Enhance compact disclosures, Escape/close behaviour, chip removal and calendar
+   refresh without replacing the GET form.
+2. Maintain shareable URLs and browser back/forward state after enhanced changes.
+3. Return focus predictably and announce result/loading/empty/error changes.
+4. Add component-scoped variables for panel, trigger, option list, checkbox,
+   chip, apply/reset actions, result count and responsive spacing.
+5. Add option search only beyond the documented threshold, preserving selected
+   values and a complete no-JavaScript list.
+
+**Exit criteria:** multiple filters and calendars remain independent; keyboard,
+touch, 200% zoom, narrow containers and reduced-motion journeys pass.
+
+### FCR-4 — Builder and shortcode parity
+
+1. Expose bounded content controls for visible groups, layout, initial disclosure,
+   active chips, results and safe labels through Gutenberg, Elementor and Divi.
+2. Group style controls around filter container, triggers, options, checkboxes,
+   chips, actions and status rather than one broad button selector.
+3. Map every host to the same semantic CSS variables; never fork frontend markup
+   or persist builder-owned event data.
+4. Keep shortcodes theme-inheriting and document the stable classes/custom
+   properties for developers without adding arbitrary style attributes.
+
+**Exit criteria:** a practical filter design needs no page-level custom CSS and
+saved pages from 0.5.x render unchanged until new controls are chosen.
+
+### FCR-5 — Category and event color domain
+
+1. Register one optional category term-meta color with strict capability, nonce,
+   validation, sanitization, deletion and term-list swatch behaviour.
+2. Register bounded event metadata for an optional custom color and selected
+   assigned display-category source with revision/duplication rules.
+3. Implement a pure resolver for event override, valid explicit category,
+   unambiguous category and component fallback precedence.
+4. Derive accessible black/white contrast text server-side and expose only
+   normalized presentation values.
+5. Treat a removed category, changed assignment, corrupt value or several distinct
+   automatic colors as a safe fallback, never an arbitrary winner.
+
+**Exit criteria:** color behaviour is deterministic, reversible, migration-free
+for existing data and independently unit tested.
+
+### FCR-6 — Calendar, recurrence and legend integration
+
+1. Add resolved presentation colors to one-off and occurrence calendar records
+   without changing dates, URLs, eligibility or structured data.
+2. Preload/cache the relevant event and term metadata per bounded response to
+   avoid a query per calendar item.
+3. Apply one series-level color across occurrences, sparse presentation
+   overrides and exact occurrence routes.
+4. Render month solid/accent and list accent treatments while retaining title,
+   time and status text.
+5. Add category swatches to visible filters and an `Auto / Show / Hide` legend;
+   Auto avoids duplicating a filter-based legend and appears when category color
+   meaning would otherwise be invisible.
+
+**Exit criteria:** one-off, all-day, multi-day, recurring, cancelled, postponed
+and overridden occurrences remain readable and accurately colored across month,
+list and no-JavaScript fallback output.
+
+### FCR-7 — 0.6.0 release qualification
+
+Run the full repository gates plus WordPress 6.9/current and PHP 8.2-current;
+Gutenberg, Elementor Free/Pro and Divi 5; classic, hybrid and block themes;
+JavaScript/no-JavaScript; keyboard, screen-reader semantics, reflow and contrast;
+one/multiple component state; corrupt/tampered inputs; recurrence; cache/query
+counts; uninstall/upgrade; strict Plugin Check and reproducible packaging.
+
+**Release criteria:** every P1 FCR item is complete; no unresolved high/critical
+dependency or security finding exists; no existing event changes appearance until
+an editor assigns color data or opts into a new presentation control; public and
+editor documentation, changelog, screenshots and translation template are current.
+
+## Phase 6 — 0.7.0 bounded “Add to calendar”
+
+### Status
+
+**Accepted for implementation after 0.6.0.** This is the only competitor-gap audit
+item with a strong visitor benefit and a lightweight contract that belongs before
+the 1.0 feature freeze.
+
+The candidate is one-way portability, not synchronization:
+
+- a downloadable standards-compliant `.ics` snapshot for one public one-off
+  event or one exact recurring occurrence;
+- optional Google Calendar and Outlook compose links for that exact event;
+- one atomic Add to Calendar Gutenberg block, Elementor widget, Divi 5 module and
+  shortcode over the same current/explicit event presentation resolver;
+- builder and block templates output nothing unless their author deliberately
+  places the component; removing the component removes the complete action;
+- the plugin-owned native fallback has one explicit global opt-in setting and
+  never appends the action when a theme/builder owns the single-event body;
+- bounded controls choose the visible providers, dropdown/button layout and safe
+  plain-text label, while each host styles the same semantic component targets;
+- stable occurrence-aware UID, captured timezone, escaped/folded ICS text and
+  public-only cache-safe responses;
+- explicit wording that later website changes do not update an imported snapshot.
+
+Canonical recurring-series export, calendar subscriptions, inbound ICS/CSV/
+Google import and bidirectional synchronization are deliberately not implied.
+Series export needs a separate decision because segmented schedules, manual dates,
+exclusions and sparse overrides cannot be represented truthfully by one simple
+RRULE in every case.
+
+### 0.7.0 work packages
+
+1. Freeze the one-event/one-occurrence ICS, Google and Outlook contracts with
+   timezone, all-day, multi-day, cancellation and exact-occurrence examples.
+2. Implement one public-only export service and endpoint with stable UIDs,
+   correct content headers, line escaping/folding, bounded text and no private or
+   password-protected fallback.
+3. Build one shared atomic renderer and expose it through shortcode, Gutenberg,
+   Elementor and Divi without duplicating event or occurrence resolution.
+4. Add the native-fallback opt-in and guarantee builder-owned templates receive no
+   forced action outside their chosen component layout.
+5. Verify Apple Calendar, Google Calendar and Outlook interoperability, external-
+   link isolation, privacy/cache behaviour, accessibility and supported-host
+   save/reload parity.
+6. Run the complete release matrix, update user/developer documentation and
+   publish one reproducible 0.7.0 artifact.
+
+**Exit criteria:** an author can place, style or omit the action independently in
+every supported editor; one-off and exact-occurrence exports are truthful; series
+pages never imply unsupported whole-series synchronization; protected content is
+unavailable; and no native action appears without explicit site-owner opt-in.
+
+## Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
+
+### Goal
+
+Stop adding product capability and prove that the complete supported product can
+be maintained as a stable 1.x contract. Version 0.9.0 is a public release
+candidate, not a place for late feature experiments.
+
+1. Freeze public shortcodes, blocks, REST routes, event/term metadata, occurrence
+   identities, CSS targets, Elementor IDs and Divi module attributes; document
+   deprecation and compatibility rules for 1.x.
+2. Exercise clean install and every supported historical upgrade path with event,
+   recurrence, builder, filter and color data.
+3. Complete a fresh security/privacy threat review, permission matrix, REST/ICS
+   review if applicable, dependency audit and official Plugin Check.
+4. Complete WCAG-oriented keyboard, focus, zoom, reflow, color/contrast and
+   screen-reader-semantic testing for every public/editor journey.
+5. Set and verify bounded performance budgets for archives, occurrence queries,
+   calendar feeds, term filters and builder previews with realistic data volumes.
+6. Rewrite the public readme, installation, first-event workflow, recurrence,
+   filters/colors, builder/template, troubleshooting, data ownership, privacy and
+   upgrade documentation from a new-user perspective.
+7. Run destructive local exploratory testing and a non-destructive production
+   validation on `taranartos.be`, removing every temporary artifact immediately.
+8. Publish 0.9.0 on GitHub and WordPress.org, then reserve a defined observation
+   window for real installation feedback and blocker fixes only.
+
+**Exit criteria:** no P1/P2 product or documentation defect remains; every public
+contract is documented; supported matrices and release artifacts are green; the
+only permitted changes before 1.0 are blocker fixes, translations and release
+documentation.
+
+## Phase 8 — 1.0.0 stable release
+
+1. Resolve every 0.9 blocker with a regression and rerun the complete release
+   matrix from the exact tag candidate.
+2. Verify the GitHub source tag, generated ZIP, WordPress.org trunk/tag and plugin
+   assets describe the same version and checksummed contents.
+3. Publish final release notes, upgrade notes, known limitations, support/security
+   contact routes and the 1.x backward-compatibility policy.
+4. Confirm that no test event, page, user, template assignment, cron task or
+   occurrence fixture remains on production or disposable qualification sites.
+5. Tag and publish 1.0.0 without bundling a new feature after the release candidate.
+
+### 1.0 definition of done
+
+- The 0.5.x maintenance work and every Phase 5 P1 are released.
+- Phase 6 is released with atomic editor parity and truthful one-event export.
+- Recurrence, Gutenberg, Elementor and Divi 5 remain optional, secure and exact.
+- Filters are understandable and removable; colors are deterministic and
+  accessible; taxonomy titles contain no leaked markup.
+- WordPress 6.9/current and PHP 8.2-current pass, as do the supported Elementor
+  and Divi lines and the Divi-absent/Elementor-absent cases.
+- Fresh install, upgrade, uninstall retention/deletion and repair paths pass.
+- No high/critical security or dependency issue, P1/P2 defect, undocumented public
+  contract or stale translation string remains.
+- GitHub and WordPress.org publish the same reproducible qualified artifact.
+
+## Pre-1.0 competitive gap audit
+
+| Capability | Decision before 1.0 | Rationale |
+|---|---|---|
+| Modern removable filters | Required in 0.6.0 | The current multiple-select UI is a real usability gap, not optional suite breadth. |
+| Category and event colors | Required in 0.6.0 | Dense month views need deterministic visual distinction; accessible fallback keeps it lightweight. |
+| Clean taxonomy archive titles | Immediate P1 | Visible source-like markup is a public correctness defect. |
+| One-way Add to Calendar | Required in 0.7.0 | Common and valuable; the accepted scope is one event/occurrence with fully optional atomic placement, never synchronization. |
+| Keyword/full-text event search | Post-1.0 investigation | Useful for large catalogues, but occurrence-aware search and relevance are materially broader than the current taxonomy filters. |
+| Reusable venues and organizers | Post-1.0 product decision | Powerful for large programmes, but introduces new content entities, migrations, archive/template surfaces and editor complexity. |
+| Featured/pinned events | Post-1.0 candidate | Convenient merchandising, but existing category/query composition can cover many simple cases. |
+| Per-event/visitor-local timezone | Post-1.0 candidate | Important for international programmes; it changes editing, formatting and recurrence assumptions and deserves a dedicated contract. |
+| Calendar subscriptions/import/sync | Post-1.0 or excluded | Persistent feeds and inbound data add cache, conflict, provenance, scheduler and recurrence complexity. |
+| Community submissions | Outside 1.0 | Requires front-end mutation, moderation, identity, spam and notification systems. |
+| Maps, ticketing and attendees | Outside roadmap | Separate product domains and service/privacy/security burdens; not required for a focused publishing plugin. |
+
 ## Deferred ideas
 
 These ideas require a separate product decision and are not implied by any phase:
@@ -676,7 +1027,11 @@ These ideas require a separate product decision and are not implied by any phase
 - per-event timezone editing;
 - visitor-local timezone conversion;
 - Elementor Pro dynamic tags;
-- external calendar synchronization or ICS import/export;
+- keyword/full-text event search;
+- reusable venue and organizer entities;
+- featured or pinned events;
+- calendar subscriptions, inbound import or external synchronization;
+- community event submissions;
 - multiple arbitrary external resource links;
 - interactive maps or geocoding;
 - ticket sales, registrations or attendee management.

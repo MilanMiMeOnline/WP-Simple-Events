@@ -142,4 +142,9 @@ and is enqueued only when the shortcode renders. It contains exactly
 FullCalendar core, day-grid and list modules; no CDN, recurrence, drag/drop,
 resource, map or premium code is included. The calendar uses real event links,
 translated controls, a live status region, keyboard-operable native controls,
-visible focus and text labels for cancelled or postponed states.
+visible focus and text labels for cancelled or postponed states. Its feed URL is
+serialized as a same-origin relative path, including the WordPress subdirectory
+when applicable, so reverse proxies and equivalent host aliases cannot turn a
+public read into a cross-origin request. In list view, timed multi-day segments
+are labelled as starting, continuing or ending; genuine all-day events retain
+their all-day language.

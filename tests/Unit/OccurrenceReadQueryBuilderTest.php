@@ -145,6 +145,33 @@ final class OccurrenceReadQueryBuilderTest extends TestCase {
 		$this->builder()->build_public_identity( 42, 'AAAA-not-a-public-key' );
 	}
 
+	/** Neighbour plans stay recurring-only, deterministic and permission-aware. */
+	public function test_public_neighbor_plans_are_bounded_and_directional(): void {
+		$previous = $this->builder()->build_previous_public_neighbor(
+			42,
+			1_800_000_000,
+			'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+		);
+		$next     = $this->builder()->build_next_public_neighbor(
+			42,
+			1_800_000_000,
+			'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+		);
+
+		self::assertStringContainsString( 'p.post_status = %s', $previous->sql );
+		self::assertStringContainsString( "p.post_password = ''", $previous->sql );
+		self::assertStringContainsString( 'o.event_id = %d', $previous->sql );
+		self::assertStringContainsString( 'o.source <> %s', $previous->sql );
+		self::assertStringContainsString( 'o.start_utc < %d', $previous->sql );
+		self::assertStringEndsWith( 'ORDER BY o.start_utc DESC, o.public_key DESC LIMIT 1', $previous->sql );
+		self::assertStringContainsString( 'o.start_utc > %d', $next->sql );
+		self::assertStringEndsWith( 'ORDER BY o.start_utc ASC, o.public_key ASC LIMIT 1', $next->sql );
+		self::assertSame(
+			array( 42, 'one_off', 1_800_000_000, 1_800_000_000, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' ),
+			array_slice( $previous->parameters, -5 )
+		);
+	}
+
 	/** Sitemap plans exclude one-off rows and retain the hard page ceiling. */
 	public function test_sitemap_plan_is_recurring_only_and_bounded(): void {
 		$plan = $this->builder()->build_sitemap( 100, 3 );

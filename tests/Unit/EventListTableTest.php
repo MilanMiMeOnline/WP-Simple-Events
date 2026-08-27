@@ -69,6 +69,7 @@ final class EventListTableTest extends TestCase {
 			array(
 				'cb',
 				'title',
+				'wpse_recurrence',
 				'wpse_start',
 				'wpse_end',
 				'wpse_all_day',

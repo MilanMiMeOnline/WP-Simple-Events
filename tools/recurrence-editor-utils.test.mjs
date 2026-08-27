@@ -20,6 +20,7 @@ import {
 	onlyThisMutationFromChanges,
 	orderedIsoWeekdays,
 	recurrenceAnchorParts,
+	showsRecurrenceEndControls,
 } from '../assets/src/js/recurrence-editor-utils.mjs';
 
 const aggregateOn = ( date ) => ( {
@@ -51,6 +52,15 @@ test( 'builds a normalized bounded survivor-search window', () => {
 		through_date: '2028-02-22',
 		max_rows: 1000,
 	} );
+} );
+
+test( 'shows recurrence termination only for generated repeat rules', () => {
+	assert.equal( showsRecurrenceEndControls( 'once' ), false );
+	assert.equal( showsRecurrenceEndControls( 'specific_dates' ), false );
+	assert.equal( showsRecurrenceEndControls( 'daily' ), true );
+	assert.equal( showsRecurrenceEndControls( 'weekly' ), true );
+	assert.equal( showsRecurrenceEndControls( 'monthly' ), true );
+	assert.equal( showsRecurrenceEndControls( 'yearly' ), true );
 } );
 
 test( 'starts survivor discovery near active and already-ended schedules', () => {

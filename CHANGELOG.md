@@ -2,6 +2,31 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [0.5.1] - 2026-08-27
+
+### Changed
+
+- Explain that the public preview of an open-ended recurrence is a rolling projection that renews automatically.
+- Hide generated-rule end controls for one-off and explicitly selected-date schedules.
+- Add a concise recurrence summary to the native Events overview, including its meaningful end condition.
+- Clarify event-source, taxonomy and typography controls in Elementor without changing saved widget defaults.
+- Label timed multi-day calendar-list segments as starting, continuing or ending while preserving the established all-day wording.
+- Add canonical-series, previous-date and next-date navigation to native exact-occurrence pages through bounded active-projection reads.
+
+### Fixed
+
+- Keep calendar feed requests on the page's active origin so equivalent host aliases, reverse proxies and domain-transition windows do not create false cross-origin failures.
+
+### Security and privacy
+
+- Keep occurrence-neighbour reads bounded to one published, password-free row in the same canonical recurring series and fail closed on inconsistent projection data.
+- Continue to use only local WordPress data and assets; this maintenance release adds no telemetry, cookies or remote service requests.
+
+### Testing
+
+- Add regressions for recurrence-control visibility, open-ended projection guidance, admin recurrence summaries, same-origin calendar feeds and timed multi-day list labels.
+- Add unit and browser coverage for bounded exact-occurrence series navigation and requalify the full static-analysis, dependency-audit and release-tooling suite.
+
 ## [0.5.0] - 2026-08-27
 
 ### Added

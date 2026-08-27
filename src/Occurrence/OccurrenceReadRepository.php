@@ -85,6 +85,38 @@ final readonly class OccurrenceReadRepository {
 	}
 
 	/**
+	 * Return the immediately previous active public occurrence in this series.
+	 *
+	 * @param OccurrenceReadModel $current Current exact public occurrence.
+	 */
+	public function find_previous_public( OccurrenceReadModel $current ): ?OccurrenceReadModel {
+		return $this->find_public_neighbor(
+			$current,
+			$this->query_builder()->build_previous_public_neighbor(
+				$current->event_id,
+				$current->date_range->start_utc(),
+				$current->public_key
+			)
+		);
+	}
+
+	/**
+	 * Return the immediately next active public occurrence in this series.
+	 *
+	 * @param OccurrenceReadModel $current Current exact public occurrence.
+	 */
+	public function find_next_public( OccurrenceReadModel $current ): ?OccurrenceReadModel {
+		return $this->find_public_neighbor(
+			$current,
+			$this->query_builder()->build_next_public_neighbor(
+				$current->event_id,
+				$current->date_range->start_utc(),
+				$current->public_key
+			)
+		);
+	}
+
+	/**
 	 * Return one bounded page of recurring candidates for public sitemap validation.
 	 *
 	 * @param int $limit Maximum rows in the page.
@@ -126,6 +158,43 @@ final readonly class OccurrenceReadRepository {
 		$total_pages = 0 === $total ? 0 : (int) ceil( $total / $plan->limit );
 
 		return new OccurrencePage( $occurrences, $total, $total_pages );
+	}
+
+	/**
+	 * Map one neighbour query without accepting a substituted series or row.
+	 *
+	 * @param OccurrenceReadModel $current Current exact public occurrence.
+	 * @param OccurrenceSqlQuery  $query   Internally built neighbour query.
+	 * @throws OccurrenceReadException When storage returns inconsistent data.
+	 */
+	private function find_public_neighbor(
+		OccurrenceReadModel $current,
+		OccurrenceSqlQuery $query
+	): ?OccurrenceReadModel {
+		$rows = $this->gateway->rows( $query );
+
+		if ( array() === $rows ) {
+			return null;
+		}
+
+		if ( 1 !== count( $rows ) ) {
+			throw new OccurrenceReadException( 'An occurrence neighbour lookup exceeded its bound.' );
+		}
+
+		try {
+			$neighbor = OccurrenceReadModel::from_row( $rows[0] );
+		} catch ( InvalidArgumentException ) {
+			throw new OccurrenceReadException( 'The occurrence projection contains invalid neighbour data.' );
+		}
+
+		if ( $neighbor->event_id !== $current->event_id
+			|| $neighbor->public_key === $current->public_key
+			|| OccurrenceSource::ONE_OFF === $neighbor->source
+		) {
+			throw new OccurrenceReadException( 'The occurrence neighbour does not belong to the requested series.' );
+		}
+
+		return $neighbor;
 	}
 
 	/**

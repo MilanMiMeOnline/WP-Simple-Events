@@ -67,6 +67,19 @@ export const boundedOccurrenceWindow = ( fromDate, horizonDays, maxRows ) => ( {
 } );
 
 /**
+ * Whether a generated recurrence exposes a termination choice and value.
+ *
+ * One-off events and explicitly selected dates do not use the rule-based end
+ * controls. Keeping this decision pure prevents a stale count or date from
+ * remaining visible after an editor changes the repeat type.
+ *
+ * @param {string} frequency Recurrence frequency selected by the editor.
+ * @return {boolean} Whether generated-rule end controls are relevant.
+ */
+export const showsRecurrenceEndControls = ( frequency ) =>
+	frequency !== 'once' && frequency !== 'specific_dates';
+
+/**
  * Pick a useful first survivor-search window without making it unbounded.
  *
  * Active/open series start at the WordPress site's current date. Already-ended

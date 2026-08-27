@@ -113,6 +113,7 @@ final class EventListWidget extends AbstractEventWidget {
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
+				'placeholder' => esc_html__( 'All categories', 'mime-simple-events-calendar' ),
 				'options'     => $this->term_options( EventTaxonomies::CATEGORY ),
 			)
 		);
@@ -123,6 +124,7 @@ final class EventListWidget extends AbstractEventWidget {
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
+				'placeholder' => esc_html__( 'All tags', 'mime-simple-events-calendar' ),
 				'options'     => $this->term_options( EventTaxonomies::TAG ),
 			)
 		);
@@ -333,6 +335,7 @@ final class EventListWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'title_typography',
+				'label'    => esc_html__( 'Event title typography', 'mime-simple-events-calendar' ),
 				'selector' => '{{WRAPPER}} .wpse-event-card-title',
 			)
 		);
@@ -340,6 +343,7 @@ final class EventListWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'button_typography',
+				'label'    => esc_html__( 'Button and pagination typography', 'mime-simple-events-calendar' ),
 				'selector' => '{{WRAPPER}} .wpse-events button, {{WRAPPER}} .wpse-events-pagination a',
 			)
 		);

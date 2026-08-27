@@ -109,6 +109,8 @@ final class CalendarShortcodeOccurrenceTest extends TestCase {
 		self::assertStringContainsString( 'Occurrence fallback venue', $output );
 		self::assertStringContainsString( '/occurrence/' . self::KEY . '/', $output );
 		self::assertStringContainsString( 'data-wpse-calendar=', $output );
+		self::assertStringNotContainsString( 'https://example.test/wp-json/', $output );
+		self::assertStringContainsString( '\/wp-json\/wpse\/v1\/events', $output );
 		self::assertNotNull( $gateway->rows_query );
 	}
 

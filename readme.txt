@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,13 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.5.1 =
+* Make open-ended recurrence previews explain their rolling public projection and hide rule-only end controls for one-off and selected-date schedules.
+* Add a concise recurrence summary to the native Events overview and clearer source, taxonomy and typography labels in Elementor.
+* Label timed multi-day calendar-list segments as starting, continuing or ending while preserving all-day wording.
+* Add bounded previous-date, next-date and canonical-series navigation to native exact-occurrence pages.
+* Keep calendar feed requests on the active site origin so equivalent host aliases and reverse proxies cannot cause false cross-origin failures.
 
 = 0.5.0 =
 * Add fifteen native Divi 5 modules with ordinary-page, Theme Builder, responsive-device and global-preset support.

@@ -183,10 +183,11 @@ Publication errors must identify the exact invalid fields. Saving, autosaving,
 REST updates, Quick Edit and other WordPress paths must enforce the same invariant
 instead of relying only on browser validation.
 
-The Events list provides useful start, end, all-day, location, category, event
-state and publication information, with practical date, category and state
-filters. Duplicate Event creates a draft and marks date values for editorial
-review.
+The Events list provides useful recurrence, start, end, all-day, location,
+category, event state and publication information, with practical date,
+category and state filters. Recurrence is summarized as one-off, selected dates
+or a concise rule and end condition; the list never expands a series into rows.
+Duplicate Event creates a draft and marks date values for editorial review.
 
 ## 7. Permissions and mutations
 
@@ -302,6 +303,8 @@ Calendar requirements:
 - theme-compatible controls with scoped CSS;
 - a useful server-rendered upcoming-event fallback;
 - clear loading, empty and error states;
+- localized start, continuation and end language for timed multi-day segments in
+  list view, without relabelling genuine all-day events;
 - no remote JavaScript, stylesheet, font or map dependency.
 
 The calendar library is bundled locally. Its licence, version and removal cost are
@@ -497,11 +500,16 @@ The version 1 product contract is satisfied when:
 ## 21. Post-version-1 roadmap boundary
 
 Future work is prioritized in [ROADMAP.md](ROADMAP.md). The next development
-cycle sharpens the existing one-off event, presentation and builder experience
-before adding a new event model or page-builder adapter.
+cycle closes the post-0.5 exploratory maintenance increment, then improves public
+filter discoverability and deterministic calendar colors, then adds bounded
+one-way Add to Calendar components before a feature-frozen 1.0 release candidate.
+The calendar action remains roadmap scope until its specification, tests and
+release are complete.
 
-Recurrence follows the accepted occurrence model, migration design and explicit
-series/occurrence editing contract in ADR-044. Divi 5 compatibility
-must reuse the shared presentation and query services rather than forking event
-logic. Interactive maps remain outside the roadmap. No roadmap item changes the
-supported product until its specification, tests and release are complete.
+Recurrence already follows the accepted occurrence model, migration design and
+explicit series/occurrence editing contract in ADR-044. Divi 5 compatibility
+already reuses the shared presentation and query services under ADR-078. Broader
+search, reusable venues/organizers, imports, synchronization, community
+submissions, interactive maps, ticketing and attendee management remain outside
+the 1.0 contract. No roadmap item changes the supported product until its
+specification, tests and release are complete.

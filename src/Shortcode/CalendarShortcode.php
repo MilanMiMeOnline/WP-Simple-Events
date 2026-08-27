@@ -165,7 +165,10 @@ final class CalendarShortcode implements ShortcodeRenderer {
 		$time_format   = is_string( $time_format ) && '' !== $time_format ? $time_format : 'H:i';
 
 		return array(
-			'endpoint'          => rest_url( 'wpse/v1/events' ),
+			// Keep browser requests on the page's active origin. This remains valid
+			// for subdirectory installs while avoiding host-alias CORS failures in
+			// proxies, local environments and domain-transition windows.
+			'endpoint'          => wp_make_link_relative( rest_url( 'wpse/v1/events' ) ),
 			'initialView'       => $this->fullcalendar_view( $attributes->initial_view ),
 			'mobileView'        => $this->fullcalendar_view( $attributes->mobile_view ),
 			'initialDate'       => $attributes->initial_date,
@@ -205,6 +208,11 @@ final class CalendarShortcode implements ShortcodeRenderer {
 				'viewHint'   => __( '%s view', 'mime-simple-events-calendar' ),
 				'cancelled'  => __( 'Cancelled', 'mime-simple-events-calendar' ),
 				'postponed'  => __( 'Postponed', 'mime-simple-events-calendar' ),
+				// Translators: %s is the displayed start time.
+				'startsAt'   => __( 'Starts at %s', 'mime-simple-events-calendar' ),
+				'continues'  => __( 'Continues', 'mime-simple-events-calendar' ),
+				// Translators: %s is the displayed end time.
+				'endsAt'     => __( 'Ends at %s', 'mime-simple-events-calendar' ),
 			),
 		);
 	}

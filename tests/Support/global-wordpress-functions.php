@@ -1720,6 +1720,19 @@ if ( ! function_exists( 'rest_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_make_link_relative' ) ) {
+	/**
+	 * Remove the scheme and host from one deterministic absolute URL.
+	 *
+	 * @param string $link Absolute or already-relative URL.
+	 */
+	function wp_make_link_relative( string $link ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		$relative = preg_replace( '|^(https?:)?//[^/]+(/?.*)|i', '$2', $link );
+
+		return is_string( $relative ) ? $relative : '';
+	}
+}
+
 if ( ! function_exists( 'determine_locale' ) ) {
 	/** Return the deterministic test locale. */
 	function determine_locale(): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.

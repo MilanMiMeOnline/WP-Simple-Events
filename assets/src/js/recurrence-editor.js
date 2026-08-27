@@ -17,6 +17,7 @@ import {
 	onlyThisMutationFromChanges,
 	orderedIsoWeekdays,
 	recurrenceAnchorParts,
+	showsRecurrenceEndControls,
 } from './recurrence-editor-utils.mjs';
 
 /**
@@ -284,6 +285,20 @@ const scheduleSummary = ( configuration ) => {
 
 	return summary;
 };
+
+const NoEndProjectionHelp = () =>
+	el(
+		'p',
+		{ className: 'components-base-control__help wpse-recurrence-projection-help' },
+		sprintf(
+			/* translators: %d: rolling public recurrence projection in days. */
+			__(
+				'This preview is limited to the next %d days. The series itself has no end date; its public occurrence window is renewed automatically.',
+				'mime-simple-events-calendar',
+			),
+			Number( wpseRecurrenceEditor.horizonDays ),
+		),
+	);
 
 const mutationFromConfiguration = ( context, configuration ) => {
 	const aggregate = JSON.parse( JSON.stringify( context.aggregate ) );
@@ -1964,6 +1979,9 @@ const RecurrencePanel = () => {
 										onChange: ( endMode ) => changeFollowingRule( { endMode } ),
 									} ),
 								followingRule.frequency !== 'specific_dates' &&
+									followingRule.endMode === 'never' &&
+									el( NoEndProjectionHelp ),
+								followingRule.frequency !== 'specific_dates' &&
 									followingRule.endMode === 'until' &&
 									el( TextControl, {
 										label: __( 'Last event date', 'mime-simple-events-calendar' ),
@@ -2198,8 +2216,7 @@ const RecurrencePanel = () => {
 						onChange: ( specificDates ) => change( { specificDates } ),
 					} ),
 				! occurrenceScoped &&
-					configuration.frequency !== 'once' &&
-					configuration.frequency !== 'specific_dates' &&
+					showsRecurrenceEndControls( configuration.frequency ) &&
 					el( SelectControl, {
 						label: __( 'Ends', 'mime-simple-events-calendar' ),
 						value: configuration.endMode,
@@ -2218,8 +2235,12 @@ const RecurrencePanel = () => {
 						onChange: ( endMode ) => change( { endMode } ),
 					} ),
 				! occurrenceScoped &&
+					showsRecurrenceEndControls( configuration.frequency ) &&
+					configuration.endMode === 'never' &&
+					el( NoEndProjectionHelp ),
+				! occurrenceScoped &&
+					showsRecurrenceEndControls( configuration.frequency ) &&
 					configuration.endMode === 'until' &&
-					configuration.frequency !== 'specific_dates' &&
 					el( TextControl, {
 						label: __( 'Last event date', 'mime-simple-events-calendar' ),
 						type: 'date',
@@ -2228,8 +2249,8 @@ const RecurrencePanel = () => {
 						onChange: ( untilDate ) => change( { untilDate } ),
 					} ),
 				! occurrenceScoped &&
+					showsRecurrenceEndControls( configuration.frequency ) &&
 					configuration.endMode === 'count' &&
-					configuration.frequency !== 'specific_dates' &&
 					el( TextControl, {
 						label: __( 'Number of events', 'mime-simple-events-calendar' ),
 						type: 'number',

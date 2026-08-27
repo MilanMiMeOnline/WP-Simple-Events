@@ -1598,3 +1598,84 @@ still prove that the current package loads the module palette without JavaScript
 errors. Device-button and global-preset interactions that browser automation
 cannot activate reliably are recorded as manual host checks rather than inferred
 from metadata alone.
+
+## ADR-083: Native occurrence leaves expose bounded series context and neighbours
+
+**Status:** Accepted
+
+An exact occurrence leaf rendered by the plugin's native fallback includes a
+small semantic navigation component after the event. It identifies the page as
+part of a repeating event, links back to the canonical series page and links to
+the immediately previous and next active public occurrence when those neighbours
+exist. Neighbours are read from the active occurrence projection with two
+permission-aware `LIMIT 1` queries; recurrence rules are never expanded during a
+visitor request.
+
+The current row's event ID, UTC start and stable public key define deterministic
+chronological tie-breaking. Parent publication, password, active-generation,
+coverage and dirty-state predicates are repeated for every neighbour read.
+Malformed or unavailable derived state fails closed to the already-public series
+link without exposing internal errors.
+
+The component is native-fallback presentation, not forced page chrome. When
+Elementor Pro or another supported Theme Builder owns the single location, that
+builder keeps full ownership and the plugin does not append markup outside its
+template. Atomic builder components for series navigation remain a separate
+future product decision.
+
+## ADR-084: The path to 1.0 closes discoverability before adding suite breadth
+
+**Status:** Accepted
+
+After the qualified recurrence and Divi 5 releases, the remaining pre-1.0 product
+work prioritizes correctness, discoverability and consistent presentation over
+copying the breadth of an event-management suite. The already-implemented post-
+0.5 exploratory fixes are released first. The next minor release replaces raw
+multiple-select visitor filters with a shared checkbox, active-chip, clear and
+restore interaction that preserves the existing namespaced GET and no-JavaScript
+contract across native, shortcode, Gutenberg, Elementor and Divi hosts.
+
+Calendar color becomes optional editorial data rather than builder-owned CSS.
+One strict category background color and one optional event override resolve
+through explicit event, explicit assigned category, unambiguous assigned category
+and component fallback precedence. Several different category colors never use
+incidental term order. Public foreground color is derived for contrast; visible
+title, time, status and legend/filter text prevent color-only communication.
+Recurring occurrences inherit the series choice in this phase.
+
+One-way Add to Calendar portability is the only competitor-gap candidate accepted
+for a separate pre-1.0 phase under ADR-085. That phase does not accept recurring-
+series export, subscriptions, inbound import or synchronization. Keyword search,
+reusable venues/organizers, featured events, international timezone conversion,
+community submission, maps, ticketing and attendee management are not 1.0
+requirements. Version 0.9 freezes features and public contracts; version 1.0 may
+follow only after upgrade, security, privacy, accessibility, performance,
+documentation and supported-host qualification pass without an unresolved P1 or
+P2 defect.
+
+## ADR-085: Add to Calendar is an optional atomic one-event action
+
+**Status:** Accepted
+
+Add to Calendar is presentation chosen by the template author, not mandatory
+event-page chrome. One shared renderer is exposed as a shortcode, dynamic
+Gutenberg block, Elementor widget and native Divi 5 module. Each uses the existing
+current/explicit event presentation resolver, supports exact occurrence context
+and emits nothing for an unavailable or ineligible source. Builder and block
+templates show the action only where their author places it. The plugin-owned
+native fallback may show it only through one explicit global opt-in and never
+appends it around a builder-owned body.
+
+The bounded action offers a downloadable ICS snapshot and optional Google Calendar
+and Outlook compose links for one public one-off event or one exact recurring
+occurrence. Provider visibility, dropdown/button presentation and a short plain-
+text label are allowlisted component settings; host design controls target shared
+semantic CSS variables. Calendar destinations never receive unpublished content,
+and external compose links use isolated new-tab behaviour.
+
+Canonical recurring-series export, subscription feeds, inbound import and
+external synchronization are excluded. Segments, manual dates, exclusions and
+sparse overrides cannot always be represented truthfully by one RRULE. A stable
+occurrence-aware UID, captured timezone, bounded escaped/folded text, safe content
+headers, cache/privacy review and Apple/Google/Outlook interoperability tests are
+release requirements for this phase.

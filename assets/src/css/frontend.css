@@ -43,6 +43,26 @@
 	width: min(100% - 2rem, 52rem);
 }
 
+.wpse-occurrence-navigation {
+	box-sizing: border-box;
+	width: min(100% - 2rem, 52rem);
+	margin-inline: auto;
+	margin-block: 0 calc(var(--wpse-spacing, 1rem) * 2);
+	padding-block-start: var(--wpse-spacing, 1rem);
+	border-block-start: 1px solid var(--wpse-color-border, currentcolor);
+}
+
+.wpse-occurrence-navigation p {
+	margin-block: 0 var(--wpse-spacing, 1rem);
+}
+
+.wpse-occurrence-navigation-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--wpse-spacing, 1rem);
+}
+
 .wpse-event-archive {
 	width: min(100% - 2rem, 72rem);
 }

@@ -139,6 +139,33 @@ final class OccurrenceReadRepositoryTest extends TestCase {
 		) )->find_public( 42, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' );
 	}
 
+	/** Previous and next reads preserve the same canonical series identity. */
+	public function test_repository_maps_public_series_neighbors(): void {
+		$current          = OccurrenceReadModel::from_row(
+			$this->row( '2027-01-08T10:00:00', '2027-01-08T11:00:00', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' )
+		);
+		$previous_gateway = new FakeOccurrenceReadGateway(
+			array( $this->row( '2027-01-01T10:00:00', '2027-01-01T11:00:00', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' ) ),
+			1
+		);
+		$next_gateway     = new FakeOccurrenceReadGateway(
+			array( $this->row( '2027-01-15T10:00:00', '2027-01-15T11:00:00', 'cccccccccccccccccccccccccccccccc' ) ),
+			1
+		);
+
+		$previous = ( new OccurrenceReadRepository( $this->builder(), $previous_gateway ) )
+			->find_previous_public( $current );
+		$next     = ( new OccurrenceReadRepository( $this->builder(), $next_gateway ) )
+			->find_next_public( $current );
+
+		self::assertSame( 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', $previous?->public_key );
+		self::assertSame( 'cccccccccccccccccccccccccccccccc', $next?->public_key );
+		self::assertNotNull( $previous_gateway->rows_query );
+		self::assertNull( $previous_gateway->count_query );
+		self::assertNotNull( $next_gateway->rows_query );
+		self::assertNull( $next_gateway->count_query );
+	}
+
 	/** Sitemap pages preserve occurrence units and use their dedicated plan. */
 	public function test_repository_returns_a_bounded_sitemap_page(): void {
 		$gateway    = new FakeOccurrenceReadGateway(

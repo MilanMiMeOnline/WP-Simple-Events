@@ -152,6 +152,10 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertSame( array( 'view' => 'grid' ), $controls['columns']['condition'] ?? null );
 		self::assertSame( array( 'show_excerpt' => 'yes' ), $controls['excerpt_length']['condition'] ?? null );
 		self::assertSame( array( 'show_title' => 'yes' ), $controls['heading_level']['condition'] ?? null );
+		self::assertSame( 'All categories', $controls['category']['placeholder'] ?? null );
+		self::assertSame( 'All tags', $controls['tag']['placeholder'] ?? null );
+		self::assertSame( 'Event title typography', $group_controls['title_typography']['args']['label'] ?? null );
+		self::assertSame( 'Button and pagination typography', $group_controls['button_typography']['args']['label'] ?? null );
 	}
 
 	/**
@@ -195,6 +199,7 @@ final class ElementorWidgetsTest extends TestCase {
 		$method = new ReflectionMethod( $widget, 'register_controls' );
 		$method->invoke( $widget );
 		$controls = $widget->wpse_test_controls();
+		$groups   = $widget->wpse_test_group_controls();
 
 		foreach ( array(
 			'spacing',
@@ -218,6 +223,10 @@ final class ElementorWidgetsTest extends TestCase {
 		}
 		self::assertSame( array( 'show_title' => 'yes' ), $controls['heading_level']['condition'] ?? null );
 		self::assertSame( array( 'show_action' => 'yes' ), $controls['action_label']['condition'] ?? null );
+		self::assertSame( 'Event source', $controls['event_id']['label'] ?? null );
+		self::assertSame( 'Current event (automatic)', $controls['event_id']['placeholder'] ?? null );
+		self::assertSame( 'Event details typography', $groups['details_typography']['args']['label'] ?? null );
+		self::assertSame( 'Field label typography', $groups['label_typography']['args']['label'] ?? null );
 	}
 
 	/**

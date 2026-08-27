@@ -125,6 +125,36 @@ final readonly class OccurrenceReadQueryBuilder {
 	}
 
 	/**
+	 * Build the immediately previous active recurring occurrence.
+	 *
+	 * @param int    $event_id  Canonical series event ID.
+	 * @param int    $start_utc Current occurrence start timestamp.
+	 * @param string $public_key Current stable occurrence key.
+	 */
+	public function build_previous_public_neighbor(
+		int $event_id,
+		int $start_utc,
+		string $public_key
+	): OccurrenceSqlQuery {
+		return $this->build_public_neighbor( $event_id, $start_utc, $public_key, false );
+	}
+
+	/**
+	 * Build the immediately next active recurring occurrence.
+	 *
+	 * @param int    $event_id  Canonical series event ID.
+	 * @param int    $start_utc Current occurrence start timestamp.
+	 * @param string $public_key Current stable occurrence key.
+	 */
+	public function build_next_public_neighbor(
+		int $event_id,
+		int $start_utc,
+		string $public_key
+	): OccurrenceSqlQuery {
+		return $this->build_public_neighbor( $event_id, $start_utc, $public_key, true );
+	}
+
+	/**
 	 * Build one bounded sitemap page from recurring projection rows only.
 	 *
 	 * @param int $limit Maximum rows in the page.
@@ -190,6 +220,51 @@ final readonly class OccurrenceReadQueryBuilder {
 			OccurrenceSource::ONE_OFF->value,
 			EventMeta::COVERAGE_GENERATION,
 			EventMeta::INDEX_DIRTY,
+		);
+	}
+
+	/**
+	 * Build one deterministic, permission-aware neighbour lookup.
+	 *
+	 * @param int    $event_id  Canonical series event ID.
+	 * @param int    $start_utc Current occurrence start timestamp.
+	 * @param string $public_key Current stable occurrence key.
+	 * @param bool   $next      Whether to read the next instead of previous row.
+	 * @throws InvalidArgumentException When the current identity is malformed.
+	 */
+	private function build_public_neighbor(
+		int $event_id,
+		int $start_utc,
+		string $public_key,
+		bool $next
+	): OccurrenceSqlQuery {
+		if ( $event_id <= 0 || $start_utc < 0 || 1 !== preg_match( '/^[a-f0-9]{32}$/D', $public_key ) ) {
+			throw new InvalidArgumentException( 'A public occurrence neighbour requires canonical identities.' );
+		}
+
+		$comparison   = $next ? '>' : '<';
+		$direction    = $next ? 'ASC' : 'DESC';
+		$conditions   = $this->base_conditions();
+		$conditions[] = 'o.event_id = %d';
+		$conditions[] = 'o.source <> %s';
+		$conditions[] = "(o.start_utc {$comparison} %d OR (o.start_utc = %d AND o.public_key {$comparison} %s))";
+		$parameters   = array_merge(
+			$this->base_parameters(),
+			array(
+				$event_id,
+				OccurrenceSource::ONE_OFF->value,
+				$start_utc,
+				$start_utc,
+				$public_key,
+			)
+		);
+
+		return new OccurrenceSqlQuery(
+			$this->select_clause()
+			. " FROM {$this->occurrences_table} o INNER JOIN {$this->posts_table} p ON p.ID = o.event_id"
+			. ' WHERE ' . implode( ' AND ', $conditions )
+			. " ORDER BY o.start_utc {$direction}, o.public_key {$direction} LIMIT 1",
+			$parameters
 		);
 	}
 

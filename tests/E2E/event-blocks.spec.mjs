@@ -168,6 +168,22 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	expect( contract.serialized ).not.toContain( 'E2E Atomic Hall' );
 	expect( contract.preview ).toContain( 'wpse-event-field-block-event-venue' );
 	expect( contract.preview ).toContain( 'E2E Atomic Hall' );
+
+	await page.evaluate( ( names ) => {
+		const eventId = Number.parseInt(
+			Object.keys( window.wpseEventFieldBlocks?.events || {} )[ 0 ],
+			10,
+		);
+		const blocks = names.map( ( name ) =>
+			window.wp.blocks.createBlock( name, { eventId } ),
+		);
+
+		window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( blocks );
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( blocks[ 2 ].clientId );
+	}, atomicBlockNames );
+	await expect( page.getByLabel( 'Event source', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Show label', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Label text', { exact: true } ) ).toBeVisible();
 } );
 
 test( 'previews and applies a complete-series recurrence in Gutenberg', async ( {
@@ -239,8 +255,17 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await expect( ordinarySchedule ).not.toHaveAttribute( 'hidden', '' );
 	await expect( scheduleNotice ).toHaveAttribute( 'hidden', '' );
 	await expect( panel ).toContainText( 'Editing scope: complete series' );
+	await expect( panel.getByLabel( 'Ends', { exact: true } ) ).toHaveCount( 0 );
+	await expect( panel.getByLabel( 'Number of events', { exact: true } ) ).toHaveCount( 0 );
 	await panel.getByLabel( 'Repeats', { exact: true } ).selectOption( 'daily' );
+	await expect( panel.getByLabel( 'Ends', { exact: true } ) ).toBeVisible();
+	await expect( panel ).toContainText(
+		'This preview is limited to the next 540 days. The series itself has no end date',
+	);
 	await panel.getByLabel( 'Ends', { exact: true } ).selectOption( 'count' );
+	await expect( panel ).not.toContainText(
+		'This preview is limited to the next 540 days. The series itself has no end date',
+	);
 	await panel.getByLabel( 'Number of events', { exact: true } ).fill( '3' );
 	await panel.getByRole( 'button', { name: 'Preview recurrence' } ).click();
 	await expect( panel ).toContainText( 'Review impact' );
@@ -279,6 +304,24 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 		);
 
 		expect( new Set( occurrenceUrls ).size ).toBe( 3 );
+
+		await archivePage.goto( occurrenceUrls[ 1 ] );
+		const seriesNavigation = archivePage.getByRole( 'navigation', {
+			name: 'Other dates for this event',
+		} );
+
+		await expect( seriesNavigation ).toContainText(
+			'This date is part of a repeating event.',
+		);
+		await expect(
+			seriesNavigation.getByRole( 'link', { name: 'View the event series' } ),
+		).toBeVisible();
+		await expect(
+			seriesNavigation.getByRole( 'link', { name: 'Previous date' } ),
+		).toBeVisible();
+		await expect(
+			seriesNavigation.getByRole( 'link', { name: 'Next date' } ),
+		).toBeVisible();
 	} finally {
 		await archivePage.close();
 	}

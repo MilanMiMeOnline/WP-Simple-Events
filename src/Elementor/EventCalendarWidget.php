@@ -97,6 +97,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
+				'placeholder' => esc_html__( 'All categories', 'mime-simple-events-calendar' ),
 				'options'     => $this->term_options( EventTaxonomies::CATEGORY ),
 				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change categories when visitor filters are shown.', 'mime-simple-events-calendar' ),
 			)
@@ -108,6 +109,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 				'type'        => Controls_Manager::SELECT2,
 				'multiple'    => true,
 				'label_block' => true,
+				'placeholder' => esc_html__( 'All tags', 'mime-simple-events-calendar' ),
 				'options'     => $this->term_options( EventTaxonomies::TAG ),
 				'description' => esc_html__( 'Applied when the calendar first loads. Visitors can change tags when visitor filters are shown.', 'mime-simple-events-calendar' ),
 			)

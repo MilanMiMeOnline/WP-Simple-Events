@@ -20,6 +20,7 @@ use MiMe\WPSimpleEvents\Frontend\NativeTemplateRenderer;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceDocumentController;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceEventPresentationFactory;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationContext;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceSeriesNavigationRenderer;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadModel;
 use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
 use MiMe\WPSimpleEvents\Seo\StructuredDataController;
@@ -33,6 +34,7 @@ use WP_Query;
 #[CoversClass( OccurrenceEventPresentationFactory::class )]
 #[CoversClass( NativeTemplateRenderer::class )]
 #[CoversClass( OccurrenceDocumentController::class )]
+#[CoversClass( OccurrenceSeriesNavigationRenderer::class )]
 /**
  * Proves that one exact occurrence drives the native public presentation.
  */
@@ -121,6 +123,9 @@ final class OccurrenceEventPresentationFactoryTest extends TestCase {
 		self::assertStringContainsString( '<div class="wpse-event-note">Occurrence note</div>', $output );
 		self::assertStringContainsString( 'https://example.com/occurrence.jpg', $output );
 		self::assertStringContainsString( 'Occurrence venue', $output );
+		self::assertStringContainsString( 'This date is part of a repeating event.', $output );
+		self::assertStringContainsString( 'View the event series', $output );
+		self::assertStringContainsString( 'https://example.com/events/series/', $output );
 	}
 
 	/** Elementor Theme Builder may own an occurrence page after widget context parity. */

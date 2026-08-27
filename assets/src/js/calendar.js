@@ -390,6 +390,40 @@ const initializeCalendar = ( root ) => {
 
 			return { domNodes: [ wrapper ] };
 		},
+		eventDidMount: ( argument ) => {
+			if (
+				! argument.view.type.startsWith( 'list' ) ||
+				argument.event.allDay ||
+				! argument.event.start ||
+				! argument.event.end ||
+				argument.event.start.toDateString() === argument.event.end.toDateString()
+			) {
+				return;
+			}
+
+			const row = argument.el.closest( '.fc-list-event' );
+			const time = row?.querySelector( '.fc-list-event-time' );
+
+			if ( ! time ) {
+				return;
+			}
+
+			const displayedTime = time.textContent.trim();
+
+			if ( argument.isStart && ! argument.isEnd ) {
+				time.textContent = config.strings.startsAt.replace(
+					'%s',
+					displayedTime,
+				);
+			} else if ( ! argument.isStart && argument.isEnd ) {
+				time.textContent = config.strings.endsAt.replace(
+					'%s',
+					displayedTime,
+				);
+			} else if ( ! argument.isStart && ! argument.isEnd ) {
+				time.textContent = config.strings.continues;
+			}
+		},
 	} );
 
 	// FullCalendar must be measurable during its initial render. The server-side

@@ -24,10 +24,12 @@ final class EventListTable {
 	 *
 	 * @param AdminEventListQuery     $query          Admin query argument builder.
 	 * @param AdminEventDateFormatter $date_formatter Compact date formatter.
+	 * @param AdminRecurrenceSummary  $recurrence     Protected recurrence summary.
 	 */
 	public function __construct(
 		private readonly AdminEventListQuery $query = new AdminEventListQuery(),
-		private readonly AdminEventDateFormatter $date_formatter = new AdminEventDateFormatter()
+		private readonly AdminEventDateFormatter $date_formatter = new AdminEventDateFormatter(),
+		private readonly AdminRecurrenceSummary $recurrence = new AdminRecurrenceSummary()
 	) {}
 
 	/**
@@ -51,6 +53,7 @@ final class EventListTable {
 		return array(
 			'cb'                                    => $columns['cb'] ?? '<input type="checkbox">',
 			'title'                                 => $columns['title'] ?? __( 'Title', 'mime-simple-events-calendar' ),
+			'wpse_recurrence'                       => __( 'Repeats', 'mime-simple-events-calendar' ),
 			'wpse_start'                            => __( 'Start', 'mime-simple-events-calendar' ),
 			'wpse_end'                              => __( 'End', 'mime-simple-events-calendar' ),
 			'wpse_all_day'                          => __( 'All day', 'mime-simple-events-calendar' ),
@@ -69,6 +72,11 @@ final class EventListTable {
 	 * @param int    $post_id Event post ID.
 	 */
 	public function render_column( string $column, int $post_id ): void {
+		if ( 'wpse_recurrence' === $column ) {
+			echo esc_html( $this->recurrence->summarize( $post_id ) );
+			return;
+		}
+
 		if ( 'wpse_start' === $column || 'wpse_end' === $column ) {
 			$this->render_date( $post_id, 'wpse_start' === $column ? EventMeta::START_UTC : EventMeta::END_UTC );
 			return;

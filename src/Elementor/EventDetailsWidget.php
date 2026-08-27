@@ -90,10 +90,11 @@ final class EventDetailsWidget extends AbstractEventWidget {
 		$this->add_control(
 			'event_id',
 			array(
-				'label'       => esc_html__( 'Preview event', 'mime-simple-events-calendar' ),
+				'label'       => esc_html__( 'Event source', 'mime-simple-events-calendar' ),
 				'description' => esc_html__( 'Optional. On an event template, leave empty to use the current event.', 'mime-simple-events-calendar' ),
 				'type'        => Controls_Manager::SELECT2,
 				'label_block' => true,
+				'placeholder' => esc_html__( 'Current event (automatic)', 'mime-simple-events-calendar' ),
 				'options'     => $this->previews->options(),
 				'default'     => '',
 			)
@@ -328,6 +329,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'details_typography',
+				'label'    => esc_html__( 'Event details typography', 'mime-simple-events-calendar' ),
 				'selector' => '{{WRAPPER}} .wpse-single-event',
 			)
 		);
@@ -335,6 +337,7 @@ final class EventDetailsWidget extends AbstractEventWidget {
 			Group_Control_Typography::get_type(),
 			array(
 				'name'     => 'label_typography',
+				'label'    => esc_html__( 'Field label typography', 'mime-simple-events-calendar' ),
 				'selector' => '{{WRAPPER}} .wpse-event-label',
 			)
 		);

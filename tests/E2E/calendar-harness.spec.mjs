@@ -260,6 +260,43 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 	} ).toEqual( [] );
 } );
 
+test( 'labels timed multi-day segments clearly in list view', async ( { page } ) => {
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+
+	const calendar = page.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+	await canvas.getByRole( 'button', { name: 'Next' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
+	await canvas.getByRole( 'button', { name: 'List' } ).click();
+
+	const segments = canvas.locator( '.fc-list-event' ).filter( {
+		hasText: 'E2E Multi-day event',
+	} );
+
+	await expect( segments ).toHaveCount( 3 );
+	await expect( segments.nth( 0 ).locator( '.fc-list-event-time' ) ).toContainText(
+		'Starts at',
+	);
+	await expect( segments.nth( 1 ).locator( '.fc-list-event-time' ) ).toHaveText(
+		'Continues',
+	);
+	await expect( segments.nth( 2 ).locator( '.fc-list-event-time' ) ).toContainText(
+		'Ends at',
+	);
+
+	const allDaySegments = canvas.locator( '.fc-list-event' ).filter( {
+		hasText: 'E2E All-day event',
+	} );
+
+	await expect( allDaySegments ).toHaveCount( 3 );
+	await expect( allDaySegments.nth( 1 ).locator( '.fc-list-event-time' ) ).not.toHaveText(
+		'Continues',
+	);
+} );
+
 test( 'uses the configured mobile list view on its first render', async ( {
 	page,
 } ) => {
