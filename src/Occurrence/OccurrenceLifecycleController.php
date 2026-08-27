@@ -30,6 +30,7 @@ final class OccurrenceLifecycleController {
 	 */
 	public function register(): void {
 		add_action( 'before_delete_post', array( $this, 'delete' ), 10, 2 );
+		add_action( 'deleted_post', array( $this, 'verify_deleted' ), 10, 2 );
 	}
 
 	/**
@@ -46,5 +47,19 @@ final class OccurrenceLifecycleController {
 		}
 
 		$this->store->remove( $post_id );
+	}
+
+	/**
+	 * Repeat row cleanup after WordPress has removed post metadata and caches.
+	 *
+	 * @param int          $post_id Deleted event candidate ID.
+	 * @param WP_Post|null $post    WordPress post that was deleted.
+	 */
+	public function verify_deleted( int $post_id, ?WP_Post $post = null ): void {
+		if ( ! $post instanceof WP_Post || EventPostType::POST_TYPE !== $post->post_type ) {
+			return;
+		}
+
+		$this->store->remove_deleted( $post_id );
 	}
 }

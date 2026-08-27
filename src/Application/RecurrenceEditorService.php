@@ -262,7 +262,7 @@ final readonly class RecurrenceEditorService {
 			$this->fail( RecurrenceEditorError::INVALID_CONFIRMATION );
 		}
 
-		$result = $this->saves->save( $event_id, $proposed, $window, $expected_revision );
+		$result = $this->saves->save( $event_id, $proposed, $expected_revision );
 
 		if ( $result->changed() ) {
 			wp_save_post_revision( $event_id );

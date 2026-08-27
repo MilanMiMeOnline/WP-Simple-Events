@@ -16,7 +16,7 @@ use MiMe\WPSimpleEvents\Recurrence\RecurrenceGenerationWindow;
 /**
  * Builds the same bounded future horizon used by the recurrence editor.
  */
-final readonly class OccurrenceRepairWindowFactory {
+final readonly class OccurrenceRepairWindowFactory implements OccurrenceProjectionWindowFactory {
 	/**
 	 * Create the production window factory.
 	 *

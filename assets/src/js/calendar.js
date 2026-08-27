@@ -160,41 +160,65 @@ const sameSelection = ( first, second ) => JSON.stringify( [ ...first ].sort() )
 
 /**
  * Repair FullCalendar after a hidden or resized integration container becomes
- * measurable. This covers tabs, accordions and editor preview containers.
+ * measurable and follow configured views when a responsive builder canvas
+ * crosses the mobile breakpoint.
  *
- * @param {HTMLElement} canvas   Calendar canvas.
- * @param {Calendar}    calendar FullCalendar instance.
+ * @param {HTMLElement} canvas      Calendar canvas.
+ * @param {Calendar}    calendar    FullCalendar instance.
+ * @param {string}      desktopView Configured desktop view.
+ * @param {string}      mobileView  Configured mobile view.
  */
-const observeCalendarSize = ( canvas, calendar ) => {
-	if ( typeof window.ResizeObserver !== 'function' ) {
-		return () => {};
+const observeCalendarSize = ( canvas, calendar, desktopView, mobileView ) => {
+	const cleanups = [];
+	const viewport = window.matchMedia( '(max-width: 599px)' );
+	const handleViewportChange = ( event ) => {
+		const desiredView = event.matches && mobileView
+			? mobileView
+			: desktopView;
+
+		if ( desiredView && calendar.view.type !== desiredView ) {
+			calendar.changeView( desiredView );
+		}
+	};
+
+	if ( typeof viewport.addEventListener === 'function' ) {
+		viewport.addEventListener( 'change', handleViewportChange );
+		cleanups.push( () =>
+			viewport.removeEventListener( 'change', handleViewportChange ),
+		);
+	} else if ( typeof viewport.addListener === 'function' ) {
+		viewport.addListener( handleViewportChange );
+		cleanups.push( () => viewport.removeListener( handleViewportChange ) );
 	}
 
-	let previousWidth = canvas.getBoundingClientRect().width;
-	const observer = new window.ResizeObserver( ( entries ) => {
-		if ( ! canvas.isConnected ) {
-			observer.disconnect();
-			return;
-		}
-
-		const width = entries[ 0 ]?.contentRect.width ?? 0;
-
-		if ( width <= 0 || Math.abs( width - previousWidth ) < 1 ) {
-			previousWidth = width;
-			return;
-		}
-
-		previousWidth = width;
-		window.requestAnimationFrame( () => {
-			if ( canvas.isConnected && canvas.getBoundingClientRect().width > 0 ) {
-				calendar.updateSize();
+	if ( typeof window.ResizeObserver === 'function' ) {
+		let previousWidth = canvas.getBoundingClientRect().width;
+		const observer = new window.ResizeObserver( ( entries ) => {
+			if ( ! canvas.isConnected ) {
+				observer.disconnect();
+				return;
 			}
+
+			const width = entries[ 0 ]?.contentRect.width ?? 0;
+
+			if ( width <= 0 || Math.abs( width - previousWidth ) < 1 ) {
+				previousWidth = width;
+				return;
+			}
+
+			previousWidth = width;
+			window.requestAnimationFrame( () => {
+				if ( canvas.isConnected && canvas.getBoundingClientRect().width > 0 ) {
+					calendar.updateSize();
+				}
+			} );
 		} );
-	} );
 
-	observer.observe( canvas );
+		observer.observe( canvas );
+		cleanups.push( () => observer.disconnect() );
+	}
 
-	return () => observer.disconnect();
+	return () => cleanups.forEach( ( cleanup ) => cleanup() );
 };
 
 /**
@@ -372,7 +396,12 @@ const initializeCalendar = ( root ) => {
 	// fallback remains available until the first event request succeeds.
 	canvas.hidden = false;
 	calendar.render();
-	const stopObservingSize = observeCalendarSize( canvas, calendar );
+	const stopObservingSize = observeCalendarSize(
+		canvas,
+		calendar,
+		config.initialView,
+		config.mobileView,
+	);
 	const emptyActionButton = emptyAction.querySelector( 'button' );
 	const handleFilterSubmit = ( event ) => {
 		event.preventDefault();
@@ -418,7 +447,7 @@ const initializeCalendar = ( root ) => {
  *
  * @param {Document|Element|Array<Element>|Object} scope Host-provided scope.
  */
-const initializeCalendars = ( scope ) => {
+export const initializeCalendars = ( scope ) => {
 	const scopeElement = scope?.jquery ? scope[ 0 ] : scope?.[ 0 ] ?? scope;
 
 	if ( ! scopeElement || typeof scopeElement.querySelectorAll !== 'function' ) {
@@ -433,6 +462,11 @@ const initializeCalendars = ( scope ) => {
 		.querySelectorAll( '[data-wpse-calendar]' )
 		.forEach( initializeCalendar );
 };
+
+// Divi and other visual builders can insert server-rendered calendar markup
+// after this bundle's initial document scan. Expose the same idempotent
+// initializer instead of duplicating FullCalendar setup in each integration.
+window.wpseInitializeCalendars = initializeCalendars;
 
 /** Bind the calendar initializer to Elementor only when its public hook exists. */
 const registerElementorHook = () => {

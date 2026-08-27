@@ -1,8 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 25 August 2026
-**Current release:** 0.4.0 recurring events, qualified for WordPress.org publication
+**Last reviewed:** 27 August 2026
+**Current release candidate:** 0.5.0 with optional native Divi 5 integration
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -13,8 +13,8 @@ linked from [the documentation index](README.md).
 
 MiMe Simple Events and Calendar is a focused WordPress event-publishing plugin. It gives
 editors a native Events area, adds event-specific dates and location fields, and
-provides lists, grids, a calendar, Gutenberg blocks and optional Elementor
-widgets.
+provides lists, grids, a calendar, Gutenberg blocks and optional Elementor or
+Divi 5 widgets/modules.
 
 The plugin must remain useful without WooCommerce, Elementor or another service.
 It should feel like publishing a WordPress post, not operating a separate event
@@ -46,6 +46,7 @@ platform.
 - Category and tag filters.
 - Shortcodes, dynamic Gutenberg blocks and an event block pattern.
 - Optional Elementor composite and atomic widgets.
+- Optional native Divi 5 composite and atomic modules.
 - Event JSON-LD on eligible public event pages.
 - Safe duplication and explicit uninstall-data ownership controls.
 - Recurring series with bounded daily, weekly, monthly, yearly and specific-date schedules.
@@ -60,9 +61,9 @@ platform.
 - Patterned recurrence exclusions and a separate builder body per occurrence.
 
 The recurrence implementation follows ADR-044 and
-[RECURRENCE-CONTRACT.md](RECURRENCE-CONTRACT.md). The 0.4.0 development branch now
-enables its fail-closed occurrence read path by default; the published 0.3.0
-release continues to represent repeated real-world events as separate posts.
+[RECURRENCE-CONTRACT.md](RECURRENCE-CONTRACT.md). Recurrence and its fail-closed
+occurrence read path have been public since 0.4.0. The optional Divi adapter
+follows ADR-078 and [DIVI-5-INTEGRATION.md](DIVI-5-INTEGRATION.md).
 
 ## 3. Platform and identity
 
@@ -82,10 +83,11 @@ release continues to represent repeated real-world events as separate posts.
 | Minimum WordPress | 6.9 |
 | Minimum PHP | 8.2 |
 | Optional Elementor minimum | 3.35 |
+| Optional Divi minimum | 5.11.1 |
 | Licence | GPL-2.0-or-later |
 
-WooCommerce and Elementor are optional. Their absence must not create an admin
-notice, break activation or disable core event functionality.
+WooCommerce, Elementor and Divi are optional. Their absence must not create an
+admin notice, break activation or disable core event functionality.
 
 ## 4. Native WordPress content model
 
@@ -432,6 +434,9 @@ batched through WordPress APIs. The complete contract is in
 
 - One rebuildable occurrence table supports bounded chronological queries. The
   event post and registered metadata remain canonical.
+- Permanent event deletion removes every derived occurrence generation. A
+  post-delete verification guard and the age-gated 100-row maintenance worker
+  repair missed or orphaned derived rows without visitor-request work.
 - Date comparison uses normalized metadata indices.
 - Public queries are bounded and avoid unbounded `posts_per_page=-1` behaviour.
 - Assets load only where their component is rendered or administered.

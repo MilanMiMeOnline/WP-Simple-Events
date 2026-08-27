@@ -8,6 +8,8 @@ export default [
   {
     files: [
       'assets/src/js/calendar.js',
+      'assets/src/js/divi-editor.js',
+      'assets/src/js/divi-editor-utils.mjs',
       'assets/src/js/recurrence-editor.js',
       'assets/src/js/recurrence-editor-utils.mjs',
     ],

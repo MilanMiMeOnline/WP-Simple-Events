@@ -25,12 +25,15 @@ final class OccurrenceGenerationCleanupQueryBuilderTest extends TestCase {
 		$query = $this->builder()->candidates( 1_800_000_000, 100 );
 
 		self::assertStringContainsString( 'SELECT DISTINCT o.id', $query->sql );
+		self::assertStringContainsString( 'LEFT JOIN wp_posts p ON p.ID = o.event_id', $query->sql );
+		self::assertStringContainsString( 'p.ID IS NULL', $query->sql );
+		self::assertStringContainsString( 'p.post_type <> %s', $query->sql );
 		self::assertStringContainsString( 'dg.post_id IS NULL', $query->sql );
 		self::assertStringContainsString( 'o.generation <> CAST(ag.meta_value AS UNSIGNED)', $query->sql );
 		self::assertStringContainsString( 'o.created_utc <= %d', $query->sql );
 		self::assertStringEndsWith( 'ORDER BY o.id ASC LIMIT %d', $query->sql );
 		self::assertSame(
-			array( EventMeta::INDEX_DIRTY, EventMeta::ACTIVE_GENERATION, 1_800_000_000, 100 ),
+			array( EventMeta::ACTIVE_GENERATION, EventMeta::INDEX_DIRTY, 1_800_000_000, 'wpse_event', 100 ),
 			$query->parameters
 		);
 	}
@@ -44,7 +47,7 @@ final class OccurrenceGenerationCleanupQueryBuilderTest extends TestCase {
 		self::assertStringContainsString( 'o.id IN (%d, %d)', $query->sql );
 		self::assertStringContainsString( 'o.generation <> CAST(ag.meta_value AS UNSIGNED)', $query->sql );
 		self::assertSame(
-			array( EventMeta::INDEX_DIRTY, EventMeta::ACTIVE_GENERATION, 9, 12, 1_800_000_000 ),
+			array( EventMeta::ACTIVE_GENERATION, EventMeta::INDEX_DIRTY, 9, 12, 1_800_000_000, 'wpse_event' ),
 			$query->parameters
 		);
 	}
@@ -67,6 +70,7 @@ final class OccurrenceGenerationCleanupQueryBuilderTest extends TestCase {
 	private function builder(): OccurrenceGenerationCleanupQueryBuilder {
 		return new OccurrenceGenerationCleanupQueryBuilder(
 			'wp_wpse_event_occurrences',
+			'wp_posts',
 			'wp_postmeta'
 		);
 	}

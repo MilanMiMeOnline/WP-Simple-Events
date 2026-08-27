@@ -75,6 +75,7 @@ const ALLOWED_PATH_PREFIXES = [
 	'assets/dist/js/',
 	'assets/src/css/',
 	'blocks/',
+	'divi/',
 	'languages/',
 	'src/',
 	'templates/',
@@ -189,6 +190,10 @@ function invalidArchive( message ) {
 function hasAllowedFileType( relative ) {
 	if ( relative.startsWith( 'blocks/' ) ) {
 		return relative.endsWith( '/block.json' );
+	}
+
+	if ( relative.startsWith( 'divi/' ) ) {
+		return relative.endsWith( '/module.json' );
 	}
 
 	if ( relative.startsWith( 'src/' ) || relative.startsWith( 'templates/' ) ) {

@@ -60,6 +60,7 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'wpse_occurrence_generation_cleanup' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_occurrence_projection_renewal' ) );
 		self::assertIsCallable( HookRecorder::action( 'before_delete_post' ) );
+		self::assertIsCallable( HookRecorder::action( 'deleted_post' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_restore_post_revision' ) );
 		self::assertIsCallable( HookRecorder::action( 'enqueue_block_editor_assets' ) );
 		self::assertCount( 2, HookRecorder::actions( 'enqueue_block_editor_assets' ) );
@@ -87,11 +88,14 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'posts_pre_query' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_enqueue_scripts' ) );
 		self::assertIsCallable( HookRecorder::action( 'rest_api_init' ) );
-		self::assertCount( 2, HookRecorder::actions( 'rest_api_init' ) );
+		self::assertCount( 3, HookRecorder::actions( 'rest_api_init' ) );
 		self::assertIsCallable( HookRecorder::action( 'template_include' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_single_template' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_archive_template' ) );
 		self::assertIsCallable( HookRecorder::action( 'elementor/loaded' ) );
+		self::assertIsCallable( HookRecorder::action( 'divi_module_library_modules_dependency_tree' ) );
+		self::assertIsCallable( HookRecorder::action( 'divi_visual_builder_assets_before_enqueue_styles' ) );
+		self::assertIsCallable( HookRecorder::action( 'divi_visual_builder_assets_before_enqueue_scripts' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp_head' ) );
 		self::assertNull( HookRecorder::action( 'elementor/widgets/register' ) );
 		self::assertNull( HookRecorder::action( 'wp' ) );
@@ -119,7 +123,7 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'redirect_canonical' ) );
 		self::assertIsCallable( HookRecorder::action( 'document_title_parts' ) );
 		self::assertIsCallable( HookRecorder::action( 'get_canonical_url' ) );
-		self::assertCount( 3, HookRecorder::actions( 'rest_api_init' ) );
+		self::assertCount( 4, HookRecorder::actions( 'rest_api_init' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpseo_canonical' ) );
 		self::assertIsCallable( HookRecorder::action( 'rank_math/frontend/canonical' ) );
 		self::assertIsCallable( HookRecorder::action( 'aioseo_canonical_url' ) );

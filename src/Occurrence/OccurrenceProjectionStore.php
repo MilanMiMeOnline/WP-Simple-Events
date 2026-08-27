@@ -46,4 +46,11 @@ interface OccurrenceProjectionStore {
 	 * @param int $event_id Canonical event post ID.
 	 */
 	public function remove( int $event_id ): bool;
+
+	/**
+	 * Remove derived rows after WordPress has already deleted the event post.
+	 *
+	 * @param int $event_id Deleted event post ID.
+	 */
+	public function remove_deleted( int $event_id ): bool;
 }

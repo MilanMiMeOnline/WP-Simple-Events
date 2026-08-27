@@ -2,6 +2,39 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [0.5.0] - 2026-08-27
+
+### Added
+
+- Add fifteen native Divi 5 modules: Event List / Grid, Event Calendar, Event Details and twelve individual event fields.
+- Add optional Divi event post-type integration, ordinary-page explicit sources and Theme Builder current-event or exact-occurrence context.
+- Add bounded authenticated live previews for query-backed Divi modules with debounce, request cancellation and editor-only empty/error states.
+- Add Divi-native responsive-device, design, advanced, copy/paste and global-preset metadata without introducing a Divi runtime dependency.
+
+### Changed
+
+- Keep mounted calendars synchronized with the configured desktop/mobile view when a builder canvas crosses the responsive breakpoint.
+- Namespace dynamically fetched Divi preview IDs and their local label, ARIA and fragment references per stable module instance.
+- Project the complete production occurrence horizon after confirmed recurrence changes instead of limiting the saved projection to the impact-preview window.
+
+### Security and privacy
+
+- Require an existing editor document and its exact `edit_post` capability for every Divi preview request; explicit event sources remain published and password-free through the shared presentation boundary.
+- Keep Divi editor snapshots bounded and non-sensitive, and return generic empty output for draft, private, password-protected or invalid explicit sources.
+- Keep licensed Divi theme files, licence keys, updater data and external Divi/React packages outside source control, CI artifacts and release archives.
+
+### Fixed
+
+- Add post-delete lifecycle guards, parent-existence rechecks and bounded orphan repair so permanent recurring-event deletion cannot retain unreachable occurrence rows during a projection race.
+- Preserve unique IDs across multiple dynamically inserted list, calendar and details previews in the same Divi document.
+- Keep saved Divi layouts and the native event archive operational when Divi is deactivated or replaced by another theme.
+
+### Testing
+
+- Qualify all fifteen modules on licensed Divi 5.11.1 through ordinary pages, Theme Builder, exact recurring leaves, duplicate/copy/paste/undo/redo, save/reload, multiple instances, responsive devices and native global presets.
+- Verify administrator, editor, subscriber and anonymous preview boundaries plus draft, private and password-protected denial through real WordPress REST and anonymous HTTP journeys.
+- Requalify the packaged plugin on WordPress 6.9 and 7.1 with PHP 8.2, including the complete browser, static-analysis, dependency-audit and reproducible-release gates.
+
 ## [0.4.0] - 2026-08-25
 
 ### Added

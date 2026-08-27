@@ -1,0 +1,206 @@
+{
+  "name": "mime-simple-events-calendar/event-title",
+  "d4Shortcode": "",
+  "title": "Event Title",
+  "titles": "Event Titles",
+  "moduleIcon": "divi/module-heading",
+  "moduleClassName": "wpse_divi_event_title",
+  "moduleOrderClassName": "wpse_divi_event_title",
+  "category": "module",
+  "attributes": {
+    "module": {
+      "type": "object",
+      "selector": "{{selector}}",
+      "default": {
+        "meta": {
+          "adminLabel": {
+            "desktop": {
+              "value": "Event Title"
+            }
+          }
+        }
+      },
+      "settings": {
+        "meta": {
+          "adminLabel": {},
+          "meta": {}
+        },
+        "advanced": {
+          "elements": {},
+          "html": {},
+          "htmlAttributes": {},
+          "link": {},
+          "loop": {},
+          "text": {}
+        },
+        "decoration": {
+          "animation": {},
+          "attributes": {},
+          "background": {},
+          "border": {},
+          "boxShadow": {},
+          "conditions": {},
+          "disabledOn": {},
+          "filters": {},
+          "interactions": {},
+          "layout": {},
+          "order": {},
+          "overflow": {},
+          "position": {},
+          "scroll": {},
+          "sizing": {},
+          "spacing": {},
+          "sticky": {},
+          "transform": {},
+          "transition": {},
+          "zIndex": {}
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "default": {
+        "innerContent": {
+          "desktop": {
+            "value": {
+              "eventId": "0",
+              "linkTitle": "off"
+            }
+          }
+        }
+      },
+      "settings": {
+        "innerContent": {
+          "groupType": "group-items",
+          "items": {
+            "eventId": {
+              "groupSlug": "contentEvent",
+              "priority": 10,
+              "render": true,
+              "subName": "eventId",
+              "label": "Event",
+              "description": "Use the current event in a template, or select one public event for a regular page.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/select",
+                "type": "field",
+                "props": {
+                  "options": {}
+                }
+              }
+            },
+            "linkTitle": {
+              "groupSlug": "contentEvent",
+              "priority": 20,
+              "render": true,
+              "subName": "linkTitle",
+              "label": "Link to event",
+              "description": "Link the title to the selected event or occurrence.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/toggle",
+                "type": "field"
+              }
+            }
+          }
+        }
+      }
+    },
+    "title": {
+      "type": "object",
+      "selector": "{{selector}} .wpse-single-event-title",
+      "elementType": "heading",
+      "tagName": "h2",
+      "default": {
+        "decoration": {
+          "font": {
+            "font": {
+              "desktop": {
+                "value": {
+                  "headingLevel": "h2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "settings": {
+        "decoration": {
+          "font": {
+            "groupType": "group-item",
+            "item": {
+              "groupSlug": "designTitleText",
+              "priority": 10,
+              "render": true,
+              "component": {
+                "name": "divi/font",
+                "type": "group",
+                "props": {
+                  "grouped": false,
+                  "fieldLabel": "Title",
+                  "dynamicSubgroupHost": true,
+                  "fields": {
+                    "headingLevel": {
+                      "render": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "customCssFields": {
+    "title": {
+      "subName": "title",
+      "label": "Event Title",
+      "selectorSuffix": " .wpse-single-event-title"
+    }
+  },
+  "settings": {
+    "content": "auto",
+    "design": "auto",
+    "advanced": "auto",
+    "groups": {
+      "contentEvent": {
+        "panel": "content",
+        "priority": 10,
+        "groupName": "contentEvent",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Event"
+          }
+        }
+      },
+      "designTitleText": {
+        "panel": "design",
+        "priority": 20,
+        "groupName": "titleText",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Title Text",
+            "clipboardCategory": "style",
+            "presetGroup": "divi/font",
+            "dynamicSubgroupHost": true
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@ parameters:
   level: 8
   scanFiles:
     - stubs/elementor.php
+    - stubs/divi.php
   paths:
     - mime-simple-events-calendar.php
     - uninstall.php

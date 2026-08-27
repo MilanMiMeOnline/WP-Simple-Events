@@ -1455,3 +1455,146 @@ metadata in a bounded WordPress query. Its slow-meta-value warning is likewise
 suppressed only at the exact `orderby` value; recurring collections use the
 indexed occurrence projection. These suppressions do not exempt the code from
 strict official Plugin Check on every release candidate.
+
+## ADR-078: Divi 5 is an optional native-module adapter over shared presentation
+
+**Status:** Accepted
+
+The 0.5.0 integration uses Divi 5's documented module metadata, PHP registration,
+Visual Builder package and REST preview contracts. It does not render events from
+raw post metadata, duplicate public queries or introduce Divi-owned event state.
+Every module maps its allowlisted attributes to the existing context resolvers,
+field renderers, shortcode renderers and component stylesheet.
+
+The integration feature-detects Divi 5 APIs before registering modules or assets.
+The dormant WordPress post-type allowlist filter is safe to register without Divi
+because no absent host consumes it. The plugin never includes files from the Divi
+theme, bundles licensed Divi code or makes Divi a Composer/npm production
+dependency. Visual Builder assets load only in Divi's editor. Frontend assets
+retain the component-scoped loading rules already used by Gutenberg, Elementor
+and shortcodes.
+
+`wpse_event` is registered through Divi's supported third-party-post-type filter.
+That gives a site without an existing preference Divi's normal supported-plugin
+default and exposes the native **Use The Divi Builder** workflow. Divi's saved
+Post Type Integration option remains authoritative: an administrator who has
+explicitly disabled Events stays opted out. Theme Builder event assignments do
+not depend on enabling individual event content editing.
+
+The Visual Builder must not infer access from its client state. Explicit event
+selection remains public-only. Current draft previews require WordPress
+capability checks and authenticated nonces through the preview boundary. Exact
+recurring leaves resolve through `CurrentEventPresentationResolver`; a Divi
+module may not fall back to the canonical series when an occurrence context is
+invalid, stale, protected or ambiguous.
+
+The editor bootstrap likewise localizes the current presentation and usable
+document ID only after resolving the exact current post and checking `edit_post`
+server-side. Divi's app state is never accepted as authorization. Public explicit
+event choices remain bounded and password-free independently of that editorial
+context.
+
+The Event Title vertical slice proved the host boundary before the adapter grew to
+all twelve atomic and three composite modules. Query-backed Visual Builder
+previews use one capability-protected, bounded REST route; stale requests are
+aborted and debounced. Dynamic calendar previews bundle the existing calendar
+runtime only in the Divi editor and initialize it idempotently after insertion.
+Because Divi fetches each module in a separate request, editor-only HTML IDs and
+their local label/ARIA/fragment references are namespaced with Divi's stable
+module identifier before insertion. Public server output remains unchanged.
+
+Ordinary-page save/reload and editor/frontend parity are proven. A temporary All
+Events Theme Builder body also proved current-context Event Title output for a
+one-off event and an exact recurring leaf with an occurrence-only override; its
+generic editor state remained non-sensitive and its public test content and
+assignment were removed. Post-run inspection found unreachable derived rows for
+the deleted series; ADR-079 hardens the lifecycle and the bounded worker repaired
+that local state to zero orphans. Browser-flow confirmation therefore joins
+protected-content denial, composite Theme Builder coverage, multi-instance
+resilience, the supported Divi floor and the packaged compatibility matrix as a
+mandatory release gate. D4 shortcodes and conversion support are not added: these
+are new Divi 5 modules with no historical D4 representation.
+
+## ADR-079: Event deletion uses two lifecycle guards and bounded orphan repair
+
+**Status:** Accepted
+
+Occurrence rows are derived state and must not outlive their canonical event.
+The normal `before_delete_post` hook continues to mark the event dirty, remove all
+of its generations and verify removal of projection metadata. A second
+`deleted_post` guard repeats the table-only deletion after WordPress has removed
+the post and its metadata. The second guard accepts only the deleted event object
+provided by WordPress and refuses to purge an ID that currently resolves to a
+post.
+
+A concurrent projector verifies that the canonical event exists both before
+mutation and after all rows have been inserted. If deletion wins that race, the
+inactive generation is removed and never activated. The scheduled stale-generation
+cleaner also treats an old row with no parent post, or with a parent of another
+post type, as an orphan. Candidate selection and deletion remain age-gated,
+ID-bounded to 100 rows and repeat the same mutable predicates at deletion time.
+This gives existing installations a gradual repair path without an unbounded
+activation query or visitor-request cleanup.
+
+## ADR-080: Calendar view follows the configured responsive breakpoint after initialization
+
+**Status:** Accepted
+
+Calendar modules choose their configured desktop or mobile view at initial render
+and continue following the same 599-pixel viewport breakpoint while they remain
+mounted. A resize that crosses the breakpoint changes FullCalendar's active view;
+ordinary size changes only repair its geometry. This distinction is required in
+builder canvases, where one calendar instance can survive device-preview changes,
+row resizing, duplicate/copy operations and undo/redo without being recreated.
+
+The responsive observer is instance-local and is removed with the existing
+calendar cleanup callback. It never infers a view from container width, because
+the public component contract defines desktop/mobile modes against the browser
+viewport. A packaged browser regression starts in month view, crosses into the
+configured mobile list view and returns to a healthy month grid. Existing manual
+Month/List choices may be replaced only when the viewport crosses that configured
+breakpoint, matching the declared responsive settings.
+
+## ADR-081: Confirmed recurrence saves project the production horizon
+
+**Status:** Accepted
+
+The recurrence editor's impact window and the public occurrence projection serve
+different purposes. Preview and confirmation remain bound to the exact bounded
+window the editor reviewed. After canonical persistence succeeds, however, the
+derived generation is always rebuilt from the current WordPress-local date
+through the shared 540-day production horizon defined by ADR-069. A future series
+anchor therefore cannot become the stored coverage start.
+
+Using the preview window for production made a valid future series fail the global
+readiness check because its coverage started after today. Public lists, feeds and
+archives then correctly fell back to the canonical parent and appeared to lose
+repeated dates. A browser regression now applies a three-date future recurrence
+and requires three unique occurrence URLs in both the calendar feed and native
+archive. Projection-window failure keeps the canonical change, dirty guard and
+specific projection error exactly as before.
+
+## ADR-082: Divi modules preserve the current native wrapper and preset contract
+
+**Status:** Accepted
+
+All fifteen native Divi modules declare the wrapper settings exposed by Divi
+5.11.1's own modules. The module metadata includes the current meta, advanced and
+decoration keys, while retaining the legacy `htmlAttributes` advanced key already
+used by the integration. This is an additive compatibility rule: saved module
+names, event attributes, control paths and renderer inputs may not be renamed or
+removed to follow a host metadata revision.
+
+Style-capable module fields continue to use Divi's native font preset group and
+style clipboard category. A repository contract compares every generated module
+and the hand-authored Event Title slice against the same wrapper and preset shape.
+This gives global presets, copy/paste and responsive host controls the metadata
+they expect without duplicating Divi's styling engine or persisting plugin-owned
+preset state.
+
+The licensed Divi package remains an external qualification input and is never
+copied into source or release artifacts. A real Visual Builder no-save pass must
+still prove that the current package loads the module palette without JavaScript
+errors. Device-button and global-preset interactions that browser automation
+cannot activate reliably are recorded as manual host checks rather than inferred
+from metadata alone.

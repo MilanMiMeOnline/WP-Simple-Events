@@ -26,6 +26,7 @@ for MiMe Simple Events and Calendar.
 - [Structured data](STRUCTURED-DATA.md)
 - [Gutenberg integration](GUTENBERG-INTEGRATION.md)
 - [Elementor integration](ELEMENTOR-INTEGRATION.md)
+- [Divi 5 integration](DIVI-5-INTEGRATION.md)
 
 ## Security, privacy and quality
 
@@ -41,12 +42,11 @@ evidence. They are not user documentation and are excluded from the installable
 plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
-The last public release evidence is [QA report 0.3.0](QA-REPORT-0.3.0.md).
-
-The active recurrence-development evidence starts with
-[QA report 0.4.0 occurrence foundation](QA-REPORT-0.4.0-FOUNDATION.md). It does not
-change the public release contract until the complete recurrence migration and
-read-side gates pass.
+The last public release evidence is
+[QA report 0.4.0](QA-REPORT-0.4.0-FOUNDATION.md). The
+[0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) records the
+current release candidate; final publication still requires the official
+post-commit CI and Plugin Check gates.
 
 ## Releases and WordPress.org
 

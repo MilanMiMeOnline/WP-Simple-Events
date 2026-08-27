@@ -33,6 +33,13 @@ final class FakeOccurrenceProjectionStore implements OccurrenceProjectionStore {
 	public array $removed_event_ids = array();
 
 	/**
+	 * Deleted event IDs purged after WordPress removed their posts.
+	 *
+	 * @var int[]
+	 */
+	public array $purged_event_ids = array();
+
+	/**
 	 * Last recurring projection coverage, or null for a one-off write.
 	 *
 	 * @var OccurrenceProjectionCoverage|null
@@ -104,6 +111,17 @@ final class FakeOccurrenceProjectionStore implements OccurrenceProjectionStore {
 		if ( $this->write_result ) {
 			delete_post_meta( $event_id, EventMeta::INDEX_DIRTY );
 		}
+
+		return $this->write_result;
+	}
+
+	/**
+	 * Record post-delete projection cleanup.
+	 *
+	 * @param int $event_id Deleted event post ID.
+	 */
+	public function remove_deleted( int $event_id ): bool {
+		$this->purged_event_ids[] = $event_id;
 
 		return $this->write_result;
 	}

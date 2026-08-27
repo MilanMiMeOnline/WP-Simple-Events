@@ -12,10 +12,12 @@ namespace MiMe\WPSimpleEvents\Application;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionWindowFactory;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceRepairWindowFactory;
 use MiMe\WPSimpleEvents\Occurrence\RecurrenceOccurrenceProjector;
 use MiMe\WPSimpleEvents\Occurrence\RecurringEventOccurrenceProjector;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceAggregate;
-use MiMe\WPSimpleEvents\Recurrence\RecurrenceGenerationWindow;
+use RuntimeException;
 
 /**
  * Saves canonical recurrence first, then repairs its complete derived projection.
@@ -27,11 +29,13 @@ final readonly class RecurrenceSaveCoordinator {
 	 * @param RecurrenceAggregatePersistence    $persistence Authorized canonical persistence.
 	 * @param RecurringEventOccurrenceProjector $projector   Complete derived-state projector.
 	 * @param EventMetaSanitizer                $sanitizer   Canonical metadata sanitizer.
+	 * @param OccurrenceProjectionWindowFactory $windows     Complete production projection horizon.
 	 */
 	public function __construct(
 		private RecurrenceAggregatePersistence $persistence = new RecurrenceAggregatePersistence(),
 		private RecurringEventOccurrenceProjector $projector = new RecurrenceOccurrenceProjector(),
-		private EventMetaSanitizer $sanitizer = new EventMetaSanitizer()
+		private EventMetaSanitizer $sanitizer = new EventMetaSanitizer(),
+		private OccurrenceProjectionWindowFactory $windows = new OccurrenceRepairWindowFactory()
 	) {}
 
 	/**
@@ -40,15 +44,13 @@ final readonly class RecurrenceSaveCoordinator {
 	 * Unchanged clean aggregates do not rebuild. Unchanged dirty aggregates are
 	 * deliberately projected again so a failed earlier attempt remains repairable.
 	 *
-	 * @param int                        $event_id         Canonical event post ID.
-	 * @param RecurrenceAggregate        $aggregate        Validated complete aggregate.
-	 * @param RecurrenceGenerationWindow $window           Explicit bounded projection window.
-	 * @param string|null                $expected_revision Optional editor revision used for preview.
+	 * @param int                 $event_id          Canonical event post ID.
+	 * @param RecurrenceAggregate $aggregate         Validated complete aggregate.
+	 * @param string|null         $expected_revision Optional editor revision used for preview.
 	 */
 	public function save(
 		int $event_id,
 		RecurrenceAggregate $aggregate,
-		RecurrenceGenerationWindow $window,
 		?string $expected_revision = null
 	): RecurrencePersistenceResult {
 		$result = $this->persistence->replace( $event_id, $aggregate, $expected_revision );
@@ -64,6 +66,15 @@ final readonly class RecurrenceSaveCoordinator {
 		$status = EventStatus::from(
 			$this->sanitizer->status( get_post_meta( $event_id, EventMeta::STATUS, true ) )
 		);
+
+		try {
+			$window = $this->windows->current();
+		} catch ( RuntimeException ) {
+			return RecurrencePersistenceResult::failure(
+				RecurrencePersistenceError::PROJECTION_FAILED,
+				$result->changed()
+			);
+		}
 
 		if ( ! $this->projector->project( $event_id, $aggregate, $status, $window ) ) {
 			return RecurrencePersistenceResult::failure(

@@ -38,6 +38,7 @@ const releaseEntries = [
 	'uninstall.php',
 	PLUGIN_FILE,
 	'blocks',
+	'divi',
 	'src',
 	'templates',
 	'languages',

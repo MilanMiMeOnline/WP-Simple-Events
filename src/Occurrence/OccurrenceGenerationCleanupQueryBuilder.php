@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Occurrence;
 
 use InvalidArgumentException;
 use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Content\EventPostType;
 
 /**
  * Builds selection and guarded deletion queries for disposable stale rows.
@@ -20,14 +21,16 @@ final readonly class OccurrenceGenerationCleanupQueryBuilder {
 	 * Create a builder from trusted WordPress table identifiers.
 	 *
 	 * @param string $occurrences_table Plugin occurrence table.
+	 * @param string $posts_table       WordPress posts table.
 	 * @param string $postmeta_table    WordPress postmeta table.
 	 * @throws InvalidArgumentException When a table identifier is unsafe.
 	 */
 	public function __construct(
 		private string $occurrences_table,
+		private string $posts_table,
 		private string $postmeta_table
 	) {
-		foreach ( array( $this->occurrences_table, $this->postmeta_table ) as $table_name ) {
+		foreach ( array( $this->occurrences_table, $this->posts_table, $this->postmeta_table ) as $table_name ) {
 			if ( 1 !== preg_match( '/^[A-Za-z0-9_]+$/D', $table_name ) ) {
 				throw new InvalidArgumentException( 'An occurrence cleanup table name is invalid.' );
 			}
@@ -46,12 +49,18 @@ final readonly class OccurrenceGenerationCleanupQueryBuilder {
 
 		return new OccurrenceSqlQuery(
 			'SELECT DISTINCT o.id' . $this->joins()
-			. ' WHERE ag.meta_key = %s'
-			. ' AND dg.post_id IS NULL'
-			. ' AND o.generation <> CAST(ag.meta_value AS UNSIGNED)'
-			. ' AND o.created_utc <= %d'
+			. ' WHERE o.created_utc <= %d'
+			. ' AND (p.ID IS NULL OR p.post_type <> %s'
+			. ' OR (ag.post_id IS NOT NULL AND dg.post_id IS NULL'
+			. ' AND o.generation <> CAST(ag.meta_value AS UNSIGNED)))'
 			. ' ORDER BY o.id ASC LIMIT %d',
-			array( EventMeta::INDEX_DIRTY, EventMeta::ACTIVE_GENERATION, $cutoff_utc, $limit )
+			array(
+				EventMeta::ACTIVE_GENERATION,
+				EventMeta::INDEX_DIRTY,
+				$cutoff_utc,
+				EventPostType::POST_TYPE,
+				$limit,
+			)
 		);
 	}
 
@@ -82,23 +91,24 @@ final readonly class OccurrenceGenerationCleanupQueryBuilder {
 
 		return new OccurrenceSqlQuery(
 			'DELETE o' . $this->joins()
-			. ' WHERE ag.meta_key = %s'
-			. ' AND dg.post_id IS NULL'
-			. " AND o.id IN ({$placeholders})"
-			. ' AND o.generation <> CAST(ag.meta_value AS UNSIGNED)'
-			. ' AND o.created_utc <= %d',
+			. " WHERE o.id IN ({$placeholders})"
+			. ' AND o.created_utc <= %d'
+			. ' AND (p.ID IS NULL OR p.post_type <> %s'
+			. ' OR (ag.post_id IS NOT NULL AND dg.post_id IS NULL'
+			. ' AND o.generation <> CAST(ag.meta_value AS UNSIGNED)))',
 			array_merge(
-				array( EventMeta::INDEX_DIRTY, EventMeta::ACTIVE_GENERATION ),
+				array( EventMeta::ACTIVE_GENERATION, EventMeta::INDEX_DIRTY ),
 				$validated_ids,
-				array( $cutoff_utc )
+				array( $cutoff_utc, EventPostType::POST_TYPE )
 			)
 		);
 	}
 
-	/** Return joins that recheck active generation and absence of a dirty marker. */
+	/** Return joins that distinguish missing parents from healthy active generations. */
 	private function joins(): string {
 		return " FROM {$this->occurrences_table} o"
-			. " INNER JOIN {$this->postmeta_table} ag ON ag.post_id = o.event_id"
+			. " LEFT JOIN {$this->posts_table} p ON p.ID = o.event_id"
+			. " LEFT JOIN {$this->postmeta_table} ag ON ag.post_id = o.event_id AND ag.meta_key = %s"
 			. " LEFT JOIN {$this->postmeta_table} dg ON dg.post_id = o.event_id AND dg.meta_key = %s";
 	}
 

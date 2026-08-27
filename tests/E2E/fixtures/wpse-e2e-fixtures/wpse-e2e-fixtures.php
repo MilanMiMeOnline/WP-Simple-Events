@@ -182,6 +182,18 @@ function wpse_e2e_seed_calendar_page(): void {
 	);
 
 	if ( count( $event_slugs ) === count( $published ) ) {
+		// Complete the same bounded migration precondition required by public
+		// occurrence collections before browser assertions begin.
+		$result = ( new MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexBatchProcessor() )->process();
+
+		if ( ! $result->has_more ) {
+			update_option(
+				MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController::COMPLETE_OPTION,
+				true,
+				false
+			);
+		}
+
 		update_option( 'wpse_e2e_events_seeded_v2', true, false );
 	}
 

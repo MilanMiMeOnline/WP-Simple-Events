@@ -1,9 +1,8 @@
 # Recurrence and occurrence contract
 
-**Status:** normative release contract for 0.4.0
+**Status:** normative public contract since 0.4.0
 **Accepted:** 20 August 2026
-**Current public release:** 0.3.0 remains one-off only; the 0.4.0 development
-branch has activated this contract for release qualification.
+**Current release candidate:** 0.5.0 retains the qualified 0.4.0 recurrence contract.
 
 This document defines the recurring-event model approved in ADR-044. It extends
 the product, data, public-query and presentation contracts. Public occurrence
@@ -131,12 +130,15 @@ revision does the same, including for one-off date/status metadata restored by
 WordPress core.
 
 The complete save coordinator writes canonical metadata first and rebuilds its
-derived generation second. Projection always inherits status from canonical event
-metadata rather than request data. An unchanged healthy aggregate avoids needless
-work; an unchanged dirty aggregate deliberately retries projection. If rebuilding
-fails after a canonical change, the canonical change remains stored, the dirty
-guard remains set and the caller receives a specific projection failure. No
-occurrence-aware read may use the stale generation in that state.
+derived generation second. Preview and confirmation remain bound to the exact
+editor impact window, while the saved generation always uses the production
+window from the current WordPress-local date through 540 days later. Projection
+always inherits status from canonical event metadata rather than request data. An
+unchanged healthy aggregate avoids needless work; an unchanged dirty aggregate
+deliberately retries projection. If rebuilding fails after a canonical change,
+the canonical change remains stored, the dirty guard remains set and the caller
+receives a specific projection failure. No occurrence-aware read may use the
+stale generation in that state.
 
 ## 4. Occurrence identity
 

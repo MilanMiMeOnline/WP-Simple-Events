@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 25 August 2026
-**Current public release:** 0.3.0
-**Active phase:** recurring-event implementation; target 0.4.0
+**Last reviewed:** 27 August 2026
+**Current public release:** 0.4.0
+**Active phase:** 0.5.0 release freeze after completed Divi 5 real-host qualification
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -490,17 +490,170 @@ journey, complete PHP 8.2–8.5 matrix, packaged WordPress 6.9/7.1 smoke journey
 twenty browser regressions, reproducible packaging and strict official Plugin
 Check all pass. The 0.4.0 recurrence phase is qualified for publication.
 
-## Phase 3 — Divi 5 integration
+## Phase 3 — 0.5.0 Divi 5 integration
 
-Divi 5 support should expose functional parity with the Elementor component
-palette without copying event logic. The adapter must use documented Divi 5 APIs,
-the shared event context resolver, renderers, query services and component CSS.
+### Goal
 
-The phase begins with a supplied licensed Divi 5 test environment and an API/
-compatibility spike. Its acceptance matrix covers ordinary pages, Theme Builder
-templates, current-event context, explicit public-event selection, responsive
-controls, editor/frontend parity and operation when Divi is absent. Divi remains an
-optional integration and may not become a core runtime dependency.
+Expose the existing composite and atomic event component palette as native Divi 5
+modules without copying event, recurrence, query or escaping logic. Divi remains
+an optional presentation host and never becomes a core runtime dependency.
+
+The accepted implementation contract and discovery evidence are recorded in
+[DIVI-5-INTEGRATION.md](DIVI-5-INTEGRATION.md). The initial spike used Divi
+5.11.1 on the disposable `simpleevents.local` environment with Elementor
+inactive. It confirmed that:
+
+- the active Divi theme preserves the native event header, main content and
+  footer shell;
+- Divi Theme Builder already discovers event singles, archives, categories and
+  tags;
+- individual event editing is available only when `wpse_event` is enabled in
+  Divi's Post Type Integration setting;
+- the official Divi 5 module contract uses shared `module.json` metadata, a PHP
+  frontend callback and a Visual Builder component;
+- the implementation now registers all twelve atomic and three composite modules
+  without changing native event output outside a deliberately placed Divi module.
+
+### D5-0 — Freeze host and compatibility boundaries
+
+1. Detect Divi 5 through feature checks for its documented module registration
+   and Visual Builder asset APIs; never include Divi files directly.
+2. Add `wpse_event` to Divi's supported third-party post types. A saved explicit
+   `off` choice remains authoritative; a site without a choice receives Divi's
+   normal supported-third-party default.
+3. Keep the plugin fully functional when Divi is missing, inactive, too old or
+   unable to load its Visual Builder. The dormant supported-post-type filter may
+   remain registered; no Divi module hooks or assets may load.
+4. Record the tested Divi floor and current tested version without promising
+   unqualified future majors.
+
+**Exit criteria:** the Events post type can use Divi's normal editor opt-in,
+Theme Builder assignments remain unchanged and Divi-absent tests prove zero
+fatal errors, hooks or frontend assets.
+
+### D5-1 — Shared module runtime and one vertical slice
+
+1. Register one atomic Event Title module through Divi 5's documented dependency
+   tree, module metadata and Visual Builder package hooks.
+2. Normalize module attributes through a Divi-owned allowlist adapter and render
+   the frontend through `CurrentEventPresentationResolver` and
+   `EventFieldRenderer`.
+3. Supply a bounded authenticated editor snapshot for atomic fields that supports
+   current event/occurrence context and explicit public event selection without
+   exposing protected metadata. Query-backed composite previews may add a narrow
+   REST route in D5-3 when live filtering requires it.
+4. Verify an ordinary page, an event Theme Builder template, an exact recurring
+   leaf and save/reload/frontend parity before multiplying the pattern.
+
+**Exit criteria:** one native module proves the complete context, security,
+styling, Visual Builder and frontend architecture.
+
+**Current evidence:** Event Title is discoverable and editable in Divi 5.11.1;
+current and explicit public sources, title links, heading levels and standard Divi
+design controls update live. A temporary ordinary page was saved, reloaded and
+rendered through the PHP callback without leaving test data behind. A temporary
+All Events Theme Builder body then proved the same empty-source module on a
+one-off route and an exact recurring leaf; the leaf kept its occurrence-only title
+instead of falling back to the series. All temporary content and assignments were
+removed.
+
+### D5-2 — Atomic palette parity
+
+Add native modules for Event Featured Image, Date & Time, Status, Venue, Address,
+Location Link, Content, Excerpt, External Action, Categories and Tags. Controls
+mirror the existing public presentation contract where the host supports an
+equivalent interaction; Divi design controls may be richer, but they may not
+change event semantics or private-content rules.
+
+**Exit criteria:** all twelve atomic fields support current context, explicit
+public selection, meaningful empty states, theme-inheriting defaults and exact
+occurrence presentation in Theme Builder.
+
+**Current evidence:** all twelve modules are present in the Command Center and
+native global-preset manager. Date and time, featured image, status and venue were
+exercised in the live editor; custom labels and explicit all-day/cancelled sources
+updated immediately. The saved Event Venue module preserved its explicit event
+and custom label on the public frontend. Event Title proved exact-occurrence
+context in Theme Builder; every atomic module delegates source resolution to that
+same tested current/explicit presentation boundary.
+
+### D5-3 — Composite palette parity
+
+Add Event Details, Event List / Grid and Event Calendar modules. Their content
+attributes delegate to the existing settings adapters and shortcode renderers.
+List/calendar queries remain bounded and public-only; visitor filters retain the
+accessible no-JavaScript baseline and multiple modules keep unique namespaces.
+
+**Exit criteria:** the three composites match the functional capabilities of
+their Elementor counterparts and reuse the shared component CSS without global
+theme overrides.
+
+**Current evidence:** Event Details, Event List / Grid and Event Calendar are
+native, discoverable modules in Divi 5.11.1. On temporary ordinary pages their
+explicit source, visibility, layout, taxonomy and initial-date controls updated
+live, survived save/reload and matched public PHP output. Calendar previews now
+initialize the existing FullCalendar runtime after dynamic insertion and load the
+shared component stylesheet inside Divi's app window. The test pages were deleted
+and existing event content was verified unchanged. Theme Builder current context
+and exact occurrence identity are proven through the same presentation resolver.
+The final role/protected-source matrix returned empty output for draft, private
+and password-protected explicit sources and denied subscriber/anonymous preview
+access.
+
+### D5-4 — Editor UX and resilience
+
+1. Group content, design and advanced controls consistently with Divi.
+2. Condition irrelevant controls, provide concise source/context guidance and
+   distinguish empty data from unavailable/private data without leaking details.
+3. Abort stale preview requests and debounce query-backed refreshes.
+4. Keep editor placeholders editor-only and preserve semantic, escaped frontend
+   markup.
+5. Verify duplicate, copy/paste, undo/redo, save, reload, responsive modes,
+   global presets and multiple-instance behaviour.
+
+**Exit criteria:** modules feel native to Divi, remain understandable without
+documentation and do not create stale previews or repeated requests.
+
+**Current evidence:** controls use consistent logical groups and conditional
+visibility. Composite previews debounce changes, abort stale requests and expose
+generic loading, empty and failure states. Dynamic calendars reuse one idempotent
+initializer. Each separately fetched preview namespaces its safe DOM IDs and
+local `for`, ARIA and fragment references with the stable Divi module identifier.
+Save/reload works for the ordinary-page composites. A disposable-page resilience
+pass kept one list and three calendars healthy through duplicate, copy/paste,
+undo, redo and reload, with unique Divi module IDs and no duplicate HTML IDs.
+Crossing the configured mobile breakpoint after initialization exposed a stale
+month view; ADR-080 and a packaged browser regression now cover desktop month →
+mobile list → desktop month. Divi deactivation with that saved layout produced no
+fatal frontend or native-archive error and the host theme was restored. A final
+no-save pass activated tablet and phone canvas states, confirmed the 484-pixel
+phone canvas, opened Divi's native global-preset manager, found all fifteen MiMe
+modules and expanded the Event Calendar default preset.
+
+### D5-5 — Release qualification
+
+Run the complete repository gates plus a real Divi 5 matrix covering Divi absent,
+the supported floor and current tested release; ordinary pages and Theme Builder;
+one-off and exact recurring contexts; desktop/tablet/mobile; public, draft,
+private and password-protected content; editor roles; frontend asset scope; and
+save/reload parity. The licensed Divi package remains a local/CI secret and is
+never committed or distributed in the plugin archive.
+
+The matrix must also reproduce permanent browser deletion of a recurring event
+and assert that no rows for the deleted parent remain in the occurrence table.
+The post-delete guard and bounded repair path now pass API-level, maintenance and
+real browser cleanup verification. Temporary Theme Builder assignments, events,
+users and occurrence rows were all removed after qualification.
+
+**Exit criteria:** strict Plugin Check, PHP 8.2-current, WordPress 6.9-current,
+Divi browser journeys, reproducible packaging and the senior developer/security/
+QA reviews all pass. Only then may Divi 5 support be advertised publicly.
+
+**Current evidence — 27 August 2026:** the full real-host Divi 5.11.1 matrix,
+protected-content and role checks, packaged browser suite, WordPress 6.9/7.1
+smokes, dependency audits, reproducible archive and senior developer/security/QA
+reviews pass locally. The 0.5.0 candidate now awaits the official post-commit CI
+matrix and strict Plugin Check before tagging and publication.
 
 ## Phase 4 — compatibility and maintenance
 

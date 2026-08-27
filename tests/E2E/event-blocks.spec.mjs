@@ -176,9 +176,12 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	test.setTimeout( 180_000 );
 	await login( page );
 	await page.goto( '/wp-admin/edit.php?post_type=wpse_event' );
-	const editUrl = await page.locator( 'a.row-title' ).first().getAttribute( 'href' );
+	const firstEvent = page.locator( 'a.row-title' ).first();
+	const editUrl = await firstEvent.getAttribute( 'href' );
+	const eventTitle = ( await firstEvent.textContent() )?.trim();
 
 	expect( editUrl ).toBeTruthy();
+	expect( eventTitle ).toBeTruthy();
 	await page.goto( editUrl );
 	await expect.poll( () =>
 		page.evaluate( () =>
@@ -245,6 +248,41 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await panel.getByRole( 'button', { name: 'Apply to complete series' } ).click();
 	await expect( panel ).toContainText( 'The recurring schedule was updated.' );
 	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'daily' );
+	const feedResponse = await page.request.get(
+		'/wp-json/wpse/v1/events?start=2026-08-01T00%3A00%3A00%2B00%3A00&end=2026-10-01T00%3A00%3A00%2B00%3A00&per_page=100&page=1',
+	);
+	const feedItems = await feedResponse.json();
+	const seriesFeedItems = feedItems.filter( ( item ) => item.title === eventTitle );
+
+	expect( feedResponse.status() ).toBe( 200 );
+	expect( seriesFeedItems ).toHaveLength( 3 );
+	expect( new Set( seriesFeedItems.map( ( item ) => item.url ) ).size ).toBe( 3 );
+
+	const archivePage = await page.context().newPage();
+
+	try {
+		const archiveResponse = await archivePage.goto( '/events/?wpse_period=all' );
+		const seriesCards = archivePage.locator( '.wpse-event-card' ).filter( {
+			has: archivePage.getByRole( 'heading', {
+				name: eventTitle,
+				exact: true,
+			} ),
+		} );
+		const seriesLinks = seriesCards.locator( '.wpse-event-card-title a' );
+
+		expect( archiveResponse?.status() ).toBe( 200 );
+		await expect( seriesCards ).toHaveCount( 3 );
+		await expect( seriesLinks ).toHaveCount( 3 );
+
+		const occurrenceUrls = await seriesLinks.evaluateAll( ( links ) =>
+			links.map( ( link ) => link.href ),
+		);
+
+		expect( new Set( occurrenceUrls ).size ).toBe( 3 );
+	} finally {
+		await archivePage.close();
+	}
+
 	await expect( ordinarySchedule ).toHaveAttribute( 'hidden', '' );
 	await expect( scheduleNotice ).not.toHaveAttribute( 'hidden', '' );
 	await expect( scheduleNotice ).toContainText(

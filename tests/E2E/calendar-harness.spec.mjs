@@ -160,6 +160,28 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	expect( pageErrors ).toEqual( [] );
 } );
 
+test( 'follows configured calendar views when a builder canvas crosses the mobile breakpoint', async ( {
+	page,
+} ) => {
+	await page.setViewportSize( { width: 800, height: 900 } );
+	await gotoFixturePage( page, 'wpse-e2e-calendar' );
+
+	const canvas = page.locator(
+		'[data-wpse-calendar] [data-wpse-calendar-canvas]',
+	);
+
+	await expect( canvas.locator( '.fc-daygrid' ) ).toBeVisible();
+	await expect( canvas.locator( '.fc-list' ) ).toHaveCount( 0 );
+
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await expect( canvas.locator( '.fc-list' ) ).toBeVisible();
+	await expect( canvas.locator( '.fc-daygrid' ) ).toHaveCount( 0 );
+
+	await page.setViewportSize( { width: 800, height: 900 } );
+	await expectHealthyMonthGrid( canvas );
+	await expect( canvas.locator( '.fc-list' ) ).toHaveCount( 0 );
+} );
+
 test( 'filters by category and tag with persistent namespaced URL state', async ( {
 	page,
 } ) => {

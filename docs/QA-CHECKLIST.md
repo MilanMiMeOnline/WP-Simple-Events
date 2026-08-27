@@ -36,7 +36,8 @@ Use the applicable items before every handoff. Record anything not tested and wh
 - [ ] Single and archive pages preserve exactly one header, main region and footer in classic, hybrid classic and full block themes.
 - [ ] PHP and block theme overrides win at their documented positions in the template hierarchy.
 - [ ] Elementor widgets register and render on the supported 3.x and current tested 4.x versions.
-- [ ] Multiple shortcode and Elementor instances do not duplicate DOM IDs or request namespaces.
+- [ ] Divi modules register and render only on the supported Divi 5 host; Divi absence remains inert.
+- [ ] Multiple shortcode, Elementor and Divi instances do not duplicate DOM IDs or request namespaces.
 
 ## Delivery evidence
 

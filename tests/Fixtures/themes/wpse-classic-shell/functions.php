@@ -21,6 +21,7 @@ use MiMe\WPSimpleEvents\Domain\EventStatus;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadModel;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadiness;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionWindowFactory;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalBatchProcessor;
 use MiMe\WPSimpleEvents\Occurrence\WordPressOccurrenceGenerationCleaner;
 use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
@@ -371,10 +372,23 @@ final class SmokeOccurrenceProbe {
 				$seed->modify( '+4 days' )->format( 'Y-m-d' ),
 				20
 			);
-			$coordinator = new RecurrenceSaveCoordinator();
-			$first       = $coordinator->save( $event_id, $aggregate, $window );
+			$windows     = new class( $window ) implements OccurrenceProjectionWindowFactory {
+				/**
+				 * Create a deterministic smoke-test window source.
+				 *
+				 * @param RecurrenceGenerationWindow $window Complete bounded smoke window.
+				 */
+				public function __construct( private readonly RecurrenceGenerationWindow $window ) {}
+
+				/** Return the complete bounded smoke-test window. */
+				public function current(): RecurrenceGenerationWindow {
+					return $this->window;
+				}
+			};
+			$coordinator = new RecurrenceSaveCoordinator( windows: $windows );
+			$first       = $coordinator->save( $event_id, $aggregate );
 			$generation  = (int) get_post_meta( $event_id, EventMeta::ACTIVE_GENERATION, true );
-			$second      = $coordinator->save( $event_id, $aggregate, $window );
+			$second      = $coordinator->save( $event_id, $aggregate );
 		} catch ( \Throwable ) {
 			return new WP_Error( 'wpse_smoke_recurrence_failed', __( 'The recurrence smoke projection failed.', 'mime-simple-events-calendar' ), array( 'status' => 500 ) );
 		}

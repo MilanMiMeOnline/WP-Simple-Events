@@ -11,6 +11,8 @@ namespace MiMe\WPSimpleEvents\Occurrence;
 
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
+use MiMe\WPSimpleEvents\Content\EventPostType;
+use WP_Post;
 
 /**
  * Writes only complete, inactive generations before switching one metadata marker.
@@ -89,6 +91,7 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 		if ( ! $wpdb instanceof \wpdb
 			|| $event_id <= 0
 			|| $generation <= 0
+			|| ! $this->event_exists( $event_id )
 			|| ! $this->mark_dirty( $event_id )
 		) {
 			return false;
@@ -116,6 +119,12 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 
 				return false;
 			}
+		}
+
+		if ( ! $this->event_exists( $event_id ) ) {
+			$this->delete_generation( $event_id, $generation );
+
+			return false;
 		}
 
 		if ( ! $this->replace_coverage( $event_id, $generation, $coverage ) ) {
@@ -179,6 +188,31 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 	}
 
 	/**
+	 * Remove every derived row after WordPress has deleted the canonical post.
+	 *
+	 * The post-deletion hook cannot update or verify post metadata anymore. It is
+	 * therefore deliberately limited to the disposable projection table and runs
+	 * only after the lifecycle controller has verified the deleted event object.
+	 *
+	 * @param int $event_id Deleted event post ID.
+	 */
+	public function remove_deleted( int $event_id ): bool {
+		global $wpdb;
+
+		if ( ! $wpdb instanceof \wpdb || $event_id <= 0 || null !== get_post( $event_id ) ) {
+			return false;
+		}
+
+		$deleted = $wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Post-delete verification mutates only the rebuildable plugin-owned projection; a cached deletion result would be incorrect.
+			$this->table->table_name(),
+			array( 'event_id' => $event_id ),
+			array( '%d' )
+		);
+
+		return false !== $deleted;
+	}
+
+	/**
 	 * Make every projection mutation fail closed before touching derived state.
 	 *
 	 * @param int $event_id Canonical event post ID.
@@ -189,6 +223,18 @@ final class WordPressOccurrenceProjectionStore implements OccurrenceProjectionSt
 		return ( new EventMetaSanitizer() )->boolean(
 			get_post_meta( $event_id, EventMeta::INDEX_DIRTY, true )
 		);
+	}
+
+	/**
+	 * Confirm the canonical event still exists before or after row insertion.
+	 *
+	 * @param int $event_id Canonical event post ID.
+	 * @phpstan-impure The canonical post can be deleted by a concurrent request.
+	 */
+	private function event_exists( int $event_id ): bool {
+		$post = get_post( $event_id );
+
+		return $post instanceof WP_Post && EventPostType::POST_TYPE === $post->post_type;
 	}
 
 	/**

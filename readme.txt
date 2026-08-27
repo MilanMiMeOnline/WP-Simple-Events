@@ -4,11 +4,11 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Create and publish focused WordPress events with lists, calendars, blocks and optional Elementor widgets.
+Create focused one-off and recurring events with calendars, blocks and optional Elementor or Divi 5 modules.
 
 == Description ==
 
@@ -46,6 +46,12 @@ MiMe Simple Events and Calendar adds a native Events section to WordPress. It is
 Elementor 3.35 or newer adds Event List / Grid, Event Calendar and configurable Event Details widgets, together with twelve individual event-field widgets. Elementor is optional: the event editor, shortcodes, Gutenberg blocks and native templates work without it.
 
 Individual widgets can select a published event on an ordinary Elementor page. In a dynamic event template they can use the current event context. Elementor Pro is only required when the site owner wants to use Elementor's Theme Builder; it is not required by this plugin.
+
+= Optional Divi 5 integration =
+
+Divi 5.11.1 or newer adds the same three complete components and twelve individual event-field modules. They work on ordinary Divi pages with an explicitly selected public event and in Divi Theme Builder templates with the current event or exact recurring occurrence.
+
+The integration uses Divi's native content, design, responsive and global-preset systems. Divi remains optional and no Divi theme code, licence data or updater credentials are included in this plugin.
 
 = Privacy by design =
 
@@ -87,6 +93,10 @@ No. Elementor is an optional integration. Native templates, Gutenberg blocks and
 
 Yes. The widgets can be placed on ordinary Elementor Free pages and can select a published event. Elementor Pro is only needed for Elementor's own Theme Builder functionality.
 
+= Does it work with Divi 5? =
+
+Yes. Divi 5.11.1 or newer provides fifteen native MiMe event modules, including Event List / Grid, Event Calendar, Event Details and twelve individual event fields. Divi Theme Builder is part of Divi itself; the plugin never creates or changes Theme Builder assignments automatically.
+
 = Which timezone and time format are used? =
 
 New events capture the timezone configured under WordPress Settings > General. Existing events keep their saved timezone if that website setting changes. Public times follow the WordPress time-format setting. Events > Settings can optionally show the captured timezone and applicable UTC offset.
@@ -113,6 +123,14 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.5.0 =
+* Add fifteen native Divi 5 modules with ordinary-page, Theme Builder, responsive-device and global-preset support.
+* Resolve the current one-off event or exact recurring occurrence in Divi Theme Builder while keeping explicit selections public and password-free.
+* Add a bounded authenticated Divi composite-preview endpoint with exact document capabilities and generic fail-closed empty states.
+* Keep mounted calendars synchronized with Divi device-preview breakpoint changes and namespace dynamic preview IDs per module instance.
+* Harden permanent recurring-event deletion against projection races and repair bounded orphan occurrence rows.
+* Preserve plugin operation when Divi is absent, inactive or unsupported, and exclude all licensed Divi code and credentials from the release.
 
 = 0.4.0 =
 * Add bounded recurring events for daily, weekly, monthly, yearly and selected-date schedules.

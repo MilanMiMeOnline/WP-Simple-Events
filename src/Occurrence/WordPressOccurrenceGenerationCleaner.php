@@ -41,6 +41,7 @@ final class WordPressOccurrenceGenerationCleaner implements OccurrenceGeneration
 		try {
 			$builder = new OccurrenceGenerationCleanupQueryBuilder(
 				$this->table->table_name(),
+				$wpdb->posts,
 				$wpdb->postmeta
 			);
 			$select  = $this->prepare( $wpdb, $builder->candidates( $cutoff_utc, $limit ) );

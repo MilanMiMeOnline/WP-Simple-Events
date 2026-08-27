@@ -23,6 +23,15 @@ use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRegistry;
 use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockRenderer;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\ContentRegistry;
+use MiMe\WPSimpleEvents\Divi\DiviIntegration;
+use MiMe\WPSimpleEvents\Divi\DiviEditorDataProvider;
+use MiMe\WPSimpleEvents\Divi\DiviCompositeModuleRenderer;
+use MiMe\WPSimpleEvents\Divi\DiviPreviewController;
+use MiMe\WPSimpleEvents\Divi\EventFieldModuleRenderer;
+use MiMe\WPSimpleEvents\Divi\DiviModuleRegistrar;
+use MiMe\WPSimpleEvents\Divi\DiviPostTypeIntegration;
+use MiMe\WPSimpleEvents\Divi\EventTitleModuleRenderer;
+use MiMe\WPSimpleEvents\Divi\WordPressDiviHost;
 use MiMe\WPSimpleEvents\Elementor\ElementorIntegration;
 use MiMe\WPSimpleEvents\Elementor\PreviewEventOptions;
 use MiMe\WPSimpleEvents\Elementor\WidgetRegistrar;
@@ -148,6 +157,19 @@ final class Plugin {
 				details: $details_shortcode
 			)
 		);
+		$divi_host                = new WordPressDiviHost();
+		$divi_composites          = new DiviCompositeModuleRenderer( $details_shortcode, $event_lists, $calendar );
+		$divi                     = new DiviIntegration(
+			new DiviPostTypeIntegration(),
+			new DiviModuleRegistrar(
+				$divi_host,
+				new EventTitleModuleRenderer( $event_contexts, $current_presentations, $event_fields ),
+				new EventFieldModuleRenderer( $event_contexts, $current_presentations, $event_fields ),
+				$divi_composites,
+				new DiviEditorDataProvider( $public_events, $event_contexts, $current_presentations )
+			),
+			new DiviPreviewController( $divi_composites )
+		);
 		$calendar_feed            = new CalendarFeedController(
 			occurrences: $occurrence_reads,
 			occurrence_presenter: $occurrence_collections,
@@ -213,6 +235,7 @@ final class Plugin {
 		$details_shortcode->register();
 		$calendar->register();
 		$elementor->register();
+		$divi->register();
 		$archive_query->register();
 		$native_templates->register();
 		$template_loader->register();
