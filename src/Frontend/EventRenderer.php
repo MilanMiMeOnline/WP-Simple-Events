@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Frontend;
 
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorPresentation;
+use MiMe\WPSimpleEvents\Domain\HexColor;
 use WP_Post;
 
 /**
@@ -26,24 +28,27 @@ final readonly class EventRenderer {
 	/**
 	 * Render one event card with late contextual escaping.
 	 *
-	 * @param WP_Post          $event   Public event post.
-	 * @param EventCardOptions $options Optional section choices.
+	 * @param WP_Post                     $event   Public event post.
+	 * @param EventCardOptions            $options Optional section choices.
+	 * @param EventColorPresentation|null $color Optional resolved calendar color.
 	 */
-	public function card( WP_Post $event, EventCardOptions $options ): string {
-		return $this->card_presentation( $this->presentations->create( $event ), $options );
+	public function card( WP_Post $event, EventCardOptions $options, ?EventColorPresentation $color = null ): string {
+		return $this->card_presentation( $this->presentations->create( $event ), $options, '', $color );
 	}
 
 	/**
 	 * Render one normalized event or occurrence card with late contextual escaping.
 	 *
-	 * @param EventPresentation $presentation Effective public presentation.
-	 * @param EventCardOptions  $options      Optional section choices.
-	 * @param string            $identity     Optional occurrence identity for unique DOM IDs.
+	 * @param EventPresentation           $presentation Effective public presentation.
+	 * @param EventCardOptions            $options      Optional section choices.
+	 * @param string                      $identity     Optional occurrence identity for unique DOM IDs.
+	 * @param EventColorPresentation|null $color        Optional resolved calendar color.
 	 */
 	public function card_presentation(
 		EventPresentation $presentation,
 		EventCardOptions $options,
-		string $identity = ''
+		string $identity = '',
+		?EventColorPresentation $color = null
 	): string {
 		if ( null === $presentation->date ) {
 			return '';
@@ -61,6 +66,7 @@ final readonly class EventRenderer {
 		$location_url = $presentation->location_url;
 		$title_id     = $this->title_id( $event->ID, $identity );
 		$classes      = array( 'wpse-event-card' );
+		$style        = '';
 		$excerpt      = $options->show_excerpt
 			? trim( wp_trim_words( get_the_excerpt( $event ), $options->excerpt_length ) )
 			: '';
@@ -72,9 +78,18 @@ final readonly class EventRenderer {
 			$classes[] = 'wpse-event-card-status-' . $status->value;
 		}
 
+		if ( null !== $color ) {
+			$background = HexColor::normalize( $color->background );
+
+			if ( '' !== $background ) {
+				$classes[] = 'wpse-event-card-has-color';
+				$style     = ' style="--wpse-event-color:' . esc_attr( $background ) . '"';
+			}
+		}
+
 		ob_start();
 		?>
-		<article class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"<?php echo $label_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete attribute is escaped above. ?>>
+		<article class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"<?php echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Strict normalized color and fixed property name. ?><?php echo $label_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The complete attribute is escaped above. ?>>
 			<?php if ( $options->show_image && $presentation->featured_image_id > 0 ) : ?>
 				<a class="wpse-event-card-image-link" href="<?php echo esc_url( $permalink ); ?>" tabindex="-1" aria-hidden="true">
 					<?php echo wp_kses_post( wp_get_attachment_image( $presentation->featured_image_id, 'medium_large', false, array( 'class' => 'wpse-event-card-image' ) ) ); ?>

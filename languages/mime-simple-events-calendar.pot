@@ -203,7 +203,7 @@ msgid "The event copy could not be completed safely."
 msgstr ""
 
 #: src/Admin/EventListTable.php:55
-#: src/Divi/DiviEditorTranslations.php:141
+#: src/Divi/DiviEditorTranslations.php:146
 #: src/Elementor/EventTitleWidget.php:46
 msgid "Title"
 msgstr ""
@@ -269,8 +269,8 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:297
 #: src/Divi/DiviEditorDataProvider.php:73
 #: src/Frontend/EventFieldRenderer.php:130
-#: src/Frontend/EventRenderer.php:146
-#: src/Shortcode/CalendarShortcode.php:213
+#: src/Frontend/EventRenderer.php:161
+#: src/Shortcode/CalendarShortcode.php:230
 msgid "Cancelled"
 msgstr ""
 
@@ -278,8 +278,8 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:298
 #: src/Divi/DiviEditorDataProvider.php:74
 #: src/Frontend/EventFieldRenderer.php:131
-#: src/Frontend/EventRenderer.php:147
-#: src/Shortcode/CalendarShortcode.php:214
+#: src/Frontend/EventRenderer.php:162
+#: src/Shortcode/CalendarShortcode.php:231
 #: assets/src/js/recurrence-editor.js:1687
 msgid "Postponed"
 msgstr ""
@@ -294,7 +294,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:159
 #: src/Frontend/EventArchiveControls.php:77
-#: src/Shortcode/EventListControls.php:129
+#: src/Shortcode/EventListControls.php:133
 msgid "Upcoming and active"
 msgstr ""
 
@@ -477,7 +477,7 @@ msgstr ""
 
 #: src/Admin/EventSettingsPage.php:77
 #: assets/src/js/event-fields-editor.js:316
-#: assets/src/js/event-fields-editor.js:797
+#: assets/src/js/event-fields-editor.js:810
 msgid "Event settings"
 msgstr ""
 
@@ -495,7 +495,7 @@ msgstr ""
 
 #: src/Admin/EventSettingsPage.php:140
 #: src/Elementor/EventListWidget.php:94
-#: assets/src/js/event-fields-editor.js:522
+#: assets/src/js/event-fields-editor.js:523
 msgid "Events per page"
 msgstr ""
 
@@ -1225,7 +1225,7 @@ msgstr ""
 #: src/Divi/DiviEditorDataProvider.php:68
 #: src/Elementor/EventVenueWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:153
-#: src/Frontend/EventRenderer.php:105
+#: src/Frontend/EventRenderer.php:120
 #: assets/src/js/event-fields-editor.js:108
 msgid "Location:"
 msgstr ""
@@ -1280,8 +1280,8 @@ msgstr ""
 #: src/Divi/DiviEditorTranslations.php:21
 #: src/Elementor/EventListWidget.php:87
 #: src/Frontend/EventArchiveControls.php:79
-#: src/Shortcode/EventListControls.php:131
-#: assets/src/js/event-fields-editor.js:516
+#: src/Shortcode/EventListControls.php:135
+#: assets/src/js/event-fields-editor.js:517
 msgid "All"
 msgstr ""
 
@@ -1301,9 +1301,10 @@ msgstr ""
 #: src/Elementor/EventCategoriesWidget.php:46
 #: src/Elementor/EventListWidget.php:122
 #: src/Frontend/EventArchiveControls.php:84
-#: src/Shortcode/CalendarControls.php:115
-#: src/Shortcode/EventListControls.php:120
-#: assets/src/js/event-fields-editor.js:536
+#: src/Frontend/EventCategoryLegend.php:70
+#: src/Shortcode/CalendarControls.php:119
+#: src/Shortcode/EventListControls.php:124
+#: assets/src/js/event-fields-editor.js:537
 msgid "Categories"
 msgstr ""
 
@@ -1402,7 +1403,7 @@ msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:50
 #: src/Elementor/EventDetailsWidget.php:64
-#: assets/src/js/event-fields-editor.js:459
+#: assets/src/js/event-fields-editor.js:460
 msgid "Event Details"
 msgstr ""
 
@@ -1475,103 +1476,133 @@ msgid "Fallback Heading Level"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:66
-msgid "Field"
+msgid "Category Color Legend"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:67
-msgid "Field Text"
+#: src/Elementor/EventCalendarWidget.php:156
+#: assets/src/js/event-fields-editor.js:620
+msgid "Auto hides the legend when visible category filters already explain the colors."
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:68
-msgid "Full Size"
+#: src/Elementor/EventCalendarWidget.php:152
+#: assets/src/js/event-fields-editor.js:623
+msgid "Auto"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:69
-#: src/Elementor/EventListWidget.php:73
-#: assets/src/js/event-fields-editor.js:504
-msgid "Grid"
+#: src/Elementor/AbstractEventFieldWidget.php:151
+#: src/Elementor/EventCalendarWidget.php:153
+#: assets/src/js/event-fields-editor.js:624
+msgid "Show"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:70
-msgid "Grid Columns"
+#: src/Elementor/AbstractEventFieldWidget.php:152
+#: src/Elementor/EventCalendarWidget.php:154
+#: assets/src/js/event-fields-editor.js:625
+msgid "Hide"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:71
-msgid "Image Size"
+msgid "Field"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:72
-msgid "Initial Categories"
+msgid "Field Text"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:73
-msgid "Initial Date"
+msgid "Full Size"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:74
-msgid "Initial Tags"
+#: src/Elementor/EventListWidget.php:73
+#: assets/src/js/event-fields-editor.js:505
+msgid "Grid"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:75
-msgid "Label Text"
+msgid "Grid Columns"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:76
-msgid "Labels"
+msgid "Image Size"
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:77
+msgid "Initial Categories"
+msgstr ""
+
+#: src/Divi/DiviEditorTranslations.php:78
+msgid "Initial Date"
+msgstr ""
+
+#: src/Divi/DiviEditorTranslations.php:79
+msgid "Initial Tags"
+msgstr ""
+
+#: src/Divi/DiviEditorTranslations.php:80
+msgid "Label Text"
+msgstr ""
+
+#: src/Divi/DiviEditorTranslations.php:81
+msgid "Labels"
+msgstr ""
+
+#: src/Divi/DiviEditorTranslations.php:82
 #: src/Elementor/EventFeaturedImageWidget.php:59
 #: assets/src/js/event-fields-editor.js:228
 msgid "Large"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:78
+#: src/Divi/DiviEditorTranslations.php:83
 #: src/Elementor/EventListWidget.php:69
-#: assets/src/js/event-fields-editor.js:501
+#: assets/src/js/event-fields-editor.js:502
 msgid "Layout"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:79
+#: src/Divi/DiviEditorTranslations.php:84
 #: src/Elementor/EventExternalActionWidget.php:55
 #: assets/src/js/event-fields-editor.js:280
 msgid "Leave empty to use the label saved on the event."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:80
+#: src/Divi/DiviEditorTranslations.php:85
 msgid "Leave empty to use the translated default label."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:81
-#: assets/src/js/event-fields-editor.js:708
+#: src/Divi/DiviEditorTranslations.php:86
+#: assets/src/js/event-fields-editor.js:721
 msgid "Leave empty to use the translated default."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:82
+#: src/Divi/DiviEditorTranslations.php:87
 msgid "Let visitors filter by available categories and tags."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:83
+#: src/Divi/DiviEditorTranslations.php:88
 msgid "Let visitors filter this event list."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:84
+#: src/Divi/DiviEditorTranslations.php:89
 msgid "Link Text"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:85
+#: src/Divi/DiviEditorTranslations.php:90
 msgid "Link the image to the selected event or occurrence."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:86
+#: src/Divi/DiviEditorTranslations.php:91
 msgid "Link the title to the selected event or occurrence."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:87
+#: src/Divi/DiviEditorTranslations.php:92
 msgid "Link to Event"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:88
+#: src/Divi/DiviEditorTranslations.php:93
 #: src/Elementor/EventFeaturedImageWidget.php:80
 #: src/Elementor/EventTitleWidget.php:62
 #: assets/src/js/event-fields-editor.js:213
@@ -1579,266 +1610,266 @@ msgstr ""
 msgid "Link to event"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:89
-#: src/Elementor/EventCalendarWidget.php:186
+#: src/Divi/DiviEditorTranslations.php:94
+#: src/Elementor/EventCalendarWidget.php:200
 #: src/Elementor/EventListWidget.php:74
-#: src/Shortcode/CalendarShortcode.php:200
-#: assets/src/js/event-fields-editor.js:505
-#: assets/src/js/event-fields-editor.js:576
-#: assets/src/js/event-fields-editor.js:594
+#: src/Shortcode/CalendarShortcode.php:217
+#: assets/src/js/event-fields-editor.js:506
+#: assets/src/js/event-fields-editor.js:577
+#: assets/src/js/event-fields-editor.js:595
 msgid "List"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:90
+#: src/Divi/DiviEditorTranslations.php:95
 msgid "Location Link Text"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:91
+#: src/Divi/DiviEditorTranslations.php:96
 msgid "Media Library Alt Text"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:92
+#: src/Divi/DiviEditorTranslations.php:97
 #: src/Elementor/EventFeaturedImageWidget.php:57
 #: assets/src/js/event-fields-editor.js:226
 msgid "Medium"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:93
+#: src/Divi/DiviEditorTranslations.php:98
 msgid "Medium Large"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:94
+#: src/Divi/DiviEditorTranslations.php:99
 msgid "Mobile View"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:95
-#: src/Elementor/EventCalendarWidget.php:185
-#: src/Shortcode/CalendarShortcode.php:199
-#: assets/src/js/event-fields-editor.js:575
-#: assets/src/js/event-fields-editor.js:593
+#: src/Divi/DiviEditorTranslations.php:100
+#: src/Elementor/EventCalendarWidget.php:199
+#: src/Shortcode/CalendarShortcode.php:216
+#: assets/src/js/event-fields-editor.js:576
+#: assets/src/js/event-fields-editor.js:594
 msgid "Month"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:96
+#: src/Divi/DiviEditorTranslations.php:101
 #: src/Elementor/EventCalendarWidget.php:89
 msgid "Optional. Use YYYY-MM-DD to open on a specific date."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:97
+#: src/Divi/DiviEditorTranslations.php:102
 msgid "Optionally include only selected event categories."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:98
+#: src/Divi/DiviEditorTranslations.php:103
 msgid "Optionally include only selected event tags."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:99
+#: src/Divi/DiviEditorTranslations.php:104
 msgid "Override Link Text"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:100
+#: src/Divi/DiviEditorTranslations.php:105
 #: src/Elementor/EventListWidget.php:86
 #: src/Frontend/EventArchiveControls.php:78
-#: src/Shortcode/EventListControls.php:130
-#: assets/src/js/event-fields-editor.js:515
+#: src/Shortcode/EventListControls.php:134
+#: assets/src/js/event-fields-editor.js:516
 msgid "Past"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:101
+#: src/Divi/DiviEditorTranslations.php:106
 #: src/Elementor/EventListWidget.php:81
 #: src/Frontend/EventArchiveControls.php:75
-#: src/Shortcode/EventListControls.php:119
-#: assets/src/js/event-fields-editor.js:511
+#: src/Shortcode/EventListControls.php:123
+#: assets/src/js/event-fields-editor.js:512
 msgid "Period"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:102
+#: src/Divi/DiviEditorTranslations.php:107
 msgid "Show Categories and Tags"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:103
+#: src/Divi/DiviEditorTranslations.php:108
 msgid "Show Content"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:104
+#: src/Divi/DiviEditorTranslations.php:109
 msgid "Show Date and Time"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:105
+#: src/Divi/DiviEditorTranslations.php:110
 msgid "Show Excerpt"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:106
+#: src/Divi/DiviEditorTranslations.php:111
 msgid "Show External Action"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:107
+#: src/Divi/DiviEditorTranslations.php:112
 msgid "Show Image"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:108
+#: src/Divi/DiviEditorTranslations.php:113
 msgid "Show Label"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:109
+#: src/Divi/DiviEditorTranslations.php:114
 msgid "Show Location"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:110
+#: src/Divi/DiviEditorTranslations.php:115
 msgid "Show Pagination"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:111
+#: src/Divi/DiviEditorTranslations.php:116
 msgid "Show Previous and Next"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:112
+#: src/Divi/DiviEditorTranslations.php:117
 msgid "Show Status"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:113
+#: src/Divi/DiviEditorTranslations.php:118
 msgid "Show Title"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:114
+#: src/Divi/DiviEditorTranslations.php:119
 msgid "Show Today"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:115
+#: src/Divi/DiviEditorTranslations.php:120
 msgid "Show View Switcher"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:116
+#: src/Divi/DiviEditorTranslations.php:121
 msgid "Show Visitor Filters"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:117
+#: src/Divi/DiviEditorTranslations.php:122
 msgid "Show cancelled or postponed status."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:118
+#: src/Divi/DiviEditorTranslations.php:123
 msgid "Show event categories and tags."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:119
+#: src/Divi/DiviEditorTranslations.php:124
 msgid "Show event dates and times on cards."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:120
+#: src/Divi/DiviEditorTranslations.php:125
 msgid "Show event excerpts on cards."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:121
+#: src/Divi/DiviEditorTranslations.php:126
 msgid "Show event locations on cards."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:122
+#: src/Divi/DiviEditorTranslations.php:127
 msgid "Show event titles on cards."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:123
+#: src/Divi/DiviEditorTranslations.php:128
 msgid "Show featured images on event cards."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:124
+#: src/Divi/DiviEditorTranslations.php:129
 msgid "Show page navigation when more results exist."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:125
+#: src/Divi/DiviEditorTranslations.php:130
 msgid "Show previous and next calendar buttons."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:126
+#: src/Divi/DiviEditorTranslations.php:131
 msgid "Show the Today button."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:127
+#: src/Divi/DiviEditorTranslations.php:132
 msgid "Show the categories label."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:128
+#: src/Divi/DiviEditorTranslations.php:133
 msgid "Show the date and time label."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:129
+#: src/Divi/DiviEditorTranslations.php:134
 msgid "Show the event date and time."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:130
+#: src/Divi/DiviEditorTranslations.php:135
 msgid "Show the event title."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:131
+#: src/Divi/DiviEditorTranslations.php:136
 msgid "Show the external event action."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:132
+#: src/Divi/DiviEditorTranslations.php:137
 msgid "Show the featured image."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:133
+#: src/Divi/DiviEditorTranslations.php:138
 msgid "Show the month and list view buttons."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:134
+#: src/Divi/DiviEditorTranslations.php:139
 msgid "Show the saved event content."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:135
+#: src/Divi/DiviEditorTranslations.php:140
 msgid "Show the tags label."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:136
+#: src/Divi/DiviEditorTranslations.php:141
 msgid "Show the venue label."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:137
+#: src/Divi/DiviEditorTranslations.php:142
 msgid "Show the venue, address and location link."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:138
+#: src/Divi/DiviEditorTranslations.php:143
 #: src/Elementor/EventListWidget.php:133
 #: src/Elementor/EventTagsWidget.php:46
 #: src/Frontend/EventArchiveControls.php:88
-#: src/Shortcode/CalendarControls.php:116
-#: src/Shortcode/EventListControls.php:121
-#: assets/src/js/event-fields-editor.js:537
+#: src/Shortcode/CalendarControls.php:120
+#: src/Shortcode/EventListControls.php:125
+#: assets/src/js/event-fields-editor.js:538
 msgid "Tags"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:139
+#: src/Divi/DiviEditorTranslations.php:144
 msgid "Tags Label"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:140
+#: src/Divi/DiviEditorTranslations.php:145
 #: src/Elementor/EventFeaturedImageWidget.php:56
 #: assets/src/js/event-fields-editor.js:225
 msgid "Thumbnail"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:142
+#: src/Divi/DiviEditorTranslations.php:147
 msgid "Title Heading Level"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:143
+#: src/Divi/DiviEditorTranslations.php:148
 msgid "Title Text"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:144
+#: src/Divi/DiviEditorTranslations.php:149
 #: src/Elementor/EventListWidget.php:85
-#: assets/src/js/event-fields-editor.js:514
+#: assets/src/js/event-fields-editor.js:515
 msgid "Upcoming"
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:145
+#: src/Divi/DiviEditorTranslations.php:150
 msgid "Use the Media Library alternative text or mark the image decorative."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:146
+#: src/Divi/DiviEditorTranslations.php:151
 msgid "Use the current event in a template, or select one public event for a regular page."
 msgstr ""
 
-#: src/Divi/DiviEditorTranslations.php:147
+#: src/Divi/DiviEditorTranslations.php:152
 msgid "Venue Label"
 msgstr ""
 
@@ -1854,14 +1885,6 @@ msgstr ""
 #: src/Elementor/AbstractEventFieldWidget.php:149
 #: assets/src/js/event-fields-editor.js:254
 msgid "Show label"
-msgstr ""
-
-#: src/Elementor/AbstractEventFieldWidget.php:151
-msgid "Show"
-msgstr ""
-
-#: src/Elementor/AbstractEventFieldWidget.php:152
-msgid "Hide"
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:160
@@ -1890,7 +1913,7 @@ msgid "Style"
 msgstr ""
 
 #: src/Elementor/AbstractEventFieldWidget.php:269
-#: src/Elementor/EventCalendarWidget.php:202
+#: src/Elementor/EventCalendarWidget.php:216
 #: src/Elementor/EventDetailsWidget.php:200
 #: src/Elementor/EventListWidget.php:246
 msgid "Text color"
@@ -1910,88 +1933,88 @@ msgid "Visitor filters"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:120
-#: assets/src/js/event-fields-editor.js:667
+#: assets/src/js/event-fields-editor.js:680
 msgid "Show categories"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:121
-#: assets/src/js/event-fields-editor.js:668
+#: assets/src/js/event-fields-editor.js:681
 msgid "Show tags"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:122
-#: assets/src/js/event-fields-editor.js:669
+#: assets/src/js/event-fields-editor.js:682
 msgid "Show active filter chips"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:123
-#: assets/src/js/event-fields-editor.js:670
+#: assets/src/js/event-fields-editor.js:683
 msgid "Show result status"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:140
-#: assets/src/js/event-fields-editor.js:679
+#: assets/src/js/event-fields-editor.js:692
 msgid "Filter layout"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:144
 #: src/Elementor/AbstractEventWidget.php:157
-#: assets/src/js/event-fields-editor.js:682
-#: assets/src/js/event-fields-editor.js:693
+#: assets/src/js/event-fields-editor.js:695
+#: assets/src/js/event-fields-editor.js:706
 msgid "Automatic"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:145
-#: assets/src/js/event-fields-editor.js:683
+#: assets/src/js/event-fields-editor.js:696
 msgid "Horizontal"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:146
-#: assets/src/js/event-fields-editor.js:684
+#: assets/src/js/event-fields-editor.js:697
 msgid "Stacked"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:153
-#: assets/src/js/event-fields-editor.js:690
+#: assets/src/js/event-fields-editor.js:703
 msgid "Initial filter panel"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:158
-#: assets/src/js/event-fields-editor.js:694
+#: assets/src/js/event-fields-editor.js:707
 msgid "Open"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:159
-#: assets/src/js/event-fields-editor.js:695
+#: assets/src/js/event-fields-editor.js:708
 msgid "Closed"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:166
-#: assets/src/js/event-fields-editor.js:700
+#: assets/src/js/event-fields-editor.js:713
 msgid "Filter button label"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:167
-#: assets/src/js/event-fields-editor.js:701
+#: assets/src/js/event-fields-editor.js:714
 msgid "Period label"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:168
 #: src/Elementor/EventDetailsWidget.php:147
-#: assets/src/js/event-fields-editor.js:654
-#: assets/src/js/event-fields-editor.js:702
+#: assets/src/js/event-fields-editor.js:667
+#: assets/src/js/event-fields-editor.js:715
 msgid "Categories label"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:169
 #: src/Elementor/EventDetailsWidget.php:148
-#: assets/src/js/event-fields-editor.js:655
-#: assets/src/js/event-fields-editor.js:703
+#: assets/src/js/event-fields-editor.js:668
+#: assets/src/js/event-fields-editor.js:716
 msgid "Tags label"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:170
-#: assets/src/js/event-fields-editor.js:704
+#: assets/src/js/event-fields-editor.js:717
 msgid "Apply button label"
 msgstr ""
 
@@ -2000,139 +2023,139 @@ msgid "Use translated default"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:199
-#: assets/src/js/event-fields-editor.js:716
+#: assets/src/js/event-fields-editor.js:729
 msgid "Container background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:200
-#: assets/src/js/event-fields-editor.js:717
+#: assets/src/js/event-fields-editor.js:730
 msgid "Panel background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:201
-#: assets/src/js/event-fields-editor.js:718
+#: assets/src/js/event-fields-editor.js:731
 msgid "Trigger background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:202
-#: assets/src/js/event-fields-editor.js:719
+#: assets/src/js/event-fields-editor.js:732
 msgid "Trigger text"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:203
-#: assets/src/js/event-fields-editor.js:720
+#: assets/src/js/event-fields-editor.js:733
 msgid "Field background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:204
-#: assets/src/js/event-fields-editor.js:721
+#: assets/src/js/event-fields-editor.js:734
 msgid "Field text"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:205
-#: assets/src/js/event-fields-editor.js:722
+#: assets/src/js/event-fields-editor.js:735
 msgid "Checkbox accent"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:206
-#: assets/src/js/event-fields-editor.js:723
+#: assets/src/js/event-fields-editor.js:736
 msgid "Chip background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:207
-#: assets/src/js/event-fields-editor.js:724
+#: assets/src/js/event-fields-editor.js:737
 msgid "Chip text"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:208
-#: assets/src/js/event-fields-editor.js:725
+#: assets/src/js/event-fields-editor.js:738
 msgid "Action background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:209
-#: assets/src/js/event-fields-editor.js:726
+#: assets/src/js/event-fields-editor.js:739
 msgid "Action text"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:210
-#: assets/src/js/event-fields-editor.js:727
+#: assets/src/js/event-fields-editor.js:740
 msgid "Status background"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:211
-#: assets/src/js/event-fields-editor.js:728
+#: assets/src/js/event-fields-editor.js:741
 msgid "Status text"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:226
 #: src/Elementor/EventListWidget.php:411
-#: assets/src/js/event-fields-editor.js:740
+#: assets/src/js/event-fields-editor.js:753
 msgid "Container padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:227
-#: assets/src/js/event-fields-editor.js:741
+#: assets/src/js/event-fields-editor.js:754
 msgid "Panel padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:228
-#: assets/src/js/event-fields-editor.js:743
+#: assets/src/js/event-fields-editor.js:756
 msgid "Trigger padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:229
-#: assets/src/js/event-fields-editor.js:748
+#: assets/src/js/event-fields-editor.js:761
 msgid "Chip padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:230
 #: src/Elementor/EventDetailsWidget.php:306
-#: assets/src/js/event-fields-editor.js:750
+#: assets/src/js/event-fields-editor.js:763
 msgid "Action padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:231
-#: assets/src/js/event-fields-editor.js:752
+#: assets/src/js/event-fields-editor.js:765
 msgid "Status padding"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:247
-#: assets/src/js/event-fields-editor.js:739
+#: assets/src/js/event-fields-editor.js:752
 msgid "Filter gap"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:248
-#: assets/src/js/event-fields-editor.js:745
+#: assets/src/js/event-fields-editor.js:758
 msgid "Option gap"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:249
-#: assets/src/js/event-fields-editor.js:746
+#: assets/src/js/event-fields-editor.js:759
 msgid "Checkbox size"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:250
-#: assets/src/js/event-fields-editor.js:747
+#: assets/src/js/event-fields-editor.js:760
 msgid "Option list maximum height"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:251
-#: assets/src/js/event-fields-editor.js:742
+#: assets/src/js/event-fields-editor.js:755
 msgid "Panel radius"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:252
-#: assets/src/js/event-fields-editor.js:744
+#: assets/src/js/event-fields-editor.js:757
 msgid "Trigger radius"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:253
-#: assets/src/js/event-fields-editor.js:749
+#: assets/src/js/event-fields-editor.js:762
 msgid "Chip radius"
 msgstr ""
 
 #: src/Elementor/AbstractEventWidget.php:254
-#: assets/src/js/event-fields-editor.js:751
+#: assets/src/js/event-fields-editor.js:764
 msgid "Action radius"
 msgstr ""
 
@@ -2157,27 +2180,27 @@ msgid "Status typography"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:63
-#: src/Elementor/EventCalendarWidget.php:195
+#: src/Elementor/EventCalendarWidget.php:209
 msgid "Calendar"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:70
-#: assets/src/js/event-fields-editor.js:572
+#: assets/src/js/event-fields-editor.js:573
 msgid "Desktop view"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:79
-#: assets/src/js/event-fields-editor.js:590
+#: assets/src/js/event-fields-editor.js:591
 msgid "Mobile view"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:88
-#: assets/src/js/event-fields-editor.js:582
+#: assets/src/js/event-fields-editor.js:583
 msgid "Initial date"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:97
-#: assets/src/js/event-fields-editor.js:598
+#: assets/src/js/event-fields-editor.js:599
 msgid "Initial categories"
 msgstr ""
 
@@ -2191,7 +2214,7 @@ msgid "Applied when the calendar first loads. Visitors can change categories whe
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:109
-#: assets/src/js/event-fields-editor.js:599
+#: assets/src/js/event-fields-editor.js:600
 msgid "Initial tags"
 msgstr ""
 
@@ -2205,8 +2228,8 @@ msgid "Applied when the calendar first loads. Visitors can change tags when visi
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:121
-#: assets/src/js/event-fields-editor.js:546
-#: assets/src/js/event-fields-editor.js:602
+#: assets/src/js/event-fields-editor.js:547
+#: assets/src/js/event-fields-editor.js:603
 msgid "Show visitor filters"
 msgstr ""
 
@@ -2215,94 +2238,99 @@ msgid "Let visitors filter by available event categories and tags. Hidden when n
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:130
-#: assets/src/js/event-fields-editor.js:607
+#: assets/src/js/event-fields-editor.js:608
 msgid "Show previous and next buttons"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:131
-#: assets/src/js/event-fields-editor.js:608
+#: assets/src/js/event-fields-editor.js:609
 msgid "Show Today button"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:132
-#: assets/src/js/event-fields-editor.js:609
+#: assets/src/js/event-fields-editor.js:610
 msgid "Show month/list switcher"
 msgstr ""
 
 #: src/Elementor/EventCalendarWidget.php:148
-#: assets/src/js/event-fields-editor.js:618
+#: assets/src/js/event-fields-editor.js:619
+msgid "Category color legend"
+msgstr ""
+
+#: src/Elementor/EventCalendarWidget.php:162
+#: assets/src/js/event-fields-editor.js:631
 msgid "Fallback heading level"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:210
+#: src/Elementor/EventCalendarWidget.php:224
 msgid "Accent color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:218
+#: src/Elementor/EventCalendarWidget.php:232
 msgid "Accent text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:226
+#: src/Elementor/EventCalendarWidget.php:240
 #: src/Elementor/EventDetailsWidget.php:216
 msgid "Border color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:234
+#: src/Elementor/EventCalendarWidget.php:248
 #: src/Elementor/EventExternalActionWidget.php:82
 msgid "Background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:242
+#: src/Elementor/EventCalendarWidget.php:256
 msgid "Calendar padding"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:251
+#: src/Elementor/EventCalendarWidget.php:265
 msgid "Today background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:259
+#: src/Elementor/EventCalendarWidget.php:273
 msgid "List hover background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:267
+#: src/Elementor/EventCalendarWidget.php:281
 msgid "Event background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:275
+#: src/Elementor/EventCalendarWidget.php:289
 msgid "Event text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:284
+#: src/Elementor/EventCalendarWidget.php:298
 msgid "Calendar typography"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:292
+#: src/Elementor/EventCalendarWidget.php:306
 msgid "Button typography"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:299
+#: src/Elementor/EventCalendarWidget.php:313
 #: src/Elementor/EventListWidget.php:374
 msgid "Button background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:307
+#: src/Elementor/EventCalendarWidget.php:321
 #: src/Elementor/EventListWidget.php:364
 msgid "Button text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:315
+#: src/Elementor/EventCalendarWidget.php:329
 msgid "Button hover background color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:323
+#: src/Elementor/EventCalendarWidget.php:337
 msgid "Button hover text color"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:338
+#: src/Elementor/EventCalendarWidget.php:352
 msgid "Button border radius"
 msgstr ""
 
-#: src/Elementor/EventCalendarWidget.php:347
+#: src/Elementor/EventCalendarWidget.php:361
 msgid "Mobile toolbar gap"
 msgstr ""
 
@@ -2316,74 +2344,74 @@ msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:104
 #: src/Elementor/EventListWidget.php:196
-#: assets/src/js/event-fields-editor.js:549
-#: assets/src/js/event-fields-editor.js:628
+#: assets/src/js/event-fields-editor.js:550
+#: assets/src/js/event-fields-editor.js:641
 msgid "Show title"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:105
 #: src/Elementor/EventListWidget.php:195
-#: assets/src/js/event-fields-editor.js:548
-#: assets/src/js/event-fields-editor.js:629
+#: assets/src/js/event-fields-editor.js:549
+#: assets/src/js/event-fields-editor.js:642
 msgid "Show image"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:106
 #: src/Elementor/EventListWidget.php:197
-#: assets/src/js/event-fields-editor.js:550
-#: assets/src/js/event-fields-editor.js:630
+#: assets/src/js/event-fields-editor.js:551
+#: assets/src/js/event-fields-editor.js:643
 msgid "Show date and time"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:107
-#: assets/src/js/event-fields-editor.js:631
+#: assets/src/js/event-fields-editor.js:644
 msgid "Show event status"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:108
-#: assets/src/js/event-fields-editor.js:632
+#: assets/src/js/event-fields-editor.js:645
 msgid "Show location details"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:109
-#: assets/src/js/event-fields-editor.js:633
+#: assets/src/js/event-fields-editor.js:646
 msgid "Show content"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:110
-#: assets/src/js/event-fields-editor.js:634
+#: assets/src/js/event-fields-editor.js:647
 msgid "Show external action"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:111
-#: assets/src/js/event-fields-editor.js:635
+#: assets/src/js/event-fields-editor.js:648
 msgid "Show categories and tags"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:127
 #: src/Elementor/EventListWidget.php:160
-#: assets/src/js/event-fields-editor.js:540
-#: assets/src/js/event-fields-editor.js:644
+#: assets/src/js/event-fields-editor.js:541
+#: assets/src/js/event-fields-editor.js:657
 msgid "Title heading level"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:143
-#: assets/src/js/event-fields-editor.js:650
+#: assets/src/js/event-fields-editor.js:663
 msgid "Date label"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:144
-#: assets/src/js/event-fields-editor.js:651
+#: assets/src/js/event-fields-editor.js:664
 msgid "Venue label"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:145
-#: assets/src/js/event-fields-editor.js:652
+#: assets/src/js/event-fields-editor.js:665
 msgid "Location link text"
 msgstr ""
 
 #: src/Elementor/EventDetailsWidget.php:146
-#: assets/src/js/event-fields-editor.js:653
+#: assets/src/js/event-fields-editor.js:666
 msgid "External action text"
 msgstr ""
 
@@ -2547,12 +2575,12 @@ msgid "Aspect ratio"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:105
-#: assets/src/js/event-fields-editor.js:530
+#: assets/src/js/event-fields-editor.js:531
 msgid "Columns"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:148
-#: assets/src/js/event-fields-editor.js:561
+#: assets/src/js/event-fields-editor.js:562
 msgid "Excerpt length (words)"
 msgstr ""
 
@@ -2561,17 +2589,17 @@ msgid "Show filters"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:194
-#: assets/src/js/event-fields-editor.js:547
+#: assets/src/js/event-fields-editor.js:548
 msgid "Show pagination"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:198
-#: assets/src/js/event-fields-editor.js:551
+#: assets/src/js/event-fields-editor.js:552
 msgid "Show excerpt"
 msgstr ""
 
 #: src/Elementor/EventListWidget.php:199
-#: assets/src/js/event-fields-editor.js:552
+#: assets/src/js/event-fields-editor.js:553
 msgid "Show location"
 msgstr ""
 
@@ -2648,38 +2676,38 @@ msgid "Native event-archive fallback from MiMe Simple Events and Calendar."
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:92
-#: src/Shortcode/CalendarControls.php:117
-#: src/Shortcode/EventListControls.php:122
+#: src/Shortcode/CalendarControls.php:121
+#: src/Shortcode/EventListControls.php:126
 msgid "Apply filters"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:94
 #: src/Frontend/EventFilterActiveChoices.php:77
-#: src/Shortcode/CalendarControls.php:132
-#: src/Shortcode/CalendarShortcode.php:110
-#: src/Shortcode/EventListControls.php:146
+#: src/Shortcode/CalendarControls.php:136
+#: src/Shortcode/CalendarShortcode.php:121
+#: src/Shortcode/EventListControls.php:150
 msgid "Clear all"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:103
-#: src/Shortcode/EventListControls.php:158
+#: src/Shortcode/EventListControls.php:162
 msgid "Filter events"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:132
-#: src/Shortcode/CalendarShortcode.php:196
-#: src/Shortcode/EventListControls.php:190
+#: src/Shortcode/CalendarShortcode.php:213
+#: src/Shortcode/EventListControls.php:194
 msgid "Previous"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:133
-#: src/Shortcode/CalendarShortcode.php:197
-#: src/Shortcode/EventListControls.php:191
+#: src/Shortcode/CalendarShortcode.php:214
+#: src/Shortcode/EventListControls.php:195
 msgid "Next"
 msgstr ""
 
 #: src/Frontend/EventArchiveControls.php:142
-#: src/Shortcode/EventListControls.php:200
+#: src/Shortcode/EventListControls.php:204
 msgid "Events pagination"
 msgstr ""
 
@@ -2693,6 +2721,10 @@ msgstr ""
 #: src/Frontend/EventArchiveTitle.php:60
 #, php-format
 msgid "Events tagged “%s”"
+msgstr ""
+
+#: src/Frontend/EventCategoryLegend.php:69
+msgid "Event category colors"
 msgstr ""
 
 #. translators: %s: Numeric timezone offset such as +02:00.
@@ -2744,9 +2776,9 @@ msgid "Clear tags"
 msgstr ""
 
 #: src/Frontend/EventFilterActiveChoices.php:79
-#: src/Shortcode/CalendarControls.php:134
-#: src/Shortcode/CalendarShortcode.php:109
-#: src/Shortcode/EventListControls.php:148
+#: src/Shortcode/CalendarControls.php:138
+#: src/Shortcode/CalendarShortcode.php:120
+#: src/Shortcode/EventListControls.php:152
 msgid "Restore defaults"
 msgstr ""
 
@@ -2754,20 +2786,20 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: src/Frontend/EventFilterTermGroup.php:40
+#: src/Frontend/EventFilterTermGroup.php:43
 msgid "Search options"
 msgstr ""
 
-#: src/Frontend/EventFilterTermGroup.php:40
+#: src/Frontend/EventFilterTermGroup.php:43
 msgid "No matching options."
 msgstr ""
 
-#: src/Frontend/EventFilterTermGroup.php:42
+#: src/Frontend/EventFilterTermGroup.php:45
 msgid "Choose any that apply. Leave all unchecked to include every available option."
 msgstr ""
 
-#: src/Frontend/EventListRenderer.php:101
-#: src/Shortcode/CalendarShortcode.php:202
+#: src/Frontend/EventListRenderer.php:106
+#: src/Shortcode/CalendarShortcode.php:219
 msgid "No events match your selection."
 msgstr ""
 
@@ -2803,36 +2835,36 @@ msgstr ""
 msgid "MiMe Simple Events and Calendar could not create its occurrence index. No event content was changed. Check the database permissions and try activation again."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:99
+#: src/Rest/CalendarFeedController.php:102
 msgid "The requested calendar period is invalid or exceeds four hundred days."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:146
-#: src/Rest/CalendarFeedController.php:159
+#: src/Rest/CalendarFeedController.php:147
+#: src/Rest/CalendarFeedController.php:162
 msgid "The occurrence calendar is temporarily unavailable."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:182
+#: src/Rest/CalendarFeedController.php:185
 msgid "Inclusive local-midnight ISO 8601 calendar start with timezone."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:188
+#: src/Rest/CalendarFeedController.php:191
 msgid "Exclusive local-midnight ISO 8601 calendar end with timezone."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:194
+#: src/Rest/CalendarFeedController.php:197
 msgid "Comma-separated event category slugs."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:201
+#: src/Rest/CalendarFeedController.php:204
 msgid "Comma-separated event tag slugs."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:208
+#: src/Rest/CalendarFeedController.php:211
 msgid "Current result page."
 msgstr ""
 
-#: src/Rest/CalendarFeedController.php:215
+#: src/Rest/CalendarFeedController.php:218
 msgid "Maximum events per result page."
 msgstr ""
 
@@ -2922,70 +2954,70 @@ msgstr ""
 msgid "The recurrence change was not completed. No stale occurrence data will be shown."
 msgstr ""
 
-#: src/Shortcode/CalendarControls.php:144
+#: src/Shortcode/CalendarControls.php:148
 msgid "Filter calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:107
+#: src/Shortcode/CalendarShortcode.php:118
 msgid "Events calendar"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:116
+#: src/Shortcode/CalendarShortcode.php:127
 msgid "Upcoming events"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:198
+#: src/Shortcode/CalendarShortcode.php:215
 msgid "Today"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:201
+#: src/Shortcode/CalendarShortcode.php:218
 msgid "Loading events…"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:203
+#: src/Shortcode/CalendarShortcode.php:220
 msgid "1 event loaded."
 msgstr ""
 
 #. Translators: %d is the number of loaded events.
-#: src/Shortcode/CalendarShortcode.php:205
+#: src/Shortcode/CalendarShortcode.php:222
 #, php-format
 msgid "%d events loaded."
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:206
+#: src/Shortcode/CalendarShortcode.php:223
 msgid "The calendar could not be loaded. The event list remains available below."
 msgstr ""
 
 #. Translators: %d is the maximum number of events currently shown.
-#: src/Shortcode/CalendarShortcode.php:208
+#: src/Shortcode/CalendarShortcode.php:225
 #, php-format
 msgid "Only the first %d events are shown. Narrow the calendar period or filters."
 msgstr ""
 
 #. Translators: %d is the number of additional events on a calendar day.
-#: src/Shortcode/CalendarShortcode.php:210
+#: src/Shortcode/CalendarShortcode.php:227
 #, php-format
 msgid "%d more"
 msgstr ""
 
 #. Translators: %s is the translated name of the calendar view.
-#: src/Shortcode/CalendarShortcode.php:212
+#: src/Shortcode/CalendarShortcode.php:229
 #, php-format
 msgid "%s view"
 msgstr ""
 
 #. Translators: %s is the displayed start time.
-#: src/Shortcode/CalendarShortcode.php:216
+#: src/Shortcode/CalendarShortcode.php:233
 #, php-format
 msgid "Starts at %s"
 msgstr ""
 
-#: src/Shortcode/CalendarShortcode.php:217
+#: src/Shortcode/CalendarShortcode.php:234
 msgid "Continues"
 msgstr ""
 
 #. Translators: %s is the displayed end time.
-#: src/Shortcode/CalendarShortcode.php:219
+#: src/Shortcode/CalendarShortcode.php:236
 #, php-format
 msgid "Ends at %s"
 msgstr ""
@@ -3072,35 +3104,35 @@ msgstr ""
 msgid "Display the interactive public event calendar with a server-rendered fallback."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:460
+#: assets/src/js/event-fields-editor.js:461
 msgid "Display the complete details of the current or selected public event."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:492
+#: assets/src/js/event-fields-editor.js:493
 msgid "Leave empty to include every available term."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:493
+#: assets/src/js/event-fields-editor.js:494
 msgid "No event terms are available yet."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:583
+#: assets/src/js/event-fields-editor.js:584
 msgid "Optional. Use YYYY-MM-DD to open the calendar on a specific date."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:659
+#: assets/src/js/event-fields-editor.js:672
 msgid "Leave empty to use the event default."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:780
+#: assets/src/js/event-fields-editor.js:793
 msgid "No public event output is available for the current settings or context."
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:802
+#: assets/src/js/event-fields-editor.js:815
 msgid "Visitor filter settings"
 msgstr ""
 
-#: assets/src/js/event-fields-editor.js:807
+#: assets/src/js/event-fields-editor.js:820
 msgid "Visitor filter design"
 msgstr ""
 

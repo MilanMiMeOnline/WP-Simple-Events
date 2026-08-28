@@ -895,6 +895,13 @@ for existing data and independently unit tested.
 
 ### FCR-6 — Calendar, recurrence and legend integration
 
+**Status:** completed locally on 2026-08-28. One prepared color collection now
+drives one-off and recurring calendar records, list/no-JavaScript accents,
+filter swatches and the bounded Auto/Show/Hide legend across shortcode,
+Gutenberg, Elementor and Divi. Detailed evidence is recorded in
+`QA-REPORT-0.6.0-FCR-6.md`; final compatibility, accessibility and release
+qualification remains FCR-7.
+
 1. Add resolved presentation colors to one-off and occurrence calendar records
    without changing dates, URLs, eligibility or structured data.
 2. Preload/cache the relevant event and term metadata per bounded response to

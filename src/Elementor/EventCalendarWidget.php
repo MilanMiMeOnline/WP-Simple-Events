@@ -143,6 +143,20 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			);
 		}
 		$this->add_control(
+			'legend',
+			array(
+				'label'       => esc_html__( 'Category color legend', 'mime-simple-events-calendar' ),
+				'type'        => Controls_Manager::SELECT,
+				'default'     => 'auto',
+				'options'     => array(
+					'auto' => esc_html__( 'Auto', 'mime-simple-events-calendar' ),
+					'show' => esc_html__( 'Show', 'mime-simple-events-calendar' ),
+					'hide' => esc_html__( 'Hide', 'mime-simple-events-calendar' ),
+				),
+				'description' => esc_html__( 'Auto hides the legend when visible category filters already explain the colors.', 'mime-simple-events-calendar' ),
+			)
+		);
+		$this->add_control(
 			'fallback_heading_level',
 			array(
 				'label'   => esc_html__( 'Fallback heading level', 'mime-simple-events-calendar' ),

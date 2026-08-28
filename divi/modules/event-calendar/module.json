@@ -101,6 +101,7 @@
               "showNavigation": "on",
               "showToday": "on",
               "showViewSwitcher": "on",
+              "legend": "auto",
               "fallbackHeadingLevel": "h3"
             }
           }
@@ -1008,9 +1009,40 @@
                 "type": "field"
               }
             },
-            "fallbackHeadingLevel": {
+            "legend": {
               "groupSlug": "contentDisplay",
               "priority": 480,
+              "render": true,
+              "subName": "legend",
+              "label": "Category Color Legend",
+              "description": "Auto hides the legend when visible category filters already explain the colors.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/select",
+                "type": "field",
+                "props": {
+                  "options": {
+                    "auto": {
+                      "label": "Auto"
+                    },
+                    "show": {
+                      "label": "Show"
+                    },
+                    "hide": {
+                      "label": "Hide"
+                    }
+                  }
+                }
+              }
+            },
+            "fallbackHeadingLevel": {
+              "groupSlug": "contentDisplay",
+              "priority": 490,
               "render": true,
               "subName": "fallbackHeadingLevel",
               "label": "Fallback Heading Level",

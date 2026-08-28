@@ -344,6 +344,20 @@ text is derived as black or white for contrast. Event color selection belongs to
 the canonical series, not an individual occurrence. Existing events retain the
 current component fallback until an editor deliberately assigns color data.
 
+The public feed uses FullCalendar's standard background, border and text color
+fields only when a valid event/category color was explicitly resolved. Component
+fallback colors remain component-owned and are not baked into feed records.
+Every occurrence inherits its canonical series color, including sparse content
+overrides and exact occurrence routes. Month view may use the resolved solid
+background while list and no-JavaScript cards use the same value as an accent.
+
+Visible category filters include decorative swatches beside their category text.
+The optional category-color legend is allowlisted as Auto, Show or Hide. Auto
+omits a duplicate legend when visible category filters already explain colors;
+otherwise it lists only bounded public categories with valid colors. Show forces
+that text-backed legend and Hide suppresses it. Every host exposes the same
+setting without making color the only carrier of event or category meaning.
+
 The calendar library is bundled locally. Its licence, version and removal cost are
 recorded in the third-party notices and decision log.
 

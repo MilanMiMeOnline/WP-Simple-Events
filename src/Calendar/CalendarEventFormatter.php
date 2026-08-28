@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorPresentation;
+use MiMe\WPSimpleEvents\Domain\HexColor;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionItem;
 use WP_Post;
 use WP_Term;
@@ -31,10 +33,11 @@ final readonly class CalendarEventFormatter {
 	/**
 	 * Format one event, omitting corrupt stored records.
 	 *
-	 * @param WP_Post $event Public event post.
+	 * @param WP_Post                     $event Public event post.
+	 * @param EventColorPresentation|null $color Optional resolved event color.
 	 * @return array<string, mixed>|null
 	 */
-	public function format( WP_Post $event ): ?array {
+	public function format( WP_Post $event, ?EventColorPresentation $color = null ): ?array {
 		if ( EventPostType::POST_TYPE !== $event->post_type ) {
 			return null;
 		}
@@ -75,7 +78,7 @@ final readonly class CalendarEventFormatter {
 			$extended['venue'] = $venue;
 		}
 
-		return array(
+		$item = array(
 			'id'            => $event->ID,
 			'title'         => $title,
 			'start'         => $dates['start'],
@@ -85,15 +88,18 @@ final readonly class CalendarEventFormatter {
 			'url'           => $permalink,
 			'extendedProps' => $extended,
 		);
+
+		return $this->with_color( $item, $color );
 	}
 
 	/**
 	 * Format one presentation-ready occurrence without rereading series schedule fields.
 	 *
-	 * @param OccurrenceCollectionItem $item Exact occurrence and effective presentation.
+	 * @param OccurrenceCollectionItem    $item  Exact occurrence and effective presentation.
+	 * @param EventColorPresentation|null $color Optional resolved series color.
 	 * @return array<string, mixed>|null
 	 */
-	public function format_occurrence( OccurrenceCollectionItem $item ): ?array {
+	public function format_occurrence( OccurrenceCollectionItem $item, ?EventColorPresentation $color = null ): ?array {
 		$event      = $item->presentation->event;
 		$occurrence = $item->occurrence;
 		$range      = $occurrence->date_range;
@@ -131,7 +137,7 @@ final readonly class CalendarEventFormatter {
 			$extended['venue'] = $item->presentation->venue;
 		}
 
-		return array(
+		$formatted = array(
 			'id'            => $occurrence->public_key,
 			'title'         => $title,
 			'start'         => $dates['start'],
@@ -141,6 +147,33 @@ final readonly class CalendarEventFormatter {
 			'url'           => $url,
 			'extendedProps' => $extended,
 		);
+
+		return $this->with_color( $formatted, $color );
+	}
+
+	/**
+	 * Add only standard bounded FullCalendar color fields.
+	 *
+	 * @param array<string, mixed>        $item  Text-backed calendar item.
+	 * @param EventColorPresentation|null $color Optional resolved event color.
+	 * @return array<string, mixed>
+	 */
+	private function with_color( array $item, ?EventColorPresentation $color ): array {
+		if ( null === $color ) {
+			return $item;
+		}
+
+		$background = HexColor::normalize( $color->background );
+
+		if ( '' === $background ) {
+			return $item;
+		}
+
+		$item['backgroundColor'] = $background;
+		$item['borderColor']     = $background;
+		$item['textColor']       = HexColor::contrast_text( $background );
+
+		return $item;
 	}
 
 	/**

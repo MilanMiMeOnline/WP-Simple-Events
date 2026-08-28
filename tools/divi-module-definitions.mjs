@@ -332,6 +332,7 @@ export const compositeModuleDefinitions = [
 			showNavigation: { ...toggle( 'Show Previous and Next', 'Show previous and next calendar buttons.', 'on' ), group: 'contentDisplay' },
 			showToday: { ...toggle( 'Show Today', 'Show the Today button.', 'on' ), group: 'contentDisplay' },
 			showViewSwitcher: { ...toggle( 'Show View Switcher', 'Show the month and list view buttons.', 'on' ), group: 'contentDisplay' },
+			legend: { ...select( 'Category Color Legend', 'Auto hides the legend when visible category filters already explain the colors.', { auto: { label: 'Auto' }, show: { label: 'Show' }, hide: { label: 'Hide' } }, 'auto' ), group: 'contentDisplay' },
 			fallbackHeadingLevel: { ...select( 'Fallback Heading Level', 'Choose the heading level used by the no-JavaScript fallback.', { h2: { label: 'H2' }, h3: { label: 'H3' }, h4: { label: 'H4' }, h5: { label: 'H5' }, h6: { label: 'H6' } }, 'h3' ), group: 'contentDisplay' },
 		},
 	},

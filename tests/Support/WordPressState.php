@@ -259,6 +259,20 @@ final class WordPressState {
 	private static array $post_terms = array();
 
 	/**
+	 * Recorded metadata cache priming calls.
+	 *
+	 * @var list<array{type: string, ids: list<int>}>
+	 */
+	private static array $meta_cache_calls = array();
+
+	/**
+	 * Recorded object-term cache priming calls.
+	 *
+	 * @var list<array{ids: list<int>, post_type: string}>
+	 */
+	private static array $object_term_cache_calls = array();
+
+	/**
 	 * Standalone taxonomy term IDs keyed by taxonomy.
 	 *
 	 * @var array<string, list<int>>
@@ -388,6 +402,8 @@ final class WordPressState {
 		self::$deleted_post_ids           = array();
 		self::$saved_post_revision_ids    = array();
 		self::$post_terms                 = array();
+		self::$meta_cache_calls           = array();
+		self::$object_term_cache_calls    = array();
 		self::$taxonomy_terms             = array();
 		self::$deleted_terms              = array();
 		self::$fail_term_operations       = false;
@@ -401,6 +417,50 @@ final class WordPressState {
 		self::$unregistered_post_types    = array();
 		self::$registered_taxonomies      = array();
 		self::$unregistered_taxonomies    = array();
+	}
+
+	/**
+	 * Record one metadata cache priming call.
+	 *
+	 * @param string $type Metadata object type.
+	 * @param int[]  $ids  Object IDs.
+	 */
+	public static function record_meta_cache( string $type, array $ids ): void {
+		self::$meta_cache_calls[] = array(
+			'type' => $type,
+			'ids'  => array_values( $ids ),
+		);
+	}
+
+	/**
+	 * Return recorded metadata cache calls.
+	 *
+	 * @return list<array{type: string, ids: list<int>}>
+	 */
+	public static function meta_cache_calls(): array {
+		return self::$meta_cache_calls;
+	}
+
+	/**
+	 * Record one object-term cache priming call.
+	 *
+	 * @param int[]  $ids       Object IDs.
+	 * @param string $post_type WordPress post type.
+	 */
+	public static function record_object_term_cache( array $ids, string $post_type ): void {
+		self::$object_term_cache_calls[] = array(
+			'ids'       => array_values( $ids ),
+			'post_type' => $post_type,
+		);
+	}
+
+	/**
+	 * Return recorded object-term cache calls.
+	 *
+	 * @return list<array{ids: list<int>, post_type: string}>
+	 */
+	public static function object_term_cache_calls(): array {
+		return self::$object_term_cache_calls;
 	}
 
 	/**

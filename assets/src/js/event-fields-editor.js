@@ -449,6 +449,7 @@ const compositeDefinitions = [
 			showNavigation: { type: 'boolean', default: true },
 			showToday: { type: 'boolean', default: true },
 			showViewSwitcher: { type: 'boolean', default: true },
+			legend: { type: 'string', default: 'auto', enum: [ 'auto', 'show', 'hide' ] },
 			fallbackHeadingLevel: { type: 'string', default: 'h3', enum: [ 'h2', 'h3', 'h4', 'h5', 'h6' ] },
 		},
 		supports: componentSupports(),
@@ -613,6 +614,18 @@ const calendarControls = ( attributes, setAttributes ) => [
 		checked: attributes[ key ],
 		onChange: ( value ) => setAttributes( { [ key ]: value } ),
 	} ) ),
+	el( SelectControl, {
+		key: 'legend',
+		label: __( 'Category color legend', 'mime-simple-events-calendar' ),
+		help: __( 'Auto hides the legend when visible category filters already explain the colors.', 'mime-simple-events-calendar' ),
+		value: attributes.legend,
+		options: [
+			{ label: __( 'Auto', 'mime-simple-events-calendar' ), value: 'auto' },
+			{ label: __( 'Show', 'mime-simple-events-calendar' ), value: 'show' },
+			{ label: __( 'Hide', 'mime-simple-events-calendar' ), value: 'hide' },
+		],
+		onChange: ( legend ) => setAttributes( { legend } ),
+	} ),
 	el( SelectControl, {
 		key: 'fallbackHeadingLevel',
 		label: __( 'Fallback heading level', 'mime-simple-events-calendar' ),

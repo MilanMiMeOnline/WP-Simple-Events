@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
 use MiMe\WPSimpleEvents\Frontend\EventRenderer;
+use MiMe\WPSimpleEvents\Domain\EventColorPresentation;
+use MiMe\WPSimpleEvents\Domain\EventColorSource;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -81,5 +83,32 @@ final class EventRendererTest extends TestCase {
 
 		self::assertStringContainsString( '<h4 class="wpse-event-card-title"', $output );
 		self::assertStringContainsString( 'aria-labelledby="wpse-event-702-title"', $output );
+	}
+
+	/** No-JavaScript calendar cards expose only a normalized accent variable. */
+	public function test_resolved_color_adds_a_text_backed_fallback_accent(): void {
+		$event = new WP_Post(
+			array(
+				'ID'          => 703,
+				'post_type'   => EventPostType::POST_TYPE,
+				'post_status' => 'publish',
+				'post_title'  => 'Colored event',
+			)
+		);
+		WordPressState::add_post( $event, 'https://example.test/events/colored/' );
+		WordPressState::update_post_meta( 703, EventMeta::START_UTC, 1_784_544_000 );
+		WordPressState::update_post_meta( 703, EventMeta::END_UTC, 1_784_547_600 );
+		WordPressState::update_post_meta( 703, EventMeta::ALL_DAY, false );
+		WordPressState::update_post_meta( 703, EventMeta::TIMEZONE, 'Europe/Brussels' );
+
+		$output = ( new EventRenderer() )->card(
+			$event,
+			new EventCardOptions( false, false, false, true, true, 30, 'h3' ),
+			new EventColorPresentation( '#336699', '#ffffff', EventColorSource::CUSTOM )
+		);
+
+		self::assertStringContainsString( 'wpse-event-card-has-color', $output );
+		self::assertStringContainsString( 'style="--wpse-event-color:#336699"', $output );
+		self::assertStringContainsString( 'Colored event', $output );
 	}
 }

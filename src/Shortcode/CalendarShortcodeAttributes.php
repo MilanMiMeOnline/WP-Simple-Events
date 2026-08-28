@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Shortcode;
 
 use MiMe\WPSimpleEvents\Domain\CalendarView;
+use MiMe\WPSimpleEvents\Domain\CalendarLegendVisibility;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Frontend\EventFilterPresentation;
 use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
@@ -21,17 +22,18 @@ final readonly class CalendarShortcodeAttributes {
 	/**
 	 * Store normalized calendar choices.
 	 *
-	 * @param CalendarView            $initial_view   Initial desktop view.
-	 * @param CalendarView            $mobile_view    Initial narrow-screen view.
-	 * @param string[]                $category_slugs Event category slugs.
-	 * @param string[]                $tag_slugs      Event tag slugs.
-	 * @param bool                    $filters        Whether filter controls are visible.
-	 * @param string                  $initial_date   Optional canonical initial date.
-	 * @param bool                    $show_navigation Show previous and next controls.
-	 * @param bool                    $show_today     Show the Today control.
-	 * @param bool                    $show_view_switcher Show month/list controls.
-	 * @param string                  $fallback_heading_level Server fallback heading element.
-	 * @param EventFilterPresentation $filter_presentation Bounded filter presentation.
+	 * @param CalendarView             $initial_view   Initial desktop view.
+	 * @param CalendarView             $mobile_view    Initial narrow-screen view.
+	 * @param string[]                 $category_slugs Event category slugs.
+	 * @param string[]                 $tag_slugs      Event tag slugs.
+	 * @param bool                     $filters        Whether filter controls are visible.
+	 * @param string                   $initial_date   Optional canonical initial date.
+	 * @param bool                     $show_navigation Show previous and next controls.
+	 * @param bool                     $show_today     Show the Today control.
+	 * @param bool                     $show_view_switcher Show month/list controls.
+	 * @param string                   $fallback_heading_level Server fallback heading element.
+	 * @param EventFilterPresentation  $filter_presentation Bounded filter presentation.
+	 * @param CalendarLegendVisibility $legend_visibility Category legend behaviour.
 	 */
 	private function __construct(
 		public CalendarView $initial_view,
@@ -44,7 +46,8 @@ final readonly class CalendarShortcodeAttributes {
 		public bool $show_today,
 		public bool $show_view_switcher,
 		public string $fallback_heading_level,
-		public EventFilterPresentation $filter_presentation
+		public EventFilterPresentation $filter_presentation,
+		public CalendarLegendVisibility $legend_visibility
 	) {}
 
 	/**
@@ -64,7 +67,8 @@ final readonly class CalendarShortcodeAttributes {
 			self::boolean_value( $attributes['show_today'] ?? null, true ),
 			self::boolean_value( $attributes['show_view_switcher'] ?? null, true ),
 			self::heading( $attributes['fallback_heading_level'] ?? null ),
-			EventFilterPresentation::from_attributes( $attributes, true )
+			EventFilterPresentation::from_attributes( $attributes, true ),
+			CalendarLegendVisibility::tryFrom( self::string_value( $attributes['legend'] ?? null ) ) ?? CalendarLegendVisibility::AUTO
 		);
 	}
 
@@ -103,7 +107,8 @@ final readonly class CalendarShortcodeAttributes {
 			$this->show_today,
 			$this->show_view_switcher,
 			$this->fallback_heading_level,
-			$this->filter_presentation
+			$this->filter_presentation,
+			$this->legend_visibility
 		);
 	}
 

@@ -70,6 +70,7 @@ final class DiviCompositeModuleTest extends TestCase {
 		self::assertFalse( $calendar['show_navigation'] );
 		self::assertTrue( $calendar['show_today'] );
 		self::assertFalse( $calendar['show_view_switcher'] );
+		self::assertSame( 'auto', $calendar['legend'] );
 	}
 
 	/** Details preview adds only a valid explicit or exact event context ID. */

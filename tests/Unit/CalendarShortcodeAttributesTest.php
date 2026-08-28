@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Domain\CalendarView;
+use MiMe\WPSimpleEvents\Domain\CalendarLegendVisibility;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcodeAttributes;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -62,6 +63,7 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 		self::assertFalse( $attributes->show_navigation );
 		self::assertFalse( $attributes->show_today );
 		self::assertFalse( $attributes->show_view_switcher );
+		self::assertSame( CalendarLegendVisibility::AUTO, $attributes->legend_visibility );
 		self::assertSame( 'h3', $attributes->fallback_heading_level );
 	}
 
@@ -71,11 +73,13 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 			array(
 				'initial_date'           => '2028-02-29',
 				'fallback_heading_level' => 'h2',
+				'legend'                 => 'show',
 			)
 		);
 
 		self::assertSame( '2028-02-29', $attributes->initial_date );
 		self::assertSame( 'h2', $attributes->fallback_heading_level );
+		self::assertSame( CalendarLegendVisibility::SHOW, $attributes->legend_visibility );
 	}
 
 	/**

@@ -14,6 +14,8 @@ use MiMe\WPSimpleEvents\Calendar\CalendarTimeFormat;
 use MiMe\WPSimpleEvents\Domain\CalendarView;
 use MiMe\WPSimpleEvents\Domain\EventListView;
 use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
+use MiMe\WPSimpleEvents\Frontend\EventCategoryLegend;
+use MiMe\WPSimpleEvents\Frontend\EventColorCollection;
 use MiMe\WPSimpleEvents\Frontend\EventListRenderer;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPage;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
@@ -42,6 +44,8 @@ final class CalendarShortcode implements ShortcodeRenderer {
 	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
 	 * @param OccurrenceRouteFeature        $occurrence_feature Explicit public recurrence gate.
 	 * @param OccurrenceReadiness           $occurrence_readiness Projection readiness gate.
+	 * @param EventColorCollection          $colors Prepared canonical colors.
+	 * @param EventCategoryLegend           $legend Category color legend.
 	 */
 	public function __construct(
 		private readonly EventRepository $events = new EventRepository(),
@@ -52,7 +56,9 @@ final class CalendarShortcode implements ShortcodeRenderer {
 		private readonly OccurrenceReadRepository $occurrences = new OccurrenceReadRepository(),
 		private readonly OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
 		private readonly OccurrenceRouteFeature $occurrence_feature = new OccurrenceRouteFeature(),
-		private readonly OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness()
+		private readonly OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness(),
+		private readonly EventColorCollection $colors = new EventColorCollection(),
+		private readonly EventCategoryLegend $legend = new EventCategoryLegend()
 	) {}
 
 	/**
@@ -101,6 +107,11 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			$output .= $this->controls->render( $normalized, $prefix, $canvas_id, $request, $configured );
 		}
 
+		$output .= $this->legend->render(
+			$normalized->legend_visibility,
+			$normalized->filters && $normalized->filter_presentation->show_categories
+		);
+
 		$status_class       = $normalized->filter_presentation->show_results ? '' : ' wpse-screen-reader-text';
 		$output            .= '<p class="wpse-calendar-status' . esc_attr( $status_class ) . '" role="status" aria-live="polite" data-wpse-calendar-status></p>';
 		$output            .= '<div id="' . esc_attr( $canvas_id ) . '" class="wpse-calendar-canvas" aria-label="'
@@ -116,20 +127,26 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			. esc_html__( 'Upcoming events', 'mime-simple-events-calendar' )
 			. '</' . esc_attr( $normalized->fallback_heading_level ) . '>';
 		$options            = new EventCardOptions( true, true, true, true, true, 30, $normalized->fallback_heading_level );
+		$event_ids          = null !== $occurrences
+			? array_map( static fn ( $item ): int => $item->occurrence->event_id, $occurrences->items )
+			: array_map( static fn ( WP_Post $post ): int => $post->ID, $posts );
+		$colors             = $this->colors->prepare( $event_ids );
 		$output            .= null !== $occurrences
 			? $this->renderer->render_occurrences(
 				$occurrences,
 				EventListView::LIST,
 				1,
 				$options,
-				$results_id
+				$results_id,
+				$colors
 			)
 			: $this->renderer->render(
 				$posts,
 				EventListView::LIST,
 				1,
 				$options,
-				$results_id
+				$results_id,
+				$colors
 			);
 
 		return $output . '</div></section>';

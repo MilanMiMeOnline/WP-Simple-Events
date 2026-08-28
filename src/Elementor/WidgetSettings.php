@@ -59,6 +59,7 @@ final class WidgetSettings {
 			'show_navigation'        => self::switcher( $settings, 'show_navigation', true ),
 			'show_today'             => self::switcher( $settings, 'show_today', true ),
 			'show_view_switcher'     => self::switcher( $settings, 'show_view_switcher', true ),
+			'legend'                 => self::choice( $settings['legend'] ?? null, array( 'auto', 'show', 'hide' ), 'auto' ),
 			'fallback_heading_level' => self::choice( $settings['fallback_heading_level'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
 			...self::filter_presentation( $settings, true ),
 		);

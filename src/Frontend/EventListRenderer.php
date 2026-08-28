@@ -26,23 +26,25 @@ final readonly class EventListRenderer {
 	/**
 	 * Render an event collection or its accessible empty state.
 	 *
-	 * @param WP_Post[]        $posts      Public event posts.
-	 * @param EventListView    $view       List or grid layout.
-	 * @param int              $columns    Desktop grid columns.
-	 * @param EventCardOptions $options    Card section choices.
-	 * @param string           $results_id Stable instance results ID.
+	 * @param WP_Post[]                                                      $posts      Public event posts.
+	 * @param EventListView                                                  $view       List or grid layout.
+	 * @param int                                                            $columns    Desktop grid columns.
+	 * @param EventCardOptions                                               $options    Card section choices.
+	 * @param string                                                         $results_id Stable instance results ID.
+	 * @param array<int, \MiMe\WPSimpleEvents\Domain\EventColorPresentation> $colors Canonical event colors.
 	 */
 	public function render(
 		array $posts,
 		EventListView $view,
 		int $columns,
 		EventCardOptions $options,
-		string $results_id
+		string $results_id,
+		array $colors = array()
 	): string {
 		$cards = array();
 
 		foreach ( $posts as $post ) {
-			$card = $this->events->card( $post, $options );
+			$card = $this->events->card( $post, $options, $colors[ $post->ID ] ?? null );
 
 			if ( '' !== $card ) {
 				$cards[] = $card;
@@ -55,18 +57,20 @@ final readonly class EventListRenderer {
 	/**
 	 * Render presentation-ready occurrence items without collapsing parent IDs.
 	 *
-	 * @param OccurrenceCollectionPage $page       Complete occurrence presentation page.
-	 * @param EventListView            $view       List or grid layout.
-	 * @param int                      $columns    Desktop grid columns.
-	 * @param EventCardOptions         $options    Card section choices.
-	 * @param string                   $results_id Stable instance results ID.
+	 * @param OccurrenceCollectionPage                                       $page       Complete occurrence presentation page.
+	 * @param EventListView                                                  $view       List or grid layout.
+	 * @param int                                                            $columns    Desktop grid columns.
+	 * @param EventCardOptions                                               $options    Card section choices.
+	 * @param string                                                         $results_id Stable instance results ID.
+	 * @param array<int, \MiMe\WPSimpleEvents\Domain\EventColorPresentation> $colors Canonical event colors.
 	 */
 	public function render_occurrences(
 		OccurrenceCollectionPage $page,
 		EventListView $view,
 		int $columns,
 		EventCardOptions $options,
-		string $results_id
+		string $results_id,
+		array $colors = array()
 	): string {
 		$cards = array();
 
@@ -74,7 +78,8 @@ final readonly class EventListRenderer {
 			$card = $this->events->card_presentation(
 				$item->presentation,
 				$options,
-				$item->occurrence->public_key
+				$item->occurrence->public_key,
+				$colors[ $item->occurrence->event_id ] ?? null
 			);
 
 			if ( '' !== $card ) {

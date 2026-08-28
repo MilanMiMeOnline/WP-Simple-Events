@@ -29,6 +29,10 @@ Details controls its event source, established field groups, title heading and
 bounded label overrides. Controls that depend on another choice are hidden while
 that feature is disabled.
 
+Calendar also exposes the shared Auto/Show/Hide category-color legend choice.
+Its server preview and public render use the same normalized shortcode setting;
+the block never stores resolved colors or category presentation in post content.
+
 List and Calendar also share **Visitor filter settings** and **Visitor filter
 design** panels. Content choices map to the same shortcode contract used by the
 other hosts. Design accepts only clearable palette colors and bounded integer

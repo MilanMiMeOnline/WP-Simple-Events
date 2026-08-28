@@ -107,6 +107,9 @@ choices use the same public filter renderer as shortcode, Gutenberg and
 Elementor output. Optional colors and integer pixel values are revalidated by
 PHP before they become allowlisted `--wpse-filter-*` declarations on one module
 wrapper; arbitrary CSS strings and out-of-range values produce no declaration.
+Event Calendar also exposes the same bounded Auto/Show/Hide category-color
+legend used by shortcode, Gutenberg and Elementor. Divi stores only that choice;
+the shared public renderer resolves the actual categories and colors.
 
 ### Deliberate exclusions
 

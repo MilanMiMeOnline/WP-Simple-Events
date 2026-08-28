@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
+use MiMe\WPSimpleEvents\Content\EventCategoryMeta;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Shortcode\EventListAttributes;
 use MiMe\WPSimpleEvents\Shortcode\EventListControls;
@@ -79,6 +80,7 @@ final class EventListControlsTest extends TestCase {
 				),
 			)
 		);
+		WordPressState::update_term_meta( 4, EventCategoryMeta::COLOR, '#663399' );
 
 		$output = ( new EventListControls() )->filters(
 			EventListAttributes::from_shortcode(
@@ -100,6 +102,8 @@ final class EventListControlsTest extends TestCase {
 		self::assertStringContainsString( 'type="checkbox"', $output );
 		self::assertStringContainsString( 'name="wpse_1_category[]"', $output );
 		self::assertStringContainsString( 'checked="checked"', $output );
+		self::assertStringContainsString( 'class="wpse-event-category-swatch"', $output );
+		self::assertStringContainsString( '--wpse-category-color:#663399', $output );
 		self::assertStringNotContainsString( 'multiple', $output );
 	}
 

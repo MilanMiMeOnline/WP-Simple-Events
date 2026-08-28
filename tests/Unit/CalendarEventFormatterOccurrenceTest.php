@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Calendar\CalendarEventFormatter;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventDateRange;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorPresentation;
+use MiMe\WPSimpleEvents\Domain\EventColorSource;
 use MiMe\WPSimpleEvents\Frontend\EventPresentation;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionItem;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadModel;
@@ -41,7 +43,10 @@ final class CalendarEventFormatterOccurrenceTest extends TestCase {
 				'Europe/Brussels'
 			)
 		);
-		$formatted = ( new CalendarEventFormatter() )->format_occurrence( $item );
+		$formatted = ( new CalendarEventFormatter() )->format_occurrence(
+			$item,
+			new EventColorPresentation( '#336699', '#ffffff', EventColorSource::CUSTOM )
+		);
 
 		self::assertNotNull( $formatted );
 		self::assertSame( self::KEY, $formatted['id'] );
@@ -54,6 +59,8 @@ final class CalendarEventFormatterOccurrenceTest extends TestCase {
 		self::assertSame( 'Occurrence venue', $formatted['extendedProps']['venue'] );
 		self::assertSame( 'Europe/Brussels', $formatted['extendedProps']['timezone'] );
 		self::assertSame( '2027-03-28T19:00:00+02:00', $formatted['extendedProps']['startInstant'] );
+		self::assertSame( '#336699', $formatted['backgroundColor'] );
+		self::assertSame( '#ffffff', $formatted['textColor'] );
 	}
 
 	/**

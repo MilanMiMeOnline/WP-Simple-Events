@@ -71,6 +71,7 @@ Default attributes are:
 | `filter_category_label` | empty | optional plain-text category label, max 80 characters |
 | `filter_tag_label` | empty | optional plain-text tag label, max 80 characters |
 | `filter_apply_label` | empty | optional plain-text apply label, max 80 characters |
+| `legend` | `auto` | `auto`, `show` or `hide` category-color legend |
 
 Unknown attributes are ignored. Invalid enum, integer and boolean values use documented safe defaults; no raw meta query, SQL, callback or post-status argument is accepted.
 
@@ -196,3 +197,15 @@ when applicable, so reverse proxies and equivalent host aliases cannot turn a
 public read into a cross-origin request. In list view, timed multi-day segments
 are labelled as starting, continuing or ending; genuine all-day events retain
 their all-day language.
+
+Calendar feed records may include FullCalendar's `backgroundColor`,
+`borderColor` and `textColor` fields only after the canonical event color has
+resolved to a normalized six-digit hexadecimal value. The formatter recomputes
+the accessible black/white foreground at its final output boundary and omits all
+three fields for the component fallback. Occurrence records reuse their canonical
+series color and never accept an occurrence-owned color value.
+
+Category choices retain visible category names and may add a decorative swatch.
+`legend="auto"` suppresses the separate text-backed category legend when visible
+category filters already explain the same colors; otherwise it shows the bounded
+set of public colored categories. `show` forces and `hide` suppresses that legend.

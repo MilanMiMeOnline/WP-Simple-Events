@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use MiMe\WPSimpleEvents\Calendar\CalendarEventFormatter;
 use MiMe\WPSimpleEvents\Domain\CalendarWindow;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
+use MiMe\WPSimpleEvents\Frontend\EventColorCollection;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadException;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadiness;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
@@ -41,6 +42,7 @@ final readonly class CalendarFeedController {
 	 * @param OccurrenceCollectionPresenter $occurrence_presenter Shared occurrence presentation bridge.
 	 * @param OccurrenceRouteFeature        $occurrence_feature Explicit public recurrence gate.
 	 * @param OccurrenceReadiness           $occurrence_readiness Projection readiness gate.
+	 * @param EventColorCollection          $colors Prepared canonical event colors.
 	 */
 	public function __construct(
 		private EventRepository $events = new EventRepository(),
@@ -48,7 +50,8 @@ final readonly class CalendarFeedController {
 		private OccurrenceReadRepository $occurrences = new OccurrenceReadRepository(),
 		private OccurrenceCollectionPresenter $occurrence_presenter = new OccurrenceCollectionPresenter(),
 		private OccurrenceRouteFeature $occurrence_feature = new OccurrenceRouteFeature(),
-		private OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness()
+		private OccurrenceReadiness $occurrence_readiness = new OccurrenceReadiness(),
+		private EventColorCollection $colors = new EventColorCollection()
 	) {}
 
 	/**
@@ -105,15 +108,13 @@ final readonly class CalendarFeedController {
 			return $this->occurrence_items( $criteria );
 		}
 
-		$query = $this->events->query_window( $criteria );
-		$items = array();
+		$query  = $this->events->query_window( $criteria );
+		$items  = array();
+		$posts  = array_values( array_filter( $query->posts, static fn ( mixed $post ): bool => $post instanceof WP_Post ) );
+		$colors = $this->colors->prepare( array_map( static fn ( WP_Post $post ): int => $post->ID, $posts ) );
 
-		foreach ( $query->posts as $post ) {
-			if ( ! $post instanceof WP_Post ) {
-				continue;
-			}
-
-			$item = $this->formatter->format( $post );
+		foreach ( $posts as $post ) {
+			$item = $this->formatter->format( $post, $colors[ $post->ID ] ?? null );
 
 			if ( null !== $item ) {
 				$items[] = $item;
@@ -148,10 +149,12 @@ final readonly class CalendarFeedController {
 			);
 		}
 
-		$items = array();
+		$items     = array();
+		$event_ids = array_map( static fn ( $item ): int => $item->occurrence->event_id, $page->items );
+		$colors    = $this->colors->prepare( $event_ids );
 
 		foreach ( $page->items as $item ) {
-			$formatted = $this->formatter->format_occurrence( $item );
+			$formatted = $this->formatter->format_occurrence( $item, $colors[ $item->occurrence->event_id ] ?? null );
 
 			if ( null === $formatted ) {
 				return new WP_Error(

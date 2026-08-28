@@ -170,3 +170,25 @@ black/white foreground values. Calendar title, time, status and optional legend
 or visible filters preserve non-color meaning. All projected occurrences inherit
 their canonical series color; occurrence-only color overrides are not part of
 0.6.
+
+Collection renderers prepare color input once per bounded result. They prime post,
+object-term and term metadata caches before resolving canonical event IDs, so
+recurring projections reuse one series value and do not introduce one metadata
+query per occurrence. The public calendar feed receives only explicit resolved
+colors through FullCalendar's standard `backgroundColor`, `borderColor` and
+`textColor` fields. A builder/component fallback remains local to that component.
+
+The stable color surface is `.wpse-event-card-has-color` for list and
+no-JavaScript cards, `.wpse-calendar-list-event-has-color` for interactive list
+rows, `.wpse-event-category-swatch` for decorative filter swatches and
+`.wpse-calendar-legend` with `.wpse-calendar-legend-title` and a semantic
+unordered list for the text-backed legend. Legend swatches reuse
+`.wpse-event-category-swatch`. Resolved accents use only the normalized
+`--wpse-event-color` custom property. The swatches are hidden from assistive
+technology because their adjacent category text carries meaning.
+
+Calendar hosts expose one `auto`, `show` or `hide` legend choice. Auto suppresses
+the separate legend only when visible category filters already explain colors;
+fixed/hidden filters do not count. Legend queries and filter choices remain
+bounded to public, non-empty event categories, and categories without a valid
+color are omitted from the legend rather than receiving an invented color.

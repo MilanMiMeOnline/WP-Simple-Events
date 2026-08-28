@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventDateRange;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationContext;
@@ -79,6 +80,8 @@ final class CalendarFeedControllerTest extends TestCase {
 
 	/** Healthy occurrence mode preserves occurrence identity, overrides and exact totals. */
 	public function test_returns_one_exact_occurrence_calendar_page(): void {
+		WordPressState::update_post_meta( 42, EventMeta::COLOR_MODE, EventColorMode::CUSTOM->value );
+		WordPressState::update_post_meta( 42, EventMeta::COLOR, '#336699' );
 		$occurrence = $this->occurrence();
 		$provider   = $this->provider( $occurrence );
 		$gateway    = new FakeOccurrenceReadGateway( array( $this->row( $occurrence ) ), 7 );
@@ -92,6 +95,7 @@ final class CalendarFeedControllerTest extends TestCase {
 		self::assertSame( self::KEY, $items[0]['id'] );
 		self::assertSame( 'Occurrence title', $items[0]['title'] );
 		self::assertSame( 'postponed', $items[0]['status'] );
+		self::assertSame( '#336699', $items[0]['backgroundColor'] );
 		self::assertSame( '/occurrence/' . self::KEY . '/', substr( $items[0]['url'], -45 ) );
 		self::assertSame(
 			array(

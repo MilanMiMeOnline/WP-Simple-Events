@@ -319,6 +319,17 @@
 	accent-color: var(--wpse-filter-accent);
 }
 
+.wpse-event-category-swatch {
+	display: inline-block;
+	flex: 0 0 auto;
+	width: 0.9em;
+	height: 0.9em;
+	margin-block-start: 0.2em;
+	border: 1px solid currentcolor;
+	border-radius: 50%;
+	background: var(--wpse-category-color, transparent);
+}
+
 .wpse-events-active-filters {
 	display: flex;
 	flex-wrap: wrap;
@@ -558,6 +569,34 @@
 	margin-top: calc(var(--wpse-spacing) * 1.5);
 }
 
+.wpse-calendar-fallback .wpse-event-card-has-color {
+	border-inline-start: 0.35rem solid var(--wpse-event-color);
+}
+
+.wpse-calendar-legend {
+	margin-block: var(--wpse-spacing);
+}
+
+.wpse-calendar-legend-title {
+	margin-block: 0 0.5rem;
+	font-weight: 600;
+}
+
+.wpse-calendar-legend ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.wpse-calendar-legend li {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
 .wpse-calendar.is-ready .wpse-calendar-fallback {
 	display: none;
 }
@@ -628,6 +667,10 @@
 .wpse-calendar .fc .fc-daygrid-event,
 .wpse-calendar .fc .fc-list-event-title a {
 	white-space: normal;
+}
+
+.wpse-calendar .fc .wpse-calendar-list-event-has-color > td:first-child {
+	border-inline-start: 0.35rem solid var(--wpse-event-color);
 }
 
 .wpse-calendar-event-status {

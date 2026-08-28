@@ -591,6 +591,7 @@ test( 'registers, serializes and previews the primary event components in Gutenb
 	await expect( page.getByLabel( 'Mobile view', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Initial date', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Show previous and next buttons', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Category color legend', { exact: true } ) ).toBeVisible();
 
 	await page.evaluate( () => {
 		const block = window.wp.blocks.createBlock( 'wpse/event-details' );

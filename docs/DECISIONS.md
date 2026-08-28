@@ -1785,3 +1785,28 @@ shared pure resolver normalizes every background and derives whichever of black
 or white has the greater WCAG contrast ratio. Public adapters receive only that
 bounded presentation value; FCR-6 owns calendar, occurrence, swatch and legend
 integration.
+
+## ADR-090: Public color presentation is prepared once per bounded collection
+
+**Status:** Accepted
+
+Calendar feeds and server-rendered calendar fallbacks resolve color from the
+canonical event, never from an occurrence or presentation override. One shared
+WordPress adapter primes post metadata, object-term relationships and term
+metadata for the complete bounded collection before invoking the pure resolver.
+The resulting map is keyed by canonical event ID, so every occurrence in a
+series receives the same deterministic presentation without query-per-item
+behaviour. Component fallback colors are deliberately omitted from the public
+feed: each calendar instance continues to own its theme or builder fallback.
+
+Resolved colors use FullCalendar's bounded background, border and text fields.
+Month view may use the solid presentation while list view and the no-JavaScript
+fallback use an accent treatment. Title, time, status and category text remain
+present, so color never becomes the only carrier of meaning.
+
+Visible category choices receive a decorative swatch beside their existing text.
+The optional calendar legend has three allowlisted states: `auto`, `show` and
+`hide`. Auto suppresses the legend when visible category filters already explain
+the same colors and otherwise shows the bounded set of colored public event
+categories. Show forces that legend and Hide suppresses it. Shortcode,
+Gutenberg, Elementor and Divi adapters expose the same setting and markup.

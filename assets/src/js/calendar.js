@@ -453,8 +453,19 @@ const initializeCalendar = ( root ) => {
 			return { domNodes: [ wrapper ] };
 		},
 		eventDidMount: ( argument ) => {
+			const isListView = argument.view.type.startsWith( 'list' );
+			const row = isListView
+				? argument.el.closest( '.fc-list-event' )
+				: null;
+			const color = argument.event.backgroundColor;
+
+			if ( row && /^#[0-9a-f]{6}$/i.test( color ) ) {
+				row.classList.add( 'wpse-calendar-list-event-has-color' );
+				row.style.setProperty( '--wpse-event-color', color );
+			}
+
 			if (
-				! argument.view.type.startsWith( 'list' ) ||
+				! isListView ||
 				argument.event.allDay ||
 				! argument.event.start ||
 				! argument.event.end ||
@@ -463,7 +474,6 @@ const initializeCalendar = ( root ) => {
 				return;
 			}
 
-			const row = argument.el.closest( '.fc-list-event' );
 			const time = row?.querySelector( '.fc-list-event-time' );
 
 			if ( ! time ) {

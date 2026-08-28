@@ -111,6 +111,7 @@ final class ElementorWidgetSettingsTest extends TestCase {
 				'show_navigation'        => false,
 				'show_today'             => true,
 				'show_view_switcher'     => false,
+				'legend'                 => 'show',
 				'fallback_heading_level' => 'h2',
 				'filter_categories'      => true,
 				'filter_tags'            => true,
@@ -135,6 +136,7 @@ final class ElementorWidgetSettingsTest extends TestCase {
 					'show_navigation'        => '',
 					'show_today'             => 'yes',
 					'show_view_switcher'     => '',
+					'legend'                 => 'show',
 					'fallback_heading_level' => 'h2',
 				)
 			)

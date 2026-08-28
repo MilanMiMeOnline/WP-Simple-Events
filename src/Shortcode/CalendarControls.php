@@ -15,6 +15,7 @@ use MiMe\WPSimpleEvents\Frontend\EventFilterDisclosure;
 use MiMe\WPSimpleEvents\Frontend\EventFilterTermGroup;
 use MiMe\WPSimpleEvents\Frontend\EventFilterUrlState;
 use MiMe\WPSimpleEvents\Frontend\EventFilterViewModel;
+use MiMe\WPSimpleEvents\Frontend\EventColorCollection;
 use WP_Term;
 
 /**
@@ -28,12 +29,14 @@ final readonly class CalendarControls {
 	 * @param EventFilterUrlState      $url_state  Bounded cross-instance URL state.
 	 * @param EventFilterActiveChoices $active_choices Removable active choices.
 	 * @param EventFilterDisclosure    $disclosure Progressive panel markup.
+	 * @param EventColorCollection     $colors Prepared category colors.
 	 */
 	public function __construct(
 		private EventFilterTermGroup $term_group = new EventFilterTermGroup(),
 		private EventFilterUrlState $url_state = new EventFilterUrlState(),
 		private EventFilterActiveChoices $active_choices = new EventFilterActiveChoices(),
-		private EventFilterDisclosure $disclosure = new EventFilterDisclosure()
+		private EventFilterDisclosure $disclosure = new EventFilterDisclosure(),
+		private EventColorCollection $colors = new EventColorCollection()
 	) {}
 
 	/**
@@ -52,10 +55,11 @@ final readonly class CalendarControls {
 		array $request,
 		?CalendarShortcodeAttributes $configured = null
 	): string {
-		$configured   = $configured ?? $attributes;
-		$presentation = $attributes->filter_presentation;
-		$categories   = $presentation->show_categories ? $this->terms( EventTaxonomies::CATEGORY ) : array();
-		$tags         = $presentation->show_tags ? $this->terms( EventTaxonomies::TAG ) : array();
+		$configured      = $configured ?? $attributes;
+		$presentation    = $attributes->filter_presentation;
+		$categories      = $presentation->show_categories ? $this->terms( EventTaxonomies::CATEGORY ) : array();
+		$tags            = $presentation->show_tags ? $this->terms( EventTaxonomies::TAG ) : array();
+		$category_colors = $this->colors->prepare_term_colors( $categories );
 
 		if ( array() === $categories && array() === $tags ) {
 			return '';
@@ -119,7 +123,7 @@ final readonly class CalendarControls {
 		ob_start();
 		?>
 			<?php if ( array() !== $categories ) : ?>
-				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', $category_label, $attributes->category_slugs, 'category' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
+				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', $category_label, $attributes->category_slugs, 'category', $category_colors ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>

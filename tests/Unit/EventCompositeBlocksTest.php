@@ -120,6 +120,7 @@ final class EventCompositeBlocksTest extends TestCase {
 				'show_navigation'        => true,
 				'show_today'             => true,
 				'show_view_switcher'     => true,
+				'legend'                 => 'auto',
 				'fallback_heading_level' => 'h3',
 				'filter_categories'      => true,
 				'filter_tags'            => true,

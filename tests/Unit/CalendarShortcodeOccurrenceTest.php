@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventDateRange;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceCollectionPresenter;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationContext;
@@ -66,6 +67,8 @@ final class CalendarShortcodeOccurrenceTest extends TestCase {
 			'https://example.com/events/series/'
 		);
 		WordPressState::update_post_meta( 42, EventMeta::STATUS, 'scheduled' );
+		WordPressState::update_post_meta( 42, EventMeta::COLOR_MODE, EventColorMode::CUSTOM->value );
+		WordPressState::update_post_meta( 42, EventMeta::COLOR, '#336699' );
 	}
 
 	/** Restore the public request superglobal. */
@@ -111,6 +114,8 @@ final class CalendarShortcodeOccurrenceTest extends TestCase {
 		self::assertStringContainsString( 'data-wpse-calendar=', $output );
 		self::assertStringNotContainsString( 'https://example.test/wp-json/', $output );
 		self::assertStringContainsString( '\/wp-json\/wpse\/v1\/events', $output );
+		self::assertStringContainsString( 'wpse-event-card-has-color', $output );
+		self::assertStringContainsString( '--wpse-event-color:#336699', $output );
 		self::assertNotNull( $gateway->rows_query );
 	}
 

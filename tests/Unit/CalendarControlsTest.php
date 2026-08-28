@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
+use MiMe\WPSimpleEvents\Content\EventCategoryMeta;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Shortcode\CalendarControls;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcodeAttributes;
@@ -41,6 +42,7 @@ final class CalendarControlsTest extends TestCase {
 			EventTaxonomies::CATEGORY,
 			array( $this->term( 3, 'Workshops', 'workshops' ) )
 		);
+		WordPressState::update_term_meta( 3, EventCategoryMeta::COLOR, '#336699' );
 
 		$output = $this->render();
 
@@ -52,6 +54,8 @@ final class CalendarControlsTest extends TestCase {
 		self::assertStringContainsString( 'type="checkbox"', $output );
 		self::assertStringNotContainsString( 'multiple', $output );
 		self::assertStringContainsString( 'value="workshops"', $output );
+		self::assertStringContainsString( 'class="wpse-event-category-swatch"', $output );
+		self::assertStringContainsString( '--wpse-category-color:#336699', $output );
 		self::assertStringNotContainsString( 'data-wpse-calendar-filter="tag"', $output );
 		self::assertStringContainsString( 'Apply filters', $output );
 	}

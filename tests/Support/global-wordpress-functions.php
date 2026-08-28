@@ -1357,6 +1357,32 @@ if ( ! function_exists( 'get_post_meta' ) ) {
 	}
 }
 
+if ( ! function_exists( 'update_meta_cache' ) ) {
+	/**
+	 * Record deterministic metadata cache priming.
+	 *
+	 * @param string $meta_type  Metadata object type.
+	 * @param int[]  $object_ids Object IDs.
+	 */
+	function update_meta_cache( string $meta_type, array $object_ids ): array|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::record_meta_cache( $meta_type, $object_ids );
+
+		return array();
+	}
+}
+
+if ( ! function_exists( 'update_object_term_cache' ) ) {
+	/**
+	 * Record deterministic object-term cache priming.
+	 *
+	 * @param int[]  $object_ids Object IDs.
+	 * @param string $post_type  WordPress post type.
+	 */
+	function update_object_term_cache( array $object_ids, string $post_type ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		WordPressState::record_object_term_cache( $object_ids, $post_type );
+	}
+}
+
 if ( ! function_exists( 'get_term_meta' ) ) {
 	/**
 	 * Read a deterministic term metadata value.

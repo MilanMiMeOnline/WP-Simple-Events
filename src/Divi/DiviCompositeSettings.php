@@ -90,6 +90,7 @@ final class DiviCompositeSettings {
 			'show_navigation'        => DiviModuleSettings::toggle( $attrs, 'showNavigation', true ),
 			'show_today'             => DiviModuleSettings::toggle( $attrs, 'showToday', true ),
 			'show_view_switcher'     => DiviModuleSettings::toggle( $attrs, 'showViewSwitcher', true ),
+			'legend'                 => DiviModuleSettings::choice( $attrs, 'legend', array( 'auto', 'show', 'hide' ), 'auto' ),
 			'fallback_heading_level' => DiviModuleSettings::choice( $attrs, 'fallbackHeadingLevel', array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
 			...self::filter_presentation( $attrs, true ),
 		);

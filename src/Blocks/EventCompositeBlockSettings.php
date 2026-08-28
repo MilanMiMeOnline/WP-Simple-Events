@@ -57,6 +57,7 @@ final class EventCompositeBlockSettings {
 			'show_navigation'        => self::boolean( $attributes, 'showNavigation', true ),
 			'show_today'             => self::boolean( $attributes, 'showToday', true ),
 			'show_view_switcher'     => self::boolean( $attributes, 'showViewSwitcher', true ),
+			'legend'                 => self::choice( $attributes['legend'] ?? null, array( 'auto', 'show', 'hide' ), 'auto' ),
 			'fallback_heading_level' => self::choice( $attributes['fallbackHeadingLevel'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
 			...self::filter_presentation( $attributes, true ),
 		);
