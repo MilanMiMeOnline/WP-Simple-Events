@@ -32,6 +32,10 @@ The implementation passed:
 - the complete WordPress 6.9 smoke journey in a clean Playground installation,
   including registration, default-off settings, nonce-protected opt-in,
   same-origin ICS output, protected-event suppression and cleanup;
+- the complete packaged browser matrix on WordPress 7.1/PHP 8.2: 29/29
+  Playwright journeys, including public Add to Calendar output, Gutenberg
+  registration and preview, one real draft save/reload, exact attribute recovery
+  and unconditional test-page deletion;
 - translation catalogue regeneration and verification;
 - `git diff --check`.
 
@@ -83,6 +87,23 @@ qualification.
 
 This report deliberately does not qualify 0.7.0 for release. Work package 5 must
 still verify real Apple Calendar import, Google and Outlook compose behaviour,
-Gutenberg/Elementor/Divi save-and-reload parity, keyboard/reflow behaviour and
-cache/privacy headers. Work package 6 must then run the complete supported
-version, Plugin Check, reproducible-package and publication gates.
+Elementor/Divi save-and-reload parity, keyboard/reflow behaviour and cache/privacy
+headers. Work package 6 must then run the complete supported-version, Plugin
+Check, reproducible-package and publication gates.
+
+## Local exploratory evidence
+
+The exact reproducible development package was installed over the local 0.6.0
+copy on `simpleevents.local`. The test then enabled the native option through the
+normal Settings API form and confirmed:
+
+- one eligible multi-day event received one same-origin local-download action;
+- a cancelled event received no action;
+- a recurring-series root received no action;
+- one exact occurrence received an action containing its immutable public key;
+- the resulting link completed a browser media download;
+- disabling and saving the option removed the action again.
+
+The setting was restored to disabled and no event, page, term, template or
+builder assignment was created by this local journey. Google/Outlook were not
+opened and no third party received event data during this pass.

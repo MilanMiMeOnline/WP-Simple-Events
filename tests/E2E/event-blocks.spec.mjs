@@ -13,6 +13,7 @@ const atomicBlockNames = [
 	'wpse/event-external-action',
 	'wpse/event-categories',
 	'wpse/event-tags',
+	'wpse/add-to-calendar',
 ];
 const compositeBlockNames = [
 	'wpse/event-list',
@@ -70,6 +71,11 @@ test( 'renders the complete explicit-source block palette without editor assets'
 	await expect( page.locator( '.wpse-event-field-block-event-external-action a' ) ).toHaveAttribute( 'rel', 'noopener noreferrer' );
 	await expect( page.locator( '.wpse-event-field-block-event-categories' ) ).toContainText( 'E2E Category' );
 	await expect( page.locator( '.wpse-event-field-block-event-tags' ) ).toContainText( 'E2E Atomic Tag' );
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-ics' ) ).toHaveAttribute(
+		'href',
+		/\/\?wpse_calendar_export=ics&wpse_event=\d+$/,
+	);
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-ics' ) ).toHaveAttribute( 'download', '' );
 	await expect( page.locator( '.wpse-event-field-block-event-featured-image' ) ).toHaveCount( 0 );
 
 	expect(
@@ -140,18 +146,36 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 		} );
 		const serialized = window.wp.blocks.serialize( [
 			window.wp.blocks.createBlock( 'wpse/event-venue', { eventId } ),
+			window.wp.blocks.createBlock( 'wpse/add-to-calendar', {
+				eventId,
+				providers: [ 'ics', 'google', 'outlook' ],
+				layout: 'list',
+			} ),
 		] );
-		const preview = await window.wp.apiFetch( {
-			path: '/wp/v2/block-renderer/wpse/event-venue?context=edit',
-			method: 'POST',
-			data: { attributes: { eventId } },
-		} );
+		const previews = await Promise.all( [
+			window.wp.apiFetch( {
+				path: '/wp/v2/block-renderer/wpse/event-venue?context=edit',
+				method: 'POST',
+				data: { attributes: { eventId } },
+			} ),
+			window.wp.apiFetch( {
+				path: '/wp/v2/block-renderer/wpse/add-to-calendar?context=edit',
+				method: 'POST',
+				data: {
+					attributes: {
+						eventId,
+						providers: [ 'ics', 'google', 'outlook' ],
+						layout: 'list',
+					},
+				},
+			} ),
+		] );
 
 		return {
 			blocks,
 			eventCount: eventIds.length,
 			serialized,
-			preview: preview.rendered,
+			previews: previews.map( ( preview ) => preview.rendered ),
 		};
 	}, atomicBlockNames );
 
@@ -165,9 +189,13 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 		expect( block.hasSave ).toBe( true );
 	}
 	expect( contract.serialized ).toContain( '<!-- wp:wpse/event-venue' );
+	expect( contract.serialized ).toContain( '<!-- wp:wpse/add-to-calendar' );
 	expect( contract.serialized ).not.toContain( 'E2E Atomic Hall' );
-	expect( contract.preview ).toContain( 'wpse-event-field-block-event-venue' );
-	expect( contract.preview ).toContain( 'E2E Atomic Hall' );
+	expect( contract.previews[ 0 ] ).toContain( 'wpse-event-field-block-event-venue' );
+	expect( contract.previews[ 0 ] ).toContain( 'E2E Atomic Hall' );
+	expect( contract.previews[ 1 ] ).toContain( 'wpse-add-to-calendar-block' );
+	expect( contract.previews[ 1 ] ).toContain( 'wpse-add-to-calendar-google' );
+	expect( contract.previews[ 1 ] ).toContain( 'wpse-add-to-calendar-outlook' );
 
 	await page.evaluate( ( names ) => {
 		const eventId = Number.parseInt(
@@ -184,6 +212,85 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 	await expect( page.getByLabel( 'Event source', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Show label', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Label text', { exact: true } ) ).toBeVisible();
+
+	await page.evaluate( () => {
+		const eventId = Number.parseInt(
+			Object.keys( window.wpseEventFieldBlocks?.events || {} )[ 0 ],
+			10,
+		);
+		const block = window.wp.blocks.createBlock( 'wpse/add-to-calendar', { eventId } );
+
+		window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( [ block ] );
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+	} );
+	await expect( page.getByLabel( 'Calendar file (ICS)', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Google Calendar', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Outlook', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Multiple-provider layout', { exact: true } ) ).toBeVisible();
+	await expect( page.getByLabel( 'Dropdown or list label', { exact: true } ) ).toBeVisible();
+} );
+
+test( 'saves, reloads and removes an Add to Calendar Gutenberg block', async ( {
+	page,
+} ) => {
+	await login( page );
+	await page.goto( '/wp-admin/post-new.php?post_type=page' );
+	await expect.poll( () => page.evaluate( () => Boolean( window.wp?.blocks ) ) ).toBe( true );
+
+	let pageId = 0;
+
+	try {
+		pageId = await page.evaluate( async () => {
+			const eventId = Number.parseInt(
+				Object.keys( window.wpseEventFieldBlocks?.events || {} )[ 0 ],
+				10,
+			);
+			const block = window.wp.blocks.createBlock( 'wpse/add-to-calendar', {
+				eventId,
+				providers: [ 'ics', 'google', 'outlook' ],
+				layout: 'list',
+				label: 'Choose a calendar',
+				actionRadius: 12,
+			} );
+
+			window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( [ block ] );
+			window.wp.data.dispatch( 'core/editor' ).editPost( {
+				status: 'draft',
+				title: 'E2E Add to Calendar save and reload',
+			} );
+			await window.wp.data.dispatch( 'core/editor' ).savePost();
+
+			return window.wp.data.select( 'core/editor' ).getCurrentPostId();
+		} );
+
+		expect( pageId ).toBeGreaterThan( 0 );
+		await page.reload( { waitUntil: 'domcontentloaded' } );
+		await expect.poll( () => page.evaluate( () => Boolean( window.wp?.blocks ) ) ).toBe( true );
+
+		const restored = await page.evaluate( () => {
+			const block = window.wp.data.select( 'core/block-editor' ).getBlocks()[ 0 ];
+
+			return {
+				name: block?.name,
+				attributes: block?.attributes,
+			};
+		} );
+
+		expect( restored.name ).toBe( 'wpse/add-to-calendar' );
+		expect( restored.attributes.providers ).toEqual( [ 'ics', 'google', 'outlook' ] );
+		expect( restored.attributes.layout ).toBe( 'list' );
+		expect( restored.attributes.label ).toBe( 'Choose a calendar' );
+		expect( restored.attributes.actionRadius ).toBe( 12 );
+	} finally {
+		if ( pageId > 0 ) {
+			await page.evaluate( async ( id ) => {
+				await window.wp.apiFetch( {
+					path: `/wp/v2/pages/${ id }?force=true`,
+					method: 'DELETE',
+				} );
+			}, pageId );
+		}
+	}
 } );
 
 test( 'previews and applies a complete-series recurrence in Gutenberg', async ( {

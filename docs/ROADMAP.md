@@ -1030,6 +1030,15 @@ path. Disabling the setting or removing a deliberately placed builder component
 removes all calendar-action markup. Explicit uninstall cleanup now includes the
 new option.
 
+**Work package 5 status — in progress.** The exact packaged implementation has
+passed 29/29 browser journeys on WordPress 7.1/PHP 8.2. Gutenberg now has an
+executable real draft save/reload/removal journey, while the public package test
+covers same-origin one-off output. A local native-template pass additionally
+verified one-off, cancelled, series-root and exact-occurrence behaviour and left
+the opt-in disabled afterwards. Real Apple import, Google/Outlook compose
+handoff, keyboard/reflow sampling and Elementor/Divi save/reload evidence remain
+before this package can close.
+
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series
 pages never imply unsupported whole-series synchronization; protected content is

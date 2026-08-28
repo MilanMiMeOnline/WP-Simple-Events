@@ -264,6 +264,7 @@ function wpse_e2e_seed_atomic_page(): void {
 		'event-external-action',
 		'event-categories',
 		'event-tags',
+		'add-to-calendar',
 	);
 	$content = implode(
 		'',
