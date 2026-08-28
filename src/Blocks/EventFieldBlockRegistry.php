@@ -26,13 +26,15 @@ final readonly class EventFieldBlockRegistry {
 	 * @param EventFieldBlockPattern      $pattern    Opt-in layout pattern.
 	 * @param FrontendAssets              $assets     Shared frontend assets.
 	 * @param EventCompositeBlockRenderer $composites Shared primary-component adapter.
+	 * @param AddToCalendarBlockRenderer  $calendar_action Shared calendar-action adapter.
 	 */
 	public function __construct(
 		private EventFieldBlockRenderer $renderer = new EventFieldBlockRenderer(),
 		private PublicEventOptions $events = new PublicEventOptions(),
 		private EventFieldBlockPattern $pattern = new EventFieldBlockPattern(),
 		private FrontendAssets $assets = new FrontendAssets(),
-		private EventCompositeBlockRenderer $composites = new EventCompositeBlockRenderer()
+		private EventCompositeBlockRenderer $composites = new EventCompositeBlockRenderer(),
+		private AddToCalendarBlockRenderer $calendar_action = new AddToCalendarBlockRenderer()
 	) {}
 
 	/** Register WordPress hooks without loading editor data on public requests. */
@@ -66,6 +68,11 @@ final readonly class EventFieldBlockRegistry {
 				array( 'render_callback' => array( $this->composites, 'render' ) )
 			);
 		}
+
+		register_block_type(
+			WPSE_PLUGIN_DIR . '/blocks/add-to-calendar',
+			array( 'render_callback' => array( $this->calendar_action, 'render' ) )
+		);
 
 		register_block_pattern_category(
 			EventFieldBlockDefinitions::CATEGORY,

@@ -72,6 +72,15 @@ calls the shared composite renderer and applies the same current-context versus
 explicit-public-source distinction as its atomic fields. These adapters may not
 query posts, read arbitrary metadata or implement a second presentation path.
 
+The atomic `wpse/add-to-calendar` block, `wpse-add-to-calendar` Elementor widget,
+native Divi 5 Add to Calendar module and `[wpse_add_to_calendar]` shortcode all
+delegate to one occurrence-aware snapshot and renderer. Empty source means the
+exact current event context; an explicit source must be a public one-off event.
+Local ICS is the only default. External provider actions require author opt-in,
+open in isolated new tabs and share no plugin-initiated remote request. The
+off-by-default native setting is evaluated only after the plugin fallback owns
+the single body, so builder templates receive no appended action.
+
 The three blocks save only block comments and attributes. They render on the
 server, retain a useful list or calendar fallback when visitor JavaScript is
 disabled and never store a preview response in post content. Taxonomy selectors

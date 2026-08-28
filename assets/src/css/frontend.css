@@ -6,6 +6,7 @@
 .wpse-single-event,
 .wpse-calendar,
 .wpse-event-archive,
+.wpse-add-to-calendar,
 .wpse-template {
 	--wpse-color-border: currentcolor;
 	--wpse-color-muted: currentcolor;
@@ -52,6 +53,15 @@
 	--wpse-action-radius: var(--wpse-radius);
 	--wpse-single-image-ratio: auto;
 	--wpse-single-image-radius: 0;
+	--wpse-calendar-action-background: transparent;
+	--wpse-calendar-action-text: inherit;
+	--wpse-calendar-action-border: currentcolor;
+	--wpse-calendar-action-radius: var(--wpse-radius);
+	--wpse-calendar-action-padding-block: 0.6em;
+	--wpse-calendar-action-padding-inline: 0.9em;
+	--wpse-calendar-action-gap: 0.5rem;
+	--wpse-calendar-menu-background: transparent;
+	--wpse-calendar-menu-padding: 0;
 }
 
 .wpse-events {
@@ -157,6 +167,58 @@
 	padding: var(--wpse-action-padding);
 	border: 1px solid currentcolor;
 	border-radius: var(--wpse-action-radius);
+}
+
+.wpse-add-to-calendar {
+	box-sizing: border-box;
+	color: inherit;
+	font: inherit;
+}
+
+.wpse-add-to-calendar-action {
+	display: inline-block;
+	box-sizing: border-box;
+	padding: var(--wpse-calendar-action-padding-block) var(--wpse-calendar-action-padding-inline);
+	border: 1px solid var(--wpse-calendar-action-border);
+	border-radius: var(--wpse-calendar-action-radius);
+	background: var(--wpse-calendar-action-background);
+	color: var(--wpse-calendar-action-text);
+	font: inherit;
+}
+
+.wpse-add-to-calendar-summary {
+	display: list-item;
+	box-sizing: border-box;
+	width: fit-content;
+	padding: var(--wpse-calendar-action-padding-block) var(--wpse-calendar-action-padding-inline);
+	border: 1px solid var(--wpse-calendar-action-border);
+	border-radius: var(--wpse-calendar-action-radius);
+	background: var(--wpse-calendar-action-background);
+	color: var(--wpse-calendar-action-text);
+	cursor: pointer;
+	font: inherit;
+	list-style-position: inside;
+}
+
+.wpse-add-to-calendar-label {
+	margin-block: 0 var(--wpse-calendar-action-gap);
+}
+
+.wpse-add-to-calendar-actions {
+	display: grid;
+	align-items: start;
+	justify-items: start;
+	gap: var(--wpse-calendar-action-gap);
+	margin-block: var(--wpse-calendar-action-gap) 0;
+	padding: var(--wpse-calendar-menu-padding);
+	background: var(--wpse-calendar-menu-background);
+	list-style: none;
+}
+
+.wpse-add-to-calendar-action:focus-visible,
+.wpse-add-to-calendar-summary:focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
 }
 
 .wpse-events-results {

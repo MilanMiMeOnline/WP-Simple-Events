@@ -18,8 +18,10 @@ The plugin is free software licensed under GPL-2.0-or-later. Its public WordPres
 - Native single and archive templates for classic and block themes.
 - A responsive list/grid and month/list calendar with bounded filters and presentation controls.
 - A no-JavaScript upcoming-event fallback.
-- Three complete Gutenberg components, twelve dynamic event-field blocks and a single-event pattern.
+- Three complete Gutenberg components, twelve dynamic event-field blocks, an Add to Calendar block and a single-event pattern.
 - Optional Elementor 3.35+ composite and atomic widgets.
+- Optional native Divi 5 modules.
+- One-way ICS download with optional Google and Outlook compose actions.
 - Safe Event JSON-LD for eligible individual events.
 - Default-safe data retention and explicit administrator maintenance tools.
 
@@ -45,15 +47,20 @@ WooCommerce and Elementor are optional and never core dependencies.
 [wpse_calendar]
 [wpse_events]
 [wpse_event_details]
+[wpse_add_to_calendar]
 ```
 
 `[wpse_calendar]` defaults to a desktop month view, a mobile list view and visible category/tag filters. `[wpse_events]` defaults to an upcoming three-column grid with pagination. Both shortcodes accept only documented, bounded attributes; invalid values fall back safely.
 
 ## Editors and page builders
 
-Gutenberg provides complete Event List / Grid, Event Calendar and Event Details blocks plus twelve server-rendered blocks for event title, featured image, date and time, status, venue, address, location link, content, excerpt, external action, categories and tags. Static pages can select one published event; dynamic templates can use the current event context.
+Gutenberg provides complete Event List / Grid, Event Calendar and Event Details blocks plus twelve server-rendered event fields and one Add to Calendar block. Static pages can select one published event; dynamic templates can use the current event context.
 
-Elementor 3.35+ provides the same twelve fields plus configurable Event List / Grid, Event Calendar and Event Details widgets. The widgets work on ordinary Elementor Free pages. Elementor Pro is only relevant when a site owner chooses to build dynamic templates with Elementor Theme Builder.
+Elementor 3.35+ provides the same fields plus configurable Event List / Grid,
+Event Calendar, Event Details and Add to Calendar widgets. Divi 5.11.1+ exposes
+the equivalent native module palette. The widgets work on ordinary Elementor
+Free pages. Elementor Pro is only relevant when a site owner chooses to build
+dynamic templates with Elementor Theme Builder.
 
 ## Privacy and security
 
@@ -66,6 +73,10 @@ The runtime plugin:
 - stores canonical event content in WordPress posts and metadata;
 - uses one rebuildable local occurrence index for bounded chronological reads;
 - keeps calendar requests on the same WordPress installation.
+
+The local ICS action stays on the website. Google and Outlook calendar actions
+are disabled until a template author enables them; following one deliberately
+sends the public event snapshot to that provider in an isolated new tab.
 
 Event content entered by editors is stored as native WordPress content and metadata. Published event details can be exposed through front-end HTML, Event JSON-LD, core REST and the bounded calendar feed. Drafts, private events and protected event details are excluded from public plugin queries. The core REST response also removes registered event metadata while a post password is required.
 

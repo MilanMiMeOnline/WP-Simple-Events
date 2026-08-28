@@ -22,7 +22,10 @@ use MiMe\WPSimpleEvents\Application\EventPersistence;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRenderer;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRegistry;
 use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockRenderer;
+use MiMe\WPSimpleEvents\Blocks\AddToCalendarBlockRenderer;
+use MiMe\WPSimpleEvents\CalendarExport\AddToCalendarRenderer;
 use MiMe\WPSimpleEvents\CalendarExport\CalendarExportController;
+use MiMe\WPSimpleEvents\CalendarExport\CalendarExportSnapshotResolver;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\ContentRegistry;
 use MiMe\WPSimpleEvents\Divi\DiviIntegration;
@@ -70,6 +73,7 @@ use MiMe\WPSimpleEvents\Routing\OccurrenceCacheController;
 use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
 use MiMe\WPSimpleEvents\Routing\OccurrenceRouteFeature;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcode;
+use MiMe\WPSimpleEvents\Shortcode\AddToCalendarShortcode;
 use MiMe\WPSimpleEvents\Shortcode\EventDetailsShortcode;
 use MiMe\WPSimpleEvents\Shortcode\EventListShortcode;
 use MiMe\WPSimpleEvents\Seo\StructuredDataController;
@@ -100,69 +104,80 @@ final class Plugin {
 	 * Boot plugin services after all plugins are available.
 	 */
 	public function boot(): void {
-		$content_registry         = new ContentRegistry();
-		$installer                = new Installer();
-		$occurrence_index         = new OccurrenceIndexMigrationController();
-		$occurrence_cleanup       = new OccurrenceGenerationCleanupController();
-		$occurrence_renewal       = new OccurrenceProjectionRenewalController();
-		$occurrence_publication   = new OccurrencePublicationController();
-		$occurrence_delete        = new OccurrenceLifecycleController();
-		$occurrence_revisions     = new OccurrenceRevisionController();
-		$event_meta_box           = new EventMetaBox();
-		$event_category_colors    = new EventCategoryColorController();
-		$event_list_table         = new EventListTable();
-		$event_maintenance        = new EventMaintenanceController();
-		$event_duplicates         = new EventDuplicateController();
-		$event_persistence        = new EventPersistence( new OneOffOccurrenceProjector() );
-		$event_saves              = new EventSaveController( persistence: $event_persistence );
-		$event_settings           = new EventSettingsPage();
-		$occurrence_site_health   = new OccurrenceSiteHealthController();
-		$recurrence_assets        = new RecurrenceEditorAssets();
-		$event_rest               = new EventRestController( persistence: $event_persistence );
-		$recurrence_editor        = new RecurrenceEditorController();
-		$frontend_assets          = new FrontendAssets();
-		$calendar_assets          = new CalendarAssets( $frontend_assets );
-		$event_contexts           = new EventContextResolver();
-		$event_fields             = new EventFieldRenderer();
-		$public_events            = new PublicEventOptions();
-		$event_details            = new EventDetailsRenderer( contexts: $event_contexts, fields: $event_fields );
-		$occurrence_presentations = new OccurrencePresentationResolver();
-		$occurrence_reads         = new OccurrenceReadRepository();
-		$occurrence_readiness     = new OccurrenceReadiness();
-		$occurrence_collections   = new OccurrenceCollectionPresenter(
+		$content_registry          = new ContentRegistry();
+		$installer                 = new Installer();
+		$occurrence_index          = new OccurrenceIndexMigrationController();
+		$occurrence_cleanup        = new OccurrenceGenerationCleanupController();
+		$occurrence_renewal        = new OccurrenceProjectionRenewalController();
+		$occurrence_publication    = new OccurrencePublicationController();
+		$occurrence_delete         = new OccurrenceLifecycleController();
+		$occurrence_revisions      = new OccurrenceRevisionController();
+		$event_meta_box            = new EventMetaBox();
+		$event_category_colors     = new EventCategoryColorController();
+		$event_list_table          = new EventListTable();
+		$event_maintenance         = new EventMaintenanceController();
+		$event_duplicates          = new EventDuplicateController();
+		$event_persistence         = new EventPersistence( new OneOffOccurrenceProjector() );
+		$event_saves               = new EventSaveController( persistence: $event_persistence );
+		$event_settings            = new EventSettingsPage();
+		$occurrence_site_health    = new OccurrenceSiteHealthController();
+		$recurrence_assets         = new RecurrenceEditorAssets();
+		$event_rest                = new EventRestController( persistence: $event_persistence );
+		$recurrence_editor         = new RecurrenceEditorController();
+		$frontend_assets           = new FrontendAssets();
+		$calendar_assets           = new CalendarAssets( $frontend_assets );
+		$event_contexts            = new EventContextResolver();
+		$event_fields              = new EventFieldRenderer();
+		$public_events             = new PublicEventOptions();
+		$event_details             = new EventDetailsRenderer( contexts: $event_contexts, fields: $event_fields );
+		$occurrence_presentations  = new OccurrencePresentationResolver();
+		$occurrence_reads          = new OccurrenceReadRepository();
+		$occurrence_readiness      = new OccurrenceReadiness();
+		$occurrence_collections    = new OccurrenceCollectionPresenter(
 			events: $event_contexts,
 			recurring: $occurrence_presentations
 		);
-		$occurrence_route         = new OccurrenceRouteController( $occurrence_presentations );
-		$occurrence_cache         = new OccurrenceCacheController( $occurrence_route );
-		$current_presentations    = new CurrentEventPresentationResolver( $event_contexts, $occurrence_route );
-		$event_lists              = new EventListShortcode(
+		$occurrence_route          = new OccurrenceRouteController( $occurrence_presentations );
+		$occurrence_cache          = new OccurrenceCacheController( $occurrence_route );
+		$current_presentations     = new CurrentEventPresentationResolver( $event_contexts, $occurrence_route );
+		$calendar_snapshots        = new CalendarExportSnapshotResolver(
+			$event_contexts,
+			$occurrence_presentations,
+			$occurrence_reads
+		);
+		$calendar_actions          = new AddToCalendarRenderer(
+			snapshots: $calendar_snapshots,
+			routes: $occurrence_route
+		);
+		$calendar_action_shortcode = new AddToCalendarShortcode( $calendar_actions, $frontend_assets );
+		$event_lists               = new EventListShortcode(
 			assets: $frontend_assets,
 			occurrences: $occurrence_reads,
 			occurrence_presenter: $occurrence_collections,
 			occurrence_feature: $this->occurrence_routes,
 			occurrence_readiness: $occurrence_readiness
 		);
-		$details_shortcode        = new EventDetailsShortcode( $event_details, $frontend_assets, $current_presentations );
-		$calendar                 = new CalendarShortcode(
+		$details_shortcode         = new EventDetailsShortcode( $event_details, $frontend_assets, $current_presentations );
+		$calendar                  = new CalendarShortcode(
 			assets: $calendar_assets,
 			occurrences: $occurrence_reads,
 			occurrence_presenter: $occurrence_collections,
 			occurrence_feature: $this->occurrence_routes,
 			occurrence_readiness: $occurrence_readiness
 		);
-		$elementor                = new ElementorIntegration(
+		$elementor                 = new ElementorIntegration(
 			new WidgetRegistrar(
 				$event_contexts,
 				$event_fields,
 				previews: new PreviewEventOptions( $public_events ),
 				current: $current_presentations,
-				details: $details_shortcode
+				details: $details_shortcode,
+				calendar_action: $calendar_actions
 			)
 		);
-		$divi_host                = new WordPressDiviHost();
-		$divi_composites          = new DiviCompositeModuleRenderer( $details_shortcode, $event_lists, $calendar );
-		$divi                     = new DiviIntegration(
+		$divi_host                 = new WordPressDiviHost();
+		$divi_composites           = new DiviCompositeModuleRenderer( $details_shortcode, $event_lists, $calendar, $calendar_action_shortcode );
+		$divi                      = new DiviIntegration(
 			new DiviPostTypeIntegration(),
 			new DiviModuleRegistrar(
 				$divi_host,
@@ -173,43 +188,45 @@ final class Plugin {
 			),
 			new DiviPreviewController( $divi_composites )
 		);
-		$calendar_feed            = new CalendarFeedController(
+		$calendar_feed             = new CalendarFeedController(
 			occurrences: $occurrence_reads,
 			occurrence_presenter: $occurrence_collections,
 			occurrence_feature: $this->occurrence_routes,
 			occurrence_readiness: $occurrence_readiness
 		);
-		$calendar_export          = new CalendarExportController();
-		$archive_query            = new EventArchiveQuery(
+		$calendar_export           = new CalendarExportController( $calendar_snapshots );
+		$archive_query             = new EventArchiveQuery(
 			occurrences: $occurrence_reads,
 			occurrence_feature: $this->occurrence_routes,
 			occurrence_readiness: $occurrence_readiness
 		);
-		$native_templates         = new NativeTemplateRenderer(
+		$native_templates          = new NativeTemplateRenderer(
 			single: $event_details,
 			archive: new EventArchiveRenderer(
 				query: $archive_query,
 				occurrence_presenter: $occurrence_collections
 			),
-			occurrences: $occurrence_route
+			occurrences: $occurrence_route,
+			calendar_action: $calendar_action_shortcode
 		);
-		$block_templates          = new BlockTemplates( $native_templates );
-		$field_blocks             = new EventFieldBlockRegistry(
+		$block_templates           = new BlockTemplates( $native_templates );
+		$field_blocks              = new EventFieldBlockRegistry(
 			renderer: new EventFieldBlockRenderer( $event_contexts, $event_fields, $current_presentations ),
 			events: $public_events,
 			assets: $frontend_assets,
-			composites: new EventCompositeBlockRenderer( $event_lists, $calendar, $event_details, $current_presentations )
+			composites: new EventCompositeBlockRenderer( $event_lists, $calendar, $event_details, $current_presentations ),
+			calendar_action: new AddToCalendarBlockRenderer( $calendar_actions )
 		);
-		$template_loader          = new TemplateLoader();
-		$occurrence_document      = new OccurrenceDocumentController( $occurrence_route );
-		$occurrence_rest          = new OccurrenceRestController( $occurrence_presentations, $occurrence_route );
-		$structured_data          = new StructuredDataController( occurrences: $occurrence_route );
-		$third_party_canonicals   = new ThirdPartyCanonicalController( $occurrence_route );
-		$occurrence_sitemap       = new OccurrenceSitemapProvider(
+		$template_loader           = new TemplateLoader();
+		$occurrence_document       = new OccurrenceDocumentController( $occurrence_route );
+		$occurrence_rest           = new OccurrenceRestController( $occurrence_presentations, $occurrence_route );
+		$structured_data           = new StructuredDataController( occurrences: $occurrence_route );
+		$third_party_canonicals    = new ThirdPartyCanonicalController( $occurrence_route );
+		$occurrence_sitemap        = new OccurrenceSitemapProvider(
 			presentations: $occurrence_presentations,
 			routes: $occurrence_route
 		);
-		$archive_rewrites         = new EventArchiveRewriteManager();
+		$archive_rewrites          = new EventArchiveRewriteManager();
 
 		add_action( 'init', array( $content_registry, 'register' ), 5 );
 		add_action( 'init', array( $installer, 'maybe_upgrade' ), 6 );
@@ -239,6 +256,7 @@ final class Plugin {
 		$field_blocks->register_hooks();
 		$event_lists->register();
 		$details_shortcode->register();
+		$calendar_action_shortcode->register();
 		$calendar->register();
 		$elementor->register();
 		$divi->register();

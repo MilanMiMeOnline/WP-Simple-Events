@@ -810,6 +810,17 @@ if ( ! function_exists( 'admin_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'home_url' ) ) {
+	/**
+	 * Build a deterministic same-origin public URL.
+	 *
+	 * @param string $path Relative public path.
+	 */
+	function home_url( string $path = '' ): string { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		return 'https://example.com/' . ltrim( $path, '/' );
+	}
+}
+
 if ( ! function_exists( 'wp_create_nonce' ) ) {
 	/**
 	 * Build a deterministic action nonce.

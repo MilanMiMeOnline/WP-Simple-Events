@@ -13,6 +13,7 @@ use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
+use MiMe\WPSimpleEvents\Frontend\NativeCalendarActionSettings;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceTable;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceTableLifecycle;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
@@ -186,6 +187,7 @@ final class SiteDataCleaner {
 			EventArchiveRewriteManager::PENDING_OPTION,
 			StructuredDataSettings::OPTION,
 			EventTimezoneDisplaySettings::OPTION,
+			NativeCalendarActionSettings::OPTION,
 			UninstallSettings::OPTION,
 			OccurrenceIndexMigrationController::COMPLETE_OPTION,
 			OccurrenceProjectionRenewalController::OFFSET_OPTION,

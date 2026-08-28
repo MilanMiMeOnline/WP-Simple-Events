@@ -98,7 +98,8 @@ function runWpEnv(
 }
 
 async function requestPage( url, options = {} ) {
-	let response = await fetch( url, { ...options, redirect: 'manual' } );
+	const signal = options.signal ?? AbortSignal.timeout( 30_000 );
+	let response = await fetch( url, { ...options, redirect: 'manual', signal } );
 	let redirectTarget = response.headers.get( 'location' );
 
 	if ( redirectTarget ) {
@@ -111,6 +112,7 @@ async function requestPage( url, options = {} ) {
 			...options,
 			headers: { ...options.headers, cookie: cookies },
 			redirect: 'manual',
+			signal,
 		} );
 		redirectTarget = response.headers.get( 'location' );
 	}
@@ -206,6 +208,23 @@ function requireCondition( condition, message ) {
 
 function requireExactlyOnce( body, marker, message ) {
 	requireCondition( body.split( marker ).length - 1 === 1, message );
+}
+
+function traceSmoke( message ) {
+	if ( process.env.WPSE_SMOKE_TRACE === '1' ) {
+		process.stderr.write( `[smoke] ${ message }\n` );
+	}
+}
+
+function decodedHtmlAttribute( body, pattern, message ) {
+	const value = body.match( pattern )?.[ 1 ];
+
+	requireCondition( value, message );
+
+	return value
+		.replaceAll( '&amp;', '&' )
+		.replaceAll( '&#038;', '&' )
+		.replaceAll( '&#38;', '&' );
 }
 
 async function activateSmokeTheme( session, theme ) {
@@ -512,6 +531,37 @@ async function authenticatedRequest( session, path, options = {} ) {
 	return { response, data };
 }
 
+async function ensureFixtureTerm( session, resource, name, slug ) {
+	const created = await authenticatedRequest(
+		session,
+		`/wp-json/wp/v2/${ resource }`,
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( { name, slug } ),
+		},
+	);
+
+	if ( created.response.status === 201 ) {
+		return created.data;
+	}
+
+	if ( created.response.status === 400 && created.data?.code === 'term_exists' ) {
+		const existing = await authenticatedRequest(
+			session,
+			`/wp-json/wp/v2/${ resource }?context=edit&slug=${ encodeURIComponent( slug ) }`,
+		);
+
+		if ( existing.response.ok && existing.data.length === 1 ) {
+			return existing.data[ 0 ];
+		}
+	}
+
+	throw new Error(
+		`The ${ resource } fixture ${ slug } could not be created: HTTP ${ created.response.status } ${ JSON.stringify( created.data ) }`,
+	);
+}
+
 function localDate( dayOffset ) {
 	const date = new Date( Date.now() + ( dayOffset * 86_400_000 ) );
 	const parts = new Intl.DateTimeFormat( 'en-CA', {
@@ -693,6 +743,7 @@ try {
 		'wpse/event-external-action',
 		'wpse/event-categories',
 		'wpse/event-tags',
+		'wpse/add-to-calendar',
 	];
 	requireCondition(
 		registeredBlocks.response.ok && Array.isArray( registeredBlocks.data ),
@@ -725,6 +776,12 @@ try {
 		settingsBody.includes( 'id="wpse_show_event_timezone"' ) &&
 			! /<input[^>]+id="wpse_show_event_timezone"[^>]+checked=/.test( settingsBody ),
 		'The public timezone setting is unavailable or not disabled by default.',
+	);
+	requireCondition(
+		settingsBody.includes( 'id="wpse_show_native_calendar_action"' ) &&
+			! /<input[^>]+id="wpse_show_native_calendar_action"[^>]+checked=/.test( settingsBody ) &&
+			settingsBody.includes( 'Builder templates remain unchanged' ),
+		'The native calendar action is unavailable, enabled by default or missing builder guidance.',
 	);
 	requireCondition(
 		settingsBody.includes( 'name="wpse_archive_slug"' ) &&
@@ -912,32 +969,18 @@ try {
 	);
 	requireCondition( draftCreate.response.status === 201, 'An incomplete event draft could not be saved.' );
 
-	const calendarCategory = await authenticatedRequest(
+	const calendarCategory = await ensureFixtureTerm(
 		session,
-		'/wp-json/wp/v2/wpse_event_category',
-		{
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify( {
-				name: 'Calendar smoke category',
-				slug: 'calendar-smoke',
-			} ),
-		},
+		'wpse_event_category',
+		'Calendar smoke category',
+		'calendar-smoke',
 	);
-	requireCondition( calendarCategory.response.status === 201, 'The calendar category fixture could not be created.' );
-	const archiveCategory = await authenticatedRequest(
+	const archiveCategory = await ensureFixtureTerm(
 		session,
-		'/wp-json/wp/v2/wpse_event_category',
-		{
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify( {
-				name: 'Archive smoke category',
-				slug: 'archive-smoke',
-			} ),
-		},
+		'wpse_event_category',
+		'Archive smoke category',
+		'archive-smoke',
 	);
-	requireCondition( archiveCategory.response.status === 201, 'The archive category fixture could not be created.' );
 
 	const categorizedEvent = await authenticatedRequest(
 		session,
@@ -946,7 +989,7 @@ try {
 			method: 'POST',
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify( {
-				wpse_event_category: [ calendarCategory.data.id, archiveCategory.data.id ],
+				wpse_event_category: [ calendarCategory.id, archiveCategory.id ],
 			} ),
 		},
 	);
@@ -959,22 +1002,18 @@ try {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
 				body: JSON.stringify( {
-					wpse_event_category: [ archiveCategory.data.id ],
+					wpse_event_category: [ archiveCategory.id ],
 				} ),
 			},
 		);
 		requireCondition( categorizedFixture.response.ok, 'A taxonomy archive fixture could not be categorized.' );
 	}
-	const blockTag = await authenticatedRequest(
+	const blockTag = await ensureFixtureTerm(
 		session,
-		'/wp-json/wp/v2/wpse_event_tag',
-		{
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify( { name: 'Block smoke tag', slug: 'block-smoke' } ),
-		},
+		'wpse_event_tag',
+		'Block smoke tag',
+		'block-smoke',
 	);
-	requireCondition( blockTag.response.status === 201, 'The atomic block tag fixture could not be created.' );
 	const blockReadyEvent = await authenticatedRequest(
 		session,
 		`/wp-json/wp/v2/wpse_event/${ eventId }`,
@@ -983,7 +1022,7 @@ try {
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify( {
 				excerpt: 'Atomic event excerpt.',
-				wpse_event_tag: [ blockTag.data.id ],
+				wpse_event_tag: [ blockTag.id ],
 			} ),
 		},
 	);
@@ -1029,6 +1068,7 @@ try {
 		'wpse-event-action',
 		'Calendar smoke category',
 		'Block smoke tag',
+		'wpse-add-to-calendar',
 	] ) {
 		requireCondition( atomicPageBody.includes( marker ), `The atomic block page omitted ${ marker }.` );
 	}
@@ -1190,7 +1230,7 @@ try {
 		'The duplicate incorrectly copied its external event link label.',
 	);
 	requireCondition(
-		duplicatedEvent.data.wpse_event_category.includes( calendarCategory.data.id ),
+		duplicatedEvent.data.wpse_event_category.includes( calendarCategory.id ),
 		'The duplicate did not copy its event category.',
 	);
 
@@ -2424,6 +2464,7 @@ try {
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
 				wpse_show_event_timezone: '1',
+				wpse_show_native_calendar_action: '0',
 				wpse_structured_data_enabled: '1',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -2462,6 +2503,7 @@ try {
 				wpse_archive_per_page: '10',
 				wpse_archive_default_period: 'upcoming',
 				wpse_show_event_timezone: '0',
+				wpse_show_native_calendar_action: '0',
 				wpse_structured_data_enabled: '0',
 				wpse_delete_data_on_uninstall: '0',
 			} ),
@@ -2480,6 +2522,80 @@ try {
 	requireCondition(
 		! disabledSchemaBody.includes( 'wpse-event-timezone' ),
 		'Disabling public timezone presentation did not restore the previous event output.',
+	);
+	requireCondition(
+		! disabledSchemaBody.includes( 'wpse-add-to-calendar' ),
+		'The off-by-default native calendar action appeared without site-owner opt-in.',
+	);
+
+	const enableNativeCalendarAction = await fetch(
+		'http://localhost:8888/wp-admin/options.php',
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+				cookie: cookieHeader( session.cookieJar ),
+			},
+			body: new URLSearchParams( {
+				option_page: 'wpse_settings',
+				action: 'update',
+				_wpnonce: settingsNonce,
+				_wp_http_referer: '/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
+				wpse_archive_slug: 'events',
+				wpse_archive_per_page: '10',
+				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
+				wpse_show_native_calendar_action: '1',
+				wpse_structured_data_enabled: '0',
+				wpse_delete_data_on_uninstall: '0',
+			} ),
+			redirect: 'manual',
+		},
+	);
+	requireCondition(
+		enableNativeCalendarAction.status === 302,
+		'The native calendar action could not be enabled through the protected settings form.',
+	);
+	const nativeCalendarActionBody = await fetchHealthyPage( validCreate.data.link );
+	requireCondition(
+		nativeCalendarActionBody.includes( 'wpse-add-to-calendar-ics' ) &&
+			! nativeCalendarActionBody.includes( 'wpse-add-to-calendar-google' ) &&
+			! nativeCalendarActionBody.includes( 'wpse-add-to-calendar-outlook' ),
+		'The native opt-in did not append only the privacy-preserving local calendar action.',
+	);
+	const protectedNativeCalendarActionBody = await fetchHealthyPage( protectedCreate.data.link );
+	requireCondition(
+		! protectedNativeCalendarActionBody.includes( 'wpse-add-to-calendar' ),
+		'The native opt-in exposed an action for a password-protected event.',
+	);
+
+	const disableNativeCalendarAction = await fetch(
+		'http://localhost:8888/wp-admin/options.php',
+		{
+			method: 'POST',
+			headers: {
+				'content-type': 'application/x-www-form-urlencoded',
+				cookie: cookieHeader( session.cookieJar ),
+			},
+			body: new URLSearchParams( {
+				option_page: 'wpse_settings',
+				action: 'update',
+				_wpnonce: settingsNonce,
+				_wp_http_referer: '/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
+				wpse_archive_slug: 'events',
+				wpse_archive_per_page: '10',
+				wpse_archive_default_period: 'upcoming',
+				wpse_show_event_timezone: '0',
+				wpse_show_native_calendar_action: '0',
+				wpse_structured_data_enabled: '0',
+				wpse_delete_data_on_uninstall: '0',
+			} ),
+			redirect: 'manual',
+		},
+	);
+	requireCondition(
+		disableNativeCalendarAction.status === 302,
+		'The native calendar action could not be disabled through the protected settings form.',
 	);
 
 	const shortcodePage = await authenticatedRequest(
@@ -2567,6 +2683,109 @@ try {
 	requireCondition( ! detailsShortcodeBody.includes( 'Protected smoke event' ), 'The details shortcode exposed a protected event.' );
 	requireCondition( ! detailsShortcodeBody.includes( 'Incomplete draft smoke event' ), 'The details shortcode exposed a draft event.' );
 	requireCondition( detailsShortcodeBody.includes( 'wpse-frontend-css' ), 'The details shortcode stylesheet was not enqueued.' );
+
+	traceSmoke( 'creating add-to-calendar page' );
+	const addToCalendarPage = await authenticatedRequest(
+		session,
+		'/wp-json/wp/v2/pages',
+		{
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify( {
+				title: 'Add to calendar shortcode smoke page',
+				status: 'publish',
+				content: `[wpse_add_to_calendar id="${ eventId }"][wpse_add_to_calendar id="${ eventId }" providers="outlook,ics,google" layout="list" label="Save this event"][wpse_add_to_calendar id="${ protectedCreate.data.id }"][wpse_add_to_calendar id="${ draftCreate.data.id }"][wpse_add_to_calendar id="1 OR 1=1"]`,
+			} ),
+		},
+	);
+	requireCondition(
+		addToCalendarPage.response.status === 201,
+		'The add-to-calendar shortcode smoke page could not be created.',
+	);
+	const addToCalendarBody = await fetchHealthyPage( addToCalendarPage.data.link );
+	traceSmoke( 'rendered add-to-calendar page' );
+	requireCondition(
+		( addToCalendarBody.match( /class="wpse-add-to-calendar /g ) ?? [] ).length === 2,
+		'The add-to-calendar shortcode exposed a non-public or invalid event.',
+	);
+	requireCondition(
+		( addToCalendarBody.match( /wpse-add-to-calendar-ics/g ) ?? [] ).length === 2,
+		'The add-to-calendar shortcode did not keep ICS available in both public instances.',
+	);
+	requireCondition(
+		( addToCalendarBody.match( /wpse-add-to-calendar-google/g ) ?? [] ).length === 1 &&
+			( addToCalendarBody.match( /wpse-add-to-calendar-outlook/g ) ?? [] ).length === 1,
+		'The add-to-calendar shortcode did not keep external providers explicit.',
+	);
+	requireCondition(
+		addToCalendarBody.includes( 'Save this event' ) &&
+			addToCalendarBody.includes( 'wpse-add-to-calendar-list' ),
+		'The add-to-calendar label or list layout was not rendered.',
+	);
+	requireCondition(
+		addToCalendarBody.includes( 'target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"' ),
+		'An external calendar action omitted its isolation attributes.',
+	);
+	requireCondition(
+		addToCalendarBody.includes( 'wpse-frontend-css' ),
+		'The add-to-calendar shortcode stylesheet was not enqueued.',
+	);
+
+	const calendarExportUrl = decodedHtmlAttribute(
+		addToCalendarBody,
+		/class="wpse-add-to-calendar-action wpse-add-to-calendar-ics" href="([^"]+)"/,
+		'The add-to-calendar shortcode omitted its ICS URL.',
+	);
+	const calendarExport = await requestPage( calendarExportUrl );
+	traceSmoke( 'downloaded public ICS export' );
+	requireCondition( calendarExport.response.status === 200, 'The public ICS export did not return HTTP 200.' );
+	requireCondition(
+		calendarExport.response.headers.get( 'content-type' )?.startsWith( 'text/calendar;' ),
+		'The public ICS export returned the wrong content type.',
+	);
+	requireCondition(
+		calendarExport.response.headers.get( 'content-disposition' )?.endsWith( '.ics"' ),
+		'The public ICS export omitted its safe download filename.',
+	);
+	requireCondition(
+		calendarExport.response.headers.get( 'cache-control' )?.includes( 'no-store' ),
+		'The public ICS export can be stored by shared caches.',
+	);
+	requireCondition(
+		calendarExport.body.startsWith( 'BEGIN:VCALENDAR\r\n' ) &&
+			calendarExport.body.includes( 'SUMMARY:Future smoke event' ) &&
+			calendarExport.body.includes( 'DTSTART' ) &&
+			! calendarExport.body.includes( '_wpse_' ),
+		'The public ICS export is incomplete or exposes internal metadata.',
+	);
+
+	const calendarExportHead = await requestPage( calendarExportUrl, { method: 'HEAD' } );
+	traceSmoke( 'validated public ICS HEAD export' );
+	requireCondition(
+		calendarExportHead.response.status === 200 &&
+			calendarExportHead.body === '' &&
+			calendarExportHead.response.headers.get( 'content-type' )?.startsWith( 'text/calendar;' ),
+		'The public ICS HEAD response did not mirror the safe GET metadata.',
+	);
+	const calendarExportPost = await requestPage( calendarExportUrl, { method: 'POST' } );
+	traceSmoke( 'validated public ICS method boundary' );
+	requireCondition(
+		calendarExportPost.response.status === 405 &&
+			calendarExportPost.response.headers.get( 'allow' ) === 'GET, HEAD',
+		'The public ICS endpoint accepted a state-changing HTTP method.',
+	);
+
+	for ( const privateEventId of [ protectedCreate.data.id, draftCreate.data.id ] ) {
+		const privateCalendarExportUrl = new URL( calendarExportUrl );
+		privateCalendarExportUrl.searchParams.set( 'wpse_event', String( privateEventId ) );
+		const privateCalendarExport = await requestPage( privateCalendarExportUrl );
+
+		requireCondition(
+			privateCalendarExport.response.status === 404 && privateCalendarExport.body === '',
+			'The public ICS endpoint disclosed whether a non-public event exists.',
+		);
+	}
+	traceSmoke( 'validated non-public ICS boundaries' );
 
 	const calendarPage = await authenticatedRequest(
 		session,
@@ -2833,11 +3052,12 @@ try {
 		[ 'pages', shortcodePage.data.id ],
 		[ 'pages', multiShortcodePage.data.id ],
 		[ 'pages', detailsShortcodePage.data.id ],
+		[ 'pages', addToCalendarPage.data.id ],
 		[ 'pages', calendarPage.data.id ],
 		[ 'pages', conflictingArchivePage.data.id ],
-		[ 'wpse_event_category', calendarCategory.data.id ],
-		[ 'wpse_event_category', archiveCategory.data.id ],
-		[ 'wpse_event_tag', blockTag.data.id ],
+		[ 'wpse_event_category', calendarCategory.id ],
+		[ 'wpse_event_category', archiveCategory.id ],
+		[ 'wpse_event_tag', blockTag.id ],
 	];
 
 	for ( const [ resource, id ] of resources ) {

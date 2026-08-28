@@ -7,8 +7,9 @@
 
 ## 1. Outcome
 
-MiMe Simple Events and Calendar will provide native Divi 5 modules for the same
-three composite components and twelve atomic event fields available in Elementor.
+MiMe Simple Events and Calendar provides native Divi 5 modules for the same
+three composite components, twelve atomic event fields and one Add to Calendar
+action available in Elementor.
 They work on ordinary Divi pages with an explicit public event and in Divi Theme
 Builder templates using the current event or exact recurring occurrence.
 
@@ -85,6 +86,7 @@ editor snapshot; query-backed composites may use Divi's REST fetch hook.
 1. Event List / Grid
 2. Event Calendar
 3. Event Details
+4. Add to Calendar
 
 ### Atomic modules
 
@@ -110,6 +112,13 @@ wrapper; arbitrary CSS strings and out-of-range values produce no declaration.
 Event Calendar also exposes the same bounded Auto/Show/Hide category-color
 legend used by shortcode, Gutenberg and Elementor. Divi stores only that choice;
 the shared public renderer resolves the actual categories and colors.
+
+Add to Calendar selects the current event/occurrence or one explicit public
+one-off event. Its default is the local ICS download; Google and Outlook are
+explicit module-author opt-ins. Provider, dropdown/list, label and bounded design
+controls delegate through the same shared shortcode and style contracts. The
+existing authenticated Divi preview endpoint supplies editor HTML; no additional
+public preview endpoint or Divi-owned event state is introduced.
 
 ### Deliberate exclusions
 

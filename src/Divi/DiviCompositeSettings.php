@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace MiMe\WPSimpleEvents\Divi;
 
+use MiMe\WPSimpleEvents\CalendarExport\AddToCalendarStyle;
 use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
 
 /** Maps nested Divi values to the established shortcode contracts. */
@@ -94,6 +95,68 @@ final class DiviCompositeSettings {
 			'fallback_heading_level' => DiviModuleSettings::choice( $attrs, 'fallbackHeadingLevel', array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
 			...self::filter_presentation( $attrs, true ),
 		);
+	}
+
+	/**
+	 * Normalize Add to Calendar settings.
+	 *
+	 * @param array<string, mixed> $attrs Divi module attributes.
+	 * @return array<string, mixed>
+	 */
+	public static function calendar_action( array $attrs ): array {
+		$providers = array();
+
+		if ( DiviModuleSettings::toggle( $attrs, 'providerIcs', true ) ) {
+			$providers[] = 'ics';
+		}
+
+		if ( DiviModuleSettings::toggle( $attrs, 'providerGoogle' ) ) {
+			$providers[] = 'google';
+		}
+
+		if ( DiviModuleSettings::toggle( $attrs, 'providerOutlook' ) ) {
+			$providers[] = 'outlook';
+		}
+
+		$settings = array(
+			'providers' => $providers,
+			'layout'    => DiviModuleSettings::choice( $attrs, 'layout', array( 'dropdown', 'list' ), 'dropdown' ),
+			'label'     => DiviModuleSettings::text( $attrs, 'label' ),
+		);
+		$event_id = DiviModuleSettings::event_id( $attrs );
+
+		if ( $event_id > 0 ) {
+			$settings['id'] = $event_id;
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Normalize optional Add to Calendar design values to scoped CSS.
+	 *
+	 * @param array<string, mixed> $attrs Divi module attributes.
+	 */
+	public static function calendar_action_style( array $attrs ): string {
+		$style = array();
+
+		foreach ( array( 'actionBackground', 'actionText', 'actionBorder', 'menuBackground' ) as $key ) {
+			$value = DiviModuleSettings::color( $attrs, $key );
+
+			if ( '' !== $value ) {
+				$style[ $key ] = $value;
+			}
+		}
+
+		foreach ( array( 'actionRadius', 'actionGap', 'menuPadding', 'actionPaddingBlock', 'actionPaddingInline' ) as $key ) {
+			$value = DiviModuleSettings::optional_integer( $attrs, $key, 0, 100 );
+
+			if ( null !== $value ) {
+				$style[ $key ] = $value;
+			}
+		}
+
+		return AddToCalendarStyle::inline_style( $style );
 	}
 
 	/**

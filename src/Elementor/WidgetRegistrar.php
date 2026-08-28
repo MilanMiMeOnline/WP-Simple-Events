@@ -16,6 +16,7 @@ use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
 use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
 use MiMe\WPSimpleEvents\Shortcode\EventDetailsShortcode;
 use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
+use MiMe\WPSimpleEvents\CalendarExport\AddToCalendarRenderer;
 
 /**
  * Registers thin widgets with shared request-wide render services.
@@ -32,6 +33,7 @@ final readonly class WidgetRegistrar {
 	 * @param PreviewEventOptions              $previews Bounded public event choices.
 	 * @param CurrentEventPresentationResolver $current Current event or occurrence resolver.
 	 * @param ShortcodeRenderer                $details Shared composite details adapter.
+	 * @param AddToCalendarRenderer            $calendar_action Shared calendar-action renderer.
 	 */
 	public function __construct(
 		private EventContextResolver $contexts = new EventContextResolver(),
@@ -39,7 +41,8 @@ final readonly class WidgetRegistrar {
 		private EditorContext $editor = new ElementorEditorContext(),
 		private PreviewEventOptions $previews = new PreviewEventOptions(),
 		private CurrentEventPresentationResolver $current = new CurrentEventPresentationResolver(),
-		private ShortcodeRenderer $details = new EventDetailsShortcode()
+		private ShortcodeRenderer $details = new EventDetailsShortcode(),
+		private AddToCalendarRenderer $calendar_action = new AddToCalendarRenderer()
 	) {}
 
 	/**
@@ -67,6 +70,7 @@ final readonly class WidgetRegistrar {
 		$manager->register( new EventListWidget() );
 		$manager->register( new EventCalendarWidget() );
 		$manager->register( new EventDetailsWidget( renderer: $this->details, editor: $this->editor, previews: $this->previews ) );
+		$manager->register( new AddToCalendarWidget( renderer: $this->calendar_action, editor: $this->editor, previews: $this->previews ) );
 		$manager->register( new EventTitleWidget( contexts: $this->contexts, fields: $this->fields, editor: $this->editor, previews: $this->previews, current: $this->current ) );
 		$manager->register( new EventFeaturedImageWidget( contexts: $this->contexts, fields: $this->fields, editor: $this->editor, previews: $this->previews, current: $this->current ) );
 		$manager->register( new EventDateTimeWidget( contexts: $this->contexts, fields: $this->fields, editor: $this->editor, previews: $this->previews, current: $this->current ) );

@@ -1010,6 +1010,26 @@ protected, recurring-series, stale and corrupt state, and returns no-store
 attachments or non-disclosing 404/405 responses. Provider and end-to-end release
 qualification remains part of work packages 3–6.
 
+**Work package 3 status — implementation complete, qualification pending.** One
+shared semantic renderer now produces the local ICS action and opt-in Google or
+Outlook compose actions from the same immutable snapshot. The
+`[wpse_add_to_calendar]` shortcode, dynamic `wpse/add-to-calendar` block,
+Elementor widget and native Divi 5 module share current versus explicit-public
+source rules, provider ordering, dropdown/list markup, external-link isolation
+and component-scoped CSS variables. Gutenberg and Divi revalidate strict colors
+and bounded pixel values server-side; Elementor maps its scoped controls to the
+same targets. Empty, cancelled, recurring-series and non-public sources emit no
+visitor wrapper.
+
+**Work package 4 status — implementation complete, qualification pending.** A
+single off-by-default setting may append the local ICS action to plugin-owned
+native single-event output. The decision occurs only after the native fallback
+has ownership: an applicable Elementor Theme Builder location returns before the
+action is considered, while Divi Theme Builder retains its established template
+path. Disabling the setting or removing a deliberately placed builder component
+removes all calendar-action markup. Explicit uninstall cleanup now includes the
+new option.
+
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series
 pages never imply unsupported whole-series synchronization; protected content is

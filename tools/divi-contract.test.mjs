@@ -66,7 +66,7 @@ test( 'exposes one idempotent calendar initializer for dynamic builder previews'
 	);
 } );
 
-test( 'keeps all fifteen native Divi modules generated and namespaced', async () => {
+test( 'keeps every native Divi module generated and namespaced', async () => {
 	const moduleRoot = new URL( '../divi/modules/', import.meta.url );
 	const folders = ( await readdir( moduleRoot ) ).sort();
 	const expectedFolders = [

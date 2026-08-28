@@ -243,6 +243,25 @@ const filterStyleControls = {
 	),
 };
 
+const calendarActionStyleControls = {
+	actionBackground: { ...color( 'Action Background', 'Set the action background color.' ), group: 'designCalendarAction' },
+	actionText: { ...color( 'Action Text', 'Set the action text color.' ), group: 'designCalendarAction' },
+	actionBorder: { ...color( 'Action Border', 'Set the action border color.' ), group: 'designCalendarAction' },
+	menuBackground: { ...color( 'Menu Background', 'Set the dropdown menu background.' ), group: 'designCalendarAction' },
+	...Object.fromEntries(
+		[
+			[ 'actionRadius', 'Action Radius' ],
+			[ 'actionGap', 'Action Gap' ],
+			[ 'menuPadding', 'Menu Padding' ],
+			[ 'actionPaddingBlock', 'Vertical Action Padding' ],
+			[ 'actionPaddingInline', 'Horizontal Action Padding' ],
+		].map( ( [ key, label ] ) => [
+			key,
+			{ ...text( `${ label } (px)`, 'Optional whole pixels from 0 through 100.' ), group: 'designCalendarAction' },
+		] ),
+	),
+};
+
 export const compositeModuleDefinitions = [
 	{
 		slug: 'event-details',
@@ -334,6 +353,38 @@ export const compositeModuleDefinitions = [
 			showViewSwitcher: { ...toggle( 'Show View Switcher', 'Show the month and list view buttons.', 'on' ), group: 'contentDisplay' },
 			legend: { ...select( 'Category Color Legend', 'Auto hides the legend when visible category filters already explain the colors.', { auto: { label: 'Auto' }, show: { label: 'Show' }, hide: { label: 'Hide' } }, 'auto' ), group: 'contentDisplay' },
 			fallbackHeadingLevel: { ...select( 'Fallback Heading Level', 'Choose the heading level used by the no-JavaScript fallback.', { h2: { label: 'H2' }, h3: { label: 'H3' }, h4: { label: 'H4' }, h5: { label: 'H5' }, h6: { label: 'H6' } }, 'h3' ), group: 'contentDisplay' },
+		},
+	},
+	{
+		slug: 'add-to-calendar',
+		component: 'calendar_action',
+		title: 'Add to Calendar',
+		icon: 'divi/module-button',
+		selector: '.wpse-add-to-calendar',
+		controls: {
+			eventId: {
+				...select(
+					'Event',
+					'Use the current event in a template, or select one public event for a regular page.',
+					{},
+					'0',
+				),
+				group: 'contentMain',
+			},
+			providerIcs: { ...toggle( 'Download Calendar File', 'Offer the universal iCalendar download.', 'on' ), group: 'contentDisplay' },
+			providerGoogle: { ...toggle( 'Google Calendar', 'Offer a one-way Google Calendar link.' ), group: 'contentDisplay' },
+			providerOutlook: { ...toggle( 'Outlook Calendar', 'Offer a one-way Outlook Calendar link.' ), group: 'contentDisplay' },
+			layout: {
+				...select(
+					'Layout',
+					'Use a compact dropdown or show every provider as a list.',
+					{ dropdown: { label: 'Dropdown' }, list: { label: 'List' } },
+					'dropdown',
+				),
+				group: 'contentDisplay',
+			},
+			label: { ...text( 'Action Label', 'Leave empty to use the translated default.' ), group: 'contentLabels' },
+			...calendarActionStyleControls,
 		},
 	},
 ];
@@ -463,6 +514,9 @@ export const buildCompositeModuleMetadata = ( definition ) => {
 				contentFilterLabels: { panel: 'content', priority: 50, groupName: 'contentFilterLabels', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Filter Labels' } } },
 				designContentText: { panel: 'design', priority: 20, groupName: 'contentText', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Content Text', clipboardCategory: 'style', presetGroup: 'divi/font', dynamicSubgroupHost: true } } },
 				designFilterStyle: { panel: 'design', priority: 30, groupName: 'filterStyle', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Visitor Filters', clipboardCategory: 'style', presetGroup: 'mime-simple-events-calendar/visitor-filters' } } },
+				...( Object.values( definition.controls ).some( ( control ) => control.group === 'designCalendarAction' )
+					? { designCalendarAction: { panel: 'design', priority: 40, groupName: 'calendarAction', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Calendar Action', clipboardCategory: 'style', presetGroup: 'mime-simple-events-calendar/calendar-action' } } } }
+					: {} ),
 			},
 		},
 	};

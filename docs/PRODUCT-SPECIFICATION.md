@@ -563,6 +563,8 @@ The version 1 product contract is satisfied when:
 10. all release gates and supported-version checks pass.
 11. recurring occurrences preserve stable identity, bounded queries and explicit
     edit scope without changing one-off event behaviour.
+12. one-way Add to Calendar remains optional, public-only and exact-occurrence
+    aware in native, shortcode, Gutenberg, Elementor and Divi presentation.
 
 ## 21. Post-version-1 roadmap boundary
 

@@ -15,6 +15,7 @@ use MiMe\WPSimpleEvents\Elementor\ElementorIntegration;
 use MiMe\WPSimpleEvents\Elementor\EventCalendarWidget;
 use MiMe\WPSimpleEvents\Elementor\EventDetailsWidget;
 use MiMe\WPSimpleEvents\Elementor\EventListWidget;
+use MiMe\WPSimpleEvents\Elementor\AddToCalendarWidget;
 use MiMe\WPSimpleEvents\Elementor\WidgetRegistrar;
 use MiMe\WPSimpleEvents\Tests\Support\FakeElementorHost;
 use MiMe\WPSimpleEvents\Tests\Support\HookRecorder;
@@ -81,10 +82,11 @@ final class ElementorIntegrationTest extends TestCase {
 		$registrar->register_widgets( $widgets );
 		$registrar->register_category( $elements );
 
-		self::assertCount( 15, $widgets->registered );
+		self::assertCount( 16, $widgets->registered );
 		self::assertInstanceOf( EventListWidget::class, $widgets->registered[0] );
 		self::assertInstanceOf( EventCalendarWidget::class, $widgets->registered[1] );
 		self::assertInstanceOf( EventDetailsWidget::class, $widgets->registered[2] );
+		self::assertInstanceOf( AddToCalendarWidget::class, $widgets->registered[3] );
 		self::assertSame(
 			array(
 				'wpse-event-title',
@@ -100,7 +102,7 @@ final class ElementorIntegrationTest extends TestCase {
 				'wpse-event-categories',
 				'wpse-event-tags',
 			),
-			array_map( static fn ( object $widget ): string => $widget->get_name(), array_slice( $widgets->registered, 3 ) )
+			array_map( static fn ( object $widget ): string => $widget->get_name(), array_slice( $widgets->registered, 4 ) )
 		);
 		self::assertSame( 'MiMe Simple Events and Calendar', $elements->categories[ WidgetRegistrar::CATEGORY ]['title'] );
 	}

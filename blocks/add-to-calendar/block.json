@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpse/add-to-calendar",
+  "title": "Add to Calendar",
+  "category": "mime-simple-events-calendar",
+  "icon": "calendar-alt",
+  "description": "Offer a calendar file and optional Google or Outlook actions for one event.",
+  "textdomain": "mime-simple-events-calendar",
+  "usesContext": ["postId", "postType"],
+  "attributes": {
+    "eventId": { "type": "integer", "default": 0 },
+    "providers": { "type": "array", "default": ["ics"], "items": { "type": "string" } },
+    "layout": { "type": "string", "default": "dropdown", "enum": ["dropdown", "list"] },
+    "label": { "type": "string", "default": "" },
+    "actionBackground": { "type": "string", "default": "" },
+    "actionText": { "type": "string", "default": "" },
+    "actionBorder": { "type": "string", "default": "" },
+    "menuBackground": { "type": "string", "default": "" },
+    "actionRadius": { "type": "integer" },
+    "actionGap": { "type": "integer" },
+    "menuPadding": { "type": "integer" },
+    "actionPaddingBlock": { "type": "integer" },
+    "actionPaddingInline": { "type": "integer" }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": ["wide", "full"],
+    "spacing": { "margin": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "editorScript": "wpse-event-fields-editor",
+  "style": "wpse-frontend"
+}

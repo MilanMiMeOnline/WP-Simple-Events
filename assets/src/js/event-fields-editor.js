@@ -183,6 +183,30 @@ const fieldDefinitions = [
 		controls: 'label',
 		labelPlaceholder: __( 'Tags:', 'mime-simple-events-calendar' ),
 	},
+	{
+		name: 'wpse/add-to-calendar',
+		title: __( 'Add to Calendar', 'mime-simple-events-calendar' ),
+		description: __( 'Offer a calendar file and optional Google or Outlook actions for one event.', 'mime-simple-events-calendar' ),
+		icon: 'calendar-alt',
+		attributes: {
+			...commonAttributes(),
+			providers: { type: 'array', default: [ 'ics' ], items: { type: 'string' } },
+			layout: { type: 'string', default: 'dropdown' },
+			label: { type: 'string', default: '' },
+			actionBackground: { type: 'string', default: '' },
+			actionText: { type: 'string', default: '' },
+			actionBorder: { type: 'string', default: '' },
+			menuBackground: { type: 'string', default: '' },
+			actionRadius: { type: 'integer' },
+			actionGap: { type: 'integer' },
+			menuPadding: { type: 'integer' },
+			actionPaddingBlock: { type: 'integer' },
+			actionPaddingInline: { type: 'integer' },
+		},
+		supports: textSupports(),
+		controls: 'addToCalendar',
+		designControls: 'addToCalendar',
+	},
 ];
 
 const sourceControls = ( attributes, setAttributes ) =>
@@ -282,9 +306,85 @@ const fieldControls = ( definition, attributes, setAttributes ) => {
 				maxLength: 120,
 				onChange: ( linkText ) => setAttributes( { linkText } ),
 			} ) ];
+		case 'addToCalendar': {
+			const providers = Array.isArray( attributes.providers ) ? attributes.providers : [ 'ics' ];
+			const providerToggle = ( provider, label ) => el( ToggleControl, {
+				key: provider,
+				label,
+				checked: providers.includes( provider ),
+				onChange: ( enabled ) => setAttributes( {
+					providers: enabled
+						? [ ...new Set( [ ...providers, provider ] ) ]
+						: providers.filter( ( value ) => value !== provider ),
+				} ),
+			} );
+
+			return [
+				providerToggle( 'ics', __( 'Calendar file (ICS)', 'mime-simple-events-calendar' ) ),
+				providerToggle( 'google', __( 'Google Calendar', 'mime-simple-events-calendar' ) ),
+				providerToggle( 'outlook', __( 'Outlook', 'mime-simple-events-calendar' ) ),
+				el( SelectControl, {
+					key: 'layout',
+					label: __( 'Multiple-provider layout', 'mime-simple-events-calendar' ),
+					help: __( 'A single provider always renders as one direct action.', 'mime-simple-events-calendar' ),
+					value: attributes.layout,
+					options: [
+						{ label: __( 'Dropdown', 'mime-simple-events-calendar' ), value: 'dropdown' },
+						{ label: __( 'Separate actions', 'mime-simple-events-calendar' ), value: 'list' },
+					],
+					onChange: ( layout ) => setAttributes( { layout } ),
+				} ),
+				el( TextControl, {
+					key: 'label',
+					label: __( 'Dropdown or list label', 'mime-simple-events-calendar' ),
+					help: __( 'Leave empty to use the translated default.', 'mime-simple-events-calendar' ),
+					value: attributes.label,
+					maxLength: 120,
+					onChange: ( label ) => setAttributes( { label } ),
+				} ),
+			];
+		}
 		default:
 			return [];
 	}
+};
+
+const fieldDesignControls = ( definition, attributes, setAttributes ) => {
+	if ( definition.designControls !== 'addToCalendar' ) {
+		return [];
+	}
+
+	return [
+		...[
+			[ 'actionBackground', __( 'Action background', 'mime-simple-events-calendar' ) ],
+			[ 'actionText', __( 'Action text', 'mime-simple-events-calendar' ) ],
+			[ 'actionBorder', __( 'Action border', 'mime-simple-events-calendar' ) ],
+			[ 'menuBackground', __( 'Menu background', 'mime-simple-events-calendar' ) ],
+		].map( ( [ key, label ] ) => el(
+			BaseControl,
+			{ key, label, __nextHasNoMarginBottom: true },
+			el( ColorPalette, {
+				value: attributes[ key ],
+				clearable: true,
+				onChange: ( value ) => setAttributes( { [ key ]: value || '' } ),
+			} ),
+		) ),
+		...[
+			[ 'actionPaddingBlock', __( 'Action vertical padding', 'mime-simple-events-calendar' ), 0, 100 ],
+			[ 'actionPaddingInline', __( 'Action horizontal padding', 'mime-simple-events-calendar' ), 0, 100 ],
+			[ 'actionRadius', __( 'Action corner radius', 'mime-simple-events-calendar' ), 0, 100 ],
+			[ 'actionGap', __( 'Space between actions', 'mime-simple-events-calendar' ), 0, 100 ],
+			[ 'menuPadding', __( 'Menu padding', 'mime-simple-events-calendar' ), 0, 100 ],
+		].map( ( [ key, label, min, max ] ) => el( RangeControl, {
+			key,
+			label,
+			value: attributes[ key ],
+			min,
+			max,
+			allowReset: true,
+			onChange: ( value ) => setAttributes( { [ key ]: value } ),
+		} ) ),
+	];
 };
 
 const emptyPreview = ( title ) => () => el( Placeholder, {
@@ -316,6 +416,11 @@ fieldDefinitions.forEach( ( definition ) => {
 					{ title: __( 'Event settings', 'mime-simple-events-calendar' ), initialOpen: true },
 					sourceControls( attributes, setAttributes ),
 					...fieldControls( definition, attributes, setAttributes ),
+				),
+				definition.designControls && el(
+					PanelBody,
+					{ title: __( 'Appearance', 'mime-simple-events-calendar' ), initialOpen: false },
+					...fieldDesignControls( definition, attributes, setAttributes ),
 				),
 			),
 			el(

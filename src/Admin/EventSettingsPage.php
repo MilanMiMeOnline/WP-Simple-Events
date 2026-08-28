@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Admin;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
+use MiMe\WPSimpleEvents\Frontend\NativeCalendarActionSettings;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceHealthMonitor;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceHealthStatus;
@@ -43,12 +44,14 @@ final class EventSettingsPage {
 	 * @param EventArchiveSettings             $archive_settings Validated archive settings.
 	 * @param EventArchiveSlugConflictDetector $slug_conflicts   Page conflict detector.
 	 * @param EventTimezoneDisplaySettings     $timezone_display Global timezone-display setting.
+	 * @param NativeCalendarActionSettings     $calendar_action  Native action opt-in.
 	 * @param OccurrenceHealthMonitor          $occurrence_health Derived occurrence health monitor.
 	 */
 	public function __construct(
 		private readonly EventArchiveSettings $archive_settings = new EventArchiveSettings(),
 		private readonly EventArchiveSlugConflictDetector $slug_conflicts = new EventArchiveSlugConflictDetector(),
 		private readonly EventTimezoneDisplaySettings $timezone_display = new EventTimezoneDisplaySettings(),
+		private readonly NativeCalendarActionSettings $calendar_action = new NativeCalendarActionSettings(),
 		private readonly OccurrenceHealthMonitor $occurrence_health = new OccurrenceHealthMonitor()
 	) {}
 
@@ -197,6 +200,26 @@ final class EventSettingsPage {
 			self::PAGE_SLUG,
 			self::DISPLAY_SECTION,
 			array( 'label_for' => EventTimezoneDisplaySettings::OPTION )
+		);
+
+		register_setting(
+			self::SETTINGS_GROUP,
+			NativeCalendarActionSettings::OPTION,
+			array(
+				'type'              => 'boolean',
+				'default'           => false,
+				'sanitize_callback' => array( $this->calendar_action, 'sanitize' ),
+				'show_in_rest'      => false,
+			)
+		);
+
+		add_settings_field(
+			NativeCalendarActionSettings::OPTION,
+			__( 'Native Add to Calendar', 'mime-simple-events-calendar' ),
+			array( $this, 'render_native_calendar_action_field' ),
+			self::PAGE_SLUG,
+			self::DISPLAY_SECTION,
+			array( 'label_for' => NativeCalendarActionSettings::OPTION )
 		);
 
 		add_settings_field(
@@ -381,6 +404,20 @@ final class EventSettingsPage {
 			<?php esc_html_e( 'Show the captured timezone and applicable UTC offset with timed event details.', 'mime-simple-events-calendar' ); ?>
 		</label>
 		<p class="description"><?php esc_html_e( 'All-day events omit timezone information. This setting changes presentation only, never saved event dates or times.', 'mime-simple-events-calendar' ); ?></p>
+		<?php
+	}
+
+	/** Render the opt-in action for plugin-owned single-event templates. */
+	public function render_native_calendar_action_field(): void {
+		$enabled = $this->calendar_action->enabled();
+		$name    = esc_attr( NativeCalendarActionSettings::OPTION );
+		?>
+		<input type="hidden" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="0">
+		<label>
+			<input id="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" type="checkbox" name="<?php echo $name; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped immediately above. ?>" value="1" <?php echo checked( $enabled, true, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core checked() returns a fixed HTML attribute. ?>>
+			<?php esc_html_e( 'Show a local calendar-file action on plugin-owned single-event pages.', 'mime-simple-events-calendar' ); ?>
+		</label>
+		<p class="description"><?php esc_html_e( 'Disabled by default. Builder templates remain unchanged; place the Add to Calendar block, widget or module where you want it.', 'mime-simple-events-calendar' ); ?></p>
 		<?php
 	}
 

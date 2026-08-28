@@ -40,6 +40,7 @@ final class FrontendAssets {
 		$contains_shortcode = $post instanceof WP_Post
 			&& ( has_shortcode( $post->post_content, 'wpse_events' )
 				|| has_shortcode( $post->post_content, 'wpse_event_details' )
+				|| has_shortcode( $post->post_content, 'wpse_add_to_calendar' )
 				|| has_shortcode( $post->post_content, 'wpse_calendar' ) );
 
 		$is_filter_view = is_post_type_archive( EventPostType::POST_TYPE )

@@ -56,7 +56,7 @@ final class DiviIntegrationTest extends TestCase {
 				return '';
 			}
 		};
-		$composites  = new DiviCompositeModuleRenderer( $shortcode, $shortcode, $shortcode );
+		$composites  = new DiviCompositeModuleRenderer( $shortcode, $shortcode, $shortcode, $shortcode );
 		$integration = new DiviIntegration(
 			new DiviPostTypeIntegration(),
 			new DiviModuleRegistrar(

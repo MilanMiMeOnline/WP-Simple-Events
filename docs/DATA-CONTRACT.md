@@ -24,6 +24,12 @@ The publication date is never an event date.
 
 The boolean `wpse_show_event_timezone` option is disabled by default. When strictly enabled, timed event-detail presentation appends the captured IANA zone and event-date UTC offset, or a concise `UTC±HH:MM` label for fixed offsets. Ranges crossing a DST transition show both boundary offsets. All-day details omit the label. This option does not change canonical dates, UTC indexes, cards, calendar placement or feeds, REST values, or structured-data machine values.
 
+The boolean `wpse_show_native_calendar_action` option is also disabled by default.
+When strictly enabled, only the plugin-owned single-event fallback appends the
+local ICS action. It stores no provider account, event snapshot or visitor state,
+does not alter builder-owned templates and does not change canonical event or
+occurrence data.
+
 `EventDateRange` rejects invalid calendar values, reversed ranges, nonexistent local times during a spring DST jump and ambiguous repeated local times during an autumn DST rollback. Ambiguous input is safer to reject because a local value without an offset cannot express which occurrence the editor intended.
 
 ## Metadata

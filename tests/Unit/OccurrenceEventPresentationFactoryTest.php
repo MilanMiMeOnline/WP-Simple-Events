@@ -17,12 +17,14 @@ use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
 use MiMe\WPSimpleEvents\Frontend\EventPresentation;
 use MiMe\WPSimpleEvents\Frontend\EventTimezoneDisplaySettings;
 use MiMe\WPSimpleEvents\Frontend\NativeTemplateRenderer;
+use MiMe\WPSimpleEvents\Frontend\NativeCalendarActionSettings;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceDocumentController;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceEventPresentationFactory;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationContext;
 use MiMe\WPSimpleEvents\Frontend\OccurrenceSeriesNavigationRenderer;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadModel;
 use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
+use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 use MiMe\WPSimpleEvents\Seo\StructuredDataController;
 use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrencePresentationProvider;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
@@ -128,17 +130,55 @@ final class OccurrenceEventPresentationFactoryTest extends TestCase {
 		self::assertStringContainsString( 'https://example.com/events/series/', $output );
 	}
 
+	/** The native opt-in appends the shared action after exact occurrence details. */
+	public function test_native_single_may_append_calendar_action_for_exact_occurrence(): void {
+		WordPressState::set_option( 'date_format', 'Y-m-d' );
+		WordPressState::set_option( 'time_format', 'H:i' );
+		WordPressState::set_option( NativeCalendarActionSettings::OPTION, true );
+		$output = ( new NativeTemplateRenderer(
+			single: new EventDetailsRenderer(),
+			occurrences: $this->resolved_route(),
+			calendar_action: $this->calendar_action()
+		) )->render_single_block();
+
+		self::assertStringContainsString( 'Occurrence title', $output );
+		self::assertStringContainsString( '<div id="native-calendar-action">Calendar action</div>', $output );
+		self::assertGreaterThan(
+			strpos( $output, 'Occurrence title' ),
+			strpos( $output, 'native-calendar-action' )
+		);
+	}
+
 	/** Elementor Theme Builder may own an occurrence page after widget context parity. */
 	public function test_occurrence_route_allows_an_applicable_elementor_single_template(): void {
+		WordPressState::set_option( NativeCalendarActionSettings::OPTION, true );
 		WordPressState::set_elementor_location( 'single', '<main id="elementor-occurrence">Builder output</main>' );
 
 		$output = ( new NativeTemplateRenderer(
 			single: new EventDetailsRenderer(),
-			occurrences: $this->resolved_route()
+			occurrences: $this->resolved_route(),
+			calendar_action: $this->calendar_action()
 		) )->render_single_block();
 
 		self::assertSame( '<main id="elementor-occurrence">Builder output</main>', $output );
 		self::assertStringNotContainsString( 'Occurrence title', $output );
+		self::assertStringNotContainsString( 'native-calendar-action', $output );
+	}
+
+	/** Build one deterministic shared action adapter. */
+	private function calendar_action(): ShortcodeRenderer {
+		return new class() implements ShortcodeRenderer {
+			/**
+			 * Return deterministic already-escaped action markup.
+			 *
+			 * @param array<string, mixed>|string $attributes Raw attributes.
+			 */
+			public function render( array|string $attributes = array() ): string {
+				unset( $attributes );
+
+				return '<div id="native-calendar-action">Calendar action</div>';
+			}
+		};
 	}
 
 	/** Core title and canonical metadata stay bound to the exact occurrence leaf. */

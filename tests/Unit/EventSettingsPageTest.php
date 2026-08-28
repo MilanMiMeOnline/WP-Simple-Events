@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Admin\EventSettingsPage;
+use MiMe\WPSimpleEvents\Frontend\NativeCalendarActionSettings;
 use MiMe\WPSimpleEvents\Tests\Support\HookRecorder;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -105,5 +106,18 @@ final class EventSettingsPageTest extends TestCase {
 		self::assertIsString( $output );
 		self::assertStringContainsString( '<code>Europe/Brussels</code>', $output );
 		self::assertStringNotContainsString( 'options-general.php', $output );
+	}
+
+	/** The native action field explains both its opt-in and builder ownership. */
+	public function test_renders_native_calendar_action_as_disabled_by_default(): void {
+		ob_start();
+		( new EventSettingsPage() )->render_native_calendar_action_field();
+		$output = ob_get_clean();
+
+		self::assertIsString( $output );
+		self::assertStringContainsString( 'name="' . NativeCalendarActionSettings::OPTION . '"', $output );
+		self::assertStringNotContainsString( 'checked=', $output );
+		self::assertStringContainsString( 'Disabled by default', $output );
+		self::assertStringContainsString( 'Builder templates remain unchanged', $output );
 	}
 }

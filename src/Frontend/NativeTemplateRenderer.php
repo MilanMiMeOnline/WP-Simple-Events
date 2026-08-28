@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Frontend;
 
 use MiMe\WPSimpleEvents\Routing\OccurrenceRouteController;
+use MiMe\WPSimpleEvents\Shortcode\AddToCalendarShortcode;
+use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 use WP_Block;
 use WP_Query;
 
@@ -25,13 +27,17 @@ final readonly class NativeTemplateRenderer {
 	 * @param OccurrenceRouteController          $occurrences              Current exact route context.
 	 * @param OccurrenceEventPresentationFactory $occurrence_presentations Effective occurrence adapter.
 	 * @param OccurrenceSeriesNavigationRenderer $series_navigation        Native series context.
+	 * @param ShortcodeRenderer                  $calendar_action          Shared atomic action adapter.
+	 * @param NativeCalendarActionSettings       $calendar_action_settings Native-template opt-in.
 	 */
 	public function __construct(
 		private EventDetailsRenderer $single = new EventDetailsRenderer(),
 		private EventArchiveRenderer $archive = new EventArchiveRenderer(),
 		private OccurrenceRouteController $occurrences = new OccurrenceRouteController(),
 		private OccurrenceEventPresentationFactory $occurrence_presentations = new OccurrenceEventPresentationFactory(),
-		private OccurrenceSeriesNavigationRenderer $series_navigation = new OccurrenceSeriesNavigationRenderer()
+		private OccurrenceSeriesNavigationRenderer $series_navigation = new OccurrenceSeriesNavigationRenderer(),
+		private ShortcodeRenderer $calendar_action = new AddToCalendarShortcode(),
+		private NativeCalendarActionSettings $calendar_action_settings = new NativeCalendarActionSettings()
 	) {}
 
 	/**
@@ -101,10 +107,16 @@ final readonly class NativeTemplateRenderer {
 			);
 
 			return $this->single->render_presentation( $presentation )
+				. $this->native_calendar_action()
 				. $this->series_navigation->render( $occurrence );
 		}
 
-		return $this->single->render( get_queried_object_id() );
+		return $this->single->render( get_queried_object_id() ) . $this->native_calendar_action();
+	}
+
+	/** Render the local provider only after the native fallback has ownership. */
+	private function native_calendar_action(): string {
+		return $this->calendar_action_settings->enabled() ? $this->calendar_action->render() : '';
 	}
 
 	/**

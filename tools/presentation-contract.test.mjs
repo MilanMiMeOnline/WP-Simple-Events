@@ -34,6 +34,9 @@ test( 'consumes opt-in component variables for practical presentation controls',
 		'--wpse-summary-padding',
 		'--wpse-action-padding',
 		'--wpse-single-image-ratio',
+		'--wpse-calendar-action-background',
+		'--wpse-calendar-action-padding-block',
+		'--wpse-calendar-menu-background',
 	] ) {
 		assert.match( stylesheet, new RegExp( `var\\(\\s*${ variable.replaceAll( '-', '\\-' ) }` ) );
 	}

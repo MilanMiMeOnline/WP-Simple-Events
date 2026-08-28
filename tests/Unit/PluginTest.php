@@ -89,6 +89,7 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'rest_after_insert_wpse_event' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_events' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_event_details' ) );
+		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_add_to_calendar' ) );
 		self::assertIsCallable( HookRecorder::action( 'shortcode_wpse_calendar' ) );
 		self::assertIsCallable( HookRecorder::action( 'pre_get_posts' ) );
 		self::assertIsCallable( HookRecorder::action( 'posts_pre_query' ) );

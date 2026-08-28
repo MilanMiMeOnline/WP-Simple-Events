@@ -17,6 +17,13 @@ All widgets appear under **MiMe Simple Events and Calendar**:
 
 The original three widget names, settings and render contracts remain stable. In addition, twelve atomic widgets expose the complete named presentation palette: Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. They are dedicated, discoverable widgets rather than a generic metadata widget.
 
+One additional **Add to Calendar** widget exposes the local ICS download and
+opt-in Google or Outlook compose actions. It follows the same event source
+selector as the atomic palette, supports a dropdown or separate-action list, and
+offers wrapper-scoped action, menu, spacing, border and typography controls.
+Local ICS is the only default; the external providers are never contacted until
+a visitor deliberately follows their isolated link.
+
 Every atomic widget has the same optional **Event source** selector. Selecting an event uses that published, password-free event as the actual source, which makes the widgets usable on ordinary Elementor Free pages. Leaving it empty consumes the current event context supplied by the page or by a host such as Elementor Pro Theme Builder. Template assignment remains Elementor's responsibility; MiMe Simple Events and Calendar does not require Pro and does not change widget output based on the Elementor edition.
 
 Field-specific controls stay intentionally small. Meaningful labels can be shown, hidden or customized. The title has an allowlisted heading and optional permalink. The image has an allowlisted WordPress image size, attachment-alt/decorative behaviour, optional permalink and responsive width, ratio and radius controls. Location and external actions can override their visible link text without changing their destination; both external destinations open in a new tab with `noopener noreferrer` isolation. The external action also exposes scoped button background, hover, padding, border and radius controls. Date and time continue to inherit WordPress' `date_format` and `time_format`, plus the plugin's global timezone-label choice; a duplicate widget-level clock-format setting is not introduced. Scoped typography, color and spacing controls inherit the theme until explicitly set.

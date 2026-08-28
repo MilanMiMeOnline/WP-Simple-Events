@@ -120,6 +120,45 @@ final class DiviCompositeModuleTest extends TestCase {
 		self::assertStringNotContainsString( '999px', $output );
 	}
 
+	/** Add to Calendar keeps provider defaults, exact preview context and bounded design values. */
+	public function test_calendar_action_uses_shared_contract_and_bounded_style(): void {
+		WordPressState::add_post(
+			new WP_Post(
+				array(
+					'ID'          => 42,
+					'post_type'   => EventPostType::POST_TYPE,
+					'post_status' => 'publish',
+				)
+			)
+		);
+		$output = $this->renderer()->render(
+			'calendar_action',
+			$this->attrs(
+				array(
+					'providerGoogle'      => 'on',
+					'providerOutlook'     => 'invalid',
+					'layout'              => 'list',
+					'label'               => 'Save this date',
+					'actionBackground'    => '#AABBCC',
+					'actionBorder'        => 'red;display:none',
+					'actionRadius'        => '18',
+					'actionPaddingInline' => '999',
+				)
+			),
+			42
+		);
+
+		self::assertStringContainsString( 'class="wpse-divi-calendar-action-style"', $output );
+		self::assertStringContainsString( '--wpse-calendar-action-background:#aabbcc', $output );
+		self::assertStringContainsString( '--wpse-calendar-action-radius:18px', $output );
+		self::assertStringNotContainsString( 'display:none', $output );
+		self::assertStringNotContainsString( '999px', $output );
+		self::assertStringContainsString( '"providers":["ics","google"]', $output );
+		self::assertStringContainsString( '"layout":"list"', $output );
+		self::assertStringContainsString( '"label":"Save this date"', $output );
+		self::assertStringContainsString( '"id":42', $output );
+	}
+
 	/**
 	 * Build nested values matching Divi's non-responsive event group.
 	 *
@@ -148,6 +187,6 @@ final class DiviCompositeModuleTest extends TestCase {
 			}
 		};
 
-		return new DiviCompositeModuleRenderer( $renderer, $renderer, $renderer );
+		return new DiviCompositeModuleRenderer( $renderer, $renderer, $renderer, $renderer );
 	}
 }

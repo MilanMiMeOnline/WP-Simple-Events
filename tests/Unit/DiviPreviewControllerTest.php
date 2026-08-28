@@ -54,6 +54,7 @@ final class DiviPreviewControllerTest extends TestCase {
 		$controller = $this->controller();
 
 		self::assertTrue( $controller->valid_module( 'calendar' ) );
+		self::assertTrue( $controller->valid_module( 'calendar_action' ) );
 		self::assertFalse( $controller->valid_module( 'unknown' ) );
 		self::assertTrue( $controller->valid_attrs( array( 'event' => array() ) ) );
 		self::assertFalse( $controller->valid_attrs( 'invalid' ) );
@@ -111,6 +112,6 @@ final class DiviPreviewControllerTest extends TestCase {
 			}
 		};
 
-		return new DiviPreviewController( new DiviCompositeModuleRenderer( $renderer, $renderer, $renderer ) );
+		return new DiviPreviewController( new DiviCompositeModuleRenderer( $renderer, $renderer, $renderer, $renderer ) );
 	}
 }

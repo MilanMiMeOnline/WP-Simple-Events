@@ -1,6 +1,13 @@
 # Gutenberg integration contract
 
-MiMe Simple Events and Calendar registers three complete dynamic components and twelve public dynamic field blocks under **MiMe Simple Events and Calendar**. The complete components are Event List / Grid, Event Calendar and Event Details. The field palette is Event Title, Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event Content, Event Excerpt, External Event Action, Event Categories and Event Tags. Each block has dedicated `block.json` metadata and is discoverable independently; there is no raw-meta block.
+MiMe Simple Events and Calendar registers three complete dynamic components,
+twelve public dynamic field blocks and one atomic Add to Calendar block under
+**MiMe Simple Events and Calendar**. The complete components are Event List /
+Grid, Event Calendar and Event Details. The field palette is Event Title,
+Featured Image, Date & Time, Event Status, Venue, Address, Location Link, Event
+Content, Event Excerpt, External Event Action, Event Categories and Event Tags.
+Each block has dedicated `block.json` metadata and is discoverable independently;
+there is no raw-meta block.
 
 ## Sources and rendering
 
@@ -41,6 +48,13 @@ pixel controls; PHP revalidates them and emits only allowlisted
 style and retain theme inheritance.
 
 ServerSideRender supplies the live preview. Empty fields receive an editor-only placeholder; saved block content and visitor output remain empty. Loading and server errors have distinct editor placeholders.
+
+The **Add to Calendar** block uses the same current/explicit source rules. Local
+ICS is enabled by default; Google and Outlook are explicit author choices.
+Multiple providers use a dropdown or list and the optional label is bounded
+plain text. Its appearance panel maps strict color and integer-pixel values to
+the shared action variables. PHP rejects arbitrary CSS, invalid providers and an
+ineligible event before emitting a wrapper.
 
 ## Styling and markup
 
