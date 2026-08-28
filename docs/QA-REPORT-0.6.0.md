@@ -1,6 +1,6 @@
 # QA report — 0.6.0 filters and calendar discoverability
 
-**Status:** fully qualified for publication
+**Status:** published and independently verified
 
 **Reviewed:** 28 August 2026
 
@@ -220,5 +220,33 @@ No correctness, security, privacy, accessibility, performance, compatibility,
 Plugin Check or archive blocker was found. The decorative marker regression
 passed against a real FullCalendar month row, and all repository, browser,
 packaged WordPress and hosted gates passed against the exact candidate. The
-package identified by the SHA-256 above is accepted for GitHub release and
+package identified by the SHA-256 above was accepted for GitHub release and
 WordPress.org SVN publication.
+
+## Publication evidence
+
+Release 0.6.0 was published on 28 August 2026 through both supported release
+channels:
+
+- GitHub tag `v0.6.0` resolves to qualified repository commit
+  `1e08aeb718c450708937f42e612144de98bd3129`;
+- the public GitHub release is neither a draft nor a prerelease and carries the
+  qualified archive plus its checksum file;
+- the GitHub archive reports SHA-256
+  `0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032`;
+- WordPress.org accepted both `trunk` and immutable tag `0.6.0` in SVN revision
+  `3670482`;
+- the public WordPress.org plugin page reports version 0.6.0 and its versioned
+  download is available;
+- WordPress.org repackaged the tag with different ZIP metadata, as expected. Its
+  extracted 356-file plugin directory compared byte for byte equal to the exact
+  qualified `.release/mime-simple-events-calendar` staging tree.
+
+The verified public endpoints are:
+
+- <https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v0.6.0>;
+- <https://wordpress.org/plugins/mime-simple-events-calendar/>;
+- <https://downloads.wordpress.org/plugin/mime-simple-events-calendar.0.6.0.zip>.
+
+The release is therefore not merely approved for publication: the two public
+distribution channels contain the qualified 0.6.0 implementation.

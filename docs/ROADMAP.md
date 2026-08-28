@@ -1,10 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 27 August 2026
-**Current public release:** 0.5.0
-**Active phase:** Phase 4 maintenance qualification, followed by Phase 5 filter
-and calendar discoverability
+**Last reviewed:** 28 August 2026
+**Current public release:** 0.6.0
+**Active phase:** Phase 6 — 0.7.0 bounded “Add to calendar”
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -15,13 +14,12 @@ of the supported product until its specification, tests and release are complete
 
 Work proceeds in this order:
 
-1. publish the already-qualified post-0.5 maintenance improvements;
-2. replace the functional but dated visitor filters with one modern shared
-   interaction and add predictable event/category colors;
-3. implement bounded one-way “Add to calendar” actions as optional atomic
+1. maintain the released modern shared visitor filters and predictable
+   event/category colors without expanding their query scope;
+2. implement bounded one-way “Add to calendar” actions as optional atomic
    components without accepting import or synchronization scope;
-4. freeze the 1.x contracts and complete a feature-free 1.0 qualification cycle;
-5. reassess broader platform or event-management features only after 1.0 and
+3. freeze the 1.x contracts and complete a feature-free 1.0 qualification cycle;
+4. reassess broader platform or event-management features only after 1.0 and
    only when their maintenance cost is justified.
 
 Interactive maps, geocoding, ticketing and attendee management remain outside the
@@ -925,12 +923,13 @@ list and no-JavaScript fallback output.
 
 ### FCR-7 — 0.6.0 release qualification
 
-**Status:** complete on 2026-08-28. The compact timed-row color-dot correction
+**Status:** released on 2026-08-28. The compact timed-row color-dot correction
 passed all local and hosted repository, browser, WordPress 6.9/7.1 on PHP 8.2,
 PHP 8.2-8.5, pinned official Plugin Check and reproducible-package gates. The
-hosted archive is byte-identical to the local qualified archive, and the
-corrected 0.6.0 candidate is accepted for public release. Detailed evidence is
-recorded in `QA-REPORT-0.6.0.md`.
+hosted archive is byte-identical to the local qualified archive. GitHub release
+`v0.6.0` and WordPress.org SVN revision `3670482` are public; the extracted
+WordPress.org download is byte-identical to the qualified 356-file staging tree.
+Detailed evidence is recorded in `QA-REPORT-0.6.0.md`.
 
 Run the full repository gates plus WordPress 6.9/current and PHP 8.2-current;
 Gutenberg, Elementor Free/Pro and Divi 5; classic, hybrid and block themes;
@@ -947,9 +946,9 @@ editor documentation, changelog, screenshots and translation template are curren
 
 ### Status
 
-**Accepted for implementation after 0.6.0.** This is the only competitor-gap audit
-item with a strong visitor benefit and a lightweight contract that belongs before
-the 1.0 feature freeze.
+**Active after the verified 0.6.0 publication.** This is the only competitor-gap
+audit item with a strong visitor benefit and a lightweight contract that belongs
+before the 1.0 feature freeze.
 
 The candidate is one-way portability, not synchronization:
 
