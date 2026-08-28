@@ -55,6 +55,12 @@ color baseline is recorded in the
 bounded URL-state implementation is qualified in the
 [FCR-2 QA evidence](QA-REPORT-0.6.0-FCR-2.md); and the responsive progressive
 interaction is qualified in [FCR-3 QA evidence](QA-REPORT-0.6.0-FCR-3.md).
+Builder parity, the color domain and public calendar integration are qualified
+in the [FCR-4](QA-REPORT-0.6.0-FCR-4.md),
+[FCR-5](QA-REPORT-0.6.0-FCR-5.md) and
+[FCR-6](QA-REPORT-0.6.0-FCR-6.md) reports. The exact locally qualified 0.6.0
+archive, upgrade journey and remaining hosted release gates are recorded in the
+[0.6.0 release-candidate report](QA-REPORT-0.6.0.md).
 
 ## Releases and WordPress.org
 

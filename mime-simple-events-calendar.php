@@ -3,7 +3,7 @@
  * Plugin Name:       MiMe Simple Events and Calendar
  * Plugin URI:        https://github.com/MilanMiMeOnline/WP-Simple-Events
  * Description:       Lightweight one-off and recurring events for WordPress, Gutenberg, Elementor and Divi 5.
- * Version:           0.5.1
+ * Version:           0.6.0
  * Requires at least: 6.9
  * Requires PHP:      8.2
  * Author:            MiMe
@@ -11,7 +11,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       mime-simple-events-calendar
  * Domain Path:       /languages
- * Elementor tested up to: 4.2.2
+ * Elementor tested up to: 4.2.3
  *
  * @package MiMe\WPSimpleEvents
  */
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPSE_VERSION', '0.5.1' );
+define( 'WPSE_VERSION', '0.6.0' );
 define( 'WPSE_PLUGIN_FILE', __FILE__ );
 define( 'WPSE_PLUGIN_DIR', __DIR__ );
 

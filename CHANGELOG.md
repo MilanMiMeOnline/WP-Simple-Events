@@ -2,6 +2,40 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [0.6.0] - 2026-08-28
+
+### Added
+
+- Add semantic category and tag checkbox filters with removable active choices, scoped clear actions and a distinct restore-defaults action where configured presets exist.
+- Add responsive filter disclosures, bounded option search for long groups, shareable instance-specific URLs and useful no-JavaScript forms.
+- Add optional event-category colors and deterministic per-event color choices, including accessible derived foreground colors, filter swatches and an Auto/Show/Hide calendar legend.
+- Add filter layout, visibility, label and presentation controls across Gutenberg, Elementor and Divi while preserving the shared frontend markup and shortcode contract.
+
+### Changed
+
+- Make filter controls respond to their component width, retain visible focus and result announcements, and preserve isolated state when several lists or calendars share a page.
+- Apply one prepared, cache-primed color collection to one-off events and complete recurring series across month, list and no-JavaScript presentation without changing event eligibility or chronology.
+- Present event category and tag archive titles as translated plain text so WordPress' decorative title markup can never appear as visible source text.
+- Keep existing pages and events visually unchanged until an editor assigns category/event color data or chooses a new filter or legend presentation setting.
+
+### Security and privacy
+
+- Validate and allowlist all filter state, labels, layout modes, legend modes, term IDs and hexadecimal colors at their input and presentation boundaries.
+- Keep public queries bounded and published/password-free; color preparation receives only canonical events already selected by the existing query layer.
+- Continue to use only local WordPress data and assets, with no telemetry, visitor tracking, remote fonts, remote scripts or external service requests.
+
+### Accessibility and performance
+
+- Use labelled fieldsets, native checkboxes, buttons and disclosure semantics with keyboard operation, visible text, reduced-motion support and non-color status/category meaning.
+- Derive black or white event text from the higher WCAG contrast and keep visible names beside every decorative swatch.
+- Prime post, taxonomy relationship and term metadata caches once per bounded response instead of querying presentation metadata for every event or occurrence.
+
+### Testing
+
+- Add unit, integration, contract and browser regressions for filter state, clear/restore behaviour, responsive interaction, multiple components, taxonomy titles and every color-precedence path.
+- Qualify shared presentation controls and saved-content compatibility across shortcodes, Gutenberg, Elementor and Divi.
+- Requalify recurrence, public eligibility, no-JavaScript output, packaged WordPress compatibility, strict Plugin Check, dependency audits and reproducible release packaging.
+
 ## [0.5.1] - 2026-08-27
 
 ### Changed

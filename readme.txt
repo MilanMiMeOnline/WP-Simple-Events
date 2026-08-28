@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.1
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,8 +34,9 @@ MiMe Simple Events and Calendar adds a native Events section to WordPress. It is
 = Display options =
 
 * Native single-event and event-archive pages for classic and block themes.
-* Responsive event list and grid with bounded card controls, optional filters and pagination.
-* Month and list calendar views with category/tag filters, an optional initial date and configurable toolbar groups.
+* Responsive event list and grid with bounded card controls, modern optional category/tag filters and pagination.
+* Semantic checkbox filters with removable active choices, clear/restore actions, shareable URLs and a complete no-JavaScript fallback.
+* Month and list calendar views with optional category colors, event color choices, an accessible legend, an initial date and configurable toolbar groups.
 * An accessible upcoming-event fallback when JavaScript is unavailable or the calendar cannot load.
 * Three complete Gutenberg components, twelve dynamic individual event-field blocks and a single-event pattern.
 * Three complete shortcodes: `[wpse_events]`, `[wpse_calendar]` and `[wpse_event_details]`.
@@ -101,6 +102,10 @@ Yes. Divi 5.11.1 or newer provides fifteen native MiMe event modules, including 
 
 New events capture the timezone configured under WordPress Settings > General. Existing events keep their saved timezone if that website setting changes. Public times follow the WordPress time-format setting. Events > Settings can optionally show the captured timezone and applicable UTC offset.
 
+= Can I color event categories or individual events? =
+
+Yes. An event category can have one optional color. An event can use its own color, an explicitly chosen assigned category, an unambiguous assigned category automatically, or the component's existing fallback. If several assigned categories have different colors, the plugin never chooses one by incidental term order. Text, times, statuses and category names remain visible so color is not the only source of meaning.
+
 = What happens to data when the plugin is removed? =
 
 Nothing is deleted on deactivation. Deleting the plugin also keeps events, event categories, event tags and settings unless an administrator first enables the clearly warned Delete plugin data option. Uploaded media is never deleted by that cleanup.
@@ -123,6 +128,14 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.6.0 =
+* Replace modifier-key multiple selects with semantic category/tag checkboxes, removable choices and clear or restore-default actions.
+* Add component-responsive filter disclosures, bounded option search, shareable isolated state and complete no-JavaScript operation.
+* Add optional category and deterministic event colors with accessible text contrast, filter swatches and an Auto/Show/Hide calendar legend.
+* Add shared filter content and design controls across Gutenberg, Elementor and Divi while preserving existing saved defaults and shortcode output.
+* Fix event taxonomy archive headings that could expose WordPress' decorative span markup as visible text.
+* Keep queries bounded, color metadata cache-primed and existing events visually unchanged until a new color or presentation setting is chosen.
 
 = 0.5.1 =
 * Make open-ended recurrence previews explain their rolling public projection and hide rule-only end controls for one-off and selected-date schedules.
