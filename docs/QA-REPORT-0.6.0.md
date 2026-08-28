@@ -1,6 +1,6 @@
 # QA report — 0.6.0 filters and calendar discoverability
 
-**Status:** locally qualified follow-up candidate; hosted CI required
+**Status:** fully qualified for publication
 
 **Reviewed:** 28 August 2026
 
@@ -11,7 +11,7 @@
 
 ## Scope
 
-This report closes the local FCR-7 release-qualification work for the Phase 5
+This report closes the FCR-7 release-qualification work for the Phase 5
 filter and color release. It aggregates the red-green evidence in FCR-0 through
 FCR-6 and qualifies one exact 0.6.0 staging tree and archive.
 
@@ -72,12 +72,10 @@ The completed candidate passed:
   `0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032`;
 - `git diff --check` and focused release-tree secret/development-file inspection.
 
-The previous hosted GitHub Actions run
-[`33167251416`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33167251416)
+Hosted GitHub Actions run
+[`33176384315`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33176384315)
 independently passed on release commit
-`decd413ef27aebe4ca0ec6c07ee34f0fffdf0f03`. It remains useful baseline evidence,
-but it predates the compact month-row color-dot follow-up and therefore does not
-qualify the exact archive identified above. Its ten successful jobs covered:
+`8c57414f3b9b758b0ec51cdf4de9a20885b48838`. Its ten successful jobs covered:
 
 - strict Composer and plugin QA on PHP 8.2, 8.3, 8.4 and 8.5;
 - JavaScript/CSS/build contracts and translation-catalogue verification;
@@ -87,10 +85,10 @@ qualify the exact archive identified above. Its ten successful jobs covered:
   `Success: Checks complete. No errors found.`;
 - release archive creation and upload.
 
-That earlier hosted archive SHA-256 was
-`9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`,
-byte-for-byte identical to the candidate before this follow-up. A new hosted run
-and archive comparison are required before publication.
+The hosted archive SHA-256 was
+`0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032`,
+byte-for-byte identical to both local release builds recorded above. The exported
+official Plugin Check report states `Success: Checks complete. No errors found.`
 
 The host WP-CLI 2.12 process emitted deprecations from its own bundled packages
 under PHP 8.5 during catalogue generation. Generation and verification passed;
@@ -218,9 +216,9 @@ renamed.
 
 ## Senior QA review and release decision
 
-No local correctness, security, privacy, accessibility, performance,
-compatibility or archive blocker was found. The decorative marker regression
-passed against a real FullCalendar month row, and all repository, browser and
-packaged WordPress gates passed against the exact local candidate. Publication
-remains blocked until a new hosted run independently passes Plugin Check, the
-compatibility matrix and archive checksum comparison for the SHA-256 above.
+No correctness, security, privacy, accessibility, performance, compatibility,
+Plugin Check or archive blocker was found. The decorative marker regression
+passed against a real FullCalendar month row, and all repository, browser,
+packaged WordPress and hosted gates passed against the exact candidate. The
+package identified by the SHA-256 above is accepted for GitHub release and
+WordPress.org SVN publication.

@@ -925,12 +925,12 @@ list and no-JavaScript fallback output.
 
 ### FCR-7 — 0.6.0 release qualification
 
-**Status:** reopened for hosted follow-up qualification on 2026-08-28. The
-compact timed-row color-dot correction has passed all local repository, browser,
-WordPress 6.9/7.1 on PHP 8.2 and reproducible-package gates. A new hosted run must
-still pass PHP 8.2-8.5, pinned official Plugin Check and exact archive-checksum
-comparison before the corrected 0.6.0 candidate is accepted for public release.
-Detailed evidence is recorded in `QA-REPORT-0.6.0.md`.
+**Status:** complete on 2026-08-28. The compact timed-row color-dot correction
+passed all local and hosted repository, browser, WordPress 6.9/7.1 on PHP 8.2,
+PHP 8.2-8.5, pinned official Plugin Check and reproducible-package gates. The
+hosted archive is byte-identical to the local qualified archive, and the
+corrected 0.6.0 candidate is accepted for public release. Detailed evidence is
+recorded in `QA-REPORT-0.6.0.md`.
 
 Run the full repository gates plus WordPress 6.9/current and PHP 8.2-current;
 Gutenberg, Elementor Free/Pro and Divi 5; classic, hybrid and block themes;
