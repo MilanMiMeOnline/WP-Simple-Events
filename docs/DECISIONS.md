@@ -1730,3 +1730,29 @@ Enhanced calendar submissions create normal browser-history entries. Back and
 forward restore only the calendar's namespaced allowlisted values and refetch only
 when that selection changed. No cookie, local storage, remote service or new
 state-changing endpoint is introduced.
+
+## ADR-088: Filter content and design choices share one bounded host contract
+
+**Status:** Accepted
+
+List and calendar filters expose the same optional category group, tag group,
+automatic/horizontal/stacked layout, automatic/open/closed initial disclosure,
+active-chip visibility, visual result-status visibility and bounded plain-text
+labels in shortcodes, Gutenberg, Elementor and Divi. Existing saved components
+retain their prior behaviour through explicit compatible defaults. Hiding a
+taxonomy group makes its configured terms a fixed component constraint; a
+forged matching query parameter cannot replace or clear that hidden constraint.
+
+All builders style the existing shared filter markup through the same
+`--wpse-filter-*` custom-property layer. Elementor assignments remain scoped by
+its widget wrapper. Gutenberg and Divi accept only strict six-digit hexadecimal
+colors and bounded integer pixel values, which one server-side value object maps
+to allowlisted declarations. Invalid, oversized, unset or CSS-like strings emit
+no declaration. Builder style data never enters event metadata, taxonomy
+metadata, eligibility queries or the shortcode transport contract.
+
+Shortcodes remain theme-inheriting and do not accept arbitrary CSS or style
+attributes. Developers may target the documented stable semantic classes and
+custom properties. The visual calendar result status may be hidden, but its
+polite live region remains available to assistive technology so asynchronous
+loading, empty and error states are never silent.

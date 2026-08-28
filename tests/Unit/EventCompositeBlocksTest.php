@@ -61,21 +61,32 @@ final class EventCompositeBlocksTest extends TestCase {
 	public function test_settings_are_bounded_and_allowlisted(): void {
 		self::assertSame(
 			array(
-				'view'           => 'list',
-				'period'         => 'all',
-				'limit'          => 50,
-				'columns'        => 4,
-				'category'       => array( 'music', 'family' ),
-				'tag'            => array( 'live' ),
-				'filters'        => true,
-				'pagination'     => false,
-				'show_excerpt'   => false,
-				'show_image'     => true,
-				'show_location'  => false,
-				'show_title'     => false,
-				'show_date'      => true,
-				'excerpt_length' => 18,
-				'heading_level'  => 'h4',
+				'view'                  => 'list',
+				'period'                => 'all',
+				'limit'                 => 50,
+				'columns'               => 4,
+				'category'              => array( 'music', 'family' ),
+				'tag'                   => array( 'live' ),
+				'filters'               => true,
+				'pagination'            => false,
+				'show_excerpt'          => false,
+				'show_image'            => true,
+				'show_location'         => false,
+				'show_title'            => false,
+				'show_date'             => true,
+				'excerpt_length'        => 18,
+				'heading_level'         => 'h4',
+				'filter_categories'     => true,
+				'filter_tags'           => true,
+				'filter_layout'         => 'auto',
+				'filter_disclosure'     => 'auto',
+				'filter_chips'          => true,
+				'filter_results'        => false,
+				'filter_label'          => '',
+				'filter_period_label'   => '',
+				'filter_category_label' => '',
+				'filter_tag_label'      => '',
+				'filter_apply_label'    => '',
 			),
 			EventCompositeBlockSettings::event_list(
 				array(
@@ -110,6 +121,17 @@ final class EventCompositeBlocksTest extends TestCase {
 				'show_today'             => true,
 				'show_view_switcher'     => true,
 				'fallback_heading_level' => 'h3',
+				'filter_categories'      => true,
+				'filter_tags'            => true,
+				'filter_layout'          => 'auto',
+				'filter_disclosure'      => 'auto',
+				'filter_chips'           => true,
+				'filter_results'         => true,
+				'filter_label'           => '',
+				'filter_period_label'    => '',
+				'filter_category_label'  => '',
+				'filter_tag_label'       => '',
+				'filter_apply_label'     => '',
 			),
 			EventCompositeBlockSettings::calendar(
 				array(
@@ -160,7 +182,14 @@ final class EventCompositeBlocksTest extends TestCase {
 		$renderer = new EventCompositeBlockRenderer( $list, $calendar );
 
 		$list_output     = $renderer->render(
-			array( 'limit' => 7 ),
+			array(
+				'limit'                 => 7,
+				'filterPanelBackground' => '#AABBCC',
+				'filterFieldText'       => '#112233',
+				'filterGap'             => 16,
+				'filterOptionGap'       => 9,
+				'filterActionText'      => 'red;display:none',
+			),
 			'',
 			new WP_Block( array( 'blockName' => 'wpse/event-list' ) )
 		);
@@ -174,6 +203,11 @@ final class EventCompositeBlocksTest extends TestCase {
 		self::assertSame( 'list', $calendar->attributes['initial_view'] ?? null );
 		self::assertStringContainsString( 'wpse-event-composite-block-list', $list_output );
 		self::assertStringContainsString( 'native-list', $list_output );
+		self::assertStringContainsString( '--wpse-filter-panel-background:#aabbcc', $list_output );
+		self::assertStringContainsString( '--wpse-control-text:#112233', $list_output );
+		self::assertStringContainsString( '--wpse-filter-gap:16px', $list_output );
+		self::assertStringContainsString( '--wpse-filter-option-gap:9px', $list_output );
+		self::assertStringNotContainsString( 'display:none', $list_output );
 		self::assertStringContainsString( 'wpse-event-composite-block-calendar', $calendar_output );
 		self::assertSame( '', $renderer->render( array(), '', new WP_Block( array( 'blockName' => 'wpse/not-public' ) ) ) );
 	}

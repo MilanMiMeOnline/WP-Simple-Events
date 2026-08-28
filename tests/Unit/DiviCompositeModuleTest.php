@@ -93,6 +93,32 @@ final class DiviCompositeModuleTest extends TestCase {
 		self::assertSame( '', $renderer->render( 'unknown', array(), 42 ) );
 	}
 
+	/** Optional Divi design values become only strict component-scoped variables. */
+	public function test_filter_design_values_are_bounded_before_rendering(): void {
+		$renderer = $this->renderer();
+		$output   = $renderer->render(
+			'list',
+			$this->attrs(
+				array(
+					'filterPanelBackground' => '#AABBCC',
+					'filterFieldText'       => '#112233',
+					'filterActionText'      => 'red;display:none',
+					'filterGap'             => '18',
+					'filterOptionGap'       => '7',
+					'filterPanelRadius'     => '999',
+				)
+			)
+		);
+
+		self::assertStringContainsString( 'class="wpse-divi-filter-style"', $output );
+		self::assertStringContainsString( '--wpse-filter-panel-background:#aabbcc', $output );
+		self::assertStringContainsString( '--wpse-control-text:#112233', $output );
+		self::assertStringContainsString( '--wpse-filter-gap:18px', $output );
+		self::assertStringContainsString( '--wpse-filter-option-gap:7px', $output );
+		self::assertStringNotContainsString( 'display:none', $output );
+		self::assertStringNotContainsString( '999px', $output );
+	}
+
 	/**
 	 * Build nested values matching Divi's non-responsive event group.
 	 *

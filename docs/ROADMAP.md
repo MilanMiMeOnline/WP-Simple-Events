@@ -853,6 +853,11 @@ touch, 200% zoom, narrow containers and reduced-motion journeys pass.
 
 ### FCR-4 — Builder and shortcode parity
 
+**Status:** completed locally on 2026-08-28. Shared bounded content/style
+controls, saved-content compatibility and the full repository, browser and
+packaged WordPress matrices passed. Detailed evidence is recorded in
+`QA-REPORT-0.6.0-FCR-4.md`; final 0.6.0 release qualification remains FCR-7.
+
 1. Expose bounded content controls for visible groups, layout, initial disclosure,
    active chips, results and safe labels through Gutenberg, Elementor and Divi.
 2. Group style controls around filter container, triggers, options, checkboxes,

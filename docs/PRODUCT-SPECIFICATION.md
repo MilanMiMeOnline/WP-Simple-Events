@@ -306,6 +306,13 @@ than the browser viewport. Category or tag groups with more than 10 options gain
 a client-side search field; checked options stay visible while searching and the
 complete option list remains available without JavaScript.
 
+Filter hosts expose bounded choices for category/tag group visibility,
+automatic/horizontal/stacked field layout, automatic/open/closed initial
+disclosure, active chips, visual result status and short plain-text labels.
+Hidden taxonomy groups remain fixed initial query constraints and cannot be
+overridden through visitor URL state. Existing components use the pre-existing
+presentation until one of these new options is deliberately changed.
+
 ## 11. Calendar
 
 `[wpse_calendar]` provides responsive month and list views. Desktop and mobile
@@ -418,6 +425,13 @@ actions and result status. Gutenberg, Elementor and Divi map their bounded desig
 controls to this same semantic markup and CSS-variable layer. Event and category
 colors override only resolved calendar event presentation; builder calendar
 colors remain the component fallback.
+
+The filter variable layer covers the outer container, field panel, disclosure
+trigger, option groups, checkbox accent/size, chips, apply/reset actions and
+result status. Gutenberg and Divi convert only strict hexadecimal colors and
+bounded integer pixel values to these variables; invalid or arbitrary CSS is
+discarded. Elementor uses the same variables inside its widget scope. Shortcodes
+remain theme-inheriting and expose no arbitrary style attribute.
 
 ## 15. SEO and structured data
 

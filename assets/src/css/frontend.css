@@ -32,12 +32,18 @@
 	--wpse-filter-checkbox-size: 1rem;
 	--wpse-filter-action-background: var(--wpse-control-background, transparent);
 	--wpse-filter-action-text: var(--wpse-control-text, inherit);
+	--wpse-filter-action-border: currentcolor;
+	--wpse-filter-action-radius: var(--wpse-radius);
+	--wpse-filter-action-padding: 0.6em 0.9em;
 	--wpse-filter-accent: currentcolor;
 	--wpse-filter-chip-background: transparent;
 	--wpse-filter-chip-border: currentcolor;
 	--wpse-filter-chip-text: inherit;
 	--wpse-filter-chip-radius: 999px;
 	--wpse-filter-chip-padding: 0.35em 0.7em;
+	--wpse-filter-status-background: transparent;
+	--wpse-filter-status-text: inherit;
+	--wpse-filter-status-padding: 0;
 	--wpse-pagination-padding: 0;
 	--wpse-pagination-gap: 0.5rem;
 	--wpse-summary-padding: var(--wpse-spacing);
@@ -253,9 +259,19 @@
 	background: var(--wpse-filter-panel-background);
 }
 
+.wpse-events-filters-layout-stacked .wpse-events-filter-panel:not([hidden]) {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+}
+
 .wpse-filters-compact .wpse-events-filter-panel:not([hidden]) {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
+}
+
+.wpse-events-filters-layout-horizontal .wpse-events-filter-panel:not([hidden]) {
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .wpse-events-filter-field,
@@ -393,6 +409,16 @@
 .wpse-events-filter-submit button {
 	background-color: var(--wpse-filter-action-background);
 	color: var(--wpse-filter-action-text);
+	padding: var(--wpse-filter-action-padding);
+	border: 1px solid var(--wpse-filter-action-border);
+	border-radius: var(--wpse-filter-action-radius);
+}
+
+.wpse-events-filter-status,
+.wpse-calendar-status {
+	padding: var(--wpse-filter-status-padding);
+	background: var(--wpse-filter-status-background);
+	color: var(--wpse-filter-status-text);
 }
 
 .wpse-event-card a:focus-visible,

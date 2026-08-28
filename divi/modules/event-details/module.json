@@ -469,6 +469,30 @@
           }
         }
       },
+      "contentFilters": {
+        "panel": "content",
+        "priority": 40,
+        "groupName": "contentFilters",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Visitor Filters"
+          }
+        }
+      },
+      "contentFilterLabels": {
+        "panel": "content",
+        "priority": 50,
+        "groupName": "contentFilterLabels",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Filter Labels"
+          }
+        }
+      },
       "designContentText": {
         "panel": "design",
         "priority": 20,
@@ -481,6 +505,20 @@
             "clipboardCategory": "style",
             "presetGroup": "divi/font",
             "dynamicSubgroupHost": true
+          }
+        }
+      },
+      "designFilterStyle": {
+        "panel": "design",
+        "priority": 30,
+        "groupName": "filterStyle",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Visitor Filters",
+            "clipboardCategory": "style",
+            "presetGroup": "mime-simple-events-calendar/visitor-filters"
           }
         }
       }

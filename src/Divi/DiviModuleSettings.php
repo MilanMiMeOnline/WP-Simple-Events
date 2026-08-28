@@ -106,6 +106,44 @@ final class DiviModuleSettings {
 	}
 
 	/**
+	 * Return one strict six-digit hexadecimal color or an empty value.
+	 *
+	 * @param array<string, mixed> $attrs Divi module attributes.
+	 * @param string               $key   Internal allowlisted setting key.
+	 */
+	public static function color( array $attrs, string $key ): string {
+		$value = self::inner_value( $attrs, $key, '' );
+
+		return is_string( $value ) && 1 === preg_match( '/^#[0-9a-f]{6}$/Di', $value ) ? strtolower( $value ) : '';
+	}
+
+	/**
+	 * Return one optional bounded integer, preserving an unset editor value.
+	 *
+	 * @param array<string, mixed> $attrs   Divi module attributes.
+	 * @param string               $key     Internal allowlisted setting key.
+	 * @param int                  $minimum Inclusive lower bound.
+	 * @param int                  $maximum Inclusive upper bound.
+	 */
+	public static function optional_integer( array $attrs, string $key, int $minimum, int $maximum ): ?int {
+		$value = self::inner_value( $attrs, $key, null );
+
+		if ( ! is_int( $value ) && ! is_string( $value ) ) {
+			return null;
+		}
+
+		$string = trim( (string) $value );
+
+		if ( 1 !== preg_match( '/^[0-9]+$/D', $string ) ) {
+			return null;
+		}
+
+		$integer = filter_var( $string, FILTER_VALIDATE_INT );
+
+		return false !== $integer && $integer >= $minimum && $integer <= $maximum ? $integer : null;
+	}
+
+	/**
 	 * Normalize one bounded decimal integer without coercing other shapes.
 	 *
 	 * @param array<string, mixed> $attrs    Divi module attributes.

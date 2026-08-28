@@ -101,6 +101,13 @@ editor snapshot; query-backed composites may use Divi's REST fetch hook.
 11. Event Categories
 12. Event Tags
 
+Event List / Grid and Event Calendar expose shared **Visitor Filters** and
+**Filter Labels** content groups plus a **Visitor Filters** design group. These
+choices use the same public filter renderer as shortcode, Gutenberg and
+Elementor output. Optional colors and integer pixel values are revalidated by
+PHP before they become allowlisted `--wpse-filter-*` declarations on one module
+wrapper; arbitrary CSS strings and out-of-range values produce no declaration.
+
 ### Deliberate exclusions
 
 - Divi 4 shortcode modules or automatic D4 conversion.

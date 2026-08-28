@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Shortcode;
 use MiMe\WPSimpleEvents\Domain\EventListView;
 use MiMe\WPSimpleEvents\Domain\EventPeriod;
 use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
+use MiMe\WPSimpleEvents\Frontend\EventFilterPresentation;
 use MiMe\WPSimpleEvents\Query\EventQueryCriteria;
 
 /**
@@ -21,22 +22,23 @@ final readonly class EventListAttributes {
 	/**
 	 * Store normalized shortcode values.
 	 *
-	 * @param EventListView $view           List or grid layout.
-	 * @param EventPeriod   $period         Upcoming, past or all events.
-	 * @param int           $limit          Results per page.
-	 * @param int           $columns        Grid columns.
-	 * @param string[]      $category_slugs Event category slugs.
-	 * @param string[]      $tag_slugs      Event tag slugs.
-	 * @param bool          $filters        Show interactive filters.
-	 * @param bool          $pagination     Show instance pagination.
-	 * @param bool          $show_excerpt   Show card excerpts.
-	 * @param bool          $show_image     Show card images.
-	 * @param bool          $show_location  Show card locations.
-	 * @param bool          $show_title     Show linked card titles.
-	 * @param bool          $show_date      Show card dates.
-	 * @param int           $excerpt_length Maximum excerpt words.
-	 * @param string        $heading_level  Card title heading element.
-	 * @param int           $page           Current instance page.
+	 * @param EventListView           $view           List or grid layout.
+	 * @param EventPeriod             $period         Upcoming, past or all events.
+	 * @param int                     $limit          Results per page.
+	 * @param int                     $columns        Grid columns.
+	 * @param string[]                $category_slugs Event category slugs.
+	 * @param string[]                $tag_slugs      Event tag slugs.
+	 * @param bool                    $filters        Show interactive filters.
+	 * @param bool                    $pagination     Show instance pagination.
+	 * @param bool                    $show_excerpt   Show card excerpts.
+	 * @param bool                    $show_image     Show card images.
+	 * @param bool                    $show_location  Show card locations.
+	 * @param bool                    $show_title     Show linked card titles.
+	 * @param bool                    $show_date      Show card dates.
+	 * @param int                     $excerpt_length Maximum excerpt words.
+	 * @param string                  $heading_level  Card title heading element.
+	 * @param int                     $page           Current instance page.
+	 * @param EventFilterPresentation $filter_presentation Bounded filter presentation.
 	 */
 	private function __construct(
 		public EventListView $view,
@@ -54,7 +56,8 @@ final readonly class EventListAttributes {
 		public bool $show_date,
 		public int $excerpt_length,
 		public string $heading_level,
-		public int $page
+		public int $page,
+		public EventFilterPresentation $filter_presentation
 	) {}
 
 	/**
@@ -82,7 +85,8 @@ final readonly class EventListAttributes {
 			self::boolean_value( $attributes['show_date'] ?? null, true ),
 			self::bounded_integer( $attributes['excerpt_length'] ?? null, 30, 1, 100 ),
 			self::heading( $attributes['heading_level'] ?? null, 'h3' ),
-			1
+			1,
+			EventFilterPresentation::from_attributes( $attributes, false )
 		);
 	}
 
@@ -100,14 +104,17 @@ final readonly class EventListAttributes {
 		if ( $this->filters ) {
 			$submitted        = '1' === self::request_scalar( $request, $prefix . '_apply' )
 				|| array_key_exists( $prefix . '_period', $request )
-				|| array_key_exists( $prefix . '_category', $request )
-				|| array_key_exists( $prefix . '_tag', $request );
+				|| ( $this->filter_presentation->show_categories && array_key_exists( $prefix . '_category', $request ) )
+				|| ( $this->filter_presentation->show_tags && array_key_exists( $prefix . '_tag', $request ) );
 			$requested_period = self::request_scalar( $request, $prefix . '_period' );
 			$period           = EventPeriod::tryFrom( $requested_period ) ?? $period;
 
-			if ( $submitted ) {
+			if ( $submitted && $this->filter_presentation->show_categories ) {
 				$category_slugs = self::slugs( $request[ $prefix . '_category' ] ?? array() );
-				$tag_slugs      = self::slugs( $request[ $prefix . '_tag' ] ?? array() );
+			}
+
+			if ( $submitted && $this->filter_presentation->show_tags ) {
+				$tag_slugs = self::slugs( $request[ $prefix . '_tag' ] ?? array() );
 			}
 		}
 
@@ -131,7 +138,8 @@ final readonly class EventListAttributes {
 			$this->show_date,
 			$this->excerpt_length,
 			$this->heading_level,
-			$page
+			$page,
+			$this->filter_presentation
 		);
 	}
 

@@ -158,6 +158,7 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			)
 		);
 		$this->end_controls_section();
+		$this->register_filter_content_controls( true );
 		$this->register_style_controls();
 	}
 
@@ -350,5 +351,6 @@ final class EventCalendarWidget extends AbstractEventWidget {
 			)
 		);
 		$this->end_controls_section();
+		$this->register_filter_style_controls();
 	}
 }

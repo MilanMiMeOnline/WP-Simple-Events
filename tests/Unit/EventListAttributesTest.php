@@ -128,4 +128,26 @@ final class EventListAttributesTest extends TestCase {
 			)->page
 		);
 	}
+
+	/** Hidden taxonomy groups retain their fixed component constraints. */
+	public function test_hidden_filter_groups_cannot_be_overridden_by_the_request(): void {
+		$attributes = EventListAttributes::from_shortcode(
+			array(
+				'filters'           => 'true',
+				'category'          => 'members',
+				'tag'               => 'featured',
+				'filter_categories' => 'false',
+			)
+		)->with_request(
+			array(
+				'wpse_1_apply'    => '1',
+				'wpse_1_category' => array( 'public' ),
+				'wpse_1_tag'      => array( 'changed' ),
+			),
+			'wpse_1'
+		);
+
+		self::assertSame( array( 'members' ), $attributes->category_slugs );
+		self::assertSame( array( 'changed' ), $attributes->tag_slugs );
+	}
 }

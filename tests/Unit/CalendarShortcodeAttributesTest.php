@@ -110,4 +110,25 @@ final class CalendarShortcodeAttributesTest extends TestCase {
 		self::assertFalse( $attributes->filters );
 		self::assertSame( array( 'workshops' ), $attributes->category_slugs );
 	}
+
+	/** A hidden group remains a fixed builder constraint while visible groups filter. */
+	public function test_hidden_filter_group_ignores_matching_request_values(): void {
+		$attributes = CalendarShortcodeAttributes::from_shortcode(
+			array(
+				'category'          => 'members',
+				'tag'               => 'featured',
+				'filter_categories' => 'false',
+			)
+		)->with_request(
+			array(
+				'wpse_calendar_1_apply'    => '1',
+				'wpse_calendar_1_category' => array( 'public' ),
+				'wpse_calendar_1_tag'      => array( 'changed' ),
+			),
+			'wpse_calendar_1'
+		);
+
+		self::assertSame( array( 'members' ), $attributes->category_slugs );
+		self::assertSame( array( 'changed' ), $attributes->tag_slugs );
+	}
 }

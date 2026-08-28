@@ -60,6 +60,17 @@ Default attributes are:
 | `show_excerpt` | `true` | strict boolean string |
 | `show_image` | `true` | strict boolean string |
 | `show_location` | `true` | strict boolean string |
+| `filter_categories` | `true` | show or fix the category group |
+| `filter_tags` | `true` | show or fix the tag group |
+| `filter_layout` | `auto` | `auto`, `horizontal` or `stacked` |
+| `filter_disclosure` | `auto` | `auto`, `open` or `closed` |
+| `filter_chips` | `true` | show removable active choices |
+| `filter_results` | `false` | show a visual matching-result status |
+| `filter_label` | empty | optional plain-text disclosure label, max 80 characters |
+| `filter_period_label` | empty | optional plain-text period label, max 80 characters |
+| `filter_category_label` | empty | optional plain-text category label, max 80 characters |
+| `filter_tag_label` | empty | optional plain-text tag label, max 80 characters |
+| `filter_apply_label` | empty | optional plain-text apply label, max 80 characters |
 
 Unknown attributes are ignored. Invalid enum, integer and boolean values use documented safe defaults; no raw meta query, SQL, callback or post-status argument is accepted.
 
@@ -153,6 +164,16 @@ Default attributes are:
 | `category` | empty | comma-separated event category slugs |
 | `tag` | empty | comma-separated event tag slugs |
 | `filters` | `true` | strict boolean string |
+| `filter_categories` | `true` | show or fix the category group |
+| `filter_tags` | `true` | show or fix the tag group |
+| `filter_layout` | `auto` | `auto`, `horizontal` or `stacked` |
+| `filter_disclosure` | `auto` | `auto`, `open` or `closed` |
+| `filter_chips` | `true` | show removable active choices |
+| `filter_results` | `true` | show the visual calendar result status |
+| `filter_label` | empty | optional plain-text disclosure label, max 80 characters |
+| `filter_category_label` | empty | optional plain-text category label, max 80 characters |
+| `filter_tag_label` | empty | optional plain-text tag label, max 80 characters |
+| `filter_apply_label` | empty | optional plain-text apply label, max 80 characters |
 
 Each calendar receives an isolated `wpse_calendar_N` request namespace. Native
 GET controls work without JavaScript and preserve only allowlisted state from

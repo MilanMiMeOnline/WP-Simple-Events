@@ -102,4 +102,62 @@ final class EventListControlsTest extends TestCase {
 		self::assertStringContainsString( 'checked="checked"', $output );
 		self::assertStringNotContainsString( 'multiple', $output );
 	}
+
+	/** Builder presentation choices alter shared markup without exposing hidden groups. */
+	public function test_presentation_controls_are_shared_and_bounded(): void {
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::CATEGORY,
+			array(
+				new WP_Term(
+					array(
+						'term_id' => 4,
+						'name'    => 'Workshops',
+						'slug'    => 'workshops',
+					)
+				),
+			)
+		);
+		WordPressState::set_taxonomy_terms(
+			EventTaxonomies::TAG,
+			array(
+				new WP_Term(
+					array(
+						'term_id' => 5,
+						'name'    => 'Inside',
+						'slug'    => 'inside',
+					)
+				),
+			)
+		);
+
+		$output = ( new EventListControls() )->filters(
+			EventListAttributes::from_shortcode(
+				array(
+					'filters'               => true,
+					'category'              => 'workshops',
+					'tag'                   => 'inside',
+					'filter_tags'           => false,
+					'filter_layout'         => 'stacked',
+					'filter_disclosure'     => 'closed',
+					'filter_chips'          => false,
+					'filter_label'          => 'Refine events',
+					'filter_period_label'   => 'When',
+					'filter_category_label' => 'Topics',
+					'filter_apply_label'    => 'Show matches',
+				)
+			),
+			'wpse_1',
+			'wpse-events-1-results',
+			array()
+		);
+
+		self::assertStringContainsString( 'wpse-events-filters-layout-stacked', $output );
+		self::assertStringContainsString( 'data-wpse-filter-disclosure="closed"', $output );
+		self::assertStringContainsString( '>Refine events<', $output );
+		self::assertStringContainsString( '>When<', $output );
+		self::assertStringContainsString( '<legend>Topics</legend>', $output );
+		self::assertStringContainsString( '>Show matches<', $output );
+		self::assertStringNotContainsString( 'name="wpse_1_tag[]"', $output );
+		self::assertStringNotContainsString( 'wpse-events-active-filters', $output );
+	}
 }

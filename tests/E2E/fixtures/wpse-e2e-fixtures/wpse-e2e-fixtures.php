@@ -43,6 +43,12 @@ function wpse_e2e_seed_calendar_page(): void {
 		'[wpse_calendar category="wpse-e2e-category" filters="true"][wpse_calendar tag="wpse-e2e-tag" filters="true"]'
 	);
 	wpse_e2e_insert_page(
+		'wpse-e2e-calendar-filter-presentation',
+		'Calendar Filter Presentation Harness',
+		'[wpse_calendar category="wpse-e2e-category" tag="wpse-e2e-tag" filters="true" filter_tags="false" filter_layout="stacked" filter_disclosure="closed" filter_chips="false" filter_results="false" filter_label="Refine events" filter_category_label="Topics" filter_apply_label="Show matches"]'
+		. '[wpse_calendar category="wpse-e2e-category" filters="true" filter_disclosure="open" filter_label="Open filters"]'
+	);
+	wpse_e2e_insert_page(
 		'wpse-e2e-calendar-hidden',
 		'Hidden Calendar Harness',
 		'[wpse_e2e_hidden_calendar]'
@@ -68,10 +74,6 @@ function wpse_e2e_seed_calendar_page(): void {
 		'[wpse_e2e_calendar_time]'
 	);
 	wpse_e2e_seed_atomic_page();
-
-	if ( ! current_user_can( MiMe\WPSimpleEvents\Access\EventCapabilities::EDIT_POSTS ) ) {
-		return;
-	}
 
 	if ( get_option( 'wpse_e2e_events_seeded_v2', false ) ) {
 		return;
@@ -499,8 +501,22 @@ function wpse_e2e_insert_page( string $slug, string $title, string $content ): v
 	);
 }
 
+/**
+ * Seed the disposable browser-test site before Playwright starts, then stop routing.
+ *
+ * This unauthenticated AJAX action exists only in the isolated E2E fixture plugin, which
+ * is never packaged with the production plugin. It exits before themes, canonical redirects
+ * or public templates can affect the deterministic setup request.
+ */
+function wpse_e2e_seed_from_ajax(): void {
+	wpse_e2e_seed_calendar_page();
+	status_header( 204 );
+	exit;
+}
+
 register_activation_hook( __FILE__, 'wpse_e2e_seed_calendar_page' );
 add_action( 'init', 'wpse_e2e_register_shortcodes', 5 );
-add_action( 'init', 'wpse_e2e_seed_calendar_page', 20 );
+add_action( 'wp_ajax_wpse_e2e_seed', 'wpse_e2e_seed_from_ajax' );
+add_action( 'wp_ajax_nopriv_wpse_e2e_seed', 'wpse_e2e_seed_from_ajax' );
 add_action( 'wp_enqueue_scripts', 'wpse_e2e_enqueue_elementor_calendar_fixture' );
 add_action( 'wp_footer', 'wpse_e2e_add_elementor_calendar_fixture_script', 1 );

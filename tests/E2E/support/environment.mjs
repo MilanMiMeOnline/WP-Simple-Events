@@ -115,6 +115,34 @@ function runWpEnv(
 	} );
 }
 
+/** Seed fixtures once wp-env has finished activating both mounted plugins. */
+async function seedFixturesWhenReady() {
+	let lastOutcome = 'no response';
+
+	for ( let attempt = 0; attempt < 40; attempt += 1 ) {
+		try {
+			const response = await fetch(
+				'http://localhost:8888/wp-admin/admin-ajax.php?action=wpse_e2e_seed',
+				{ redirect: 'manual' },
+			);
+			lastOutcome = `HTTP ${ response.status }`;
+
+			if ( response.status === 204 ) {
+				await response.arrayBuffer();
+				return;
+			}
+		} catch ( error ) {
+			lastOutcome = error instanceof Error ? error.message : String( error );
+		}
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 250 ) );
+	}
+
+	throw new Error(
+		`Fixture seed request did not become ready (${ lastOutcome }).`,
+	);
+}
+
 /** Prepare and start a clean WordPress browser-test site. */
 export async function startE2EEnvironment() {
 	const configuration = structuredClone( baseConfiguration );
@@ -141,6 +169,7 @@ export async function startE2EEnvironment() {
 	await rm( wpEnvHome, { force: true, recursive: true } );
 	await seedOfflineVersionCache();
 	await runWpEnv( [ 'start', '--runtime=playground' ] );
+	await seedFixturesWhenReady();
 }
 
 /** Stop and remove the isolated browser-test site. */

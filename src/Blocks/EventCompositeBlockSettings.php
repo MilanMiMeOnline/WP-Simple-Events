@@ -36,6 +36,7 @@ final class EventCompositeBlockSettings {
 			'show_date'      => self::boolean( $attributes, 'showDate', true ),
 			'excerpt_length' => self::integer( $attributes['excerptLength'] ?? null, 30, 1, 100 ),
 			'heading_level'  => self::choice( $attributes['headingLevel'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $attributes, false ),
 		);
 	}
 
@@ -57,6 +58,30 @@ final class EventCompositeBlockSettings {
 			'show_today'             => self::boolean( $attributes, 'showToday', true ),
 			'show_view_switcher'     => self::boolean( $attributes, 'showViewSwitcher', true ),
 			'fallback_heading_level' => self::choice( $attributes['fallbackHeadingLevel'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $attributes, true ),
+		);
+	}
+
+	/**
+	 * Map shared filter-presentation block attributes to shortcode keys.
+	 *
+	 * @param array<string, mixed> $attributes Parsed block attributes.
+	 * @param bool                 $default_results Host-compatible result default.
+	 * @return array<string, bool|string>
+	 */
+	private static function filter_presentation( array $attributes, bool $default_results ): array {
+		return array(
+			'filter_categories'     => self::boolean( $attributes, 'filterCategories', true ),
+			'filter_tags'           => self::boolean( $attributes, 'filterTags', true ),
+			'filter_layout'         => self::choice( $attributes['filterLayout'] ?? null, array( 'auto', 'horizontal', 'stacked' ), 'auto' ),
+			'filter_disclosure'     => self::choice( $attributes['filterDisclosure'] ?? null, array( 'auto', 'open', 'closed' ), 'auto' ),
+			'filter_chips'          => self::boolean( $attributes, 'filterChips', true ),
+			'filter_results'        => self::boolean( $attributes, 'filterResults', $default_results ),
+			'filter_label'          => self::text( $attributes['filterLabel'] ?? null ),
+			'filter_period_label'   => self::text( $attributes['filterPeriodLabel'] ?? null ),
+			'filter_category_label' => self::text( $attributes['filterCategoryLabel'] ?? null ),
+			'filter_tag_label'      => self::text( $attributes['filterTagLabel'] ?? null ),
+			'filter_apply_label'    => self::text( $attributes['filterApplyLabel'] ?? null ),
 		);
 	}
 

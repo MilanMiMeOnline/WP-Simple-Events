@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Blocks;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Frontend\CurrentEventPresentationResolver;
 use MiMe\WPSimpleEvents\Frontend\EventDetailsRenderer;
+use MiMe\WPSimpleEvents\Frontend\EventFilterStyle;
 use MiMe\WPSimpleEvents\Shortcode\CalendarShortcode;
 use MiMe\WPSimpleEvents\Shortcode\EventListShortcode;
 use MiMe\WPSimpleEvents\Shortcode\EventDetailsAttributes;
@@ -66,9 +67,14 @@ final readonly class EventCompositeBlockRenderer {
 			return '';
 		}
 
-		$wrapper = get_block_wrapper_attributes(
-			array( 'class' => 'wpse-event-composite-block wpse-event-composite-block-' . $component )
-		);
+		$wrapper_attributes = array( 'class' => 'wpse-event-composite-block wpse-event-composite-block-' . $component );
+		$style              = EventFilterStyle::from_attributes( $attributes )->inline_style();
+
+		if ( in_array( $component, array( 'list', 'calendar' ), true ) && '' !== $style ) {
+			$wrapper_attributes['style'] = $style;
+		}
+
+		$wrapper = get_block_wrapper_attributes( $wrapper_attributes );
 
 		return '<div ' . $wrapper . '>' . $output . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core creates wrapper attributes and shared renderers own contextual escaping.
 	}

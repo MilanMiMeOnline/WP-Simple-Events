@@ -69,6 +69,7 @@ final class DiviCompositeSettings {
 			'show_date'      => DiviModuleSettings::toggle( $attrs, 'showDate', true ),
 			'excerpt_length' => DiviModuleSettings::integer( $attrs, 'excerptLength', 30, 1, 100 ),
 			'heading_level'  => DiviModuleSettings::choice( $attrs, 'headingLevel', array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $attrs, false ),
 		);
 	}
 
@@ -90,6 +91,91 @@ final class DiviCompositeSettings {
 			'show_today'             => DiviModuleSettings::toggle( $attrs, 'showToday', true ),
 			'show_view_switcher'     => DiviModuleSettings::toggle( $attrs, 'showViewSwitcher', true ),
 			'fallback_heading_level' => DiviModuleSettings::choice( $attrs, 'fallbackHeadingLevel', array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $attrs, true ),
 		);
+	}
+
+	/**
+	 * Normalize shared Divi filter-presentation controls.
+	 *
+	 * @param array<string, mixed> $attrs Divi module attributes.
+	 * @param bool                 $default_results Host-compatible result default.
+	 * @return array<string, bool|string>
+	 */
+	private static function filter_presentation( array $attrs, bool $default_results ): array {
+		return array(
+			'filter_categories'     => DiviModuleSettings::toggle( $attrs, 'filterCategories', true ),
+			'filter_tags'           => DiviModuleSettings::toggle( $attrs, 'filterTags', true ),
+			'filter_layout'         => DiviModuleSettings::choice( $attrs, 'filterLayout', array( 'auto', 'horizontal', 'stacked' ), 'auto' ),
+			'filter_disclosure'     => DiviModuleSettings::choice( $attrs, 'filterDisclosure', array( 'auto', 'open', 'closed' ), 'auto' ),
+			'filter_chips'          => DiviModuleSettings::toggle( $attrs, 'filterChips', true ),
+			'filter_results'        => DiviModuleSettings::toggle( $attrs, 'filterResults', $default_results ),
+			'filter_label'          => DiviModuleSettings::text( $attrs, 'filterLabel' ),
+			'filter_period_label'   => DiviModuleSettings::text( $attrs, 'filterPeriodLabel' ),
+			'filter_category_label' => DiviModuleSettings::text( $attrs, 'filterCategoryLabel' ),
+			'filter_tag_label'      => DiviModuleSettings::text( $attrs, 'filterTagLabel' ),
+			'filter_apply_label'    => DiviModuleSettings::text( $attrs, 'filterApplyLabel' ),
+		);
+	}
+
+	/**
+	 * Normalize optional Divi design fields for EventFilterStyle.
+	 *
+	 * @param array<string, mixed> $attrs Divi module attributes.
+	 * @return array<string, int|string>
+	 */
+	public static function filter_style( array $attrs ): array {
+		$style = array();
+
+		foreach (
+			array(
+				'filterContainerBackground',
+				'filterPanelBackground',
+				'filterTriggerBackground',
+				'filterTriggerText',
+				'filterFieldBackground',
+				'filterFieldText',
+				'filterAccent',
+				'filterChipBackground',
+				'filterChipText',
+				'filterActionBackground',
+				'filterActionText',
+				'filterStatusBackground',
+				'filterStatusText',
+			) as $key
+		) {
+			$value = DiviModuleSettings::color( $attrs, $key );
+
+			if ( '' !== $value ) {
+				$style[ $key ] = $value;
+			}
+		}
+
+		foreach (
+			array(
+				'filterGap'              => array( 0, 80 ),
+				'filterContainerPadding' => array( 0, 80 ),
+				'filterPanelPadding'     => array( 0, 80 ),
+				'filterPanelRadius'      => array( 0, 80 ),
+				'filterTriggerPadding'   => array( 0, 80 ),
+				'filterTriggerRadius'    => array( 0, 80 ),
+				'filterOptionGap'        => array( 0, 40 ),
+				'filterCheckboxSize'     => array( 8, 40 ),
+				'filterOptionsMaxHeight' => array( 80, 800 ),
+				'filterChipPadding'      => array( 0, 80 ),
+				'filterChipRadius'       => array( 0, 80 ),
+				'filterActionPadding'    => array( 0, 80 ),
+				'filterActionRadius'     => array( 0, 80 ),
+				'filterStatusPadding'    => array( 0, 80 ),
+			) as $key => $bounds
+		) {
+			$value = DiviModuleSettings::optional_integer( $attrs, $key, $bounds[0], $bounds[1] );
+
+			if ( null !== $value ) {
+				$style[ $key ] = $value;
+			}
+		}
+
+		return $style;
 	}
 }

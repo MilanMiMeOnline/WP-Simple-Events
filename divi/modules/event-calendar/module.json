@@ -60,6 +60,44 @@
               "categories": [],
               "tags": [],
               "filters": "on",
+              "filterCategories": "on",
+              "filterTags": "on",
+              "filterLayout": "auto",
+              "filterDisclosure": "auto",
+              "filterChips": "on",
+              "filterResults": "on",
+              "filterLabel": "",
+              "filterPeriodLabel": "",
+              "filterCategoryLabel": "",
+              "filterTagLabel": "",
+              "filterApplyLabel": "",
+              "filterContainerBackground": "",
+              "filterPanelBackground": "",
+              "filterTriggerBackground": "",
+              "filterTriggerText": "",
+              "filterFieldBackground": "",
+              "filterFieldText": "",
+              "filterAccent": "",
+              "filterChipBackground": "",
+              "filterChipText": "",
+              "filterActionBackground": "",
+              "filterActionText": "",
+              "filterStatusBackground": "",
+              "filterStatusText": "",
+              "filterGap": "",
+              "filterContainerPadding": "",
+              "filterPanelPadding": "",
+              "filterPanelRadius": "",
+              "filterTriggerPadding": "",
+              "filterTriggerRadius": "",
+              "filterOptionGap": "",
+              "filterCheckboxSize": "",
+              "filterOptionsMaxHeight": "",
+              "filterChipPadding": "",
+              "filterChipRadius": "",
+              "filterActionPadding": "",
+              "filterActionRadius": "",
+              "filterStatusPadding": "",
               "showNavigation": "on",
               "showToday": "on",
               "showViewSwitcher": "on",
@@ -206,9 +244,719 @@
                 "type": "field"
               }
             },
+            "filterCategories": {
+              "groupSlug": "contentFilters",
+              "priority": 70,
+              "render": true,
+              "subName": "filterCategories",
+              "label": "Show Categories",
+              "description": "Show the category filter group.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/toggle",
+                "type": "field"
+              }
+            },
+            "filterTags": {
+              "groupSlug": "contentFilters",
+              "priority": 80,
+              "render": true,
+              "subName": "filterTags",
+              "label": "Show Tags",
+              "description": "Show the tag filter group.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/toggle",
+                "type": "field"
+              }
+            },
+            "filterLayout": {
+              "groupSlug": "contentFilters",
+              "priority": 90,
+              "render": true,
+              "subName": "filterLayout",
+              "label": "Filter Layout",
+              "description": "Choose automatic, horizontal or stacked filter fields.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/select",
+                "type": "field",
+                "props": {
+                  "options": {
+                    "auto": {
+                      "label": "Automatic"
+                    },
+                    "horizontal": {
+                      "label": "Horizontal"
+                    },
+                    "stacked": {
+                      "label": "Stacked"
+                    }
+                  }
+                }
+              }
+            },
+            "filterDisclosure": {
+              "groupSlug": "contentFilters",
+              "priority": 100,
+              "render": true,
+              "subName": "filterDisclosure",
+              "label": "Initial Filter Panel",
+              "description": "Choose automatic, initially open or initially closed disclosure.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/select",
+                "type": "field",
+                "props": {
+                  "options": {
+                    "auto": {
+                      "label": "Automatic"
+                    },
+                    "open": {
+                      "label": "Open"
+                    },
+                    "closed": {
+                      "label": "Closed"
+                    }
+                  }
+                }
+              }
+            },
+            "filterChips": {
+              "groupSlug": "contentFilters",
+              "priority": 110,
+              "render": true,
+              "subName": "filterChips",
+              "label": "Show Active Filter Chips",
+              "description": "Show removable active choices above the form.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/toggle",
+                "type": "field"
+              }
+            },
+            "filterResults": {
+              "groupSlug": "contentFilters",
+              "priority": 120,
+              "render": true,
+              "subName": "filterResults",
+              "label": "Show Result Status",
+              "description": "Show the visual matching-event status.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/toggle",
+                "type": "field"
+              }
+            },
+            "filterLabel": {
+              "groupSlug": "contentFilterLabels",
+              "priority": 130,
+              "render": true,
+              "subName": "filterLabel",
+              "label": "Filter Button Label",
+              "description": "Leave empty to use the translated default.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterPeriodLabel": {
+              "groupSlug": "contentFilterLabels",
+              "priority": 140,
+              "render": true,
+              "subName": "filterPeriodLabel",
+              "label": "Period Label",
+              "description": "Leave empty to use the translated default.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterCategoryLabel": {
+              "groupSlug": "contentFilterLabels",
+              "priority": 150,
+              "render": true,
+              "subName": "filterCategoryLabel",
+              "label": "Categories Label",
+              "description": "Leave empty to use the translated default.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterTagLabel": {
+              "groupSlug": "contentFilterLabels",
+              "priority": 160,
+              "render": true,
+              "subName": "filterTagLabel",
+              "label": "Tags Label",
+              "description": "Leave empty to use the translated default.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterApplyLabel": {
+              "groupSlug": "contentFilterLabels",
+              "priority": 170,
+              "render": true,
+              "subName": "filterApplyLabel",
+              "label": "Apply Button Label",
+              "description": "Leave empty to use the translated default.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterContainerBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 180,
+              "render": true,
+              "subName": "filterContainerBackground",
+              "label": "Container Background",
+              "description": "Set the outer filter background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterPanelBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 190,
+              "render": true,
+              "subName": "filterPanelBackground",
+              "label": "Panel Background",
+              "description": "Set the filter-field panel background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterTriggerBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 200,
+              "render": true,
+              "subName": "filterTriggerBackground",
+              "label": "Trigger Background",
+              "description": "Set the compact disclosure background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterTriggerText": {
+              "groupSlug": "designFilterStyle",
+              "priority": 210,
+              "render": true,
+              "subName": "filterTriggerText",
+              "label": "Trigger Text",
+              "description": "Set the compact disclosure text color.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterFieldBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 220,
+              "render": true,
+              "subName": "filterFieldBackground",
+              "label": "Field Background",
+              "description": "Set the select and search-field background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterFieldText": {
+              "groupSlug": "designFilterStyle",
+              "priority": 230,
+              "render": true,
+              "subName": "filterFieldText",
+              "label": "Field Text",
+              "description": "Set the select and search-field text color.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterAccent": {
+              "groupSlug": "designFilterStyle",
+              "priority": 240,
+              "render": true,
+              "subName": "filterAccent",
+              "label": "Checkbox Accent",
+              "description": "Set the checkbox accent color.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterChipBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 250,
+              "render": true,
+              "subName": "filterChipBackground",
+              "label": "Chip Background",
+              "description": "Set active-filter chip backgrounds.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterChipText": {
+              "groupSlug": "designFilterStyle",
+              "priority": 260,
+              "render": true,
+              "subName": "filterChipText",
+              "label": "Chip Text",
+              "description": "Set active-filter chip text.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterActionBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 270,
+              "render": true,
+              "subName": "filterActionBackground",
+              "label": "Action Background",
+              "description": "Set the apply-action background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterActionText": {
+              "groupSlug": "designFilterStyle",
+              "priority": 280,
+              "render": true,
+              "subName": "filterActionText",
+              "label": "Action Text",
+              "description": "Set the apply-action text.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterStatusBackground": {
+              "groupSlug": "designFilterStyle",
+              "priority": 290,
+              "render": true,
+              "subName": "filterStatusBackground",
+              "label": "Status Background",
+              "description": "Set the result-status background.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterStatusText": {
+              "groupSlug": "designFilterStyle",
+              "priority": 300,
+              "render": true,
+              "subName": "filterStatusText",
+              "label": "Status Text",
+              "description": "Set the result-status text.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/color-picker",
+                "type": "field"
+              }
+            },
+            "filterGap": {
+              "groupSlug": "designFilterStyle",
+              "priority": 310,
+              "render": true,
+              "subName": "filterGap",
+              "label": "Filter Gap (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterContainerPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 320,
+              "render": true,
+              "subName": "filterContainerPadding",
+              "label": "Container Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterPanelPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 330,
+              "render": true,
+              "subName": "filterPanelPadding",
+              "label": "Panel Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterPanelRadius": {
+              "groupSlug": "designFilterStyle",
+              "priority": 340,
+              "render": true,
+              "subName": "filterPanelRadius",
+              "label": "Panel Radius (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterTriggerPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 350,
+              "render": true,
+              "subName": "filterTriggerPadding",
+              "label": "Trigger Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterTriggerRadius": {
+              "groupSlug": "designFilterStyle",
+              "priority": 360,
+              "render": true,
+              "subName": "filterTriggerRadius",
+              "label": "Trigger Radius (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterOptionGap": {
+              "groupSlug": "designFilterStyle",
+              "priority": 370,
+              "render": true,
+              "subName": "filterOptionGap",
+              "label": "Option Gap (px)",
+              "description": "Optional whole pixels from 0 through 40.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterCheckboxSize": {
+              "groupSlug": "designFilterStyle",
+              "priority": 380,
+              "render": true,
+              "subName": "filterCheckboxSize",
+              "label": "Checkbox Size (px)",
+              "description": "Optional whole pixels from 8 through 40.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterOptionsMaxHeight": {
+              "groupSlug": "designFilterStyle",
+              "priority": 390,
+              "render": true,
+              "subName": "filterOptionsMaxHeight",
+              "label": "Option List Maximum Height (px)",
+              "description": "Optional whole pixels from 80 through 800.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterChipPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 400,
+              "render": true,
+              "subName": "filterChipPadding",
+              "label": "Chip Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterChipRadius": {
+              "groupSlug": "designFilterStyle",
+              "priority": 410,
+              "render": true,
+              "subName": "filterChipRadius",
+              "label": "Chip Radius (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterActionPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 420,
+              "render": true,
+              "subName": "filterActionPadding",
+              "label": "Action Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterActionRadius": {
+              "groupSlug": "designFilterStyle",
+              "priority": 430,
+              "render": true,
+              "subName": "filterActionRadius",
+              "label": "Action Radius (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
+            "filterStatusPadding": {
+              "groupSlug": "designFilterStyle",
+              "priority": 440,
+              "render": true,
+              "subName": "filterStatusPadding",
+              "label": "Status Padding (px)",
+              "description": "Optional whole pixels from 0 through 80.",
+              "features": {
+                "sticky": false,
+                "responsive": false,
+                "hover": false,
+                "dynamicContent": false
+              },
+              "component": {
+                "name": "divi/text",
+                "type": "field"
+              }
+            },
             "showNavigation": {
               "groupSlug": "contentDisplay",
-              "priority": 70,
+              "priority": 450,
               "render": true,
               "subName": "showNavigation",
               "label": "Show Previous and Next",
@@ -226,7 +974,7 @@
             },
             "showToday": {
               "groupSlug": "contentDisplay",
-              "priority": 80,
+              "priority": 460,
               "render": true,
               "subName": "showToday",
               "label": "Show Today",
@@ -244,7 +992,7 @@
             },
             "showViewSwitcher": {
               "groupSlug": "contentDisplay",
-              "priority": 90,
+              "priority": 470,
               "render": true,
               "subName": "showViewSwitcher",
               "label": "Show View Switcher",
@@ -262,7 +1010,7 @@
             },
             "fallbackHeadingLevel": {
               "groupSlug": "contentDisplay",
-              "priority": 100,
+              "priority": 480,
               "render": true,
               "subName": "fallbackHeadingLevel",
               "label": "Fallback Heading Level",
@@ -375,6 +1123,30 @@
           }
         }
       },
+      "contentFilters": {
+        "panel": "content",
+        "priority": 40,
+        "groupName": "contentFilters",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Visitor Filters"
+          }
+        }
+      },
+      "contentFilterLabels": {
+        "panel": "content",
+        "priority": 50,
+        "groupName": "contentFilterLabels",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Filter Labels"
+          }
+        }
+      },
       "designContentText": {
         "panel": "design",
         "priority": 20,
@@ -387,6 +1159,20 @@
             "clipboardCategory": "style",
             "presetGroup": "divi/font",
             "dynamicSubgroupHost": true
+          }
+        }
+      },
+      "designFilterStyle": {
+        "panel": "design",
+        "priority": 30,
+        "groupName": "filterStyle",
+        "multiElements": true,
+        "component": {
+          "name": "divi/composite",
+          "props": {
+            "groupLabel": "Visitor Filters",
+            "clipboardCategory": "style",
+            "presetGroup": "mime-simple-events-calendar/visitor-filters"
           }
         }
       }

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Divi;
 
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Frontend\EventFilterStyle;
 use MiMe\WPSimpleEvents\Shortcode\ShortcodeRenderer;
 
 /** Delegates Divi settings to the same native renderers used elsewhere. */
@@ -46,12 +47,22 @@ final readonly class DiviCompositeModuleRenderer {
 	 * @param int                  $context_id Editor request post, when known.
 	 */
 	public function render( string $component, array $attrs, int $context_id = 0 ): string {
-		return match ( $component ) {
+		$output = match ( $component ) {
 			'details'  => $this->details->render( $this->details_settings( $attrs, $context_id ) ),
 			'list'     => $this->event_list->render( DiviCompositeSettings::event_list( $attrs ) ),
 			'calendar' => $this->calendar->render( DiviCompositeSettings::calendar( $attrs ) ),
 			default    => '',
 		};
+
+		if ( '' === $output || ! in_array( $component, array( 'list', 'calendar' ), true ) ) {
+			return $output;
+		}
+
+		$style = EventFilterStyle::from_attributes( DiviCompositeSettings::filter_style( $attrs ) )->inline_style();
+
+		return '' === $style
+			? $output
+			: '<div class="wpse-divi-filter-style" style="' . esc_attr( $style ) . '">' . $output . '</div>';
 	}
 
 	/**

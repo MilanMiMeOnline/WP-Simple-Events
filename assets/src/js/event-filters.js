@@ -128,9 +128,14 @@ const initializeFilterForm = ( form ) => {
 	}
 
 	const host = componentRoot( form );
+	const disclosure = [ 'auto', 'open', 'closed' ].includes(
+		form.dataset.wpseFilterDisclosure,
+	)
+		? form.dataset.wpseFilterDisclosure
+		: 'auto';
 	const cleanups = [];
 	let compact = false;
-	let visitorExpanded = false;
+	let visitorExpanded = disclosure === 'open';
 
 	const setExpanded = ( expanded, focusToggle = false ) => {
 		panel.hidden = ! expanded;
@@ -144,15 +149,17 @@ const initializeFilterForm = ( form ) => {
 	const applyLayout = ( width ) => {
 		const nextCompact = width <= COMPACT_WIDTH;
 
-		if ( nextCompact === compact && toggle.hidden === ! nextCompact ) {
+		const showToggle = disclosure === 'closed' || nextCompact;
+
+		if ( nextCompact === compact && toggle.hidden === ! showToggle ) {
 			return;
 		}
 
 		compact = nextCompact;
 		host.classList.toggle( 'wpse-filters-compact', compact );
-		toggle.hidden = ! compact;
+		toggle.hidden = ! showToggle;
 
-		if ( compact ) {
+		if ( showToggle ) {
 			setExpanded( visitorExpanded );
 		} else {
 			setExpanded( true );
@@ -164,7 +171,7 @@ const initializeFilterForm = ( form ) => {
 		setExpanded( visitorExpanded );
 	};
 	const handleEscape = ( event ) => {
-		if ( compact && event.key === 'Escape' && ! panel.hidden ) {
+		if ( ! toggle.hidden && event.key === 'Escape' && ! panel.hidden ) {
 			event.preventDefault();
 			visitorExpanded = false;
 			setExpanded( false, true );

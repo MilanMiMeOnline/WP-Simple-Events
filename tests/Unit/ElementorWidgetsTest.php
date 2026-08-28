@@ -146,6 +146,24 @@ final class ElementorWidgetsTest extends TestCase {
 			self::assertArrayNotHasKey( 'default', $controls[ $control_id ] );
 		}
 
+		foreach ( array(
+			'filter_categories',
+			'filter_tags',
+			'filter_layout',
+			'filter_disclosure',
+			'filter_chips',
+			'filter_results',
+			'filter_panel_background',
+			'filter_trigger_background',
+			'filter_option_gap',
+			'filter_chip_background',
+			'filter_action_background',
+			'filter_status_background',
+			'filter_checkbox_size',
+		) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $controls );
+		}
+
 		foreach ( array( 'card_border', 'filters_border', 'control_border', 'pagination_border' ) as $control_id ) {
 			self::assertArrayHasKey( $control_id, $group_controls );
 		}
@@ -160,6 +178,11 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertSame( 'All tags', $controls['tag']['placeholder'] ?? null );
 		self::assertSame( 'Event title typography', $group_controls['title_typography']['args']['label'] ?? null );
 		self::assertSame( 'Button and pagination typography', $group_controls['button_typography']['args']['label'] ?? null );
+		self::assertSame( '', $controls['filter_results']['default'] ?? null );
+		self::assertSame(
+			array( '{{WRAPPER}}' => '--wpse-filter-status-background: {{VALUE}};' ),
+			$controls['filter_status_background']['selectors'] ?? null
+		);
 	}
 
 	/**
@@ -188,11 +211,22 @@ final class ElementorWidgetsTest extends TestCase {
 			self::assertArrayHasKey( $control_id, $controls );
 			self::assertArrayNotHasKey( 'default', $controls[ $control_id ] );
 		}
+
+		foreach ( array(
+			'filter_categories',
+			'filter_layout',
+			'filter_panel_background',
+			'filter_action_background',
+			'filter_status_text',
+		) as $control_id ) {
+			self::assertArrayHasKey( $control_id, $controls );
+		}
 		self::assertArrayHasKey( 'button_border', $widget->wpse_test_group_controls() );
 		self::assertSame( 'text', $controls['initial_date']['type'] ?? null );
 		self::assertSame( 'yes', $controls['show_navigation']['default'] ?? null );
 		self::assertSame( 'yes', $controls['show_today']['default'] ?? null );
 		self::assertSame( 'yes', $controls['show_view_switcher']['default'] ?? null );
+		self::assertSame( 'yes', $controls['filter_results']['default'] ?? null );
 	}
 
 	/**

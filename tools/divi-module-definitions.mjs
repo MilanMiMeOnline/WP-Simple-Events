@@ -20,6 +20,13 @@ const text = ( label, description ) => ( {
 	component: 'divi/text',
 } );
 
+const color = ( label, description ) => ( {
+	label,
+	description,
+	defaultValue: '',
+	component: 'divi/color-picker',
+} );
+
 const checkboxes = ( label, description ) => ( {
 	label,
 	description,
@@ -169,6 +176,73 @@ const detailsToggles = {
 	showTerms: toggle( 'Show Categories and Tags', 'Show event categories and tags.', 'on' ),
 };
 
+const filterControls = ( defaultResults ) => ( {
+	filterCategories: { ...toggle( 'Show Categories', 'Show the category filter group.', 'on' ), group: 'contentFilters' },
+	filterTags: { ...toggle( 'Show Tags', 'Show the tag filter group.', 'on' ), group: 'contentFilters' },
+	filterLayout: {
+		...select(
+			'Filter Layout',
+			'Choose automatic, horizontal or stacked filter fields.',
+			{ auto: { label: 'Automatic' }, horizontal: { label: 'Horizontal' }, stacked: { label: 'Stacked' } },
+			'auto',
+		),
+		group: 'contentFilters',
+	},
+	filterDisclosure: {
+		...select(
+			'Initial Filter Panel',
+			'Choose automatic, initially open or initially closed disclosure.',
+			{ auto: { label: 'Automatic' }, open: { label: 'Open' }, closed: { label: 'Closed' } },
+			'auto',
+		),
+		group: 'contentFilters',
+	},
+	filterChips: { ...toggle( 'Show Active Filter Chips', 'Show removable active choices above the form.', 'on' ), group: 'contentFilters' },
+	filterResults: { ...toggle( 'Show Result Status', 'Show the visual matching-event status.', defaultResults ? 'on' : 'off' ), group: 'contentFilters' },
+	filterLabel: { ...text( 'Filter Button Label', 'Leave empty to use the translated default.' ), group: 'contentFilterLabels' },
+	filterPeriodLabel: { ...text( 'Period Label', 'Leave empty to use the translated default.' ), group: 'contentFilterLabels' },
+	filterCategoryLabel: { ...text( 'Categories Label', 'Leave empty to use the translated default.' ), group: 'contentFilterLabels' },
+	filterTagLabel: { ...text( 'Tags Label', 'Leave empty to use the translated default.' ), group: 'contentFilterLabels' },
+	filterApplyLabel: { ...text( 'Apply Button Label', 'Leave empty to use the translated default.' ), group: 'contentFilterLabels' },
+} );
+
+const filterStyleControls = {
+	filterContainerBackground: { ...color( 'Container Background', 'Set the outer filter background.' ), group: 'designFilterStyle' },
+	filterPanelBackground: { ...color( 'Panel Background', 'Set the filter-field panel background.' ), group: 'designFilterStyle' },
+	filterTriggerBackground: { ...color( 'Trigger Background', 'Set the compact disclosure background.' ), group: 'designFilterStyle' },
+	filterTriggerText: { ...color( 'Trigger Text', 'Set the compact disclosure text color.' ), group: 'designFilterStyle' },
+	filterFieldBackground: { ...color( 'Field Background', 'Set the select and search-field background.' ), group: 'designFilterStyle' },
+	filterFieldText: { ...color( 'Field Text', 'Set the select and search-field text color.' ), group: 'designFilterStyle' },
+	filterAccent: { ...color( 'Checkbox Accent', 'Set the checkbox accent color.' ), group: 'designFilterStyle' },
+	filterChipBackground: { ...color( 'Chip Background', 'Set active-filter chip backgrounds.' ), group: 'designFilterStyle' },
+	filterChipText: { ...color( 'Chip Text', 'Set active-filter chip text.' ), group: 'designFilterStyle' },
+	filterActionBackground: { ...color( 'Action Background', 'Set the apply-action background.' ), group: 'designFilterStyle' },
+	filterActionText: { ...color( 'Action Text', 'Set the apply-action text.' ), group: 'designFilterStyle' },
+	filterStatusBackground: { ...color( 'Status Background', 'Set the result-status background.' ), group: 'designFilterStyle' },
+	filterStatusText: { ...color( 'Status Text', 'Set the result-status text.' ), group: 'designFilterStyle' },
+	...Object.fromEntries(
+		[
+			[ 'filterGap', 'Filter Gap', '0 through 80' ],
+			[ 'filterContainerPadding', 'Container Padding', '0 through 80' ],
+			[ 'filterPanelPadding', 'Panel Padding', '0 through 80' ],
+			[ 'filterPanelRadius', 'Panel Radius', '0 through 80' ],
+			[ 'filterTriggerPadding', 'Trigger Padding', '0 through 80' ],
+			[ 'filterTriggerRadius', 'Trigger Radius', '0 through 80' ],
+			[ 'filterOptionGap', 'Option Gap', '0 through 40' ],
+			[ 'filterCheckboxSize', 'Checkbox Size', '8 through 40' ],
+			[ 'filterOptionsMaxHeight', 'Option List Maximum Height', '80 through 800' ],
+			[ 'filterChipPadding', 'Chip Padding', '0 through 80' ],
+			[ 'filterChipRadius', 'Chip Radius', '0 through 80' ],
+			[ 'filterActionPadding', 'Action Padding', '0 through 80' ],
+			[ 'filterActionRadius', 'Action Radius', '0 through 80' ],
+			[ 'filterStatusPadding', 'Status Padding', '0 through 80' ],
+		].map( ( [ key, label, bounds ] ) => [
+			key,
+			{ ...text( `${ label } (px)`, `Optional whole pixels from ${ bounds }.` ), group: 'designFilterStyle' },
+		] ),
+	),
+};
+
 export const compositeModuleDefinitions = [
 	{
 		slug: 'event-details',
@@ -228,6 +302,8 @@ export const compositeModuleDefinitions = [
 			categories: { ...checkboxes( 'Categories', 'Optionally include only selected event categories.' ), optionSource: 'categories', group: 'contentMain' },
 			tags: { ...checkboxes( 'Tags', 'Optionally include only selected event tags.' ), optionSource: 'tags', group: 'contentMain' },
 			filters: { ...toggle( 'Show Visitor Filters', 'Let visitors filter this event list.' ), group: 'contentDisplay' },
+			...filterControls( false ),
+			...filterStyleControls,
 			pagination: { ...toggle( 'Show Pagination', 'Show page navigation when more results exist.', 'on' ), group: 'contentDisplay' },
 			showImage: { ...toggle( 'Show Image', 'Show featured images on event cards.', 'on' ), group: 'contentDisplay' },
 			showTitle: { ...toggle( 'Show Title', 'Show event titles on cards.', 'on' ), group: 'contentDisplay' },
@@ -251,6 +327,8 @@ export const compositeModuleDefinitions = [
 			categories: { ...checkboxes( 'Initial Categories', 'Apply selected categories when the calendar first loads.' ), optionSource: 'categories', group: 'contentMain' },
 			tags: { ...checkboxes( 'Initial Tags', 'Apply selected tags when the calendar first loads.' ), optionSource: 'tags', group: 'contentMain' },
 			filters: { ...toggle( 'Show Visitor Filters', 'Let visitors filter by available categories and tags.', 'on' ), group: 'contentDisplay' },
+			...filterControls( true ),
+			...filterStyleControls,
 			showNavigation: { ...toggle( 'Show Previous and Next', 'Show previous and next calendar buttons.', 'on' ), group: 'contentDisplay' },
 			showToday: { ...toggle( 'Show Today', 'Show the Today button.', 'on' ), group: 'contentDisplay' },
 			showViewSwitcher: { ...toggle( 'Show View Switcher', 'Show the month and list view buttons.', 'on' ), group: 'contentDisplay' },
@@ -380,7 +458,10 @@ export const buildCompositeModuleMetadata = ( definition ) => {
 				contentMain: { panel: 'content', priority: 10, groupName: 'contentMain', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Events' } } },
 				contentDisplay: { panel: 'content', priority: 20, groupName: 'contentDisplay', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Display' } } },
 				contentLabels: { panel: 'content', priority: 30, groupName: 'contentLabels', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Labels' } } },
+				contentFilters: { panel: 'content', priority: 40, groupName: 'contentFilters', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Visitor Filters' } } },
+				contentFilterLabels: { panel: 'content', priority: 50, groupName: 'contentFilterLabels', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Filter Labels' } } },
 				designContentText: { panel: 'design', priority: 20, groupName: 'contentText', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Content Text', clipboardCategory: 'style', presetGroup: 'divi/font', dynamicSubgroupHost: true } } },
+				designFilterStyle: { panel: 'design', priority: 30, groupName: 'filterStyle', multiElements: true, component: { name: 'divi/composite', props: { groupLabel: 'Visitor Filters', clipboardCategory: 'style', presetGroup: 'mime-simple-events-calendar/visitor-filters' } } },
 			},
 		},
 	};

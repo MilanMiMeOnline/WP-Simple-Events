@@ -53,17 +53,18 @@ final class EventListControls {
 		array $request,
 		?EventListAttributes $configured = null
 	): string {
-		$configured = $configured ?? $attributes;
-		$categories = $this->terms( EventTaxonomies::CATEGORY );
-		$tags       = $this->terms( EventTaxonomies::TAG );
-		$action     = get_permalink( get_queried_object_id() );
-		$action     = is_string( $action ) ? $action : '';
-		$submitted  = array_key_exists( $prefix . '_apply', $request )
+		$configured   = $configured ?? $attributes;
+		$presentation = $attributes->filter_presentation;
+		$categories   = $presentation->show_categories ? $this->terms( EventTaxonomies::CATEGORY ) : array();
+		$tags         = $presentation->show_tags ? $this->terms( EventTaxonomies::TAG ) : array();
+		$action       = get_permalink( get_queried_object_id() );
+		$action       = is_string( $action ) ? $action : '';
+		$submitted    = array_key_exists( $prefix . '_apply', $request )
 			|| array_key_exists( $prefix . '_period', $request )
-			|| array_key_exists( $prefix . '_category', $request )
-			|| array_key_exists( $prefix . '_tag', $request );
-		$preserved  = $this->url_state->preserved( $request, $prefix );
-		$current    = array(
+			|| ( $presentation->show_categories && array_key_exists( $prefix . '_category', $request ) )
+			|| ( $presentation->show_tags && array_key_exists( $prefix . '_tag', $request ) );
+		$preserved    = $this->url_state->preserved( $request, $prefix );
+		$current      = array(
 			$prefix . '_apply'  => '1',
 			$prefix . '_period' => $attributes->period->value,
 		);
@@ -76,22 +77,30 @@ final class EventListControls {
 			$current[ $prefix . '_tag' ] = $attributes->tag_slugs;
 		}
 
-		$clear_url    = $this->url_state->url(
-			$action,
-			array_merge(
-				$preserved,
-				array(
-					$prefix . '_apply'  => '1',
-					$prefix . '_period' => $configured->period->value,
-				)
-			)
+		$clear_state = array(
+			$prefix . '_apply'  => '1',
+			$prefix . '_period' => $configured->period->value,
 		);
-		$has_defaults = array() !== $configured->category_slugs || array() !== $configured->tag_slugs;
-		$differs      = $attributes->period !== $configured->period
+
+		if ( ! $presentation->show_categories && array() !== $configured->category_slugs ) {
+			$clear_state[ $prefix . '_category' ] = $configured->category_slugs;
+		}
+
+		if ( ! $presentation->show_tags && array() !== $configured->tag_slugs ) {
+			$clear_state[ $prefix . '_tag' ] = $configured->tag_slugs;
+		}
+
+		$clear_url      = $this->url_state->url(
+			$action,
+			array_merge( $preserved, $clear_state )
+		);
+		$has_defaults   = ( $presentation->show_categories && array() !== $configured->category_slugs )
+			|| ( $presentation->show_tags && array() !== $configured->tag_slugs );
+		$differs        = $attributes->period !== $configured->period
 			|| $attributes->category_slugs !== $configured->category_slugs
 			|| $attributes->tag_slugs !== $configured->tag_slugs;
-		$restore_url  = $has_defaults && $differs ? $this->url_state->url( $action, $preserved ) : '';
-		$active       = $this->active_choices->render(
+		$restore_url    = $has_defaults && $differs ? $this->url_state->url( $action, $preserved ) : '';
+		$active         = $presentation->show_chips ? $this->active_choices->render(
 			new EventFilterViewModel(
 				$action,
 				$preserved,
@@ -106,12 +115,16 @@ final class EventListControls {
 				$restore_url,
 				$submitted
 			)
-		);
+		) : '';
+		$period_label   = '' !== $presentation->period_label ? $presentation->period_label : __( 'Period', 'mime-simple-events-calendar' );
+		$category_label = '' !== $presentation->category_label ? $presentation->category_label : __( 'Categories', 'mime-simple-events-calendar' );
+		$tag_label      = '' !== $presentation->tag_label ? $presentation->tag_label : __( 'Tags', 'mime-simple-events-calendar' );
+		$apply_label    = '' !== $presentation->apply_label ? $presentation->apply_label : __( 'Apply filters', 'mime-simple-events-calendar' );
 
 		ob_start();
 		?>
 			<p class="wpse-events-filter-field">
-				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php esc_html_e( 'Period', 'mime-simple-events-calendar' ); ?></label>
+				<label for="<?php echo esc_attr( $prefix . '-period' ); ?>"><?php echo esc_html( $period_label ); ?></label>
 				<select id="<?php echo esc_attr( $prefix . '-period' ); ?>" name="<?php echo esc_attr( $prefix . '_period' ); ?>">
 					<option value="upcoming" <?php selected( $attributes->period->value, EventPeriod::UPCOMING->value ); ?>><?php esc_html_e( 'Upcoming and active', 'mime-simple-events-calendar' ); ?></option>
 					<option value="past" <?php selected( $attributes->period->value, EventPeriod::PAST->value ); ?>><?php esc_html_e( 'Past', 'mime-simple-events-calendar' ); ?></option>
@@ -120,15 +133,15 @@ final class EventListControls {
 			</p>
 
 			<?php if ( array() !== $categories ) : ?>
-				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', __( 'Categories', 'mime-simple-events-calendar' ), $attributes->category_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
+				<?php echo $this->term_group->render( $categories, $prefix . '_category', $prefix . '-category', $category_label, $attributes->category_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<?php if ( array() !== $tags ) : ?>
-				<?php echo $this->term_group->render( $tags, $prefix . '_tag', $prefix . '-tag', __( 'Tags', 'mime-simple-events-calendar' ), $attributes->tag_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
+				<?php echo $this->term_group->render( $tags, $prefix . '_tag', $prefix . '-tag', $tag_label, $attributes->tag_slugs ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every value for its output context. ?>
 			<?php endif; ?>
 
 			<p class="wpse-events-filter-submit">
-				<button type="submit" aria-controls="<?php echo esc_attr( $results_id ); ?>"><?php esc_html_e( 'Apply filters', 'mime-simple-events-calendar' ); ?></button>
+				<button type="submit" aria-controls="<?php echo esc_attr( $results_id ); ?>"><?php echo esc_html( $apply_label ); ?></button>
 				<?php if ( '' === $active && $submitted ) : ?>
 					<a href="<?php echo esc_url( $clear_url ); ?>" data-wpse-filter-clear><?php esc_html_e( 'Clear all', 'mime-simple-events-calendar' ); ?></a>
 					<?php if ( '' !== $restore_url ) : ?>
@@ -142,10 +155,10 @@ final class EventListControls {
 
 		ob_start();
 		?>
-		<form class="wpse-events-filters" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>" data-wpse-event-filters data-wpse-filter-submitted="<?php echo $submitted ? '1' : '0'; ?>">
+		<form class="wpse-events-filters wpse-events-filters-layout-<?php echo esc_attr( $presentation->layout ); ?>" method="get" action="<?php echo esc_url( $action ); ?>" aria-label="<?php esc_attr_e( 'Filter events', 'mime-simple-events-calendar' ); ?>" data-wpse-event-filters data-wpse-filter-layout="<?php echo esc_attr( $presentation->layout ); ?>" data-wpse-filter-disclosure="<?php echo esc_attr( $presentation->disclosure ); ?>" data-wpse-filter-submitted="<?php echo $submitted ? '1' : '0'; ?>">
 			<?php echo $this->url_state->hidden_fields( $preserved ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared renderer escapes every hidden value and attribute. ?>
 			<input type="hidden" name="<?php echo esc_attr( $prefix . '_apply' ); ?>" value="1">
-			<?php echo $this->disclosure->render( $prefix . '-filter-panel', $panel, count( $attributes->category_slugs ) + count( $attributes->tag_slugs ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared disclosure and fields own contextual escaping. ?>
+			<?php echo $this->disclosure->render( $prefix . '-filter-panel', $panel, ( $presentation->show_categories ? count( $attributes->category_slugs ) : 0 ) + ( $presentation->show_tags ? count( $attributes->tag_slugs ) : 0 ), $presentation->filter_label ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Shared disclosure and fields own contextual escaping. ?>
 		</form>
 		<?php
 		$output = ob_get_clean();

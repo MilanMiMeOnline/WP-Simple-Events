@@ -107,10 +107,12 @@ final class EventListShortcodeOccurrenceTest extends TestCase {
 		);
 		$output    = $shortcode->render(
 			array(
-				'limit'        => '10',
-				'pagination'   => 'false',
-				'show_excerpt' => 'false',
-				'show_image'   => 'false',
+				'limit'          => '10',
+				'filters'        => 'true',
+				'filter_results' => 'true',
+				'pagination'     => 'false',
+				'show_excerpt'   => 'false',
+				'show_image'     => 'false',
 			)
 		);
 
@@ -120,6 +122,7 @@ final class EventListShortcodeOccurrenceTest extends TestCase {
 		self::assertStringContainsString( '/occurrence/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/', $output );
 		self::assertStringContainsString( '/occurrence/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/', $output );
 		self::assertCount( 2, $provider->requests );
+		self::assertStringContainsString( '2 events found.', $output );
 		self::assertNotNull( $gateway->rows_query );
 		self::assertNotNull( $gateway->count_query );
 	}

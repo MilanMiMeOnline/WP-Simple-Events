@@ -166,6 +166,7 @@ final class EventListWidget extends AbstractEventWidget {
 		);
 
 		$this->end_controls_section();
+		$this->register_filter_content_controls( false );
 		$this->register_style_controls();
 	}
 
@@ -386,62 +387,7 @@ final class EventListWidget extends AbstractEventWidget {
 		);
 		$this->end_controls_section();
 
-		$this->start_controls_section(
-			'wpse_filter_style',
-			array(
-				'label'     => esc_html__( 'Filters', 'mime-simple-events-calendar' ),
-				'tab'       => Controls_Manager::TAB_STYLE,
-				'condition' => array( 'filters' => 'yes' ),
-			)
-		);
-		$this->add_control(
-			'filters_background_color',
-			array(
-				'label'     => esc_html__( 'Panel background color', 'mime-simple-events-calendar' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-filter-background: {{VALUE}};' ),
-			)
-		);
-		$this->add_responsive_control(
-			'filters_padding',
-			array(
-				'label'      => esc_html__( 'Panel padding', 'mime-simple-events-calendar' ),
-				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', 'em', 'rem' ),
-				'selectors'  => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-filter-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};' ),
-			)
-		);
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			array(
-				'name'     => 'filters_border',
-				'selector' => '{{WRAPPER}} .wpse-events-filters',
-			)
-		);
-		$this->add_control(
-			'control_background_color',
-			array(
-				'label'     => esc_html__( 'Control background color', 'mime-simple-events-calendar' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-control-background: {{VALUE}};' ),
-			)
-		);
-		$this->add_control(
-			'control_text_color',
-			array(
-				'label'     => esc_html__( 'Control text color', 'mime-simple-events-calendar' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array( '{{WRAPPER}} .wpse-events-filters' => '--wpse-control-text: {{VALUE}};' ),
-			)
-		);
-		$this->add_group_control(
-			Group_Control_Border::get_type(),
-			array(
-				'name'     => 'control_border',
-				'selector' => '{{WRAPPER}} .wpse-events-filters select, {{WRAPPER}} .wpse-events-filter-submit button',
-			)
-		);
-		$this->end_controls_section();
+		$this->register_filter_style_controls();
 
 		$this->start_controls_section(
 			'wpse_pagination_style',

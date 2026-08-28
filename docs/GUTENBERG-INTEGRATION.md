@@ -29,6 +29,13 @@ Details controls its event source, established field groups, title heading and
 bounded label overrides. Controls that depend on another choice are hidden while
 that feature is disabled.
 
+List and Calendar also share **Visitor filter settings** and **Visitor filter
+design** panels. Content choices map to the same shortcode contract used by the
+other hosts. Design accepts only clearable palette colors and bounded integer
+pixel controls; PHP revalidates them and emits only allowlisted
+`--wpse-filter-*` declarations on the block wrapper. Empty values add no inline
+style and retain theme inheritance.
+
 ServerSideRender supplies the live preview. Empty fields receive an editor-only placeholder; saved block content and visitor output remain empty. Loading and server errors have distinct editor placeholders.
 
 ## Styling and markup

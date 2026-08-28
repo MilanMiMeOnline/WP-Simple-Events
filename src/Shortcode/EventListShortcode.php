@@ -86,6 +86,18 @@ final class EventListShortcode implements ShortcodeRenderer {
 
 		if ( $normalized->filters ) {
 			$output .= $this->controls->filters( $normalized, $prefix, $results_id, $request, $configured );
+
+			if ( $normalized->filter_presentation->show_results ) {
+				$total   = null !== $occurrences ? $occurrences->total : (int) $query->found_posts;
+				$message = 1 === $total
+					? __( '1 event found.', 'mime-simple-events-calendar' )
+					: sprintf(
+						/* Translators: %d is the number of matching events. */
+						__( '%d events found.', 'mime-simple-events-calendar' ),
+						$total
+					);
+				$output .= '<p class="wpse-events-filter-status" role="status" aria-live="polite">' . esc_html( $message ) . '</p>';
+			}
 		}
 
 		$output .= null !== $occurrences

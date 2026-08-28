@@ -101,7 +101,8 @@ final class CalendarShortcode implements ShortcodeRenderer {
 			$output .= $this->controls->render( $normalized, $prefix, $canvas_id, $request, $configured );
 		}
 
-		$output            .= '<p class="wpse-calendar-status" role="status" aria-live="polite" data-wpse-calendar-status></p>';
+		$status_class       = $normalized->filter_presentation->show_results ? '' : ' wpse-screen-reader-text';
+		$output            .= '<p class="wpse-calendar-status' . esc_attr( $status_class ) . '" role="status" aria-live="polite" data-wpse-calendar-status></p>';
 		$output            .= '<div id="' . esc_attr( $canvas_id ) . '" class="wpse-calendar-canvas" aria-label="'
 			. esc_attr__( 'Events calendar', 'mime-simple-events-calendar' ) . '" data-wpse-calendar-canvas hidden></div>';
 		$empty_action_label = array() !== $configured->category_slugs || array() !== $configured->tag_slugs

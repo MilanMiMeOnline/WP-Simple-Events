@@ -6,6 +6,8 @@
 const { registerBlockType } = wp.blocks;
 const { InspectorControls, useBlockProps } = wp.blockEditor;
 const {
+	BaseControl,
+	ColorPalette,
 	PanelBody,
 	Placeholder,
 	RangeControl,
@@ -359,6 +361,48 @@ const componentSupports = () => ( {
 	spacing: { margin: true, padding: true },
 	typography: { fontSize: true, lineHeight: true },
 } );
+const filterAttributes = ( defaultResults ) => ( {
+	filterCategories: { type: 'boolean', default: true },
+	filterTags: { type: 'boolean', default: true },
+	filterLayout: { type: 'string', default: 'auto', enum: [ 'auto', 'horizontal', 'stacked' ] },
+	filterDisclosure: { type: 'string', default: 'auto', enum: [ 'auto', 'open', 'closed' ] },
+	filterChips: { type: 'boolean', default: true },
+	filterResults: { type: 'boolean', default: defaultResults },
+	filterLabel: { type: 'string', default: '' },
+	filterPeriodLabel: { type: 'string', default: '' },
+	filterCategoryLabel: { type: 'string', default: '' },
+	filterTagLabel: { type: 'string', default: '' },
+	filterApplyLabel: { type: 'string', default: '' },
+} );
+const filterStyleAttributes = () => ( {
+	filterContainerBackground: { type: 'string', default: '' },
+	filterPanelBackground: { type: 'string', default: '' },
+	filterTriggerBackground: { type: 'string', default: '' },
+	filterTriggerText: { type: 'string', default: '' },
+	filterFieldBackground: { type: 'string', default: '' },
+	filterFieldText: { type: 'string', default: '' },
+	filterAccent: { type: 'string', default: '' },
+	filterChipBackground: { type: 'string', default: '' },
+	filterChipText: { type: 'string', default: '' },
+	filterActionBackground: { type: 'string', default: '' },
+	filterActionText: { type: 'string', default: '' },
+	filterStatusBackground: { type: 'string', default: '' },
+	filterStatusText: { type: 'string', default: '' },
+	filterGap: { type: 'integer' },
+	filterContainerPadding: { type: 'integer' },
+	filterPanelPadding: { type: 'integer' },
+	filterPanelRadius: { type: 'integer' },
+	filterTriggerPadding: { type: 'integer' },
+	filterTriggerRadius: { type: 'integer' },
+	filterOptionGap: { type: 'integer' },
+	filterCheckboxSize: { type: 'integer' },
+	filterOptionsMaxHeight: { type: 'integer' },
+	filterChipPadding: { type: 'integer' },
+	filterChipRadius: { type: 'integer' },
+	filterActionPadding: { type: 'integer' },
+	filterActionRadius: { type: 'integer' },
+	filterStatusPadding: { type: 'integer' },
+} );
 
 const compositeDefinitions = [
 	{
@@ -374,6 +418,8 @@ const compositeDefinitions = [
 			categories: { type: 'array', default: [], items: { type: 'string' } },
 			tags: { type: 'array', default: [], items: { type: 'string' } },
 			filters: { type: 'boolean', default: false },
+			...filterAttributes( false ),
+			...filterStyleAttributes(),
 			pagination: { type: 'boolean', default: true },
 			showExcerpt: { type: 'boolean', default: true },
 			showImage: { type: 'boolean', default: true },
@@ -397,6 +443,8 @@ const compositeDefinitions = [
 			categories: { type: 'array', default: [], items: { type: 'string' } },
 			tags: { type: 'array', default: [], items: { type: 'string' } },
 			filters: { type: 'boolean', default: true },
+			...filterAttributes( true ),
+			...filterStyleAttributes(),
 			initialDate: { type: 'string', default: '' },
 			showNavigation: { type: 'boolean', default: true },
 			showToday: { type: 'boolean', default: true },
@@ -614,6 +662,105 @@ const detailsControls = ( attributes, setAttributes ) => [
 	} ) ),
 ].filter( Boolean );
 
+const filterControls = ( attributes, setAttributes, showPeriod ) => [
+	...[
+		[ 'filterCategories', __( 'Show categories', 'mime-simple-events-calendar' ) ],
+		[ 'filterTags', __( 'Show tags', 'mime-simple-events-calendar' ) ],
+		[ 'filterChips', __( 'Show active filter chips', 'mime-simple-events-calendar' ) ],
+		[ 'filterResults', __( 'Show result status', 'mime-simple-events-calendar' ) ],
+	].map( ( [ key, label ] ) => el( ToggleControl, {
+		key,
+		label,
+		checked: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+	el( SelectControl, {
+		key: 'filterLayout',
+		label: __( 'Filter layout', 'mime-simple-events-calendar' ),
+		value: attributes.filterLayout,
+		options: [
+			{ label: __( 'Automatic', 'mime-simple-events-calendar' ), value: 'auto' },
+			{ label: __( 'Horizontal', 'mime-simple-events-calendar' ), value: 'horizontal' },
+			{ label: __( 'Stacked', 'mime-simple-events-calendar' ), value: 'stacked' },
+		],
+		onChange: ( filterLayout ) => setAttributes( { filterLayout } ),
+	} ),
+	el( SelectControl, {
+		key: 'filterDisclosure',
+		label: __( 'Initial filter panel', 'mime-simple-events-calendar' ),
+		value: attributes.filterDisclosure,
+		options: [
+			{ label: __( 'Automatic', 'mime-simple-events-calendar' ), value: 'auto' },
+			{ label: __( 'Open', 'mime-simple-events-calendar' ), value: 'open' },
+			{ label: __( 'Closed', 'mime-simple-events-calendar' ), value: 'closed' },
+		],
+		onChange: ( filterDisclosure ) => setAttributes( { filterDisclosure } ),
+	} ),
+	...[
+		[ 'filterLabel', __( 'Filter button label', 'mime-simple-events-calendar' ), true ],
+		[ 'filterPeriodLabel', __( 'Period label', 'mime-simple-events-calendar' ), showPeriod ],
+		[ 'filterCategoryLabel', __( 'Categories label', 'mime-simple-events-calendar' ), attributes.filterCategories ],
+		[ 'filterTagLabel', __( 'Tags label', 'mime-simple-events-calendar' ), attributes.filterTags ],
+		[ 'filterApplyLabel', __( 'Apply button label', 'mime-simple-events-calendar' ), true ],
+	].map( ( [ key, label, visible ] ) => visible && el( TextControl, {
+		key,
+		label,
+		help: __( 'Leave empty to use the translated default.', 'mime-simple-events-calendar' ),
+		value: attributes[ key ],
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+].filter( Boolean );
+
+const filterDesignControls = ( attributes, setAttributes ) => [
+	...[
+		[ 'filterContainerBackground', __( 'Container background', 'mime-simple-events-calendar' ) ],
+		[ 'filterPanelBackground', __( 'Panel background', 'mime-simple-events-calendar' ) ],
+		[ 'filterTriggerBackground', __( 'Trigger background', 'mime-simple-events-calendar' ) ],
+		[ 'filterTriggerText', __( 'Trigger text', 'mime-simple-events-calendar' ) ],
+		[ 'filterFieldBackground', __( 'Field background', 'mime-simple-events-calendar' ) ],
+		[ 'filterFieldText', __( 'Field text', 'mime-simple-events-calendar' ) ],
+		[ 'filterAccent', __( 'Checkbox accent', 'mime-simple-events-calendar' ) ],
+		[ 'filterChipBackground', __( 'Chip background', 'mime-simple-events-calendar' ) ],
+		[ 'filterChipText', __( 'Chip text', 'mime-simple-events-calendar' ) ],
+		[ 'filterActionBackground', __( 'Action background', 'mime-simple-events-calendar' ) ],
+		[ 'filterActionText', __( 'Action text', 'mime-simple-events-calendar' ) ],
+		[ 'filterStatusBackground', __( 'Status background', 'mime-simple-events-calendar' ) ],
+		[ 'filterStatusText', __( 'Status text', 'mime-simple-events-calendar' ) ],
+	].map( ( [ key, label ] ) => el(
+		BaseControl,
+		{ key, label, __nextHasNoMarginBottom: true },
+		el( ColorPalette, {
+			value: attributes[ key ],
+			clearable: true,
+			onChange: ( value ) => setAttributes( { [ key ]: value || '' } ),
+		} ),
+	) ),
+	...[
+		[ 'filterGap', __( 'Filter gap', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterContainerPadding', __( 'Container padding', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterPanelPadding', __( 'Panel padding', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterPanelRadius', __( 'Panel radius', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterTriggerPadding', __( 'Trigger padding', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterTriggerRadius', __( 'Trigger radius', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterOptionGap', __( 'Option gap', 'mime-simple-events-calendar' ), 0, 40 ],
+		[ 'filterCheckboxSize', __( 'Checkbox size', 'mime-simple-events-calendar' ), 8, 40 ],
+		[ 'filterOptionsMaxHeight', __( 'Option list maximum height', 'mime-simple-events-calendar' ), 80, 800 ],
+		[ 'filterChipPadding', __( 'Chip padding', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterChipRadius', __( 'Chip radius', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterActionPadding', __( 'Action padding', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterActionRadius', __( 'Action radius', 'mime-simple-events-calendar' ), 0, 80 ],
+		[ 'filterStatusPadding', __( 'Status padding', 'mime-simple-events-calendar' ), 0, 80 ],
+	].map( ( [ key, label, min, max ] ) => el( RangeControl, {
+		key,
+		label: `${ label } (px)`,
+		value: attributes[ key ],
+		min,
+		max,
+		allowReset: true,
+		onChange: ( value ) => setAttributes( { [ key ]: value } ),
+	} ) ),
+];
+
 const compositeControls = ( definition, attributes, setAttributes ) => {
 	switch ( definition.controls ) {
 		case 'list':
@@ -649,6 +796,16 @@ compositeDefinitions.forEach( ( definition ) => {
 					PanelBody,
 					{ title: __( 'Event settings', 'mime-simple-events-calendar' ), initialOpen: true },
 					...compositeControls( definition, attributes, setAttributes ),
+				),
+				definition.controls !== 'details' && attributes.filters && el(
+					PanelBody,
+					{ title: __( 'Visitor filter settings', 'mime-simple-events-calendar' ), initialOpen: false },
+					...filterControls( attributes, setAttributes, definition.controls === 'list' ),
+				),
+				definition.controls !== 'details' && attributes.filters && el(
+					PanelBody,
+					{ title: __( 'Visitor filter design', 'mime-simple-events-calendar' ), initialOpen: false },
+					...filterDesignControls( attributes, setAttributes ),
 				),
 			),
 			el(

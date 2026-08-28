@@ -25,6 +25,15 @@ wrapper-scoped CSS only after a user chooses a value. Installing an update
 therefore preserves theme inheritance and existing page output, while allowing
 common background, border and pagination adjustments without page-level CSS.
 
+List and Calendar share a dedicated **Visitor filters** content section for
+category/tag visibility, automatic/horizontal/stacked layout,
+automatic/open/closed initial disclosure, active chips, visual result status and
+bounded labels. Their dedicated style section separates container, panel,
+trigger, fields, checkbox, chips, actions and status. Every value targets the
+shared `--wpse-filter-*` layer or one narrowly scoped semantic selector; the
+general calendar and card button controls no longer need to stand in for filter
+design.
+
 Every widget declares the shared `wpse-frontend` style. Style selectors use Elementor's `{{WRAPPER}}` token and MiMe Simple Events and Calendar component classes. They do not rely on `.elementor-widget-container`; `has_widget_inner_wrapper()` returns false for Elementor's optimized markup.
 
 ## Rendering and security boundary

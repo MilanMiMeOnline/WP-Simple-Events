@@ -38,6 +38,7 @@ final class WidgetSettings {
 			'show_date'      => self::switcher( $settings, 'show_date', true ),
 			'excerpt_length' => self::integer( $settings['excerpt_length'] ?? null, 30, 1, 100 ),
 			'heading_level'  => self::choice( $settings['heading_level'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $settings, false ),
 		);
 	}
 
@@ -59,6 +60,30 @@ final class WidgetSettings {
 			'show_today'             => self::switcher( $settings, 'show_today', true ),
 			'show_view_switcher'     => self::switcher( $settings, 'show_view_switcher', true ),
 			'fallback_heading_level' => self::choice( $settings['fallback_heading_level'] ?? null, array( 'h2', 'h3', 'h4', 'h5', 'h6' ), 'h3' ),
+			...self::filter_presentation( $settings, true ),
+		);
+	}
+
+	/**
+	 * Normalize shared Elementor filter-presentation controls.
+	 *
+	 * @param array<string, mixed> $settings Display settings.
+	 * @param bool                 $default_results Host-compatible result default.
+	 * @return array<string, bool|string>
+	 */
+	private static function filter_presentation( array $settings, bool $default_results ): array {
+		return array(
+			'filter_categories'     => self::switcher( $settings, 'filter_categories', true ),
+			'filter_tags'           => self::switcher( $settings, 'filter_tags', true ),
+			'filter_layout'         => self::choice( $settings['filter_layout'] ?? null, array( 'auto', 'horizontal', 'stacked' ), 'auto' ),
+			'filter_disclosure'     => self::choice( $settings['filter_disclosure'] ?? null, array( 'auto', 'open', 'closed' ), 'auto' ),
+			'filter_chips'          => self::switcher( $settings, 'filter_chips', true ),
+			'filter_results'        => self::switcher( $settings, 'filter_results', $default_results ),
+			'filter_label'          => self::text( $settings['filter_label'] ?? null ),
+			'filter_period_label'   => self::text( $settings['filter_period_label'] ?? null ),
+			'filter_category_label' => self::text( $settings['filter_category_label'] ?? null ),
+			'filter_tag_label'      => self::text( $settings['filter_tag_label'] ?? null ),
+			'filter_apply_label'    => self::text( $settings['filter_apply_label'] ?? null ),
 		);
 	}
 

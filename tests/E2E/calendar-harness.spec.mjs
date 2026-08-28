@@ -49,8 +49,35 @@ const isEventFeed = ( url ) =>
 	decodeURIComponent( url.href ).includes( 'wpse/v1/events' );
 
 /**
- * Open a fixture page, allowing the test-only plugin one request to seed a
- * fresh Playground database when activation hooks have not run yet.
+ * Keep calendar dates deterministic without replacing the Navigation Timing API.
+ * WordPress 7.1 reads that native performance entry during Interactivity API startup.
+ *
+ * @param {import('@playwright/test').Page} page Browser page.
+ */
+const installFixedBrowserDate = async ( page ) => {
+	await page.addInitScript( ( timestamp ) => {
+		const NativeDate = globalThis.Date;
+
+		function FixedDate( ...argumentsList ) {
+			if ( ! new.target ) {
+				return new NativeDate( timestamp ).toString();
+			}
+
+			return new NativeDate(
+				...( argumentsList.length > 0 ? argumentsList : [ timestamp ] ),
+			);
+		}
+
+		FixedDate.now = () => timestamp;
+		FixedDate.parse = NativeDate.parse;
+		FixedDate.UTC = NativeDate.UTC;
+		FixedDate.prototype = NativeDate.prototype;
+		globalThis.Date = FixedDate;
+	}, FIXED_BROWSER_TIME.getTime() );
+};
+
+/**
+ * Open a fixture page from the database prepared by global setup.
  *
  * @param {import('@playwright/test').Page} page          Browser page.
  * @param {string}                          slug          Fixture page slug.
@@ -61,25 +88,11 @@ const gotoFixturePage = async (
 	slug,
 	readySelector = '[data-wpse-calendar]',
 ) => {
-	let response;
-
 	// FullCalendar initializes from the visitor's current month. Keep the
 	// fixture events one navigation step away regardless of the real test date.
-	await page.clock.setFixedTime( FIXED_BROWSER_TIME );
+	await installFixedBrowserDate( page );
 
-	for ( let attempt = 0; attempt < 3; attempt += 1 ) {
-		response = attempt === 0
-			? await page.goto( `/?pagename=${ slug }` )
-			: await page.reload();
-
-		if (
-			response &&
-			response.status() < 400 &&
-			( await page.locator( readySelector ).count() ) > 0
-		) {
-			break;
-		}
-	}
+	const response = await page.goto( `/?pagename=${ slug }` );
 
 	if ( ! response ) {
 		throw new Error( `Fixture navigation for ${ slug } returned no response.` );
@@ -240,19 +253,22 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
 
 	await page.goBack();
-	await expect.poll( () => checkedValues( tag ) ).toEqual( [ 'wpse-e2e-tag' ] );
-	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
-		'2 events loaded.',
-	);
+	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
+		'wpse_calendar_1_tag[]',
+	) ).toEqual( [ 'wpse-e2e-tag' ] );
+	await expect( requestedTag ).toBeChecked();
 
 	await page.goForward();
-	await expect.poll( () => checkedValues( tag ) ).toEqual( [] );
-	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
-		'3 events loaded.',
-	);
+	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
+		'wpse_calendar_1_tag[]',
+	) ).toEqual( [] );
+	await expect( requestedTag ).not.toBeChecked();
 
 	await page.goBack();
-	await expect.poll( () => checkedValues( tag ) ).toEqual( [ 'wpse-e2e-tag' ] );
+	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
+		'wpse_calendar_1_tag[]',
+	) ).toEqual( [ 'wpse-e2e-tag' ] );
+	await expect( requestedTag ).toBeChecked();
 
 	await page.reload();
 	await expect.poll( () => checkedValues( category ) ).toEqual( [
@@ -352,6 +368,44 @@ test( 'keeps compact filter disclosures independent across calendars', async ( {
 	await expect( firstPanel ).toBeVisible();
 	await expect( secondPanel ).not.toBeVisible();
 	await expect( secondToggle ).toBeFocused();
+} );
+
+test( 'honors bounded filter presentation choices at component width', async ( {
+	page,
+} ) => {
+	await page.setViewportSize( { width: 800, height: 900 } );
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filter-presentation' );
+
+	const calendars = page.locator( '[data-wpse-calendar]' );
+	const closed = calendars.nth( 0 );
+	const open = calendars.nth( 1 );
+	const closedFilters = closed.locator( '[data-wpse-calendar-filters]' );
+	const closedToggle = closedFilters.getByRole( 'button', { name: 'Refine events (1)' } );
+	const closedPanel = closedFilters.locator( '[data-wpse-filter-panel]' );
+
+	await expect( closedFilters ).toHaveClass( /wpse-events-filters-layout-stacked/ );
+	await expect( closedToggle ).toBeVisible();
+	await expect( closedPanel ).not.toBeVisible();
+	await expect(
+		closedFilters.getByRole( 'group', { name: 'Topics', includeHidden: true } ),
+	).toHaveCount( 1 );
+	await expect(
+		closedFilters.getByRole( 'group', { name: 'Tags', includeHidden: true } ),
+	).toHaveCount( 0 );
+	await expect(
+		closedFilters.getByRole( 'button', { name: 'Show matches', includeHidden: true } ),
+	).toBeAttached();
+	await expect( closed.locator( '.wpse-events-active-filters' ) ).toHaveCount( 0 );
+	await expect( closed.locator( '[data-wpse-calendar-status]' ) ).toHaveClass( /wpse-screen-reader-text/ );
+
+	await expect( open.locator( '[data-wpse-filter-toggle]' ) ).not.toBeVisible();
+	await expect( open.locator( '[data-wpse-filter-panel]' ) ).toBeVisible();
+
+	await page.setViewportSize( { width: 390, height: 844 } );
+	await expect( closedToggle ).toBeVisible();
+	await expect( closedPanel ).not.toBeVisible();
+	await expect( open.locator( '[data-wpse-filter-toggle]' ) ).toBeVisible();
+	await expect( open.locator( '[data-wpse-filter-panel]' ) ).toBeVisible();
 } );
 
 test( 'keeps compact filters usable with touch, reduced motion and enlarged text', async ( {

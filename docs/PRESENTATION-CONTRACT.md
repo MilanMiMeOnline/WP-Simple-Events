@@ -133,6 +133,28 @@ hover states, event colors and calendar button states. Builder hosts must scope
 assignments through their own wrapper and these plugin classes. They may not emit
 unscoped element rules or duplicate public markup.
 
+The stable filter surface is `.wpse-events-filters` with
+`.wpse-events-filter-toggle`, `.wpse-events-filter-panel`,
+`.wpse-events-filter-group`, `.wpse-events-filter-option`,
+`.wpse-events-filter-chip`, `.wpse-events-filter-submit`,
+`.wpse-events-filter-status` and `.wpse-calendar-status`. Supported custom
+properties are `--wpse-filter-background`, `--wpse-filter-padding`,
+`--wpse-filter-gap`, `--wpse-filter-panel-background`,
+`--wpse-filter-panel-border`, `--wpse-filter-panel-radius`,
+`--wpse-filter-panel-padding`, `--wpse-filter-trigger-background`,
+`--wpse-filter-trigger-text`, `--wpse-filter-trigger-border`,
+`--wpse-filter-trigger-radius`, `--wpse-filter-trigger-padding`,
+`--wpse-control-background`, `--wpse-control-text`,
+`--wpse-filter-option-gap`, `--wpse-filter-options-max-height`,
+`--wpse-filter-checkbox-size`, `--wpse-filter-accent`,
+`--wpse-filter-chip-background`, `--wpse-filter-chip-border`,
+`--wpse-filter-chip-text`, `--wpse-filter-chip-radius`,
+`--wpse-filter-chip-padding`, `--wpse-filter-action-background`,
+`--wpse-filter-action-text`, `--wpse-filter-action-border`,
+`--wpse-filter-action-radius`, `--wpse-filter-action-padding`,
+`--wpse-filter-status-background`, `--wpse-filter-status-text` and
+`--wpse-filter-status-padding`. Shortcodes set none of these inline.
+
 Event-grid breakpoints use the `.wpse-events` component's inline width rather than
 the browser viewport. A feature-detected viewport fallback preserves the same
 two-, three- and four-column behaviour in browsers without container-query
