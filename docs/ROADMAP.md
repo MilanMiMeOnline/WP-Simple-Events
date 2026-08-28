@@ -754,7 +754,8 @@ dimensions, arbitrary CSS, maps, ticketing, facet counts or remote services.
 - An event may choose automatic resolution, the component fallback, one assigned
   colored category or one custom color. The choice applies to its complete
   recurring series; occurrence-specific color overrides remain outside 0.6.0.
-- Month view may use a solid chip; list view may use an accent dot or border.
+- Month view uses a solid chip for block events and a compact color dot for
+  ordinary timed rows; list view uses an accent border.
   Titles, times, statuses and an automatic/optional category legend keep color
   from becoming the only information carrier.
 - Builder-wide event colors remain the fallback. Assigning a category or event
@@ -902,6 +903,10 @@ Gutenberg, Elementor and Divi. Detailed evidence is recorded in
 `QA-REPORT-0.6.0-FCR-6.md`; final compatibility, accessibility and release
 qualification remains FCR-7.
 
+Post-qualification UX sampling clarified the month contract: compact single-day
+timed rows show the resolved color as a decorative dot, while all-day and
+spanning rows retain their solid block treatment and inherited readable text.
+
 1. Add resolved presentation colors to one-off and occurrence calendar records
    without changing dates, URLs, eligibility or structured data.
 2. Preload/cache the relevant event and term metadata per bounded response to
@@ -920,13 +925,12 @@ list and no-JavaScript fallback output.
 
 ### FCR-7 — 0.6.0 release qualification
 
-**Status:** complete on 2026-08-28. All repository, browser, WordPress 6.9/7.1 on
-PHP 8.2, PHP 8.2-8.5, upgrade, dependency, reproducible-package, pinned official
-Plugin Check and authenticated Elementor Free/Divi 5 builder gates passed for
-the exact 0.6.0 candidate. The hosted archive is byte-identical to the local
-qualified archive, temporary builder data was removed and the candidate is
-accepted for public release. Detailed evidence is recorded in
-`QA-REPORT-0.6.0.md`.
+**Status:** reopened for hosted follow-up qualification on 2026-08-28. The
+compact timed-row color-dot correction has passed all local repository, browser,
+WordPress 6.9/7.1 on PHP 8.2 and reproducible-package gates. A new hosted run must
+still pass PHP 8.2-8.5, pinned official Plugin Check and exact archive-checksum
+comparison before the corrected 0.6.0 candidate is accepted for public release.
+Detailed evidence is recorded in `QA-REPORT-0.6.0.md`.
 
 Run the full repository gates plus WordPress 6.9/current and PHP 8.2-current;
 Gutenberg, Elementor Free/Pro and Divi 5; classic, hybrid and block themes;

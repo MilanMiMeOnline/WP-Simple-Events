@@ -1,13 +1,13 @@
 # QA report — 0.6.0 filters and calendar discoverability
 
-**Status:** fully qualified for publication
+**Status:** locally qualified follow-up candidate; hosted CI required
 
 **Reviewed:** 28 August 2026
 
 **Candidate:** MiMe Simple Events and Calendar 0.6.0
 
 **Release SHA-256:**
-`9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`
+`0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032`
 
 ## Scope
 
@@ -24,6 +24,7 @@ The candidate adds:
 - shared Gutenberg, Elementor and Divi content/design controls;
 - optional category colors and deterministic event color choices;
 - cache-primed one-off and recurring-series calendar colors;
+- decorative resolved-color dots for compact timed month rows;
 - decorative filter swatches and an Auto/Show/Hide text-backed legend.
 
 The release does not add filter dimensions, counts, arbitrary CSS, occurrence-
@@ -56,11 +57,11 @@ The completed candidate passed:
 - `composer validate --strict`;
 - `composer qa`: WordPress coding standards, PHPStan over 301 files, 731 PHPUnit
   tests with 2,852 assertions and the Composer advisory audit;
-- `npm run qa`: deterministic production builds, 56 tooling-contract tests,
+- `npm run qa`: deterministic production builds, 57 tooling-contract tests,
   ESLint, Stylelint and npm audit with zero vulnerabilities;
 - the production-only npm advisory audit with zero vulnerabilities;
 - translation-template regeneration and catalogue verification;
-- the complete packaged browser matrix: 27/27 Playwright journeys on WordPress
+- the complete packaged browser matrix: 28/28 Playwright journeys on WordPress
   7.1, including filters, touch/reduced motion/enlarged text, multiple calendars,
   failed/delayed feeds, Elementor lifecycle, Gutenberg, no-JavaScript and
   recurrence editing;
@@ -68,13 +69,15 @@ The completed candidate passed:
 - five packaged theme-shell fixtures covering classic, hybrid, full block and
   explicit PHP/block template overrides;
 - archive content verification and two identical release builds with SHA-256
-  `9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`;
+  `0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032`;
 - `git diff --check` and focused release-tree secret/development-file inspection.
 
-Hosted GitHub Actions run
+The previous hosted GitHub Actions run
 [`33167251416`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33167251416)
 independently passed on release commit
-`decd413ef27aebe4ca0ec6c07ee34f0fffdf0f03`. Its ten successful jobs covered:
+`decd413ef27aebe4ca0ec6c07ee34f0fffdf0f03`. It remains useful baseline evidence,
+but it predates the compact month-row color-dot follow-up and therefore does not
+qualify the exact archive identified above. Its ten successful jobs covered:
 
 - strict Composer and plugin QA on PHP 8.2, 8.3, 8.4 and 8.5;
 - JavaScript/CSS/build contracts and translation-catalogue verification;
@@ -84,9 +87,10 @@ independently passed on release commit
   `Success: Checks complete. No errors found.`;
 - release archive creation and upload.
 
-The hosted archive SHA-256 was
+That earlier hosted archive SHA-256 was
 `9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`,
-byte-for-byte identical to both local release builds recorded above.
+byte-for-byte identical to the candidate before this follow-up. A new hosted run
+and archive comparison are required before publication.
 
 The host WP-CLI 2.12 process emitted deprecations from its own bundled packages
 under PHP 8.5 during catalogue generation. Generation and verification passed;
@@ -203,16 +207,20 @@ settings but do not fork frontend markup, query rules or color precedence.
 Recurrence uses the canonical event ID, so sparse occurrence content cannot
 silently create a second color-storage model.
 
-The version-only release edits do not change runtime logic. Public documentation
-matches the implemented feature set and clearly preserves the plugin's local,
+The follow-up copies only a strictly validated six-digit hexadecimal feed color
+to one fixed component-scoped custom property. A CSS pseudo-element renders that
+value as a decorative dot on FullCalendar's compact timed month rows; fallback,
+solid block and list treatments remain independent. Public documentation matches
+the implemented feature set and clearly preserves the plugin's local,
 privacy-first scope. No compatibility identifier, shortcode attribute, block
 name, Elementor widget name, Divi module name or established CSS class was
 renamed.
 
 ## Senior QA review and release decision
 
-No correctness, security, privacy, accessibility, performance, compatibility,
-Plugin Check or archive blocker was found. Automated, hosted and authenticated
-builder gates passed against the exact 0.6.0 candidate, and the disposable-site
-state was restored after testing. The package identified by the SHA-256 above is
-accepted for GitHub release and WordPress.org SVN publication.
+No local correctness, security, privacy, accessibility, performance,
+compatibility or archive blocker was found. The decorative marker regression
+passed against a real FullCalendar month row, and all repository, browser and
+packaged WordPress gates passed against the exact local candidate. Publication
+remains blocked until a new hosted run independently passes Plugin Check, the
+compatibility matrix and archive checksum comparison for the SHA-256 above.

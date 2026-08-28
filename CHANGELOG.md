@@ -15,6 +15,7 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 - Make filter controls respond to their component width, retain visible focus and result announcements, and preserve isolated state when several lists or calendars share a page.
 - Apply one prepared, cache-primed color collection to one-off events and complete recurring series across month, list and no-JavaScript presentation without changing event eligibility or chronology.
+- Show the resolved event color as a compact dot beside ordinary timed events in month view while preserving solid all-day and spanning event blocks.
 - Present event category and tag archive titles as translated plain text so WordPress' decorative title markup can never appear as visible source text.
 - Keep existing pages and events visually unchanged until an editor assigns category/event color data or chooses a new filter or legend presentation setting.
 

@@ -133,6 +133,7 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 * Replace modifier-key multiple selects with semantic category/tag checkboxes, removable choices and clear or restore-default actions.
 * Add component-responsive filter disclosures, bounded option search, shareable isolated state and complete no-JavaScript operation.
 * Add optional category and deterministic event colors with accessible text contrast, filter swatches and an Auto/Show/Hide calendar legend.
+* Show resolved colors as compact dots beside ordinary timed month events while keeping all-day and spanning events as readable solid blocks.
 * Add shared filter content and design controls across Gutenberg, Elementor and Divi while preserving existing saved defaults and shortcode output.
 * Fix event taxonomy archive headings that could expose WordPress' decorative span markup as visible text.
 * Keep queries bounded, color metadata cache-primed and existing events visually unchanged until a new color or presentation setting is chosen.

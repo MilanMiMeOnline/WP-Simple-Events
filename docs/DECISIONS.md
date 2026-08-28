@@ -1786,6 +1786,22 @@ or white has the greater WCAG contrast ratio. Public adapters receive only that
 bounded presentation value; FCR-6 owns calendar, occurrence, swatch and legend
 integration.
 
+## ADR-091: Compact month events use a decorative color dot
+
+**Status:** Accepted
+
+FullCalendar renders all-day and spanning month events as solid blocks, but
+ordinary single-day timed events as compact rows. The plugin's custom text-backed
+event content deliberately replaces FullCalendar's default content, so the
+library's implicit dot is not a stable presentation boundary.
+
+The plugin therefore renders one scoped decorative circular marker before every
+compact month row. A valid resolved event color is copied to one fixed custom
+property on that row; otherwise the marker uses the calendar component's existing
+event-color fallback. The title remains ordinary inherited theme text, while
+block events retain their contrast-derived solid presentation. Status and title
+text remain visible, so the marker never becomes the sole carrier of meaning.
+
 ## ADR-090: Public color presentation is prepared once per bounded collection
 
 **Status:** Accepted

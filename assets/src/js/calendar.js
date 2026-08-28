@@ -458,10 +458,21 @@ const initializeCalendar = ( root ) => {
 				? argument.el.closest( '.fc-list-event' )
 				: null;
 			const color = argument.event.backgroundColor;
+			const hasResolvedColor = /^#[0-9a-f]{6}$/i.test( color );
 
-			if ( row && /^#[0-9a-f]{6}$/i.test( color ) ) {
+			if ( row && hasResolvedColor ) {
 				row.classList.add( 'wpse-calendar-list-event-has-color' );
 				row.style.setProperty( '--wpse-event-color', color );
+			}
+
+			if (
+				hasResolvedColor &&
+				argument.el.classList.contains( 'fc-daygrid-dot-event' )
+			) {
+				argument.el.classList.add(
+					'wpse-calendar-daygrid-event-has-color',
+				);
+				argument.el.style.setProperty( '--wpse-event-color', color );
 			}
 
 			if (

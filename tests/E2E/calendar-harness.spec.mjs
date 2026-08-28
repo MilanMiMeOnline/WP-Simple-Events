@@ -195,6 +195,60 @@ test( 'follows configured calendar views when a builder canvas crosses the mobil
 	await expect( canvas.locator( '.fc-list' ) ).toHaveCount( 0 );
 } );
 
+test( 'shows resolved colors as dots on compact timed month events', async ( {
+	page,
+} ) => {
+	await page.route( isEventFeed, async ( route ) => {
+		const response = await route.fetch();
+		const events = await response.json();
+		const coloredEvents = events.map( ( event ) =>
+			event.title === 'E2E Same-day event'
+				? {
+					...event,
+					backgroundColor: '#336699',
+					borderColor: '#336699',
+					textColor: '#ffffff',
+				}
+				: event,
+		);
+
+		await route.fulfill( { response, json: coloredEvents } );
+	} );
+
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+
+	const calendar = page.locator( '[data-wpse-calendar]' );
+	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+
+	await canvas.getByRole( 'button', { name: 'Next' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
+
+	const timedEvent = canvas.locator( '.fc-daygrid-dot-event' ).filter( {
+		hasText: 'E2E Same-day event',
+	} );
+
+	await expect( timedEvent ).toHaveCount( 1 );
+	await expect.poll( () => timedEvent.evaluate( ( element ) => {
+		const marker = window.getComputedStyle( element, '::before' );
+
+		return {
+			backgroundColor: marker.backgroundColor,
+			isCircular: marker.borderRadius === '50%',
+			isPresent: marker.content !== 'none' &&
+				Number.parseFloat( marker.height ) >= 6 &&
+				Number.parseFloat( marker.width ) >= 6,
+		};
+	} ) ).toEqual( {
+		backgroundColor: 'rgb(51, 102, 153)',
+		isCircular: true,
+		isPresent: true,
+	} );
+
+	await page.unrouteAll( { behavior: 'wait' } );
+} );
+
 test( 'filters by category and tag with persistent namespaced URL state', async ( {
 	page,
 } ) => {

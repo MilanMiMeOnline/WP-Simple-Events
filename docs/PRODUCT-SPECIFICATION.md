@@ -348,8 +348,10 @@ The public feed uses FullCalendar's standard background, border and text color
 fields only when a valid event/category color was explicitly resolved. Component
 fallback colors remain component-owned and are not baked into feed records.
 Every occurrence inherits its canonical series color, including sparse content
-overrides and exact occurrence routes. Month view may use the resolved solid
-background while list and no-JavaScript cards use the same value as an accent.
+overrides and exact occurrence routes. Month view uses the resolved solid
+background for block events and a compact decorative dot for ordinary timed
+rows; list and no-JavaScript cards use the same value as an accent. Compact row
+text continues to inherit the surrounding calendar/theme color.
 
 Visible category filters include decorative swatches beside their category text.
 The optional category-color legend is allowlisted as Auto, Show or Hide. Auto

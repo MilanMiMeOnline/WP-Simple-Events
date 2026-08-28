@@ -669,6 +669,16 @@
 	white-space: normal;
 }
 
+.wpse-calendar .fc .fc-daygrid-dot-event::before {
+	width: 0.5rem;
+	height: 0.5rem;
+	margin-inline-end: 0.35rem;
+	border-radius: 50%;
+	background-color: var(--wpse-event-color, var(--wpse-calendar-event-background));
+	content: "";
+	flex: 0 0 0.5rem;
+}
+
 .wpse-calendar .fc .wpse-calendar-list-event-has-color > td:first-child {
 	border-inline-start: 0.35rem solid var(--wpse-event-color);
 }
