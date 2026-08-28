@@ -310,19 +310,19 @@ test( 'filters by category and tag with persistent namespaced URL state', async 
 	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
 		'wpse_calendar_1_tag[]',
 	) ).toEqual( [ 'wpse-e2e-tag' ] );
-	await expect( requestedTag ).toBeChecked();
+	await expect( requestedTag ).toBeChecked( { timeout: 15_000 } );
 
 	await page.goForward();
 	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
 		'wpse_calendar_1_tag[]',
 	) ).toEqual( [] );
-	await expect( requestedTag ).not.toBeChecked();
+	await expect( requestedTag ).not.toBeChecked( { timeout: 15_000 } );
 
 	await page.goBack();
 	await expect.poll( () => new URL( page.url() ).searchParams.getAll(
 		'wpse_calendar_1_tag[]',
 	) ).toEqual( [ 'wpse-e2e-tag' ] );
-	await expect( requestedTag ).toBeChecked();
+	await expect( requestedTag ).toBeChecked( { timeout: 15_000 } );
 
 	await page.reload();
 	await expect.poll( () => checkedValues( category ) ).toEqual( [

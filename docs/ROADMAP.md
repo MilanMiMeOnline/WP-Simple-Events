@@ -1031,13 +1031,16 @@ removes all calendar-action markup. Explicit uninstall cleanup now includes the
 new option.
 
 **Work package 5 status — in progress.** The exact packaged implementation has
-passed 29/29 browser journeys on WordPress 7.1/PHP 8.2. Gutenberg now has an
-executable real draft save/reload/removal journey, while the public package test
-covers same-origin one-off output. A local native-template pass additionally
+passed 30/30 browser journeys on WordPress 7.1/PHP 8.2. Gutenberg has an
+executable real draft save/reload/removal journey; the public package test covers
+same-origin one-off output plus a JavaScript-free, keyboard-operated,
+three-provider dropdown without 390 px overflow. A local native-template pass
 verified one-off, cancelled, series-root and exact-occurrence behaviour and left
-the opt-in disabled afterwards. Real Apple import, Google/Outlook compose
-handoff, keyboard/reflow sampling and Elementor/Divi save/reload evidence remain
-before this package can close.
+the opt-in disabled afterwards. Elementor Free additionally passed a real
+place/configure/save/reload/remove/save journey with ICS, Google and Outlook, and
+the host was restored with Elementor inactive. Real Apple import,
+Google/Outlook compose handoff, Divi save/reload evidence and cache/privacy
+header sampling remain before this package can close.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series

@@ -251,7 +251,7 @@ function wpse_e2e_seed_atomic_page(): void {
 		wp_set_object_terms( $event->ID, array( $tag ), 'wpse_event_tag' );
 	}
 
-	$slugs   = array(
+	$slugs    = array(
 		'event-title',
 		'event-featured-image',
 		'event-date-time',
@@ -264,15 +264,16 @@ function wpse_e2e_seed_atomic_page(): void {
 		'event-external-action',
 		'event-categories',
 		'event-tags',
-		'add-to-calendar',
 	);
-	$content = implode(
+	$content  = implode(
 		'',
 		array_map(
 			static fn ( string $slug ): string => '<!-- wp:wpse/' . $slug . ' {"eventId":' . $event->ID . '} /-->',
 			$slugs
 		)
 	);
+	$content .= '<!-- wp:wpse/add-to-calendar {"eventId":' . $event->ID
+		. ',"providers":["ics","google","outlook"],"layout":"dropdown","label":"Choose a calendar"} /-->';
 
 	if ( ! $atomic_page instanceof WP_Post ) {
 		wpse_e2e_insert_page( 'wpse-e2e-atomic-fields', 'Atomic Event Fields Harness', $content );

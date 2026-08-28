@@ -323,6 +323,12 @@ const initializeCalendar = ( root ) => {
 	}
 
 	const filters = root.querySelector( '[data-wpse-calendar-filters]' );
+
+	// Browsers may restore form-control state independently when revisiting a
+	// history entry. Re-apply the namespaced URL state before FullCalendar makes
+	// its first request so controls, results and shareable URLs cannot diverge.
+	restoreFiltersFromUrl( config, root );
+
 	let lastResult = { events: [], truncated: false };
 	let loadFailed = false;
 	const initialView =

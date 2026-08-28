@@ -32,10 +32,12 @@ The implementation passed:
 - the complete WordPress 6.9 smoke journey in a clean Playground installation,
   including registration, default-off settings, nonce-protected opt-in,
   same-origin ICS output, protected-event suppression and cleanup;
-- the complete packaged browser matrix on WordPress 7.1/PHP 8.2: 29/29
+- the complete packaged browser matrix on WordPress 7.1/PHP 8.2: 30/30
   Playwright journeys, including public Add to Calendar output, Gutenberg
   registration and preview, one real draft save/reload, exact attribute recovery
   and unconditional test-page deletion;
+- a JavaScript-free three-provider dropdown at 390 px, including native keyboard
+  opening, all three semantic actions and absence of horizontal overflow;
 - translation catalogue regeneration and verification;
 - `git diff --check`.
 
@@ -87,9 +89,9 @@ qualification.
 
 This report deliberately does not qualify 0.7.0 for release. Work package 5 must
 still verify real Apple Calendar import, Google and Outlook compose behaviour,
-Elementor/Divi save-and-reload parity, keyboard/reflow behaviour and cache/privacy
-headers. Work package 6 must then run the complete supported-version, Plugin
-Check, reproducible-package and publication gates.
+Divi save-and-reload behaviour and cache/privacy headers. Work package 6 must
+then run the complete supported-version, Plugin Check, reproducible-package and
+publication gates.
 
 ## Local exploratory evidence
 
@@ -107,3 +109,16 @@ normal Settings API form and confirmed:
 The setting was restored to disabled and no event, page, term, template or
 builder assignment was created by this local journey. Google/Outlook were not
 opened and no third party received event data during this pass.
+
+Elementor Free was then activated temporarily and its Add to Calendar widget was
+placed on an existing local page. An explicit public event, ICS, Google, Outlook
+and dropdown layout were configured, saved and recovered after a full editor
+reload. The widget was removed and that cleanup was saved; Elementor was then
+deactivated again. The host returned to its original active-plugin state and no
+temporary widget remained.
+
+The packaged browser matrix also exposed a history-restoration edge case outside
+the new component: a browser may restore checkbox state independently while
+revisiting a calendar URL. Calendar initialization now reapplies its namespaced
+URL state before the first event request. The complete filter history journey and
+all 30 packaged browser journeys pass with that production fix.

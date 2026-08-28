@@ -76,11 +76,58 @@ test( 'renders the complete explicit-source block palette without editor assets'
 		/\/\?wpse_calendar_export=ics&wpse_event=\d+$/,
 	);
 	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-ics' ) ).toHaveAttribute( 'download', '' );
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-google' ) ).toHaveAttribute( 'target', '_blank' );
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-google' ) ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-google' ) ).toHaveAttribute( 'referrerpolicy', 'no-referrer' );
+	await expect( page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-outlook' ) ).toHaveAttribute( 'target', '_blank' );
 	await expect( page.locator( '.wpse-event-field-block-event-featured-image' ) ).toHaveCount( 0 );
 
 	expect(
 		await page.locator( 'script[src*="event-fields-editor"]' ).count(),
 	).toBe( 0 );
+} );
+
+test( 'keeps the multi-provider calendar action keyboard-friendly without JavaScript or horizontal overflow', async ( {
+	browser,
+	page: setupPage,
+} ) => {
+	// Trigger the capability-protected fixture seeder before opening an anonymous,
+	// JavaScript-free visitor context.
+	await login( setupPage );
+
+	const context = await browser.newContext( {
+		baseURL: 'http://localhost:8888',
+		javaScriptEnabled: false,
+		viewport: { width: 390, height: 844 },
+	} );
+	const page = await context.newPage();
+
+	try {
+		const response = await page.goto( '/?pagename=wpse-e2e-atomic-fields' );
+
+		expect( response?.status() ).toBeLessThan( 400 );
+		const action = page.locator( '.wpse-add-to-calendar-block .wpse-add-to-calendar-dropdown' );
+		const summary = action.locator( 'summary' );
+
+		await expect( action ).not.toHaveAttribute( 'open', '' );
+		await summary.focus();
+		await expect( summary ).toBeFocused();
+		await page.keyboard.press( 'Enter' );
+		await expect( action ).toHaveAttribute( 'open', '' );
+		await expect( action.locator( '.wpse-add-to-calendar-action' ) ).toHaveCount( 3 );
+
+		const widths = await page.evaluate( () => ( {
+			document: document.documentElement.scrollWidth,
+			viewport: document.documentElement.clientWidth,
+			action: document.querySelector( '.wpse-add-to-calendar-block' )?.scrollWidth || 0,
+			actionClient: document.querySelector( '.wpse-add-to-calendar-block' )?.clientWidth || 0,
+		} ) );
+
+		expect( widths.document ).toBeLessThanOrEqual( widths.viewport );
+		expect( widths.action ).toBeLessThanOrEqual( widths.actionClient );
+	} finally {
+		await context.close();
+	}
 } );
 
 test( 'resolves current event context inside a Query Loop', async ( { page } ) => {
