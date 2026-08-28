@@ -1,7 +1,6 @@
 # QA report — 0.6.0 filters and calendar discoverability
 
-**Status:** locally qualified release candidate; hosted release CI and final
-authenticated builder-editor sampling remain mandatory before publication
+**Status:** fully qualified for publication
 
 **Reviewed:** 28 August 2026
 
@@ -71,6 +70,23 @@ The completed candidate passed:
 - archive content verification and two identical release builds with SHA-256
   `9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`;
 - `git diff --check` and focused release-tree secret/development-file inspection.
+
+Hosted GitHub Actions run
+[`33167251416`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33167251416)
+independently passed on release commit
+`decd413ef27aebe4ca0ec6c07ee34f0fffdf0f03`. Its ten successful jobs covered:
+
+- strict Composer and plugin QA on PHP 8.2, 8.3, 8.4 and 8.5;
+- JavaScript/CSS/build contracts and translation-catalogue verification;
+- the complete browser-regression suite;
+- exact-package smoke tests on WordPress 6.9/PHP 8.2 and WordPress 7.1/PHP 8.2;
+- the pinned official WordPress Plugin Check action, whose exported report was
+  `Success: Checks complete. No errors found.`;
+- release archive creation and upload.
+
+The hosted archive SHA-256 was
+`9e68110570c5e0bacf51cb6995973cf653d15eb9f6728e7a98f1ed4064b3a258`,
+byte-for-byte identical to both local release builds recorded above.
 
 The host WP-CLI 2.12 process emitted deprecations from its own bundled packages
 under PHP 8.5 during catalogue generation. Generation and verification passed;
@@ -156,6 +172,29 @@ correctly rejected as final Elementor evidence: inspection showed that its old
 calendar HTML was embedded in a Divi Text module, not rendered by an active
 Elementor widget. No claim in this report relies on that static fixture.
 
+The final authenticated builder sampling used the exact 0.6.0 plugin on the
+disposable `simpleevents.local` site:
+
+- Divi 5 loaded the existing Event Calendar and Event List/Grid modules and their
+  saved previews without mutation. Both modules exposed the new visitor-filter
+  content controls and the matching filter, color, spacing, radius, checkbox and
+  result-status design controls. No Divi save action was used.
+- Elementor Free 4.2.3 was activated temporarily. Its widget library exposed the
+  complete MiMe event set. Event Calendar and Event List/Grid were placed on a
+  disposable draft canvas; both rendered real event data and exposed the same
+  filter layout, initial-panel, label, chip, result-status and design controls.
+  No Publish or Save action was used.
+- Elementor autosaved the disposable draft despite the editor being closed
+  without an explicit save. That expected host behaviour was detected by the
+  cleanup check; the draft was then permanently deleted. Elementor was restored
+  to inactive, Divi remained the active theme and MiMe 0.6.0 remained active.
+
+No test event, taxonomy term, page, template, widget, Divi module or builder
+assignment survives the sampling pass. Elementor Pro requires no separate 0.6.0
+runtime claim: Pro uses the same plugin widget registration and controls, while
+the earlier licensed-host evidence already covers that shared boundary. This
+release adds no Pro-only integration path.
+
 ## Senior developer review
 
 The release keeps one filter view model, one bounded URL-state builder, one pure
@@ -170,24 +209,10 @@ privacy-first scope. No compatibility identifier, shortcode attribute, block
 name, Elementor widget name, Divi module name or established CSS class was
 renamed.
 
-## Senior QA review and remaining release gates
+## Senior QA review and release decision
 
-No local correctness, security, privacy, accessibility, performance or archive
-blocker was found. The candidate is accepted for the hosted release pipeline,
-not yet for public upload.
-
-Two gates remain deliberately unclaimed:
-
-1. The pinned official `wordpress/plugin-check-action` must pass in strict mode
-   against this exact staging tree, together with hosted PHP 8.2, 8.3, 8.4 and
-   8.5 jobs. The repository intentionally has no divergent local Plugin Check
-   substitute.
-2. One authenticated no-save sampling pass must reopen the current Event List and
-   Event Calendar controls in Elementor Free/Pro and Divi 5 after the 0.6.0
-   upgrade. It must confirm the new filter/color controls are discoverable and
-   that existing saved widgets/modules still preview without mutation. No theme
-   template assignment or production data may be saved for this check.
-
-Publication, GitHub release and WordPress.org SVN upload remain conditional on
-both items. After the release commit is pushed, the CI archive and checksum must
-match this locally qualified artifact before distribution.
+No correctness, security, privacy, accessibility, performance, compatibility,
+Plugin Check or archive blocker was found. Automated, hosted and authenticated
+builder gates passed against the exact 0.6.0 candidate, and the disposable-site
+state was restored after testing. The package identified by the SHA-256 above is
+accepted for GitHub release and WordPress.org SVN publication.

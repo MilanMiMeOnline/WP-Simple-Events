@@ -920,11 +920,12 @@ list and no-JavaScript fallback output.
 
 ### FCR-7 — 0.6.0 release qualification
 
-**Status:** locally qualified on 2026-08-28. All repository, browser,
-WordPress 6.9/7.1 on PHP 8.2, upgrade, dependency and reproducible-package gates
-passed for the exact 0.6.0 candidate. Public release remains conditional on the
-pinned hosted strict Plugin Check/PHP matrix and one authenticated no-save
-Elementor/Divi editor sampling pass. Detailed evidence is recorded in
+**Status:** complete on 2026-08-28. All repository, browser, WordPress 6.9/7.1 on
+PHP 8.2, PHP 8.2-8.5, upgrade, dependency, reproducible-package, pinned official
+Plugin Check and authenticated Elementor Free/Divi 5 builder gates passed for
+the exact 0.6.0 candidate. The hosted archive is byte-identical to the local
+qualified archive, temporary builder data was removed and the candidate is
+accepted for public release. Detailed evidence is recorded in
 `QA-REPORT-0.6.0.md`.
 
 Run the full repository gates plus WordPress 6.9/current and PHP 8.2-current;
