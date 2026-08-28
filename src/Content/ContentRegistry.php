@@ -19,6 +19,7 @@ final class ContentRegistry {
 	public function register(): void {
 		( new EventPostType() )->register();
 		( new EventTaxonomies() )->register();
+		( new EventCategoryMeta() )->register();
 		( new EventMeta() )->register();
 	}
 }

@@ -28,10 +28,13 @@ function editorFixture( { withEditorStore = true, scheduleOwned = false } = {} )
 	const controls = {
 		'#wpse-address': control(),
 		'#wpse-all-day': control(),
+		'#wpse-color-mode': control( 'automatic' ),
+		'#wpse-display-category': control( '0' ),
 		'#wpse-end-date': control(),
 		'#wpse-end-time': control(),
 		'#wpse-event-url': control(),
 		'#wpse-event-url-label': control(),
+		'#wpse-event-color': control( '#2271b1' ),
 		'#wpse-location-url': control(),
 		'#wpse-start-date': control(),
 		'#wpse-start-time': control(),
@@ -51,11 +54,21 @@ function editorFixture( { withEditorStore = true, scheduleOwned = false } = {} )
 	const scheduleFields = { hidden: false };
 	const scheduleIntro = { hidden: false };
 	const scheduleNotice = { hidden: true };
+	const customColorField = { hidden: true };
+	const categoryColorField = { hidden: true };
 	const eventFields = {
 		dataset: {
 			wpseScheduleOwner: scheduleOwned ? 'recurrence' : 'event',
 		},
 		querySelector: ( selector ) => {
+			if ( selector === '[data-wpse-custom-color-field]' ) {
+				return customColorField;
+			}
+
+			if ( selector === '[data-wpse-category-color-field]' ) {
+				return categoryColorField;
+			}
+
 			if ( selector === '[data-wpse-schedule-fields]' ) {
 				return scheduleFields;
 			}
@@ -79,10 +92,13 @@ function editorFixture( { withEditorStore = true, scheduleOwned = false } = {} )
 		_unrelated_plugin_meta: 'preserved',
 		_wpse_address: '',
 		_wpse_all_day: false,
+		_wpse_color_mode: 'automatic',
+		_wpse_display_category_id: 0,
 		_wpse_end_local: '',
 		_wpse_event_status: 'scheduled',
 		_wpse_event_url: '',
 		_wpse_event_url_label: '',
+		_wpse_event_color: '#2271b1',
 		_wpse_location_url: '',
 		_wpse_start_local: '',
 		_wpse_timezone: 'Europe/Brussels',
@@ -124,6 +140,8 @@ function editorFixture( { withEditorStore = true, scheduleOwned = false } = {} )
 
 	return {
 		controls,
+		customColorField,
+		categoryColorField,
 		edits,
 		eventFields,
 		fireDocumentEvent: ( eventName, detail ) =>
@@ -155,16 +173,45 @@ test( 'moves timed metabox values into the Gutenberg REST meta payload', () => {
 			_unrelated_plugin_meta: 'preserved',
 			_wpse_address: 'Grote Markt 3, 2850 Boom',
 			_wpse_all_day: false,
+			_wpse_color_mode: 'automatic',
+			_wpse_display_category_id: 0,
 			_wpse_end_local: '2026-07-19T21:24',
 			_wpse_event_status: 'scheduled',
 			_wpse_event_url: 'https://example.com/event',
 			_wpse_event_url_label: 'Bekijk het parkingplan',
+			_wpse_event_color: '#2271b1',
 			_wpse_location_url: 'https://maps.example.test/casa-milan',
 			_wpse_start_local: '2026-07-19T16:23',
 			_wpse_timezone: 'Europe/Brussels',
 			_wpse_venue: 'Casa Milan',
 		},
 	} );
+} );
+
+test( 'syncs explicit color intent and shows only the relevant editor control', () => {
+	const {
+		categoryColorField,
+		controls,
+		customColorField,
+		edits,
+	} = editorFixture();
+
+	controls[ '#wpse-color-mode' ].value = 'custom';
+	controls[ '#wpse-event-color' ].value = '#aabbcc';
+	controls[ '#wpse-color-mode' ].fire( 'change' );
+
+	assert.equal( customColorField.hidden, false );
+	assert.equal( categoryColorField.hidden, true );
+	assert.equal( edits.at( -1 ).meta._wpse_color_mode, 'custom' );
+	assert.equal( edits.at( -1 ).meta._wpse_event_color, '#aabbcc' );
+
+	controls[ '#wpse-color-mode' ].value = 'category';
+	controls[ '#wpse-display-category' ].value = '17';
+	controls[ '#wpse-color-mode' ].fire( 'change' );
+
+	assert.equal( customColorField.hidden, true );
+	assert.equal( categoryColorField.hidden, false );
+	assert.equal( edits.at( -1 ).meta._wpse_display_category_id, 17 );
 } );
 
 test( 'uses date-only canonical values and disables time inputs for all-day events', () => {

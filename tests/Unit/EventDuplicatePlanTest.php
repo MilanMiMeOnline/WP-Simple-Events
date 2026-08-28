@@ -58,6 +58,9 @@ final class EventDuplicatePlanTest extends TestCase {
 		self::assertContains( EventMeta::START_LOCAL, $keys );
 		self::assertContains( EventMeta::END_UTC, $keys );
 		self::assertContains( EventMeta::LOCATION_URL, $keys );
+		self::assertContains( EventMeta::COLOR_MODE, $keys );
+		self::assertContains( EventMeta::COLOR, $keys );
+		self::assertContains( EventMeta::DISPLAY_CATEGORY, $keys );
 		self::assertContains( '_thumbnail_id', $keys );
 		self::assertNotContains( EventMeta::EVENT_URL, $keys );
 		self::assertNotContains( EventMeta::EVENT_URL_LABEL, $keys );

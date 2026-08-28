@@ -11,13 +11,22 @@ if ( eventFields ) {
 		'[data-wpse-recurrence-schedule-notice]',
 	);
 	const timeFields = eventFields.querySelectorAll( '[data-wpse-time-field]' );
+	const customColorField = eventFields.querySelector(
+		'[data-wpse-custom-color-field]',
+	);
+	const categoryColorField = eventFields.querySelector(
+		'[data-wpse-category-color-field]',
+	);
 	let scheduleOwned = eventFields.dataset.wpseScheduleOwner === 'recurrence';
 	const fields = {
 		address: eventFields.querySelector( '#wpse-address' ),
+		colorMode: eventFields.querySelector( '#wpse-color-mode' ),
+		displayCategory: eventFields.querySelector( '#wpse-display-category' ),
 		endDate: eventFields.querySelector( '#wpse-end-date' ),
 		endTime: eventFields.querySelector( '#wpse-end-time' ),
 		eventUrl: eventFields.querySelector( '#wpse-event-url' ),
 		eventUrlLabel: eventFields.querySelector( '#wpse-event-url-label' ),
+		eventColor: eventFields.querySelector( '#wpse-event-color' ),
 		locationUrl: eventFields.querySelector( '#wpse-location-url' ),
 		startDate: eventFields.querySelector( '#wpse-start-date' ),
 		startTime: eventFields.querySelector( '#wpse-start-time' ),
@@ -68,6 +77,12 @@ if ( eventFields ) {
 			_wpse_event_status: fields.status.value,
 			_wpse_event_url: fields.eventUrl.value,
 			_wpse_event_url_label: fields.eventUrlLabel.value,
+			_wpse_color_mode: fields.colorMode.value,
+			_wpse_display_category_id: Number.parseInt(
+				fields.displayCategory.value,
+				10,
+			) || 0,
+			_wpse_event_color: fields.eventColor.value,
 			_wpse_location_url: fields.locationUrl.value,
 			_wpse_venue: fields.venue.value,
 		};
@@ -109,6 +124,11 @@ if ( eventFields ) {
 		} );
 	};
 
+	const syncColorFields = () => {
+		customColorField.hidden = fields.colorMode.value !== 'custom';
+		categoryColorField.hidden = fields.colorMode.value !== 'category';
+	};
+
 	const syncScheduleOwnership = ( owned ) => {
 		scheduleOwned = owned;
 		eventFields.dataset.wpseScheduleOwner = owned ? 'recurrence' : 'event';
@@ -124,6 +144,10 @@ if ( eventFields ) {
 	Object.values( fields ).forEach( ( field ) => {
 		field.addEventListener( 'input', syncEditorMeta );
 	} );
+	fields.colorMode.addEventListener( 'change', () => {
+		syncColorFields();
+		syncEditorMeta();
+	} );
 	allDay.addEventListener( 'input', syncEditorMeta );
 	allDay.addEventListener( 'change', () => {
 		syncTimeFields();
@@ -133,4 +157,5 @@ if ( eventFields ) {
 		syncScheduleOwnership( Boolean( event.detail?.recurring ) );
 	} );
 	syncScheduleOwnership( scheduleOwned );
+	syncColorFields();
 }

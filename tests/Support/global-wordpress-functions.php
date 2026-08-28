@@ -1357,6 +1357,56 @@ if ( ! function_exists( 'get_post_meta' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_term_meta' ) ) {
+	/**
+	 * Read a deterministic term metadata value.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 * @param bool   $single   Single-value selection.
+	 */
+	function get_term_meta( int $term_id, string $meta_key, bool $single = false ): mixed { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		return WordPressState::term_meta( $term_id, $meta_key );
+	}
+}
+
+if ( ! function_exists( 'update_term_meta' ) ) {
+	/**
+	 * Store a deterministic term metadata value.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 * @param mixed  $value    Metadata value.
+	 * @param mixed  $previous Optional prior value.
+	 */
+	function update_term_meta( int $term_id, string $meta_key, mixed $value, mixed $previous = '' ): int|bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		if ( WordPressState::meta_operations_fail() ) {
+			return false;
+		}
+
+		WordPressState::update_term_meta( $term_id, $meta_key, $value );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'delete_term_meta' ) ) {
+	/**
+	 * Delete a deterministic term metadata value.
+	 *
+	 * @param int    $term_id   Term ID.
+	 * @param string $meta_key  Metadata key.
+	 * @param mixed  $meta_value Optional exact value.
+	 */
+	function delete_term_meta( int $term_id, string $meta_key, mixed $meta_value = null ): bool { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		if ( WordPressState::meta_operations_fail() ) {
+			return false;
+		}
+
+		return WordPressState::delete_term_meta( $term_id, $meta_key );
+	}
+}
+
 if ( ! function_exists( 'update_post_meta' ) ) {
 	/**
 	 * Store a post metadata test value.
@@ -1575,7 +1625,10 @@ if ( ! function_exists( 'wp_verify_nonce' ) ) {
 	 * @param string $action Expected action.
 	 */
 	function wp_verify_nonce( string $nonce, string $action ): int|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
-		return 'valid-event-nonce' === $nonce && 'wpse_save_event' === $action ? 1 : false;
+		$valid = ( 'valid-event-nonce' === $nonce && 'wpse_save_event' === $action )
+			|| ( 'valid-category-color-nonce' === $nonce && 'wpse_save_event_category_color' === $action );
+
+		return $valid ? 1 : false;
 	}
 }
 

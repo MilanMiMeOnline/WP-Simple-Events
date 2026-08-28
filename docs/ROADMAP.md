@@ -872,6 +872,13 @@ saved pages from 0.5.x render unchanged until new controls are chosen.
 
 ### FCR-5 — Category and event color domain
 
+**Status:** completed locally on 2026-08-28. The migration-free storage,
+category/event editor, revision and duplication behaviour, strict color and
+permission boundaries, deterministic resolver and accessible contrast derivation
+passed the full repository, browser and packaged WordPress gates. Detailed
+evidence is recorded in `QA-REPORT-0.6.0-FCR-5.md`; public calendar, recurrence,
+swatch and legend integration remains FCR-6.
+
 1. Register one optional category term-meta color with strict capability, nonce,
    validation, sanitization, deletion and term-list swatch behaviour.
 2. Register bounded event metadata for an optional custom color and selected

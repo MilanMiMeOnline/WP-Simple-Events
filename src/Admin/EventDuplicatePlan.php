@@ -60,6 +60,9 @@ final class EventDuplicatePlan {
 			EventMeta::ADDRESS,
 			EventMeta::LOCATION_URL,
 			EventMeta::STATUS,
+			EventMeta::COLOR_MODE,
+			EventMeta::COLOR,
+			EventMeta::DISPLAY_CATEGORY,
 			'_thumbnail_id',
 		);
 	}

@@ -35,6 +35,13 @@ final class WordPressState {
 	private static array $post_meta = array();
 
 	/**
+	 * Stored term metadata keyed by term ID and meta key.
+	 *
+	 * @var array<int, array<string, mixed>>
+	 */
+	private static array $term_meta = array();
+
+	/**
 	 * Configured post objects keyed by ID.
 	 *
 	 * @var array<int, \WP_Post>
@@ -349,6 +356,7 @@ final class WordPressState {
 		self::$roles                      = array();
 		self::$current_user_can           = false;
 		self::$post_meta                  = array();
+		self::$term_meta                  = array();
 		self::$posts                      = array();
 		self::$last_get_posts_arguments   = array();
 		self::$permalinks                 = array();
@@ -1339,5 +1347,48 @@ final class WordPressState {
 	 */
 	public static function has_post_meta( int $post_id, string $meta_key ): bool {
 		return array_key_exists( $meta_key, self::$post_meta[ $post_id ] ?? array() );
+	}
+
+	/**
+	 * Store one term metadata value.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 * @param mixed  $value    Metadata value.
+	 */
+	public static function update_term_meta( int $term_id, string $meta_key, mixed $value ): void {
+		self::$term_meta[ $term_id ][ $meta_key ] = $value;
+	}
+
+	/**
+	 * Delete one term metadata value.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 */
+	public static function delete_term_meta( int $term_id, string $meta_key ): bool {
+		unset( self::$term_meta[ $term_id ][ $meta_key ] );
+
+		return true;
+	}
+
+	/**
+	 * Read one term metadata value.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 */
+	public static function term_meta( int $term_id, string $meta_key ): mixed {
+		return self::$term_meta[ $term_id ][ $meta_key ] ?? '';
+	}
+
+	/**
+	 * Determine whether one term metadata value exists.
+	 *
+	 * @param int    $term_id  Term ID.
+	 * @param string $meta_key Metadata key.
+	 */
+	public static function has_term_meta( int $term_id, string $meta_key ): bool {
+		return array_key_exists( $meta_key, self::$term_meta[ $term_id ] ?? array() );
 	}
 }

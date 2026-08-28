@@ -83,6 +83,13 @@ Term creation and editing use the normal taxonomy capability and nonce boundarie
 invalid values fail validation and removing the value deletes the term metadata.
 The category list shows a labelled swatch in addition to text.
 
+Set this under **Events → Event Categories** by enabling **Calendar color** for
+the category. The event editor then offers four explicit choices under **Calendar
+color**: automatic, the calendar/website default, one currently assigned colored
+category, or a custom event color. Assign and save a new category before selecting
+it as an explicit color source; the selector deliberately lists only categories
+that are already assigned to that event and have a valid color.
+
 An event may keep automatic color resolution, force the component fallback,
 select one assigned colored category as its display source, or save one custom
 normalized color. An unassigned/deleted category, corrupt color or ambiguous set

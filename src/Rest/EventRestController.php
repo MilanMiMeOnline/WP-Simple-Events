@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Rest;
 
 use MiMe\WPSimpleEvents\Application\EventInputMapper;
+use MiMe\WPSimpleEvents\Application\EventColorPersistence;
 use MiMe\WPSimpleEvents\Application\EventPersistence;
 use MiMe\WPSimpleEvents\Application\EventPublicationPolicy;
 use MiMe\WPSimpleEvents\Application\EventValidationMessages;
@@ -41,13 +42,15 @@ final class EventRestController {
 	 * @param EventPersistence        $persistence Validated persistence gateway.
 	 * @param EventPublicationPolicy  $policy      Publication completeness policy.
 	 * @param EventValidationMessages $messages    Translated validation messages.
+	 * @param EventColorPersistence   $colors      Canonical color intent persistence.
 	 */
 	public function __construct(
 		private readonly EventInputMapper $mapper = new EventInputMapper(),
 		private readonly EventValidator $validator = new EventValidator(),
 		private readonly EventPersistence $persistence = new EventPersistence(),
 		private readonly EventPublicationPolicy $policy = new EventPublicationPolicy(),
-		private readonly EventValidationMessages $messages = new EventValidationMessages()
+		private readonly EventValidationMessages $messages = new EventValidationMessages(),
+		private readonly EventColorPersistence $colors = new EventColorPersistence()
 	) {}
 
 	/**
@@ -106,16 +109,7 @@ final class EventRestController {
 			return $prepared_post;
 		}
 
-		$raw_meta = $request->get_param( 'meta' );
-		$meta     = array();
-
-		if ( is_array( $raw_meta ) ) {
-			foreach ( $raw_meta as $key => $value ) {
-				if ( is_string( $key ) ) {
-					$meta[ $key ] = $value;
-				}
-			}
-		}
+		$meta = $this->request_meta( $request );
 
 		$post_id     = (int) $request->get_param( 'id' );
 		$post_status = isset( $prepared_post->post_status ) && is_string( $prepared_post->post_status )
@@ -176,7 +170,31 @@ final class EventRestController {
 		}
 
 		$this->persistence->persist( $post->ID, $data );
+		$this->colors->persist_rest( $post->ID, $this->request_meta( $request ) );
 		unset( $this->validated_requests[ $request_id ] );
+	}
+
+	/**
+	 * Keep only string-keyed metadata from one REST request.
+	 *
+	 * @param WP_REST_Request $request REST event request.
+	 * @return array<string, mixed>
+	 */
+	private function request_meta( WP_REST_Request $request ): array {
+		$raw_meta = $request->get_param( 'meta' );
+		$meta     = array();
+
+		if ( ! is_array( $raw_meta ) ) {
+			return $meta;
+		}
+
+		foreach ( $raw_meta as $key => $value ) {
+			if ( is_string( $key ) ) {
+				$meta[ $key ] = $value;
+			}
+		}
+
+		return $meta;
 	}
 
 	/**

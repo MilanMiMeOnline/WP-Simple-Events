@@ -1756,3 +1756,32 @@ attributes. Developers may target the documented stable semantic classes and
 custom properties. The visual calendar result status may be hidden, but its
 polite live region remains available to assistive technology so asynchronous
 loading, empty and error states are never silent.
+
+## ADR-089: Event color intent is explicit, revisioned series metadata
+
+**Status:** Accepted
+
+The optional 0.6 color choice is stored on the canonical event as one allowlisted
+mode: `automatic`, `fallback`, `category` or `custom`. Automatic is represented by
+the absence of color metadata so existing events remain migration-free. A custom
+choice stores one strict normalized six-digit hexadecimal value. A category
+choice stores one positive assigned event-category ID; inactive values are
+removed when an editor switches mode. All three event metadata keys participate
+in WordPress revisions and the existing allowlisted event-duplication workflow.
+Occurrence rows and occurrence overrides never own color.
+
+One optional strict six-digit hexadecimal background is stored as event-category
+term metadata. Native category creation and editing validate the value before the
+term write, then save or delete it only behind the event taxonomy capability and
+a plugin nonce. Neither event nor term metadata accepts arbitrary CSS, alpha,
+foreground colors or presentation markup.
+
+Resolution treats the stored mode as authoritative. Custom and explicit-category
+choices either resolve their valid value or use the component fallback. Automatic
+uses a category color only when the set of valid assigned colors contains one
+distinct value. An absent/removed assignment, invalid mode/value, or several
+distinct automatic colors uses the component fallback and never term order. A
+shared pure resolver normalizes every background and derives whichever of black
+or white has the greater WCAG contrast ratio. Public adapters receive only that
+bounded presentation value; FCR-6 owns calendar, occurrence, swatch and legend
+integration.

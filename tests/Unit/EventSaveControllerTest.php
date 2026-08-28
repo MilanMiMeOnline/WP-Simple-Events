@@ -13,6 +13,7 @@ use MiMe\WPSimpleEvents\Admin\EventMetaBox;
 use MiMe\WPSimpleEvents\Admin\EventSaveController;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
@@ -165,6 +166,35 @@ final class EventSaveControllerTest extends TestCase {
 		);
 
 		self::assertSame( 'Parking plan', WordPressState::post_meta( 42, EventMeta::EVENT_URL_LABEL ) );
+	}
+
+	/** The verified native boundary persists bounded series-level color intent. */
+	public function test_valid_native_save_persists_custom_event_color_intent(): void {
+		WordPressState::allow_current_user( true );
+		$_POST = array(
+			EventMetaBox::NONCE_NAME => 'valid-event-nonce',
+			'wpse_event'             => $this->payload(
+				array(
+					'color_mode'  => EventColorMode::CUSTOM->value,
+					'event_color' => '#AABBCC',
+				)
+			),
+		);
+
+		( new EventSaveController() )->save(
+			42,
+			new WP_Post(
+				array(
+					'ID'          => 42,
+					'post_type'   => EventPostType::POST_TYPE,
+					'post_status' => 'publish',
+				)
+			),
+			true
+		);
+
+		self::assertSame( EventColorMode::CUSTOM->value, WordPressState::post_meta( 42, EventMeta::COLOR_MODE ) );
+		self::assertSame( '#aabbcc', WordPressState::post_meta( 42, EventMeta::COLOR ) );
 	}
 
 	/**

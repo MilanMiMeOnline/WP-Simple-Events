@@ -14,6 +14,7 @@ use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -94,6 +95,9 @@ final class ContentDefinitionTest extends TestCase {
 			EventMeta::EVENT_URL,
 			EventMeta::EVENT_URL_LABEL,
 			EventMeta::STATUS,
+			EventMeta::COLOR_MODE,
+			EventMeta::COLOR,
+			EventMeta::DISPLAY_CATEGORY,
 			EventMeta::DATES_NEED_REVIEW,
 			EventMeta::SERIES_UID,
 			EventMeta::ACTIVE_GENERATION,
@@ -128,6 +132,8 @@ final class ContentDefinitionTest extends TestCase {
 		self::assertFalse( $definitions[ EventMeta::RECURRENCE ]['show_in_rest'] );
 		self::assertSame( 'string', $definitions[ EventMeta::RECURRENCE ]['type'] );
 		self::assertSame( EventStatus::SCHEDULED->value, $definitions[ EventMeta::STATUS ]['default'] );
+		self::assertSame( EventColorMode::AUTOMATIC->value, $definitions[ EventMeta::COLOR_MODE ]['default'] );
+		self::assertSame( EventColorMode::values(), $definitions[ EventMeta::COLOR_MODE ]['show_in_rest']['schema']['enum'] );
 		self::assertSame(
 			EventStatus::values(),
 			$definitions[ EventMeta::STATUS ]['show_in_rest']['schema']['enum']

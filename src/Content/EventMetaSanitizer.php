@@ -12,6 +12,8 @@ namespace MiMe\WPSimpleEvents\Content;
 use DateTimeImmutable;
 use DateTimeZone;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
+use MiMe\WPSimpleEvents\Domain\HexColor;
 
 /**
  * Provides narrow callbacks for registered event metadata.
@@ -213,6 +215,49 @@ final class EventMetaSanitizer {
 		$status = EventStatus::tryFrom( $value );
 
 		return null === $status ? EventStatus::SCHEDULED->value : $status->value;
+	}
+
+	/**
+	 * Normalize one optional strict six-digit event color.
+	 *
+	 * @param mixed $value Untrusted color.
+	 */
+	public function color( mixed $value ): string {
+		return HexColor::normalize( $value );
+	}
+
+	/**
+	 * Normalize explicit editor color intent through its allowlist.
+	 *
+	 * @param mixed $value Untrusted mode.
+	 */
+	public function color_mode( mixed $value ): string {
+		if ( '' === $value ) {
+			return EventColorMode::AUTOMATIC->value;
+		}
+
+		$mode = is_string( $value ) ? EventColorMode::tryFrom( $value ) : null;
+
+		return null === $mode ? EventColorMode::FALLBACK->value : $mode->value;
+	}
+
+	/**
+	 * Normalize one positive bounded WordPress term ID or the empty sentinel.
+	 *
+	 * @param mixed $value Untrusted term ID.
+	 */
+	public function term_id( mixed $value ): int {
+		if ( is_string( $value ) && 1 !== preg_match( '/^\d+$/D', $value ) ) {
+			return 0;
+		}
+
+		if ( ! is_int( $value ) && ! is_string( $value ) ) {
+			return 0;
+		}
+
+		$value = (int) $value;
+
+		return $value > 0 && $value <= 2_147_483_647 ? $value : 0;
 	}
 
 	/**

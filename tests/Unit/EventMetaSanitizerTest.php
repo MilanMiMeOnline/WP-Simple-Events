@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -123,6 +124,17 @@ final class EventMetaSanitizerTest extends TestCase {
 		self::assertSame( 73, $this->sanitizer->generation( '73' ) );
 		self::assertSame( 0, $this->sanitizer->generation( '-1' ) );
 		self::assertSame( 0, $this->sanitizer->generation( 'arbitrary' ) );
+	}
+
+	/** Event color metadata accepts only its strict values and ID bounds. */
+	public function test_event_color_metadata_is_strict_and_bounded(): void {
+		self::assertSame( '#aabbcc', $this->sanitizer->color( '#AABBCC' ) );
+		self::assertSame( '', $this->sanitizer->color( 'red;display:none' ) );
+		self::assertSame( EventColorMode::CATEGORY->value, $this->sanitizer->color_mode( 'category' ) );
+		self::assertSame( EventColorMode::FALLBACK->value, $this->sanitizer->color_mode( 'unexpected' ) );
+		self::assertSame( 42, $this->sanitizer->term_id( '42' ) );
+		self::assertSame( 0, $this->sanitizer->term_id( '-1' ) );
+		self::assertSame( 0, $this->sanitizer->term_id( '9999999999999999' ) );
 	}
 
 	/**

@@ -68,6 +68,12 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'update_option_wpse_archive_slug' ) );
 		self::assertIsCallable( HookRecorder::action( 'add_option_wpse_archive_slug' ) );
 		self::assertIsCallable( HookRecorder::action( 'add_meta_boxes_wpse_event' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpse_event_category_add_form_fields' ) );
+		self::assertIsCallable( HookRecorder::action( 'wpse_event_category_edit_form_fields' ) );
+		self::assertIsCallable( HookRecorder::action( 'created_wpse_event_category' ) );
+		self::assertIsCallable( HookRecorder::action( 'edited_wpse_event_category' ) );
+		self::assertIsCallable( HookRecorder::action( 'manage_edit-wpse_event_category_columns' ) );
+		self::assertIsCallable( HookRecorder::action( 'manage_wpse_event_category_custom_column' ) );
 		self::assertIsCallable( HookRecorder::action( 'manage_wpse_event_posts_columns' ) );
 		self::assertIsCallable( HookRecorder::action( 'manage_wpse_event_posts_custom_column' ) );
 		self::assertIsCallable( HookRecorder::action( 'post_row_actions' ) );

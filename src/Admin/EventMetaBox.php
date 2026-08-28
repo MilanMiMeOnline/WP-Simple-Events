@@ -12,9 +12,13 @@ namespace MiMe\WPSimpleEvents\Admin;
 use MiMe\WPSimpleEvents\Application\EventInput;
 use MiMe\WPSimpleEvents\Application\RecurrenceScheduleOwnership;
 use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Content\EventCategoryMeta;
 use MiMe\WPSimpleEvents\Content\EventMetaSanitizer;
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\HexColor;
 use WP_Post;
 
 /**
@@ -170,6 +174,8 @@ final class EventMetaBox {
 				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'mime-simple-events-calendar' ), 'url', $input->event_url, null, 2048, __( 'Optional information or registration page using HTTP(S).', 'mime-simple-events-calendar' ) ); ?>
 				<?php $this->render_input( 'event-url-label', 'event_url_label', __( 'External event link label', 'mime-simple-events-calendar' ), 'text', $input->event_url_label, null, EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH, __( 'Optional link text. The default is “More event information”.', 'mime-simple-events-calendar' ) ); ?>
 			</div>
+
+			<?php $this->render_color_fields( $post->ID ); ?>
 		</div>
 		<?php
 	}
@@ -301,6 +307,96 @@ final class EventMetaBox {
 			</select>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Render explicit, mutually exclusive calendar color intent.
+	 *
+	 * @param int $post_id Event ID.
+	 */
+	private function render_color_fields( int $post_id ): void {
+		$stored_mode = $this->stored_string( $post_id, EventMeta::COLOR_MODE );
+		$mode        = EventColorMode::from_stored( $stored_mode ) ?? EventColorMode::FALLBACK;
+		$color       = HexColor::normalize( $this->stored_string( $post_id, EventMeta::COLOR ) );
+		$color       = '' !== $color ? $color : '#2271b1';
+		$selected_id = ( new EventMetaSanitizer() )->term_id(
+			get_post_meta( $post_id, EventMeta::DISPLAY_CATEGORY, true )
+		);
+		$categories  = $this->colored_categories( $post_id );
+		$available   = isset( $categories[ $selected_id ] );
+		$options     = array(
+			EventColorMode::AUTOMATIC->value => __( 'Automatic — use one unambiguous category color', 'mime-simple-events-calendar' ),
+			EventColorMode::FALLBACK->value  => __( 'Use the calendar or website default', 'mime-simple-events-calendar' ),
+			EventColorMode::CATEGORY->value  => __( 'Use one assigned category color', 'mime-simple-events-calendar' ),
+			EventColorMode::CUSTOM->value    => __( 'Use a custom event color', 'mime-simple-events-calendar' ),
+		);
+		?>
+		<fieldset class="wpse-event-color-fields">
+			<legend><?php esc_html_e( 'Calendar color', 'mime-simple-events-calendar' ); ?></legend>
+			<p class="description"><?php esc_html_e( 'This choice applies to the complete event series. Public text color is selected automatically for contrast.', 'mime-simple-events-calendar' ); ?></p>
+			<p class="wpse-event-fields-field">
+				<label for="wpse-color-mode"><?php esc_html_e( 'Color source', 'mime-simple-events-calendar' ); ?></label>
+				<select class="widefat" id="wpse-color-mode" name="wpse_event[color_mode]">
+					<?php foreach ( $options as $value => $label ) : ?>
+						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $mode->value, $value ); ?>><?php echo esc_html( $label ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+			<div data-wpse-custom-color-field <?php echo EventColorMode::CUSTOM !== $mode ? 'hidden' : ''; ?>>
+				<p class="wpse-event-fields-field">
+					<label for="wpse-event-color"><?php esc_html_e( 'Custom event color', 'mime-simple-events-calendar' ); ?></label>
+					<input type="color" id="wpse-event-color" name="wpse_event[event_color]" value="<?php echo esc_attr( $color ); ?>">
+				</p>
+			</div>
+			<div data-wpse-category-color-field <?php echo EventColorMode::CATEGORY !== $mode ? 'hidden' : ''; ?>>
+				<p class="wpse-event-fields-field">
+					<label for="wpse-display-category"><?php esc_html_e( 'Display category', 'mime-simple-events-calendar' ); ?></label>
+					<select class="widefat" id="wpse-display-category" name="wpse_event[display_category_id]">
+						<option value="0"><?php esc_html_e( 'Choose an assigned colored category', 'mime-simple-events-calendar' ); ?></option>
+						<?php foreach ( $categories as $category_id => $category ) : ?>
+							<option value="<?php echo esc_attr( (string) $category_id ); ?>" <?php selected( $selected_id, $category_id ); ?>>
+								<?php echo esc_html( $category['name'] . ' (' . $category['color'] . ')' ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+					<?php if ( EventColorMode::CATEGORY === $mode && $selected_id > 0 && ! $available ) : ?>
+						<span class="description wpse-event-color-warning"><?php esc_html_e( 'The previously selected color category is no longer assigned or has no valid color. The calendar will use its default color until you choose another source.', 'mime-simple-events-calendar' ); ?></span>
+					<?php endif; ?>
+				</p>
+			</div>
+		</fieldset>
+		<?php
+	}
+
+	/**
+	 * Return assigned event categories that currently own a valid color.
+	 *
+	 * @param int $post_id Event ID.
+	 * @return array<int, array{name:string,color:string}>
+	 */
+	private function colored_categories( int $post_id ): array {
+		$terms = get_the_terms( $post_id, EventTaxonomies::CATEGORY );
+
+		if ( false === $terms || is_wp_error( $terms ) ) {
+			return array();
+		}
+
+		$categories = array();
+
+		foreach ( $terms as $term ) {
+			$color = HexColor::normalize( get_term_meta( $term->term_id, EventCategoryMeta::COLOR, true ) );
+
+			if ( '' !== $color ) {
+				$categories[ $term->term_id ] = array(
+					'name'  => $term->name,
+					'color' => $color,
+				);
+			}
+		}
+
+		ksort( $categories, SORT_NUMERIC );
+
+		return $categories;
 	}
 
 	/**

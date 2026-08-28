@@ -11,6 +11,7 @@ namespace MiMe\WPSimpleEvents\Admin;
 
 use MiMe\WPSimpleEvents\Access\EventCapabilities;
 use MiMe\WPSimpleEvents\Application\EventInputMapper;
+use MiMe\WPSimpleEvents\Application\EventColorPersistence;
 use MiMe\WPSimpleEvents\Application\EventPersistence;
 use MiMe\WPSimpleEvents\Application\EventPublicationPolicy;
 use MiMe\WPSimpleEvents\Application\EventValidationError;
@@ -45,13 +46,15 @@ final class EventSaveController {
 	 * @param EventPersistence        $persistence Validated persistence gateway.
 	 * @param EventPublicationPolicy  $policy      Publication completeness policy.
 	 * @param EventValidationMessages $messages    Translated validation messages.
+	 * @param EventColorPersistence   $colors      Canonical color intent persistence.
 	 */
 	public function __construct(
 		private readonly EventInputMapper $mapper = new EventInputMapper(),
 		private readonly EventValidator $validator = new EventValidator(),
 		private readonly EventPersistence $persistence = new EventPersistence(),
 		private readonly EventPublicationPolicy $policy = new EventPublicationPolicy(),
-		private readonly EventValidationMessages $messages = new EventValidationMessages()
+		private readonly EventValidationMessages $messages = new EventValidationMessages(),
+		private readonly EventColorPersistence $colors = new EventColorPersistence()
 	) {}
 
 	/**
@@ -152,6 +155,7 @@ final class EventSaveController {
 
 		if ( null !== $data ) {
 			$this->persistence->persist( $post_id, $data );
+			$this->colors->persist_admin( $post_id, $payload );
 		}
 	}
 

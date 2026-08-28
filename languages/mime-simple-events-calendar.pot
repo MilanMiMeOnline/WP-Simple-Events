@@ -130,6 +130,36 @@ msgstr ""
 msgid "no end date"
 msgstr ""
 
+#: src/Admin/EventCategoryColorController.php:61
+#: src/Admin/EventCategoryColorController.php:179
+#: src/Admin/EventMetaBox.php:335
+msgid "Calendar color"
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:85
+msgid "The event category color could not be verified. Please try again."
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:92
+msgid "You are not allowed to change event category colors."
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:99
+msgid "Choose a valid six-digit event category color."
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:139
+msgid "Color"
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:183
+msgid "Use this color for events in this category"
+msgstr ""
+
+#: src/Admin/EventCategoryColorController.php:186
+msgid "Optional. Events can use this color automatically or select it explicitly. Public text color is chosen automatically for contrast."
+msgstr ""
+
 #: src/Admin/EventDuplicateController.php:59
 msgid "Duplicate event"
 msgstr ""
@@ -211,8 +241,8 @@ msgid "Event Categories"
 msgstr ""
 
 #: src/Admin/EventListTable.php:63
-#: src/Admin/EventMetaBox.php:296
-#: src/Content/EventMeta.php:163
+#: src/Admin/EventMetaBox.php:302
+#: src/Content/EventMeta.php:167
 #: assets/src/js/recurrence-editor.js:1682
 msgid "Event status"
 msgstr ""
@@ -230,13 +260,13 @@ msgid "No"
 msgstr ""
 
 #: src/Admin/EventListTable.php:111
-#: src/Admin/EventMetaBox.php:290
+#: src/Admin/EventMetaBox.php:296
 #: assets/src/js/recurrence-editor.js:1686
 msgid "Scheduled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:112
-#: src/Admin/EventMetaBox.php:291
+#: src/Admin/EventMetaBox.php:297
 #: src/Divi/DiviEditorDataProvider.php:73
 #: src/Frontend/EventFieldRenderer.php:130
 #: src/Frontend/EventRenderer.php:146
@@ -245,7 +275,7 @@ msgid "Cancelled"
 msgstr ""
 
 #: src/Admin/EventListTable.php:113
-#: src/Admin/EventMetaBox.php:292
+#: src/Admin/EventMetaBox.php:298
 #: src/Divi/DiviEditorDataProvider.php:74
 #: src/Frontend/EventFieldRenderer.php:131
 #: src/Frontend/EventRenderer.php:147
@@ -296,111 +326,152 @@ msgstr ""
 msgid "Event maintenance denied"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:50
+#: src/Admin/EventMetaBox.php:54
 #: src/Elementor/EventDetailsWidget.php:193
 msgid "Event details"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:83
+#: src/Admin/EventMetaBox.php:87
 msgid "A start is required before an event can be published. Drafts may remain incomplete."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:96
+#: src/Admin/EventMetaBox.php:100
 msgid "This event’s schedule is managed in the block editor."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:97
+#: src/Admin/EventMetaBox.php:101
 msgid "Dates, times, the all-day setting and timezone are managed in the Repeating event panel in the block editor. Choose Complete series, Only this occurrence, or This and following there. The event status below applies to the complete series."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:103
+#: src/Admin/EventMetaBox.php:107
 msgid "Review the copied start and end date before publishing this event."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:121
-#: src/Content/EventMeta.php:102
+#: src/Admin/EventMetaBox.php:125
+#: src/Content/EventMeta.php:106
 #: assets/src/js/recurrence-editor.js:1609
 #: assets/src/js/recurrence-editor.js:1840
 msgid "All-day event"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:126
+#: src/Admin/EventMetaBox.php:130
 #: assets/src/js/recurrence-editor.js:1622
 #: assets/src/js/recurrence-editor.js:1849
 msgid "Start date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:128
+#: src/Admin/EventMetaBox.php:132
 #: assets/src/js/recurrence-editor.js:1631
 #: assets/src/js/recurrence-editor.js:1857
 msgid "Start time"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:130
+#: src/Admin/EventMetaBox.php:134
 #: assets/src/js/recurrence-editor.js:1639
 #: assets/src/js/recurrence-editor.js:1864
 msgid "End date"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:132
+#: src/Admin/EventMetaBox.php:136
 #: assets/src/js/recurrence-editor.js:1648
 #: assets/src/js/recurrence-editor.js:1872
 msgid "End time"
 msgstr ""
 
 #. translators: %s: Event timezone identifier.
-#: src/Admin/EventMetaBox.php:140
+#: src/Admin/EventMetaBox.php:144
 #, php-format
 msgid "Timezone: %s. Existing events keep their saved timezone."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:146
+#: src/Admin/EventMetaBox.php:150
 msgid "Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:161
-#: src/Content/EventMeta.php:118
+#: src/Admin/EventMetaBox.php:165
+#: src/Content/EventMeta.php:122
 #: src/Elementor/EventVenueWidget.php:46
 #: assets/src/js/recurrence-editor.js:1724
 msgid "Venue"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:165
-#: src/Content/EventMeta.php:126
+#: src/Admin/EventMetaBox.php:169
+#: src/Content/EventMeta.php:130
 #: assets/src/js/recurrence-editor.js:1739
 msgid "Address"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:167
-#: src/Content/EventMeta.php:134
+#: src/Admin/EventMetaBox.php:171
+#: src/Content/EventMeta.php:138
 #: assets/src/js/recurrence-editor.js:1755
 msgid "Location URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:167
+#: src/Admin/EventMetaBox.php:171
 msgid "Optional route or location page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:170
-#: src/Content/EventMeta.php:142
+#: src/Admin/EventMetaBox.php:174
+#: src/Content/EventMeta.php:146
 #: assets/src/js/recurrence-editor.js:1779
 msgid "External event URL"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:170
+#: src/Admin/EventMetaBox.php:174
 msgid "Optional information or registration page using HTTP(S)."
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:171
-#: src/Content/EventMeta.php:150
+#: src/Admin/EventMetaBox.php:175
+#: src/Content/EventMeta.php:154
 msgid "External event link label"
 msgstr ""
 
-#: src/Admin/EventMetaBox.php:171
+#: src/Admin/EventMetaBox.php:175
 msgid "Optional link text. The default is “More event information”."
 msgstr ""
 
-#: src/Admin/EventSaveController.php:192
+#: src/Admin/EventMetaBox.php:328
+msgid "Automatic — use one unambiguous category color"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:329
+msgid "Use the calendar or website default"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:330
+msgid "Use one assigned category color"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:331
+msgid "Use a custom event color"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:336
+msgid "This choice applies to the complete event series. Public text color is selected automatically for contrast."
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:338
+msgid "Color source"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:347
+#: src/Content/EventMeta.php:193
+msgid "Custom event color"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:353
+msgid "Display category"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:355
+msgid "Choose an assigned colored category"
+msgstr ""
+
+#: src/Admin/EventMetaBox.php:363
+msgid "The previously selected color category is no longer assigned or has no valid color. The calendar will use its default color until you choose another source."
+msgstr ""
+
+#: src/Admin/EventSaveController.php:196
 msgid "The event details were not saved because they need attention."
 msgstr ""
 
@@ -724,135 +795,163 @@ msgstr ""
 msgid "A complete flexible event layout built from individual MiMe Simple Events and Calendar blocks."
 msgstr ""
 
-#: src/Content/EventMeta.php:70
+#: src/Content/EventCategoryMeta.php:35
+msgid "Event category color"
+msgstr ""
+
+#: src/Content/EventCategoryMeta.php:36
+msgid "Optional normalized calendar background color."
+msgstr ""
+
+#: src/Content/EventMeta.php:74
 msgid "Event start"
 msgstr ""
 
-#: src/Content/EventMeta.php:71
+#: src/Content/EventMeta.php:75
 msgid "Canonical local event start."
 msgstr ""
 
-#: src/Content/EventMeta.php:78
+#: src/Content/EventMeta.php:82
 msgid "Event end"
 msgstr ""
 
-#: src/Content/EventMeta.php:79
+#: src/Content/EventMeta.php:83
 msgid "Canonical local event end."
 msgstr ""
 
-#: src/Content/EventMeta.php:86
+#: src/Content/EventMeta.php:90
 msgid "Event start UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:87
+#: src/Content/EventMeta.php:91
 msgid "Internal UTC start timestamp used for sorting."
 msgstr ""
 
-#: src/Content/EventMeta.php:94
+#: src/Content/EventMeta.php:98
 msgid "Event end UTC index"
 msgstr ""
 
-#: src/Content/EventMeta.php:95
+#: src/Content/EventMeta.php:99
 msgid "Internal inclusive UTC end timestamp used for chronological period queries."
 msgstr ""
 
-#: src/Content/EventMeta.php:103
+#: src/Content/EventMeta.php:107
 msgid "Whether the event uses inclusive dates without visible times."
 msgstr ""
 
-#: src/Content/EventMeta.php:110
+#: src/Content/EventMeta.php:114
 msgid "Event timezone"
 msgstr ""
 
-#: src/Content/EventMeta.php:111
+#: src/Content/EventMeta.php:115
 msgid "IANA timezone or WordPress fixed UTC offset used when the event was saved."
 msgstr ""
 
-#: src/Content/EventMeta.php:119
+#: src/Content/EventMeta.php:123
 msgid "Event location or venue name."
 msgstr ""
 
-#: src/Content/EventMeta.php:127
+#: src/Content/EventMeta.php:131
 msgid "Readable event address."
 msgstr ""
 
-#: src/Content/EventMeta.php:135
+#: src/Content/EventMeta.php:139
 msgid "Optional external HTTP(S) route or location URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:143
+#: src/Content/EventMeta.php:147
 msgid "Optional external HTTP(S) information or registration URL."
 msgstr ""
 
-#: src/Content/EventMeta.php:151
+#: src/Content/EventMeta.php:155
 msgid "Optional plain-text label for the external event link."
 msgstr ""
 
-#: src/Content/EventMeta.php:164
+#: src/Content/EventMeta.php:168
 msgid "Scheduled, cancelled or postponed; separate from publication status."
 msgstr ""
 
-#: src/Content/EventMeta.php:176
+#: src/Content/EventMeta.php:180
+msgid "Event color mode"
+msgstr ""
+
+#: src/Content/EventMeta.php:181
+msgid "Automatic, component fallback, assigned category or custom event color."
+msgstr ""
+
+#: src/Content/EventMeta.php:194
+msgid "Optional normalized six-digit calendar background color."
+msgstr ""
+
+#: src/Content/EventMeta.php:206
+msgid "Event display color category"
+msgstr ""
+
+#: src/Content/EventMeta.php:207
+msgid "Optional assigned colored event category selected for calendar presentation."
+msgstr ""
+
+#: src/Content/EventMeta.php:220
 msgid "Copied event dates need review"
 msgstr ""
 
-#: src/Content/EventMeta.php:177
+#: src/Content/EventMeta.php:221
 msgid "Internal editor flag set when event dates were duplicated."
 msgstr ""
 
-#: src/Content/EventMeta.php:184
+#: src/Content/EventMeta.php:228
 msgid "Event series UID"
 msgstr ""
 
-#: src/Content/EventMeta.php:185
+#: src/Content/EventMeta.php:229
 msgid "Internal immutable identity shared by an event series and its occurrences."
 msgstr ""
 
-#: src/Content/EventMeta.php:192
+#: src/Content/EventMeta.php:236
 msgid "Active occurrence generation"
 msgstr ""
 
-#: src/Content/EventMeta.php:193
+#: src/Content/EventMeta.php:237
 msgid "Internal generation token for the complete active occurrence projection."
 msgstr ""
 
-#: src/Content/EventMeta.php:200
+#: src/Content/EventMeta.php:244
 msgid "Occurrence index needs repair"
 msgstr ""
 
-#: src/Content/EventMeta.php:201
+#: src/Content/EventMeta.php:245
 msgid "Internal recovery marker set when occurrence projection could not complete."
 msgstr ""
 
-#: src/Content/EventMeta.php:208
+#: src/Content/EventMeta.php:252
 msgid "Occurrence coverage start"
 msgstr ""
 
-#: src/Content/EventMeta.php:209
+#: src/Content/EventMeta.php:253
 msgid "Internal inclusive local start of the active recurring projection."
 msgstr ""
 
-#: src/Content/EventMeta.php:216
+#: src/Content/EventMeta.php:260
 msgid "Occurrence coverage end"
 msgstr ""
 
-#: src/Content/EventMeta.php:217
+#: src/Content/EventMeta.php:261
 msgid "Internal inclusive local end of the active recurring projection."
 msgstr ""
 
-#: src/Content/EventMeta.php:224
+#: src/Content/EventMeta.php:268
 msgid "Occurrence coverage generation"
 msgstr ""
 
-#: src/Content/EventMeta.php:225
+#: src/Content/EventMeta.php:269
 msgid "Internal generation token binding recurring coverage to its active projection."
 msgstr ""
 
-#: src/Content/EventMeta.php:232
+#: src/Content/EventMeta.php:276
 msgid "Event recurrence definition"
 msgstr ""
 
-#: src/Content/EventMeta.php:233
+#: src/Content/EventMeta.php:277
 msgid "Internal versioned recurrence aggregate."
 msgstr ""
 
@@ -2737,7 +2836,7 @@ msgstr ""
 msgid "Maximum events per result page."
 msgstr ""
 
-#: src/Rest/EventRestController.php:139
+#: src/Rest/EventRestController.php:133
 msgid "The event could not be saved because its details are invalid."
 msgstr ""
 

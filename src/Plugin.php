@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents;
 
 use MiMe\WPSimpleEvents\Admin\EventMetaBox;
+use MiMe\WPSimpleEvents\Admin\EventCategoryColorController;
 use MiMe\WPSimpleEvents\Admin\EventDuplicateController;
 use MiMe\WPSimpleEvents\Admin\EventListTable;
 use MiMe\WPSimpleEvents\Admin\EventMaintenanceController;
@@ -107,6 +108,7 @@ final class Plugin {
 		$occurrence_delete        = new OccurrenceLifecycleController();
 		$occurrence_revisions     = new OccurrenceRevisionController();
 		$event_meta_box           = new EventMetaBox();
+		$event_category_colors    = new EventCategoryColorController();
 		$event_list_table         = new EventListTable();
 		$event_maintenance        = new EventMaintenanceController();
 		$event_duplicates         = new EventDuplicateController();
@@ -219,6 +221,7 @@ final class Plugin {
 		$occurrence_revisions->register();
 
 		$event_meta_box->register();
+		$event_category_colors->register();
 		$event_list_table->register();
 		$event_maintenance->register();
 		$event_duplicates->register();

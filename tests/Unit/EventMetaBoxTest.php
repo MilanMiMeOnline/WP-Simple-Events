@@ -11,6 +11,9 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Admin\EventMetaBox;
 use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Content\EventCategoryMeta;
+use MiMe\WPSimpleEvents\Content\EventTaxonomies;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Application\RecurrenceScheduleOwnership;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -65,6 +68,53 @@ final class EventMetaBoxTest extends TestCase {
 
 		self::assertStringContainsString(
 			'data-wpse-schedule-owner="recurrence"',
+			$this->render()
+		);
+	}
+
+	/** Assigned colored categories and current custom intent are clear in the editor. */
+	public function test_color_editor_lists_only_assigned_colored_categories(): void {
+		WordPressState::add_term(
+			new \WP_Term(
+				array(
+					'term_id'  => 7,
+					'name'     => 'Concerts',
+					'taxonomy' => EventTaxonomies::CATEGORY,
+				)
+			),
+			'https://example.com/concerts'
+		);
+		WordPressState::add_term(
+			new \WP_Term(
+				array(
+					'term_id'  => 9,
+					'name'     => 'Meetups',
+					'taxonomy' => EventTaxonomies::CATEGORY,
+				)
+			),
+			'https://example.com/meetups'
+		);
+		WordPressState::set_post_terms( 42, EventTaxonomies::CATEGORY, array( 7, 9 ) );
+		WordPressState::update_term_meta( 7, EventCategoryMeta::COLOR, '#AABBCC' );
+		WordPressState::update_post_meta( 42, EventMeta::COLOR_MODE, EventColorMode::CATEGORY->value );
+		WordPressState::update_post_meta( 42, EventMeta::DISPLAY_CATEGORY, 7 );
+
+		$html = $this->render();
+
+		self::assertStringContainsString( 'id="wpse-color-mode"', $html );
+		self::assertMatchesRegularExpression( '/value="category"\s+selected="selected"/', $html );
+		self::assertStringContainsString( 'Concerts (#aabbcc)', $html );
+		self::assertStringNotContainsString( 'Meetups (', $html );
+		self::assertMatchesRegularExpression( '/value="7"\s+selected="selected"/', $html );
+	}
+
+	/** A removed category source is explained and remains a safe fallback. */
+	public function test_color_editor_warns_when_the_selected_category_is_unavailable(): void {
+		WordPressState::update_post_meta( 42, EventMeta::COLOR_MODE, EventColorMode::CATEGORY->value );
+		WordPressState::update_post_meta( 42, EventMeta::DISPLAY_CATEGORY, 99 );
+
+		self::assertStringContainsString(
+			'The previously selected color category is no longer assigned or has no valid color.',
 			$this->render()
 		);
 	}

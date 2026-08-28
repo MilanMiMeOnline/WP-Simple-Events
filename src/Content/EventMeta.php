@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace MiMe\WPSimpleEvents\Content;
 
 use MiMe\WPSimpleEvents\Domain\EventStatus;
+use MiMe\WPSimpleEvents\Domain\EventColorMode;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceAggregateJsonCodec;
 
 /**
@@ -36,6 +37,9 @@ final class EventMeta {
 	public const COVERAGE_THROUGH    = '_wpse_occurrence_coverage_through';
 	public const COVERAGE_GENERATION = '_wpse_occurrence_coverage_generation';
 	public const RECURRENCE          = '_wpse_recurrence_definition';
+	public const COLOR_MODE          = '_wpse_color_mode';
+	public const COLOR               = '_wpse_event_color';
+	public const DISPLAY_CATEGORY    = '_wpse_display_category_id';
 
 	/**
 	 * Register all event meta fields.
@@ -168,6 +172,46 @@ final class EventMeta {
 					'schema' => array(
 						'type' => 'string',
 						'enum' => EventStatus::values(),
+					),
+				),
+			),
+			self::COLOR_MODE          => $common + array(
+				'type'              => 'string',
+				'label'             => __( 'Event color mode', 'mime-simple-events-calendar' ),
+				'description'       => __( 'Automatic, component fallback, assigned category or custom event color.', 'mime-simple-events-calendar' ),
+				'default'           => EventColorMode::AUTOMATIC->value,
+				'sanitize_callback' => array( $sanitizer, 'color_mode' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type' => 'string',
+						'enum' => EventColorMode::values(),
+					),
+				),
+			),
+			self::COLOR               => $common + array(
+				'type'              => 'string',
+				'label'             => __( 'Custom event color', 'mime-simple-events-calendar' ),
+				'description'       => __( 'Optional normalized six-digit calendar background color.', 'mime-simple-events-calendar' ),
+				'default'           => '',
+				'sanitize_callback' => array( $sanitizer, 'color' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'    => 'string',
+						'pattern' => '^(?:|#[0-9a-fA-F]{6})$',
+					),
+				),
+			),
+			self::DISPLAY_CATEGORY    => $common + array(
+				'type'              => 'integer',
+				'label'             => __( 'Event display color category', 'mime-simple-events-calendar' ),
+				'description'       => __( 'Optional assigned colored event category selected for calendar presentation.', 'mime-simple-events-calendar' ),
+				'default'           => 0,
+				'sanitize_callback' => array( $sanitizer, 'term_id' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'    => 'integer',
+						'minimum' => 0,
+						'maximum' => 2_147_483_647,
 					),
 				),
 			),
