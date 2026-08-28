@@ -22,6 +22,7 @@ use MiMe\WPSimpleEvents\Application\EventPersistence;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRenderer;
 use MiMe\WPSimpleEvents\Blocks\EventFieldBlockRegistry;
 use MiMe\WPSimpleEvents\Blocks\EventCompositeBlockRenderer;
+use MiMe\WPSimpleEvents\CalendarExport\CalendarExportController;
 use MiMe\WPSimpleEvents\Calendar\CalendarAssets;
 use MiMe\WPSimpleEvents\Content\ContentRegistry;
 use MiMe\WPSimpleEvents\Divi\DiviIntegration;
@@ -178,6 +179,7 @@ final class Plugin {
 			occurrence_feature: $this->occurrence_routes,
 			occurrence_readiness: $occurrence_readiness
 		);
+		$calendar_export          = new CalendarExportController();
 		$archive_query            = new EventArchiveQuery(
 			occurrences: $occurrence_reads,
 			occurrence_feature: $this->occurrence_routes,
@@ -232,6 +234,7 @@ final class Plugin {
 		$event_rest->register();
 		$recurrence_editor->register();
 		$calendar_feed->register();
+		$calendar_export->register();
 		$frontend_assets->register();
 		$field_blocks->register_hooks();
 		$event_lists->register();

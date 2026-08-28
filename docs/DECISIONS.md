@@ -1826,3 +1826,37 @@ The optional calendar legend has three allowlisted states: `auto`, `show` and
 the same colors and otherwise shows the bounded set of colored public event
 categories. Show forces that legend and Hide suppresses it. Shortcode,
 Gutenberg, Elementor and Divi adapters expose the same setting and markup.
+
+## ADR-092: Calendar portability resolves one public snapshot and defaults local
+
+**Status:** Accepted
+
+The 0.7.0 action resolves one immutable public one-off or exact-occurrence
+snapshot before any provider formats it. A recurring series page, explicit
+recurring-series selection, cancelled event, protected post or invalid projection
+cannot fall back to another event or inferred next occurrence. This preserves the
+established public presentation boundary and keeps recurrence expansion off
+visitor requests.
+
+The local standards-based ICS download is the only default provider. Google and
+Outlook compose adapters are deliberate author opt-ins because clicking them
+discloses the bounded public snapshot to that named external service. The plugin
+does not contact either provider. Outlook's unauthenticated compose parameters do
+not have a stable official contract comparable to RFC 5545 or Google's documented
+one-off template link, so that adapter remains isolated, optional and explicitly
+covered by release interoperability tests.
+
+One event action uses a deterministic occurrence-derived UID, UTC timed values,
+local all-day dates, inclusive-to-exclusive all-day conversion, RFC escaping and
+UTF-8-safe 75-octet folding. Zero-duration events never receive an invented end.
+Cancelled snapshots emit neither UI nor a downloadable cancellation object;
+postponed snapshots remain truthful as tentative. The query endpoint accepts only
+GET/HEAD, re-resolves public eligibility and returns no-store attachment responses
+or a non-disclosing error.
+
+One-provider output is a direct action. Multiple providers use either native
+`details`/`summary` disclosure or a semantic action list without requiring
+JavaScript. Shortcode, Gutenberg, Elementor, Divi and the off-by-default native
+fallback reuse the same resolver, renderer, provider builders and scoped style
+variables. The complete normative behaviour and test matrix are recorded in
+`ADD-TO-CALENDAR-CONTRACT.md`.

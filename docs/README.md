@@ -17,6 +17,7 @@ for MiMe Simple Events and Calendar.
 
 - [Data contract](DATA-CONTRACT.md)
 - [Recurrence and occurrence contract](RECURRENCE-CONTRACT.md)
+- [Add to Calendar contract](ADD-TO-CALENDAR-CONTRACT.md)
 - [Public query contract](PUBLIC-QUERY-CONTRACT.md)
 - [Presentation contract](PRESENTATION-CONTRACT.md)
 - [Template contract](TEMPLATE-CONTRACT.md)
@@ -43,11 +44,12 @@ plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
 The current public release evidence is the
-[0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md). The
-[0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remains the
-normative historical evidence for the recurring-events contract retained by
-0.5.0. The post-release UX findings and their qualified maintenance candidate
-are documented in the
+[0.6.0 qualification and publication report](QA-REPORT-0.6.0.md). The
+[0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
+[0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the
+normative historical evidence for the builder and recurring-events contracts
+retained by 0.6.0. The post-release UX findings and their qualified maintenance
+candidate are documented in the
 [0.5.0 exploratory report](QA-REPORT-0.5.0-EXPLORATORY.md) and
 [0.5.1 release-candidate report](QA-REPORT-0.5.1.md). The frozen 0.6.0 filter and
 color baseline is recorded in the
@@ -58,9 +60,8 @@ interaction is qualified in [FCR-3 QA evidence](QA-REPORT-0.6.0-FCR-3.md).
 Builder parity, the color domain and public calendar integration are qualified
 in the [FCR-4](QA-REPORT-0.6.0-FCR-4.md),
 [FCR-5](QA-REPORT-0.6.0-FCR-5.md) and
-[FCR-6](QA-REPORT-0.6.0-FCR-6.md) reports. The exact locally qualified 0.6.0
-archive, upgrade journey and remaining hosted release gates are recorded in the
-[0.6.0 release-candidate report](QA-REPORT-0.6.0.md).
+[FCR-6](QA-REPORT-0.6.0-FCR-6.md) reports. The accepted 0.7.0 portability scope
+is frozen in the [Add to Calendar contract](ADD-TO-CALENDAR-CONTRACT.md).
 
 ## Releases and WordPress.org
 

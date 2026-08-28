@@ -990,6 +990,26 @@ RRULE in every case.
 6. Run the complete release matrix, update user/developer documentation and
    publish one reproducible 0.7.0 artifact.
 
+**Work package 1 status — complete on 2026-08-28.** ADR-092 and
+`ADD-TO-CALENDAR-CONTRACT.md` now freeze eligibility, stable occurrence identity,
+UTC timed and local all-day output, cancellation/zero-duration behaviour,
+RFC 5545 escaping and folding, the no-store public endpoint, provider privacy,
+no-JavaScript presentation, editor parity and the required test matrix. Local ICS
+is the only default; Google and best-effort Outlook compose links are explicit
+author opt-ins. No implementation is considered supported until the remaining
+work packages and 0.7.0 release qualification are complete.
+
+**Work package 2 status — implementation complete, qualification pending.** One
+request-local resolver now accepts only an active public one-off projection or
+one exact recurring-occurrence context, verifies its immutable identity and
+creates a bounded plain-text snapshot. The RFC 5545 builder emits stable UID,
+deterministic modification time, truthful scheduled/postponed status, UTC timed
+values, exclusive all-day ends and UTF-8-safe folded CRLF lines. A strict
+GET/HEAD query endpoint re-resolves every request, suppresses cancelled,
+protected, recurring-series, stale and corrupt state, and returns no-store
+attachments or non-disclosing 404/405 responses. Provider and end-to-end release
+qualification remains part of work packages 3–6.
+
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series
 pages never imply unsupported whole-series synchronization; protected content is

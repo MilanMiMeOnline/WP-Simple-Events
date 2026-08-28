@@ -1028,6 +1028,29 @@ if ( ! function_exists( 'get_the_excerpt' ) ) {
 	}
 }
 
+if ( ! function_exists( 'get_post_modified_time' ) ) {
+	/**
+	 * Return one deterministic canonical post-modified timestamp.
+	 *
+	 * @param string           $format    Requested date format.
+	 * @param bool             $gmt       Whether UTC was requested.
+	 * @param WP_Post|int|null $post      Post, post ID or null.
+	 * @param bool             $translate Whether localization was requested.
+	 * @return int|string|false
+	 */
+	function get_post_modified_time( string $format = 'U', bool $gmt = false, WP_Post|int|null $post = null, bool $translate = false ): int|string|false { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- WordPress test double.
+		$post_object = $post instanceof WP_Post ? $post : ( is_int( $post ) ? WordPressState::post( $post ) : null );
+
+		if ( ! $post_object instanceof WP_Post || ! $gmt || 'U' !== $format || $translate ) {
+			return false;
+		}
+
+		$timestamp = strtotime( $post_object->post_modified_gmt . ' UTC' );
+
+		return false === $timestamp ? false : $timestamp;
+	}
+}
+
 if ( ! function_exists( 'post_password_required' ) ) {
 	/**
 	 * Treat every configured password as locked in isolated tests.

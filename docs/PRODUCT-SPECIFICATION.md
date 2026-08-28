@@ -1,8 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 27 August 2026
-**Current public release:** 0.5.0 with optional native Divi 5 integration
+**Last reviewed:** 28 August 2026
+**Current public release:** 0.6.0 with optional Elementor and native Divi 5 integrations
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -567,11 +567,10 @@ The version 1 product contract is satisfied when:
 ## 21. Post-version-1 roadmap boundary
 
 Future work is prioritized in [ROADMAP.md](ROADMAP.md). The next development
-cycle closes the post-0.5 exploratory maintenance increment, then improves public
-filter discoverability and deterministic calendar colors, then adds bounded
-one-way Add to Calendar components before a feature-frozen 1.0 release candidate.
-The calendar action remains roadmap scope until its specification, tests and
-release are complete.
+cycle implements bounded one-way Add to Calendar components before a
+feature-frozen 1.0 release candidate. The action follows
+[ADD-TO-CALENDAR-CONTRACT.md](ADD-TO-CALENDAR-CONTRACT.md) and remains roadmap
+scope until its implementation, tests and 0.7.0 release are complete.
 
 Recurrence already follows the accepted occurrence model, migration design and
 explicit series/occurrence editing contract in ADR-044. Divi 5 compatibility

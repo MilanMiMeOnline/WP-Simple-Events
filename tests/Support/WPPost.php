@@ -70,19 +70,29 @@ if ( ! class_exists( 'WP_Post' ) ) {
 		public string $post_content;
 
 		/**
+		 * Canonical UTC modification instant.
+		 *
+		 * @var string
+		 */
+		public string $post_modified_gmt;
+
+		/**
 		 * Construct one deterministic post object.
 		 *
 		 * @param array<string, int|string> $data Post field overrides.
 		 */
 		public function __construct( array $data = array() ) {
-			$this->ID            = isset( $data['ID'] ) ? (int) $data['ID'] : 0;
-			$this->post_type     = isset( $data['post_type'] ) ? (string) $data['post_type'] : 'post';
-			$this->post_name     = isset( $data['post_name'] ) ? (string) $data['post_name'] : '';
-			$this->post_status   = isset( $data['post_status'] ) ? (string) $data['post_status'] : 'draft';
-			$this->post_password = isset( $data['post_password'] ) ? (string) $data['post_password'] : '';
-			$this->post_title    = isset( $data['post_title'] ) ? (string) $data['post_title'] : '';
-			$this->post_excerpt  = isset( $data['post_excerpt'] ) ? (string) $data['post_excerpt'] : '';
-			$this->post_content  = isset( $data['post_content'] ) ? (string) $data['post_content'] : '';
+			$this->ID                = isset( $data['ID'] ) ? (int) $data['ID'] : 0;
+			$this->post_type         = isset( $data['post_type'] ) ? (string) $data['post_type'] : 'post';
+			$this->post_name         = isset( $data['post_name'] ) ? (string) $data['post_name'] : '';
+			$this->post_status       = isset( $data['post_status'] ) ? (string) $data['post_status'] : 'draft';
+			$this->post_password     = isset( $data['post_password'] ) ? (string) $data['post_password'] : '';
+			$this->post_title        = isset( $data['post_title'] ) ? (string) $data['post_title'] : '';
+			$this->post_excerpt      = isset( $data['post_excerpt'] ) ? (string) $data['post_excerpt'] : '';
+			$this->post_content      = isset( $data['post_content'] ) ? (string) $data['post_content'] : '';
+			$this->post_modified_gmt = isset( $data['post_modified_gmt'] )
+				? (string) $data['post_modified_gmt']
+				: '2026-01-01 00:00:00';
 		}
 	}
 	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound

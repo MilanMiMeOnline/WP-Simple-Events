@@ -95,6 +95,8 @@ final class PluginTest extends TestCase {
 		self::assertIsCallable( HookRecorder::action( 'wp_enqueue_scripts' ) );
 		self::assertIsCallable( HookRecorder::action( 'rest_api_init' ) );
 		self::assertCount( 3, HookRecorder::actions( 'rest_api_init' ) );
+		self::assertCount( 2, HookRecorder::actions( 'query_vars' ) );
+		self::assertIsCallable( HookRecorder::action( 'template_redirect' ) );
 		self::assertIsCallable( HookRecorder::action( 'template_include' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_single_template' ) );
 		self::assertIsCallable( HookRecorder::action( 'wpse_render_archive_template' ) );
@@ -123,7 +125,7 @@ final class PluginTest extends TestCase {
 		$callback();
 
 		self::assertCount( 10, HookRecorder::actions( 'init' ) );
-		self::assertCount( 2, HookRecorder::actions( 'query_vars' ) );
+		self::assertCount( 3, HookRecorder::actions( 'query_vars' ) );
 		self::assertIsCallable( HookRecorder::action( 'wp' ) );
 		self::assertCount( 2, HookRecorder::actions( 'wp' ) );
 		self::assertIsCallable( HookRecorder::action( 'redirect_canonical' ) );
