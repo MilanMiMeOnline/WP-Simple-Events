@@ -3,7 +3,7 @@
 **Status:** implementation checkpoint qualified; interoperability and release
 qualification remain open
 
-**Reviewed:** 28 August 2026
+**Reviewed:** 29 August 2026
 
 ## Scope
 
@@ -31,7 +31,9 @@ The implementation passed:
   ESLint, Stylelint and npm audit with zero vulnerabilities;
 - the complete WordPress 6.9 smoke journey in a clean Playground installation,
   including registration, default-off settings, nonce-protected opt-in,
-  same-origin ICS output, protected-event suppression and cleanup;
+  same-origin ICS output, protected-event suppression and cleanup. GET, HEAD,
+  404 and 405 responses all prove the exact no-store/no-cache, legacy expiry,
+  `nosniff` and no-cookie contract;
 - the complete packaged browser matrix on WordPress 7.1/PHP 8.2: 30/30
   Playwright journeys, including public Add to Calendar output, Gutenberg
   registration and preview, one real draft save/reload, exact attribute recovery
@@ -88,10 +90,9 @@ found in the implemented checkpoint. Work packages 3 and 4 may proceed to host
 qualification.
 
 This report deliberately does not qualify 0.7.0 for release. Work package 5 must
-still verify real Apple Calendar import, Google and Outlook compose behaviour,
-Divi save-and-reload behaviour and cache/privacy headers. Work package 6 must
-then run the complete supported-version, Plugin Check, reproducible-package and
-publication gates.
+still verify real Apple Calendar import and the Google and Outlook compose
+handoffs. Work package 6 must then run the complete supported-version, Plugin
+Check, reproducible-package and publication gates.
 
 ## Local exploratory evidence
 
@@ -116,6 +117,15 @@ and dropdown layout were configured, saved and recovered after a full editor
 reload. The widget was removed and that cleanup was saved; Elementor was then
 deactivated again. The host returned to its original active-plugin state and no
 temporary widget remained.
+
+With the exact package still installed and Divi 5 active, its native Add to
+Calendar module was then placed on the existing local calendar page. A public
+multi-day event, ICS, Google, Outlook, dropdown layout and custom action label
+were configured. A full Visual Builder save and reload recovered the module,
+event, all three providers and custom label. The module was removed through
+Divi's native module action, the cleanup was saved and a second full reload
+proved that no temporary module remained. Existing calendar and event-list
+modules were not altered.
 
 The packaged browser matrix also exposed a history-restoration edge case outside
 the new component: a browser may restore checkbox state independently while

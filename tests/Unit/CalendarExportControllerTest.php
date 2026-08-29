@@ -43,8 +43,7 @@ final class CalendarExportControllerTest extends TestCase {
 		self::assertSame( 200, $response->status );
 		self::assertSame( 'text/calendar; charset=utf-8', $response->headers['Content-Type'] );
 		self::assertSame( 'attachment; filename="concert-2026-07-16.ics"', $response->headers['Content-Disposition'] );
-		self::assertSame( 'nosniff', $response->headers['X-Content-Type-Options'] );
-		self::assertStringContainsString( 'no-store', $response->headers['Cache-Control'] );
+		$this->assert_private_response_headers( $response );
 		self::assertStringStartsWith( "BEGIN:VCALENDAR\r\n", $response->body );
 		self::assertSame(
 			array(
@@ -72,6 +71,7 @@ final class CalendarExportControllerTest extends TestCase {
 		self::assertNotNull( $response );
 		self::assertSame( 200, $response->status );
 		self::assertSame( '', $response->body );
+		$this->assert_private_response_headers( $response );
 		self::assertSame(
 			array(
 				array(
@@ -113,7 +113,7 @@ final class CalendarExportControllerTest extends TestCase {
 			self::assertNotNull( $response );
 			self::assertSame( 404, $response->status );
 			self::assertSame( '', $response->body );
-			self::assertStringContainsString( 'no-store', $response->headers['Cache-Control'] );
+			$this->assert_private_response_headers( $response );
 		}
 
 		$missing = $controller->response(
@@ -126,6 +126,7 @@ final class CalendarExportControllerTest extends TestCase {
 
 		self::assertNotNull( $missing );
 		self::assertSame( 404, $missing->status );
+		$this->assert_private_response_headers( $missing );
 	}
 
 	/** Unsupported methods are rejected before any event lookup. */
@@ -142,6 +143,7 @@ final class CalendarExportControllerTest extends TestCase {
 		self::assertNotNull( $response );
 		self::assertSame( 405, $response->status );
 		self::assertSame( 'GET, HEAD', $response->headers['Allow'] );
+		$this->assert_private_response_headers( $response );
 		self::assertSame( array(), $provider->requests );
 	}
 
@@ -161,6 +163,18 @@ final class CalendarExportControllerTest extends TestCase {
 
 		$this->expectException( InvalidArgumentException::class );
 		new CalendarExportResponse( 200, array( 'X-Test' => "safe\r\nInjected: yes" ), '' );
+	}
+
+	/**
+	 * Assert the complete privacy and stale-cache prevention contract.
+	 *
+	 * @param CalendarExportResponse $response Endpoint response under test.
+	 */
+	private function assert_private_response_headers( CalendarExportResponse $response ): void {
+		self::assertSame( 'nosniff', $response->headers['X-Content-Type-Options'] );
+		self::assertSame( 'no-store, no-cache, must-revalidate, max-age=0', $response->headers['Cache-Control'] );
+		self::assertSame( 'no-cache', $response->headers['Pragma'] );
+		self::assertSame( 'Wed, 11 Jan 1984 05:00:00 GMT', $response->headers['Expires'] );
 	}
 
 	/** Return one deterministic public calendar snapshot. */

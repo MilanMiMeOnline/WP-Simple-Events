@@ -206,6 +206,19 @@ function requireCondition( condition, message ) {
 	}
 }
 
+function requirePrivateCalendarResponse( response, context ) {
+	requireCondition(
+		response.headers.get( 'cache-control' ) ===
+			'no-store, no-cache, must-revalidate, max-age=0' &&
+			response.headers.get( 'pragma' ) === 'no-cache' &&
+			response.headers.get( 'expires' ) ===
+				'Wed, 11 Jan 1984 05:00:00 GMT' &&
+			response.headers.get( 'x-content-type-options' ) === 'nosniff' &&
+			response.headers.getSetCookie().length === 0,
+		`${ context } omitted a privacy or stale-cache prevention header.`,
+	);
+}
+
 function requireExactlyOnce( body, marker, message ) {
 	requireCondition( body.split( marker ).length - 1 === 1, message );
 }
@@ -2747,10 +2760,7 @@ try {
 		calendarExport.response.headers.get( 'content-disposition' )?.endsWith( '.ics"' ),
 		'The public ICS export omitted its safe download filename.',
 	);
-	requireCondition(
-		calendarExport.response.headers.get( 'cache-control' )?.includes( 'no-store' ),
-		'The public ICS export can be stored by shared caches.',
-	);
+	requirePrivateCalendarResponse( calendarExport.response, 'The public ICS export' );
 	requireCondition(
 		calendarExport.body.startsWith( 'BEGIN:VCALENDAR\r\n' ) &&
 			calendarExport.body.includes( 'SUMMARY:Future smoke event' ) &&
@@ -2767,6 +2777,7 @@ try {
 			calendarExportHead.response.headers.get( 'content-type' )?.startsWith( 'text/calendar;' ),
 		'The public ICS HEAD response did not mirror the safe GET metadata.',
 	);
+	requirePrivateCalendarResponse( calendarExportHead.response, 'The public ICS HEAD response' );
 	const calendarExportPost = await requestPage( calendarExportUrl, { method: 'POST' } );
 	traceSmoke( 'validated public ICS method boundary' );
 	requireCondition(
@@ -2774,6 +2785,7 @@ try {
 			calendarExportPost.response.headers.get( 'allow' ) === 'GET, HEAD',
 		'The public ICS endpoint accepted a state-changing HTTP method.',
 	);
+	requirePrivateCalendarResponse( calendarExportPost.response, 'The public ICS method error' );
 
 	for ( const privateEventId of [ protectedCreate.data.id, draftCreate.data.id ] ) {
 		const privateCalendarExportUrl = new URL( calendarExportUrl );
@@ -2783,6 +2795,10 @@ try {
 		requireCondition(
 			privateCalendarExport.response.status === 404 && privateCalendarExport.body === '',
 			'The public ICS endpoint disclosed whether a non-public event exists.',
+		);
+		requirePrivateCalendarResponse(
+			privateCalendarExport.response,
+			'The public ICS non-public response',
 		);
 	}
 	traceSmoke( 'validated non-public ICS boundaries' );

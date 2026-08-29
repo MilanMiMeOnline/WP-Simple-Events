@@ -1038,9 +1038,13 @@ three-provider dropdown without 390 px overflow. A local native-template pass
 verified one-off, cancelled, series-root and exact-occurrence behaviour and left
 the opt-in disabled afterwards. Elementor Free additionally passed a real
 place/configure/save/reload/remove/save journey with ICS, Google and Outlook, and
-the host was restored with Elementor inactive. Real Apple import,
-Google/Outlook compose handoff, Divi save/reload evidence and cache/privacy
-header sampling remain before this package can close.
+the host was restored with Elementor inactive. Native Divi 5 likewise passed a
+real place/configure/save/reload/remove/save journey with an explicit multi-day
+event, all three providers and a custom label; a second reload proved the cleanup.
+GET, HEAD, non-public 404 and method-error 405 responses now assert the complete
+no-store/no-cache, expiry, `nosniff` and no-cookie contract in the clean WordPress
+smoke journey. Real Apple import and Google/Outlook compose handoff remain before
+this package can close.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series
