@@ -1,6 +1,6 @@
 # QA report — 0.7.0 bounded Add to Calendar portability
 
-**Status:** qualified release candidate; publication pending
+**Status:** published and independently verified
 
 **Reviewed:** 29 August 2026
 
@@ -163,4 +163,34 @@ dependency or reproducibility blocker remains. The candidate is locally
 qualified with the SHA-256 above. The independent hosted matrix and official
 Plugin Check passed, and the hosted archive is byte-identical. No release blocker
 remains; this exact candidate is authorized for GitHub and WordPress.org
-publication. Publication URLs and SVN revision remain to be recorded afterwards.
+publication.
+
+## Publication evidence
+
+The exact qualified candidate was published without changing its production
+contents:
+
+- GitHub tag and release:
+  <https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v0.7.0>;
+- WordPress.org SVN revision: `3673019`;
+- public plugin page:
+  <https://wordpress.org/plugins/mime-simple-events-calendar/>;
+- public versioned download:
+  <https://downloads.wordpress.org/plugin/mime-simple-events-calendar.0.7.0.zip>.
+
+Before the SVN commit, both prepared `trunk` and `tags/0.7.0` were compared
+recursively with `.release/mime-simple-events-calendar` and had no differing
+file. The first timestamp-based transfer was deliberately rejected by this check
+because normalized release timestamps and equal file sizes could conceal changed
+version bytes; the unpublished working copy was resynchronized with content
+checksums and both comparisons then passed.
+
+After WordPress.org committed revision `3673019`, the public versioned archive
+was downloaded, extracted and recursively compared with the qualified staging
+tree. All 377 paths were byte-identical. WordPress.org's own ZIP container has
+SHA-256
+`dcfae7e2ce4db5e0acdef81b00784d8be226de37ee4ece7bb9f6fea6e3cb4b7f`;
+the different container hash is expected because WordPress.org repackages the
+same files. Its extracted plugin header, `WPSE_VERSION` and stable tag all report
+0.7.0. After the normal post-commit cache window, the public WordPress.org plugin
+API also reported version 0.7.0 and the same versioned download URL.

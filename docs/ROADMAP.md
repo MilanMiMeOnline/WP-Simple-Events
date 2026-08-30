@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 28 August 2026
-**Current public release:** 0.6.0
-**Active phase:** Phase 6 — 0.7.0 bounded “Add to calendar”
+**Last reviewed:** 29 August 2026
+**Current public release:** 0.7.0
+**Active phase:** Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -16,8 +16,8 @@ Work proceeds in this order:
 
 1. maintain the released modern shared visitor filters and predictable
    event/category colors without expanding their query scope;
-2. implement bounded one-way “Add to calendar” actions as optional atomic
-   components without accepting import or synchronization scope;
+2. maintain the released bounded one-way “Add to calendar” actions as optional
+   atomic components without accepting import or synchronization scope;
 3. freeze the 1.x contracts and complete a feature-free 1.0 qualification cycle;
 4. reassess broader platform or event-management features only after 1.0 and
    only when their maintenance cost is justified.
@@ -946,11 +946,11 @@ editor documentation, changelog, screenshots and translation template are curren
 
 ### Status
 
-**Active after the verified 0.6.0 publication.** This is the only competitor-gap
-audit item with a strong visitor benefit and a lightweight contract that belongs
-before the 1.0 feature freeze.
+**Released on 2026-08-29.** This was the only competitor-gap audit item with a
+strong visitor benefit and a lightweight contract accepted before the 1.0
+feature freeze.
 
-The candidate is one-way portability, not synchronization:
+The release provides one-way portability, not synchronization:
 
 - a downloadable standards-compliant `.ics` snapshot for one public one-off
   event or one exact recurring occurrence;
@@ -996,8 +996,8 @@ UTC timed and local all-day output, cancellation/zero-duration behaviour,
 RFC 5545 escaping and folding, the no-store public endpoint, provider privacy,
 no-JavaScript presentation, editor parity and the required test matrix. Local ICS
 is the only default; Google and best-effort Outlook compose links are explicit
-author opt-ins. No implementation is considered supported until the remaining
-work packages and 0.7.0 release qualification are complete.
+author opt-ins. At this contract checkpoint, implementation support remained
+conditional on the work packages and release qualification now completed below.
 
 **Work package 2 status — complete on 2026-08-29.** One
 request-local resolver now accepts only an active public one-off projection or
@@ -1048,15 +1048,16 @@ builder as one new event; the final import was cancelled so no test event remain
 Google and Outlook received the complete multi-day snapshot up to their respective
 authentication boundaries, including visible description/URL and venue/address
 separators, while external-link isolation remained intact. The Divi module was
-removed, saved and absent after a full reload. Work package 6 is now the only open
-0.7.0 package.
+removed, saved and absent after a full reload. Work package 6 was the only open
+0.7.0 package at that checkpoint.
 
-**Work package 6 status — qualified; publication pending.** Version metadata,
+**Work package 6 status — complete on 2026-08-29.** Version metadata,
 public changelogs and user documentation describe the bounded one-event or
 exact-occurrence portability contract. The reproducible 0.7.0 package, supported
 WordPress/PHP matrix, official Plugin Check and all ten hosted CI jobs passed;
-the hosted ZIP is byte-identical to the local candidate. GitHub and WordPress.org
-publication plus their final public evidence are the only remaining gates.
+the hosted ZIP is byte-identical to the local candidate. GitHub release `v0.7.0`
+and WordPress.org SVN revision `3673019` are public. The extracted WordPress.org
+0.7.0 download is byte-identical to the qualified 377-path staging tree.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series

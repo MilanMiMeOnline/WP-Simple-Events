@@ -2,8 +2,7 @@
 
 **Status:** normative product and technical contract
 **Last reviewed:** 29 August 2026
-**Current release candidate:** 0.7.0 with bounded one-way Add to Calendar portability
-**Current public release:** 0.6.0 with optional Elementor and native Divi 5 integrations
+**Current public release:** 0.7.0 with bounded one-way Add to Calendar portability and optional Elementor/Divi 5 integrations
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
