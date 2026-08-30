@@ -1051,12 +1051,12 @@ separators, while external-link isolation remained intact. The Divi module was
 removed, saved and absent after a full reload. Work package 6 is now the only open
 0.7.0 package.
 
-**Work package 6 status — release candidate in qualification.** Version metadata,
-public changelogs and user documentation now describe the bounded one-event or
+**Work package 6 status — qualified; publication pending.** Version metadata,
+public changelogs and user documentation describe the bounded one-event or
 exact-occurrence portability contract. The reproducible 0.7.0 package, supported
-WordPress/PHP matrix, official Plugin Check, hosted CI result and publication
-evidence remain release gates; this status may become complete only after those
-exact artifacts agree.
+WordPress/PHP matrix, official Plugin Check and all ten hosted CI jobs passed;
+the hosted ZIP is byte-identical to the local candidate. GitHub and WordPress.org
+publication plus their final public evidence are the only remaining gates.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series

@@ -1,6 +1,6 @@
 # QA report — 0.7.0 bounded Add to Calendar portability
 
-**Status:** locally qualified release candidate; hosted CI and publication pending
+**Status:** qualified release candidate; publication pending
 
 **Reviewed:** 29 August 2026
 
@@ -52,6 +52,23 @@ The completed candidate passed:
 - 30/30 packaged Playwright journeys on WordPress 7.1/PHP 8.2;
 - the exact staged package on WordPress 6.9/PHP 8.2 and WordPress 7.1/PHP 8.2;
 - `git diff --check` and focused release metadata/content inspection.
+
+Hosted GitHub Actions run
+[`33327785189`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33327785189)
+independently passed on release commit
+`da659f1a547a86ecc0da73531e8b025fa12baeec`. Its ten successful jobs covered:
+
+- strict Composer and plugin QA on PHP 8.2, 8.3, 8.4 and 8.5;
+- JavaScript/CSS/build contracts and translation-catalogue verification;
+- the complete 30-journey browser-regression suite;
+- exact-package smoke tests on WordPress 6.9/PHP 8.2 and WordPress 7.1/PHP 8.2;
+- the pinned official WordPress Plugin Check action;
+- release archive creation and artifact upload.
+
+The hosted archive SHA-256 is
+`91f5d1c441fe175a4fcb89540e44f881b000269e8be9077dd38eb0dafd7b48de`
+and `cmp` confirmed that it is byte-for-byte identical to the locally qualified
+archive.
 
 The host WP-CLI 2.12 process emitted deprecations from its own bundled packages
 under local PHP 8.5 during catalogue generation. Generation and verification
@@ -139,14 +156,11 @@ implementation. The smoke harness cleanup is deterministic, and its single
 read-only retry applies only to an actual transport timeout; writes, HTTP
 failures, caller cancellation and repeated timeouts still fail immediately.
 
-## Senior QA review and remaining release gate
+## Senior QA review and release decision
 
 No local correctness, security, privacy, accessibility, compatibility,
 dependency or reproducibility blocker remains. The candidate is locally
-qualified with the SHA-256 above.
-
-This report does not yet authorize publication. The version commit must still
-pass all ten hosted GitHub Actions jobs, including PHP 8.2–8.5, both packaged
-WordPress smoke targets, the complete browser matrix, translation verification
-and the pinned official WordPress Plugin Check action. The hosted artifact must
-match the local checksum before GitHub and WordPress.org publication.
+qualified with the SHA-256 above. The independent hosted matrix and official
+Plugin Check passed, and the hosted archive is byte-identical. No release blocker
+remains; this exact candidate is authorized for GitHub and WordPress.org
+publication. Publication URLs and SVN revision remain to be recorded afterwards.
