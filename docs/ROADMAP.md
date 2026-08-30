@@ -1,7 +1,7 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 29 August 2026
+**Last reviewed:** 30 August 2026
 **Current public release:** 0.7.0
 **Active phase:** Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
 
@@ -1090,6 +1090,40 @@ candidate, not a place for late feature experiments.
    validation on `taranartos.be`, removing every temporary artifact immediately.
 8. Publish 0.9.0 on GitHub and WordPress.org, then reserve a defined observation
    window for real installation feedback and blocker fixes only.
+
+### 0.9.0 work packages
+
+1. **RC1 — Public contract freeze:** inventory the complete public surface,
+   define the 1.x compatibility/deprecation policy and guard source identities
+   against undocumented drift.
+2. **RC2 — Install, upgrade and lifecycle matrix:** prove clean install and every
+   supported released upgrade path, data retention, opt-in deletion, repair and
+   scheduled-maintenance behaviour.
+3. **RC3 — Security and privacy re-audit:** repeat the permission, REST, export,
+   stored-input, dependency and Plugin Check review against the frozen surface.
+4. **RC4 — Accessibility qualification:** execute keyboard, focus, semantic,
+   zoom, reflow, forced-colors and contrast journeys for native and supported
+   editor output.
+5. **RC5 — Performance budgets:** set realistic bounded fixtures and acceptance
+   budgets for archives, occurrences, filters, calendars and builder previews.
+6. **RC6 — New-user documentation:** rewrite installation, first event,
+   recurrence, filters/colors, builders, troubleshooting, privacy, ownership and
+   upgrade guidance around real user tasks.
+7. **RC7 — Destructive and production exploratory QA:** use disposable local
+   environments for mutation and `taranartos.be` only for reversible,
+   immediately cleaned validation.
+8. **RC8 — Final 0.9.0 qualification and publication:** freeze the candidate,
+   run the complete matrix, publish identical GitHub/WordPress.org artifacts and
+   begin the blocker-only observation window.
+
+**RC1 complete — 30 August 2026.** ADR-093 and
+`PUBLIC-COMPATIBILITY-CONTRACT.md` freeze the intended 1.x identities and
+extension boundaries. Stable fingerprints cover all sixteen Gutenberg and Divi
+saved schemas, while the generic Elementor inspector now covers the sixteenth
+Add to Calendar widget introduced in 0.7.0. The inventory tests, full repository
+gates and real WordPress 7.1/PHP 8.2 host inspection pass with official Elementor
+3.35.9 and 4.2.2 packages. Evidence and residual ownership are recorded in
+[QA-REPORT-0.9.0-RC1.md](QA-REPORT-0.9.0-RC1.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the

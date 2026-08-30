@@ -1,7 +1,7 @@
 # Divi 5 integration contract
 
-**Status:** accepted implementation contract; not yet public support
-**Target release:** 0.5.0
+**Status:** public support since 0.5.0; Add to Calendar parity since 0.7.0
+**Released:** 0.5.0 core integration; 0.7.0 sixteenth module
 **Qualified host floor/current package:** Divi 5.11.1
 **Last reviewed:** 27 August 2026
 
@@ -313,7 +313,7 @@ compatible.
 The final qualification matrix includes both automated and real-host evidence:
 
 - supported and unsupported Divi host detection;
-- all fifteen module metadata, registration, rendering and packaging contracts;
+- all sixteen module metadata, registration, rendering and packaging contracts;
 - administrator/editor/subscriber/anonymous preview authorization;
 - public, draft, private and password-protected explicit sources;
 - ordinary page and exact Theme Builder event/occurrence context;
@@ -346,7 +346,7 @@ No layout or preset was changed or saved.
 ### Real WordPress/Divi browser journeys
 
 1. Divi absent: plugin activation, native event editor and public components.
-2. Supported Divi: module category and all fifteen modules are discoverable.
+2. Supported Divi: module category and all sixteen modules are discoverable.
 3. Ordinary page: select a public event, modify controls, save, reload and compare
    frontend output.
 4. Theme Builder: temporary All Events body with current-context atomic/details
@@ -425,7 +425,7 @@ behaviour remains independently covered by the packaged browser regression.
 
 ## 11. Definition of done
 
-Divi 5 support may be advertised only when all fifteen modules pass ordinary-page
+Divi 5 support may be advertised only when all sixteen modules pass ordinary-page
 and Theme Builder journeys, exact recurrence remains correct, Divi absence is
 clean, no licensed code is distributed, all repository/release gates pass and the
 manual senior developer, security/privacy and senior QA reviews record no open P1

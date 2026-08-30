@@ -1860,3 +1860,22 @@ JavaScript. Shortcode, Gutenberg, Elementor, Divi and the off-by-default native
 fallback reuse the same resolver, renderer, provider builders and scoped style
 variables. The complete normative behaviour and test matrix are recorded in
 `ADD-TO-CALENDAR-CONTRACT.md`.
+
+## ADR-093: Version 1 freezes documented identities, not implementation classes
+
+**Status:** Accepted
+
+The 0.9 release-candidate cycle freezes the public WordPress content identities,
+shortcodes, saved Gutenberg block names and attributes, saved Elementor widget
+and control IDs, saved Divi module names and attributes, request variables,
+custom REST resources, documented plugin hooks and documented semantic CSS
+surface. Existing valid data and saved layouts keep their meaning throughout
+1.x. Additive optional fields remain possible when their defaults preserve old
+output; removal or repurposing is reserved for a later major version.
+
+Internal PHP classes, derived occurrence-table storage, maintenance cursors,
+editor-only transports, generated DOM IDs, third-party classes and undocumented
+markup are not public extension APIs. Security and correctness fixes may reject
+values that were already invalid under the normative contracts. The complete
+inventory, deprecation policy and change procedure live in
+`PUBLIC-COMPATIBILITY-CONTRACT.md` and are guarded against source drift.

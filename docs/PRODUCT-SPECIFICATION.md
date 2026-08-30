@@ -568,11 +568,11 @@ The version 1 product contract is satisfied when:
 
 ## 21. Post-version-1 roadmap boundary
 
-Future work is prioritized in [ROADMAP.md](ROADMAP.md). The next development
-cycle implements bounded one-way Add to Calendar components before a
-feature-frozen 1.0 release candidate. The action follows
-[ADD-TO-CALENDAR-CONTRACT.md](ADD-TO-CALENDAR-CONTRACT.md) and remains roadmap
-scope until its implementation, tests and 0.7.0 release are complete.
+Future work is prioritized in [ROADMAP.md](ROADMAP.md). Bounded one-way Add to
+Calendar components are released in 0.7.0. The active development cycle is the
+feature-frozen 0.9.0 release candidate: it freezes the public 1.x surface under
+[PUBLIC-COMPATIBILITY-CONTRACT.md](PUBLIC-COMPATIBILITY-CONTRACT.md) and adds no
+new product capability.
 
 Recurrence already follows the accepted occurrence model, migration design and
 explicit series/occurrence editing contract in ADR-044. Divi 5 compatibility

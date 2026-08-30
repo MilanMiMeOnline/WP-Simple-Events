@@ -39,6 +39,7 @@ function wpse_run_elementor_compat_inspection(): void {
 		'wpse-event-list',
 		'wpse-event-calendar',
 		'wpse-event-details',
+		'wpse-add-to-calendar',
 		'wpse-event-title',
 		'wpse-event-featured-image',
 		'wpse-event-date-time',
@@ -61,6 +62,24 @@ function wpse_run_elementor_compat_inspection(): void {
 	}
 
 	$control_contracts = array(
+		'wpse-add-to-calendar'       => array(
+			'event_id',
+			'provider_ics',
+			'provider_google',
+			'provider_outlook',
+			'layout',
+			'label',
+			'action_background',
+			'action_text',
+			'action_border',
+			'menu_background',
+			'action_padding',
+			'action_radius',
+			'action_gap',
+			'menu_padding',
+			'calendar_action_border',
+			'calendar_action_typography',
+		),
 		'wpse-event-title'           => array( 'event_id', 'heading', 'link', 'text_color', 'spacing' ),
 		'wpse-event-featured-image'  => array( 'event_id', 'image_size', 'alt_mode', 'link', 'spacing' ),
 		'wpse-event-date-time'       => array( 'event_id', 'show_label', 'label', 'text_color', 'spacing' ),

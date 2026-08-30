@@ -9,6 +9,8 @@ for MiMe Simple Events and Calendar.
   technical scope.
 - [Product roadmap](ROADMAP.md) — prioritized future work and the next
   implementation plan.
+- [Public 1.x compatibility contract](PUBLIC-COMPATIBILITY-CONTRACT.md) — stable
+  identities, extension boundaries and deprecation policy.
 - [Development standards](DEVELOPMENT-STANDARDS.md) — implementation conventions.
 - [Decision log](DECISIONS.md) — intentional architectural and product changes.
 - [Contributing](../CONTRIBUTING.md) — local setup, testing and review workflow.
@@ -47,6 +49,8 @@ The current public release evidence is the
 [0.7.0 qualification and publication report](QA-REPORT-0.7.0.md); its detailed
 editor, provider and interoperability checkpoint is in
 [QA-REPORT-0.7.0-WP3-4.md](QA-REPORT-0.7.0-WP3-4.md). The
+[0.9.0 RC1 report](QA-REPORT-0.9.0-RC1.md) records the active release-candidate
+cycle's completed public compatibility freeze. The
 [0.6.0 filter and color release report](QA-REPORT-0.6.0.md),
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the
