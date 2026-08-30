@@ -38,3 +38,11 @@ Both output directories are generated and ignored by Git. Do not edit their cont
 ## Release acceptance
 
 Do not publish a candidate unless all local gates, both WordPress smoke targets and the official CI Plugin Check job are green. Record dependency findings, compatibility exceptions and any intentionally deferred issue in the QA report before distribution.
+
+## Public release notes
+
+1. Copy `docs/RELEASE-NOTES-TEMPLATE.md` and replace every placeholder with verified release information.
+2. Describe user-visible outcomes in plain language and keep the established `Highlights` and `Safety and compatibility` sections.
+3. Keep test counts, CI job lists, commit hashes, checksums and other qualification evidence in the matching QA report, not in the public GitHub release description.
+4. Link to the tagged `CHANGELOG.md` for the complete technical record.
+5. Re-read the rendered GitHub release before publishing and confirm that no template instruction or placeholder remains.

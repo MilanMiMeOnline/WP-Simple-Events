@@ -33,6 +33,14 @@ const wpEnvConfig = await readFile(
 	new URL( '../.wp-env.json', import.meta.url ),
 	'utf8',
 );
+const releaseProcess = await readFile(
+	new URL( '../docs/RELEASE-PROCESS.md', import.meta.url ),
+	'utf8',
+);
+const releaseNotesTemplate = await readFile(
+	new URL( '../docs/RELEASE-NOTES-TEMPLATE.md', import.meta.url ),
+	'utf8',
+);
 const wordpressOrgAssets = new URL( '../.wordpress-org/', import.meta.url );
 
 test( 'keeps non-PHP dependency trees optional for PHP-only CI jobs', () => {
@@ -133,5 +141,29 @@ test( 'keeps six screenshot captions synchronized with the image set', () => {
 			Number.parseInt( match[ 1 ], 10 ),
 		),
 		[ 1, 2, 3, 4, 5, 6 ],
+	);
+} );
+
+test( 'keeps public GitHub release notes consistent and user-facing', () => {
+	assert.match(
+		releaseProcess,
+		/`docs\/RELEASE-NOTES-TEMPLATE\.md`/,
+	);
+	assert.match(
+		releaseNotesTemplate,
+		/^## MiMe Simple Events and Calendar \{VERSION\}$/m,
+	);
+	assert.match( releaseNotesTemplate, /^### Highlights$/m );
+	assert.match(
+		releaseNotesTemplate,
+		/^### Safety and compatibility$/m,
+	);
+	assert.match(
+		releaseNotesTemplate,
+		/See \[CHANGELOG\.md\]\(https:\/\/github\.com\/MilanMiMeOnline\/WP-Simple-Events\/blob\/v\{VERSION\}\/CHANGELOG\.md\)/,
+	);
+	assert.match(
+		releaseNotesTemplate,
+		/Do not publish test counts, CI job lists, commit hashes, checksums/,
 	);
 } );
