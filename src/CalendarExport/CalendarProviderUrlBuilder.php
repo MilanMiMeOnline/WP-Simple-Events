@@ -48,8 +48,8 @@ final class CalendarProviderUrlBuilder {
 			'action'   => 'TEMPLATE',
 			'text'     => $this->bounded( $snapshot->title, 200 ),
 			'dates'    => $this->google_dates( $snapshot ),
-			'details'  => $this->bounded( $snapshot->description, 1_000 ),
-			'location' => $this->bounded( $snapshot->location, 300 ),
+			'details'  => $this->bounded( $this->external_text( $snapshot->description, ' - ' ), 1_000 ),
+			'location' => $this->bounded( $this->external_text( $snapshot->location, ', ' ), 300 ),
 		);
 
 		if ( $this->iana_timezone( $snapshot->date_range->timezone() ) ) {
@@ -78,8 +78,8 @@ final class CalendarProviderUrlBuilder {
 			'enddt'    => $range->all_day()
 				? $this->exclusive_all_day_end( $range->end_local(), $range->timezone(), 'Y-m-d' )
 				: gmdate( 'Y-m-d\TH:i:s\Z', $range->end_utc() ),
-			'body'     => $this->bounded( $snapshot->description, 1_000 ),
-			'location' => $this->bounded( $snapshot->location, 300 ),
+			'body'     => $this->bounded( $this->external_text( $snapshot->description, ' - ' ), 1_000 ),
+			'location' => $this->bounded( $this->external_text( $snapshot->location, ', ' ), 300 ),
 		);
 
 		if ( $range->all_day() ) {
@@ -129,6 +129,26 @@ final class CalendarProviderUrlBuilder {
 	 */
 	private function iana_timezone( string $timezone ): bool {
 		return false !== ( new DateTimeZone( $timezone ) )->getLocation();
+	}
+
+	/**
+	 * Replace snapshot line breaks with a visible URL-safe provider separator.
+	 *
+	 * WordPress removes encoded CR/LF sequences when a rendered href is escaped.
+	 * Normalizing them before URL construction prevents adjacent fields from being
+	 * silently concatenated while the local ICS export keeps its semantic lines.
+	 *
+	 * @param string $value     Validated snapshot value.
+	 * @param string $separator Visible single-line separator.
+	 */
+	private function external_text( string $value, string $separator ): string {
+		$value = str_replace( array( "\r\n", "\r" ), "\n", $value );
+		$parts = array_filter(
+			array_map( 'trim', explode( "\n", $value ) ),
+			static fn( string $part ): bool => '' !== $part
+		);
+
+		return implode( $separator, $parts );
 	}
 
 	/**

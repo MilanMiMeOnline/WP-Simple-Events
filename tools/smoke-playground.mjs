@@ -5,9 +5,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve as resolvePath } from 'node:path';
 
 import {
+	isTransientFetchTimeout,
 	pluginActionUrl,
 	pluginFileFromPath,
 	themeActivationUrl,
+	themeIsActive,
 } from './smoke-contract.mjs';
 
 const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
@@ -123,7 +125,29 @@ async function requestPage( url, options = {} ) {
 }
 
 async function fetchHealthyPage( url, options = {} ) {
-	const { body, redirectTarget, response } = await requestPage( url, options );
+	const method = String( options.method ?? 'GET' ).toUpperCase();
+	let result;
+
+	for ( let attempt = 0; attempt < 2; attempt += 1 ) {
+		try {
+			result = await requestPage( url, options );
+			break;
+		} catch ( error ) {
+			const retryable =
+				attempt === 0 &&
+				options.signal === undefined &&
+				[ 'GET', 'HEAD' ].includes( method ) &&
+				isTransientFetchTimeout( error );
+
+			if ( ! retryable ) {
+				throw error;
+			}
+
+			traceSmoke( `retrying one timed-out ${ method } request to ${ url }` );
+		}
+	}
+
+	const { body, redirectTarget, response } = result;
 
 	if ( redirectTarget ) {
 		throw new Error( `${ url } redirected to ${ redirectTarget }.` );
@@ -245,11 +269,16 @@ async function activateSmokeTheme( session, theme ) {
 	const body = await fetchHealthyPage( themesUrl, {
 		headers: { cookie: cookieHeader( session.cookieJar ) },
 	} );
+
+	if ( themeIsActive( body, theme ) ) {
+		return;
+	}
+
 	const activationUrl = themeActivationUrl( body, theme );
 
 	requireCondition(
 		activationUrl,
-		`The smoke theme ${ theme } is unavailable for activation.`,
+		`The smoke theme ${ theme } is unavailable for activation (${ body.match( new RegExp( `.{0,240}${ theme }.{0,400}`, 's' ) )?.[ 0 ] ?? 'no matching markup' }).`,
 	);
 
 	const response = await fetch( activationUrl, {
@@ -638,6 +667,104 @@ async function createPublishedEvent(
 	} );
 }
 
+async function purgeSmokePostCollection( session, resource ) {
+	for ( const status of [ 'publish', 'future', 'draft', 'pending', 'private', 'trash' ] ) {
+		while ( true ) {
+			const collection = await authenticatedRequest(
+				session,
+				`/wp-json/wp/v2/${ resource }?context=edit&status=${ status }&per_page=100`,
+			);
+
+			requireCondition(
+				collection.response.ok && Array.isArray( collection.data ),
+				`The isolated smoke environment could not inspect stale ${ status } ${ resource }.`,
+			);
+
+			if ( collection.data.length === 0 ) {
+				break;
+			}
+
+			for ( const event of collection.data ) {
+				const deletion = await authenticatedRequest(
+					session,
+					`/wp-json/wp/v2/${ resource }/${ event.id }?force=true`,
+					{ method: 'DELETE' },
+				);
+				requireCondition(
+					deletion.response.ok,
+					`The isolated smoke environment could not delete stale ${ resource } item ${ event.id }.`,
+				);
+			}
+		}
+	}
+}
+
+async function purgeSmokeTermCollection( session, resource ) {
+	while ( true ) {
+		const collection = await authenticatedRequest(
+			session,
+			`/wp-json/wp/v2/${ resource }?context=edit&hide_empty=false&per_page=100`,
+		);
+		requireCondition(
+			collection.response.ok && Array.isArray( collection.data ),
+			`The isolated smoke environment could not inspect stale ${ resource }.`,
+		);
+
+		if ( collection.data.length === 0 ) {
+			break;
+		}
+
+		for ( const term of collection.data ) {
+			const deletion = await authenticatedRequest(
+				session,
+				`/wp-json/wp/v2/${ resource }/${ term.id }?force=true`,
+				{ method: 'DELETE' },
+			);
+			requireCondition(
+				deletion.response.ok,
+				`The isolated smoke environment could not delete stale ${ resource } term ${ term.id }.`,
+			);
+		}
+	}
+}
+
+async function resetSmokePluginSettings( session ) {
+	const settingsUrl = 'http://localhost:8888/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings';
+	const settingsBody = await fetchHealthyPage( settingsUrl, {
+		headers: { cookie: cookieHeader( session.cookieJar ) },
+	} );
+	const nonce = settingsBody.match( /name="_wpnonce" value="([^"]+)"/ )?.[ 1 ];
+
+	requireCondition( nonce, 'The isolated smoke environment could not read the settings nonce.' );
+
+	const reset = await fetch( 'http://localhost:8888/wp-admin/options.php', {
+		method: 'POST',
+		headers: {
+			'content-type': 'application/x-www-form-urlencoded',
+			cookie: cookieHeader( session.cookieJar ),
+		},
+		body: new URLSearchParams( {
+			option_page: 'wpse_settings',
+			action: 'update',
+			_wpnonce: nonce,
+			_wp_http_referer: '/wp-admin/edit.php?post_type=wpse_event&page=wpse-settings',
+			wpse_archive_slug: 'events',
+			wpse_archive_per_page: '10',
+			wpse_archive_default_period: 'upcoming',
+			wpse_show_event_timezone: '0',
+			wpse_show_native_calendar_action: '0',
+			wpse_structured_data_enabled: '1',
+			wpse_delete_data_on_uninstall: '0',
+		} ),
+		redirect: 'manual',
+	} );
+
+	requireCondition(
+		reset.status === 302,
+		'The isolated smoke environment could not restore deterministic plugin settings.',
+	);
+}
+
 const smokeStartedOn = localDate( 0 );
 
 await prepareSmokeConfiguration();
@@ -654,6 +781,11 @@ try {
 	await waitForHealthyPage( 'http://localhost:8888/' );
 	const session = await authenticateAdministrator();
 	await ensurePackagedPluginIsActive( session );
+	await purgeSmokePostCollection( session, 'wpse_event' );
+	await purgeSmokePostCollection( session, 'pages' );
+	await purgeSmokeTermCollection( session, 'wpse_event_category' );
+	await purgeSmokeTermCollection( session, 'wpse_event_tag' );
+	await resetSmokePluginSettings( session );
 	const siteTimezoneUpdate = await authenticatedRequest(
 		session,
 		'/wp-json/wp/v2/settings',
@@ -1388,8 +1520,11 @@ try {
 	requireCondition( ! calendarTitles.includes( 'Protected smoke event' ), 'The calendar feed exposed a password-protected event.' );
 	requireCondition( ! calendarTitles.includes( 'Incomplete draft smoke event' ), 'The calendar feed exposed a draft event.' );
 
-	const futureFeedEvent = calendarFeed.data.find( ( event ) => event.id === eventId );
-	requireCondition( futureFeedEvent?.status === 'postponed', 'The calendar feed omitted the visible event status.' );
+	const futureFeedEvent = calendarFeed.data.find( ( event ) => event.title === 'Future smoke event' );
+	requireCondition(
+		futureFeedEvent?.status === 'postponed',
+		`The calendar feed omitted the visible event status (event ${ JSON.stringify( futureFeedEvent ) }).`,
+	);
 	requireCondition( futureFeedEvent?.extendedProps?.venue === 'Town Hall', 'The calendar feed omitted its public venue.' );
 	requireCondition(
 		futureFeedEvent?.extendedProps?.categories?.includes( 'calendar-smoke' ),
@@ -1406,8 +1541,8 @@ try {
 	const filteredCalendarFeed = await requestJson( filteredCalendarUrl );
 	requireCondition( filteredCalendarFeed.response.ok, 'The filtered calendar feed is unavailable.' );
 	requireCondition(
-		filteredCalendarFeed.data.length === 1 && filteredCalendarFeed.data[ 0 ].id === eventId,
-		'The calendar category filter returned unrelated events.',
+		filteredCalendarFeed.data.length === 1 && filteredCalendarFeed.data[ 0 ].title === 'Future smoke event',
+		`The calendar category filter returned unrelated events (${ JSON.stringify( filteredCalendarFeed.data ) }).`,
 	);
 
 	const archiveBody = await fetchHealthyPage( 'http://localhost:8888/events/' );
@@ -2713,7 +2848,7 @@ try {
 	);
 	requireCondition(
 		addToCalendarPage.response.status === 201,
-		'The add-to-calendar shortcode smoke page could not be created.',
+		`The add-to-calendar shortcode smoke page could not be created (status ${ addToCalendarPage.response.status }, response ${ JSON.stringify( addToCalendarPage.data ).slice( 0, 500 ) }).`,
 	);
 	const addToCalendarBody = await fetchHealthyPage( addToCalendarPage.data.link );
 	traceSmoke( 'rendered add-to-calendar page' );
@@ -2742,6 +2877,29 @@ try {
 	requireCondition(
 		addToCalendarBody.includes( 'wpse-frontend-css' ),
 		'The add-to-calendar shortcode stylesheet was not enqueued.',
+	);
+
+	const googleCalendarUrl = decodedHtmlAttribute(
+		addToCalendarBody,
+		/class="wpse-add-to-calendar-action wpse-add-to-calendar-google" href="([^"]+)"/,
+		'The add-to-calendar shortcode omitted its Google URL.',
+	);
+	const outlookCalendarUrl = decodedHtmlAttribute(
+		addToCalendarBody,
+		/class="wpse-add-to-calendar-action wpse-add-to-calendar-outlook" href="([^"]+)"/,
+		'The add-to-calendar shortcode omitted its Outlook URL.',
+	);
+	const googleCalendarQuery = new URL( googleCalendarUrl ).searchParams;
+	const outlookCalendarQuery = new URL( outlookCalendarUrl ).searchParams;
+	requireCondition(
+		googleCalendarQuery.get( 'details' )?.includes( ' - http://localhost:8888/' ) &&
+			googleCalendarQuery.get( 'location' ) === 'Town Hall, Main Square 1',
+		'The Google calendar handoff concatenated its public description or location fields.',
+	);
+	requireCondition(
+		outlookCalendarQuery.get( 'body' )?.includes( ' - http://localhost:8888/' ) &&
+			outlookCalendarQuery.get( 'location' ) === 'Town Hall, Main Square 1',
+		'The Outlook calendar handoff concatenated its public description or location fields.',
 	);
 
 	const calendarExportUrl = decodedHtmlAttribute(

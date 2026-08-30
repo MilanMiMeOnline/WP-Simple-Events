@@ -1030,7 +1030,7 @@ path. Disabling the setting or removing a deliberately placed builder component
 removes all calendar-action markup. Explicit uninstall cleanup now includes the
 new option.
 
-**Work package 5 status — in progress.** The exact packaged implementation has
+**Work package 5 status — complete on 2026-08-29.** The exact packaged implementation has
 passed 30/30 browser journeys on WordPress 7.1/PHP 8.2. Gutenberg has an
 executable real draft save/reload/removal journey; the public package test covers
 same-origin one-off output plus a JavaScript-free, keyboard-operated,
@@ -1043,8 +1043,13 @@ real place/configure/save/reload/remove/save journey with an explicit multi-day
 event, all three providers and a custom label; a second reload proved the cleanup.
 GET, HEAD, non-public 404 and method-error 405 responses now assert the complete
 no-store/no-cache, expiry, `nosniff` and no-cookie contract in the clean WordPress
-smoke journey. Real Apple import and Google/Outlook compose handoff remain before
-this package can close.
+smoke journey. Apple Calendar accepted a file produced by the production ICS
+builder as one new event; the final import was cancelled so no test event remained.
+Google and Outlook received the complete multi-day snapshot up to their respective
+authentication boundaries, including visible description/URL and venue/address
+separators, while external-link isolation remained intact. The Divi module was
+removed, saved and absent after a full reload. Work package 6 is now the only open
+0.7.0 package.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series

@@ -1,13 +1,13 @@
 # QA report — 0.7.0 Add to Calendar editor and native adapters
 
-**Status:** implementation checkpoint qualified; interoperability and release
-qualification remain open
+**Status:** editor, native-adapter and provider interoperability checkpoint
+qualified; release qualification remains open
 
 **Reviewed:** 29 August 2026
 
 ## Scope
 
-This checkpoint completes work packages 3 and 4 of the bounded 0.7.0 Add to
+This checkpoint completes work packages 3, 4 and 5 of the bounded 0.7.0 Add to
 Calendar roadmap. It adds one shared semantic action renderer and exposes it as:
 
 - `[wpse_add_to_calendar]` shortcode;
@@ -25,11 +25,12 @@ complete placement ownership and receive no globally injected action.
 
 The implementation passed:
 
-- `composer qa`: WordPress coding standards, PHPStan over 320 files, 771 PHPUnit
-  tests with 3,153 assertions and the Composer advisory audit;
-- `npm run qa`: deterministic production builds, 57 tooling-contract tests,
+- `composer qa`: WordPress coding standards, PHPStan over 320 files, 772 PHPUnit
+  tests with 3,184 assertions and the Composer advisory audit;
+- `npm run qa`: deterministic production builds, 60 tooling-contract tests,
   ESLint, Stylelint and npm audit with zero vulnerabilities;
-- the complete WordPress 6.9 smoke journey in a clean Playground installation,
+- the complete packaged WordPress 6.9 and 7.1 smoke journeys in clean Playground
+  installations,
   including registration, default-off settings, nonce-protected opt-in,
   same-origin ICS output, protected-event suppression and cleanup. GET, HEAD,
   404 and 405 responses all prove the exact no-store/no-cache, legacy expiry,
@@ -42,6 +43,13 @@ The implementation passed:
   opening, all three semantic actions and absence of horizontal overflow;
 - translation catalogue regeneration and verification;
 - `git diff --check`.
+
+The isolated WordPress 7.1 Playground intermittently stalled one unrelated
+read-only page request for longer than its 30-second fetch boundary. The harness
+now retries exactly once only for a real `TimeoutError` on GET/HEAD and never for
+writes, HTTP failures or caller-supplied abort signals. The complete 7.1 journey
+then passed; a sustained second timeout would still fail the gate. The official
+Plugin Check remains the pinned CI release job against this exact staging tree.
 
 ## Security and privacy review
 
@@ -86,13 +94,14 @@ policy object and participates in explicit multisite-aware uninstall cleanup.
 ## Senior QA review and residual work
 
 No correctness, security, privacy, accessibility or compatibility blocker was
-found in the implemented checkpoint. Work packages 3 and 4 may proceed to host
-qualification.
+found in the implemented checkpoint. Work packages 3, 4 and 5 are qualified.
 
-This report deliberately does not qualify 0.7.0 for release. Work package 5 must
-still verify real Apple Calendar import and the Google and Outlook compose
-handoffs. Work package 6 must then run the complete supported-version, Plugin
-Check, reproducible-package and publication gates.
+This report deliberately does not qualify 0.7.0 for release. Work package 6 must
+still run the complete supported-version, Plugin Check, reproducible-package,
+documentation and publication gates. Google and Outlook interoperability was
+verified up to each provider's authentication boundary; no test account was
+available to persist the prefilled event. Their complete transferred compose
+values remain visible in the destination URLs and are regression-tested.
 
 ## Local exploratory evidence
 
@@ -126,6 +135,25 @@ event, all three providers and custom label. The module was removed through
 Divi's native module action, the cleanup was saved and a second full reload
 proved that no temporary module remained. Existing calendar and event-list
 modules were not altered.
+
+The same Divi preview then exercised the external handoff with that explicit
+multi-day event. Google received the complete title, UTC boundaries, IANA
+timezone hints, description, canonical URL and comma-separated location before
+redirecting to its public sign-in/marketing boundary. Outlook preserved the
+complete subject, UTC boundaries, body and comma-separated location inside its
+authenticated compose redirect. Both external actions used `_blank`,
+`noopener noreferrer` and `no-referrer`; the local ICS action remained
+same-origin without external-link attributes. This journey exposed that encoded
+line breaks can be stripped by WordPress URL escaping and concatenate adjacent
+fields. Provider descriptions now use a visible ` - ` separator and locations
+use `, `, with a unit regression through the exact escaped renderer boundary and
+WordPress smoke assertions for both destinations.
+
+Apple Calendar accepted an ICS file generated directly by the production
+`IcsCalendarBuilder`, identified it as one new event and displayed the normal
+destination-calendar confirmation. The operation was cancelled before its final
+OK action, so no calendar event was stored; the generated file and generator were
+removed immediately afterwards.
 
 The packaged browser matrix also exposed a history-restoration edge case outside
 the new component: a browser may restore checkbox state independently while

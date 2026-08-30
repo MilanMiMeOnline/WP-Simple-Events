@@ -156,6 +156,10 @@ Provider URLs are HTTPS-only, bounded after encoding and generated from the same
 snapshot as ICS. External links open in a new tab with `noopener noreferrer` and
 no referrer. Provider links never include categories, tags, author data,
 unrendered post content, internal recurrence definitions or editor metadata.
+Before URL encoding, multi-line description values use a visible ` - ` separator
+and multi-line venue/address values use `, `. This preserves field boundaries
+after WordPress escapes a rendered `href`; local ICS retains semantic escaped
+newlines instead.
 
 ## 7. Shared presentation and editor controls
 

@@ -65,6 +65,35 @@ final class CalendarActionBuilderTest extends TestCase {
 		self::assertSame( 'Europe/Brussels', $query['etz'] );
 	}
 
+	/** External provider URLs retain visible separators after WordPress URL sanitization. */
+	public function test_keeps_description_and_location_parts_visibly_separated(): void {
+		$snapshot = $this->snapshot(
+			description: "Details at the event page.\r\n\r\nhttps://example.com/events/concert/",
+			location: "Town Hall\rMain Street 1"
+		);
+		$actions  = ( new CalendarActionBuilder() )->build(
+			$snapshot,
+			array( CalendarProvider::GOOGLE, CalendarProvider::OUTLOOK )
+		);
+
+		self::assertCount( 2, $actions );
+
+		foreach ( $actions as $action ) {
+			$url   = html_entity_decode(
+				esc_url( $action->url ),
+				ENT_QUOTES | ENT_HTML5,
+				'UTF-8'
+			);
+			$query = $this->query( $url );
+
+			self::assertSame(
+				'Details at the event page. - https://example.com/events/concert/',
+				CalendarProvider::GOOGLE === $action->provider ? $query['details'] : $query['body']
+			);
+			self::assertSame( 'Town Hall, Main Street 1', $query['location'] );
+		}
+	}
+
 	/** All-day external links use exclusive local ends without UTC date drift. */
 	public function test_builds_truthful_all_day_google_and_outlook_values(): void {
 		$range   = EventDateRange::from_local( '2026-10-24', '2026-10-25', true, 'Europe/Brussels' );
