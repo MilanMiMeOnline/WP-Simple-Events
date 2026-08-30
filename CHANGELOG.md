@@ -2,6 +2,41 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [0.7.0] - 2026-08-29
+
+### Added
+
+- Add a standards-compliant local `.ics` snapshot for one public one-off event or one exact recurring occurrence.
+- Add optional Google Calendar and best-effort Outlook compose actions that are enabled deliberately by the component author.
+- Add one shared Add to Calendar renderer exposed through `[wpse_add_to_calendar]`, Gutenberg, Elementor and native Divi 5 components.
+- Add an off-by-default native single-event fallback setting for sites that use the plugin-owned template.
+
+### Changed
+
+- Keep calendar portability atomic: template authors can place, configure, style or omit the complete action independently from other event details.
+- Preserve captured event timezones, exclusive all-day end dates, stable occurrence-aware identities and truthful scheduled or postponed snapshots.
+- Normalize provider descriptions and locations into visible plain-text separators so WordPress URL escaping cannot concatenate adjacent fields.
+- Keep recurring-series roots ineligible rather than implying unsupported whole-series synchronization; exact occurrence pages export only that occurrence.
+
+### Security and privacy
+
+- Re-resolve every export request through the public event boundary and reject drafts, private, password-protected, cancelled, stale, corrupt or ambiguous contexts without disclosure.
+- Return ICS downloads through a strict same-origin GET/HEAD endpoint with attachment, `nosniff`, no-store/no-cache and no-cookie headers.
+- Keep Google and Outlook disabled by default and make following their isolated links the visitor's explicit action; the plugin performs no background provider request.
+- Bound and escape event titles, descriptions, URLs, locations, labels, provider choices and component presentation settings for their exact output contexts.
+
+### Accessibility and compatibility
+
+- Provide semantic list and dropdown layouts with no-JavaScript operation, keyboard interaction, visible focus and narrow-screen reflow.
+- Share the same event resolution and output contract across native templates, shortcodes, Gutenberg, Elementor Free/Pro and Divi 5 without making a builder a dependency.
+- Preserve existing event, recurrence, filter, color, shortcode, block, widget, module and CSS identifiers.
+
+### Testing
+
+- Add deterministic unit, WordPress integration, smoke and browser coverage for RFC 5545 generation, provider handoff, public eligibility, cache privacy and editor save/reload/removal.
+- Verify the generated ICS with Apple Calendar and verify complete Google and Outlook compose payloads up to their authentication boundaries.
+- Requalify PHP 8.2 through 8.5, WordPress 6.9 and 7.1, official Plugin Check, dependency audits and byte-for-byte reproducible release archives.
+
 ## [0.6.0] - 2026-08-28
 
 ### Added

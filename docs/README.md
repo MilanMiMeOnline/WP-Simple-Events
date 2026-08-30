@@ -45,6 +45,9 @@ those completed backlogs.
 
 The current public release evidence is the
 [0.6.0 qualification and publication report](QA-REPORT-0.6.0.md). The
+[0.7.0 release-candidate report](QA-REPORT-0.7.0.md) records the complete local
+matrix; its detailed editor, provider and interoperability checkpoint is in
+[QA-REPORT-0.7.0-WP3-4.md](QA-REPORT-0.7.0-WP3-4.md). The
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the
 normative historical evidence for the builder and recurring-events contracts

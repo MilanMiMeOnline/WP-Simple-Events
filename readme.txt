@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.6.0
+Stable tag: 0.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -133,6 +133,15 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.7.0 =
+* Add an optional local ICS download for one public one-off event or one exact recurring occurrence.
+* Add opt-in Google Calendar and Outlook compose actions with isolated external links and clear snapshot semantics.
+* Add an atomic Add to Calendar shortcode, Gutenberg block, Elementor widget and native Divi 5 module over one shared renderer.
+* Add an off-by-default native single-event action that never overrides Elementor or Divi Theme Builder ownership.
+* Preserve captured timezones, exclusive all-day ends, stable occurrence identities and RFC 5545 text escaping and folding.
+* Keep exports public-only and fail closed for drafts, private, password-protected, cancelled, stale or ambiguous event contexts.
+* Return local calendar files through a same-origin no-store endpoint without visitor cookies, remote assets or background provider requests.
 
 = 0.6.0 =
 * Replace modifier-key multiple selects with semantic category/tag checkboxes, removable choices and clear or restore-default actions.

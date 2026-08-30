@@ -1,7 +1,8 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 28 August 2026
+**Last reviewed:** 29 August 2026
+**Current release candidate:** 0.7.0 with bounded one-way Add to Calendar portability
 **Current public release:** 0.6.0 with optional Elementor and native Divi 5 integrations
 **Maintainer:** MiMe
 

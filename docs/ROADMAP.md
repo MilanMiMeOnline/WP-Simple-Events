@@ -999,7 +999,7 @@ is the only default; Google and best-effort Outlook compose links are explicit
 author opt-ins. No implementation is considered supported until the remaining
 work packages and 0.7.0 release qualification are complete.
 
-**Work package 2 status — implementation complete, qualification pending.** One
+**Work package 2 status — complete on 2026-08-29.** One
 request-local resolver now accepts only an active public one-off projection or
 one exact recurring-occurrence context, verifies its immutable identity and
 creates a bounded plain-text snapshot. The RFC 5545 builder emits stable UID,
@@ -1007,10 +1007,10 @@ deterministic modification time, truthful scheduled/postponed status, UTC timed
 values, exclusive all-day ends and UTF-8-safe folded CRLF lines. A strict
 GET/HEAD query endpoint re-resolves every request, suppresses cancelled,
 protected, recurring-series, stale and corrupt state, and returns no-store
-attachments or non-disclosing 404/405 responses. Provider and end-to-end release
-qualification remains part of work packages 3–6.
+attachments or non-disclosing 404/405 responses. Its public, cache and packaged
+WordPress boundaries are qualified in the WP5 and release-candidate reports.
 
-**Work package 3 status — implementation complete, qualification pending.** One
+**Work package 3 status — complete on 2026-08-29.** One
 shared semantic renderer now produces the local ICS action and opt-in Google or
 Outlook compose actions from the same immutable snapshot. The
 `[wpse_add_to_calendar]` shortcode, dynamic `wpse/add-to-calendar` block,
@@ -1021,7 +1021,7 @@ and bounded pixel values server-side; Elementor maps its scoped controls to the
 same targets. Empty, cancelled, recurring-series and non-public sources emit no
 visitor wrapper.
 
-**Work package 4 status — implementation complete, qualification pending.** A
+**Work package 4 status — complete on 2026-08-29.** A
 single off-by-default setting may append the local ICS action to plugin-owned
 native single-event output. The decision occurs only after the native fallback
 has ownership: an applicable Elementor Theme Builder location returns before the
@@ -1050,6 +1050,13 @@ authentication boundaries, including visible description/URL and venue/address
 separators, while external-link isolation remained intact. The Divi module was
 removed, saved and absent after a full reload. Work package 6 is now the only open
 0.7.0 package.
+
+**Work package 6 status — release candidate in qualification.** Version metadata,
+public changelogs and user documentation now describe the bounded one-event or
+exact-occurrence portability contract. The reproducible 0.7.0 package, supported
+WordPress/PHP matrix, official Plugin Check, hosted CI result and publication
+evidence remain release gates; this status may become complete only after those
+exact artifacts agree.
 
 **Exit criteria:** an author can place, style or omit the action independently in
 every supported editor; one-off and exact-occurrence exports are truthful; series

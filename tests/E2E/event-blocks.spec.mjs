@@ -280,6 +280,9 @@ test( 'registers, serializes and previews atomic blocks in Gutenberg', async ( {
 test( 'saves, reloads and removes an Add to Calendar Gutenberg block', async ( {
 	page,
 } ) => {
+	// A real Gutenberg save, full editor reload and authenticated REST cleanup can
+	// exceed the suite's 30-second default on a cold hosted runner.
+	test.setTimeout( 60_000 );
 	await login( page );
 	await page.goto( '/wp-admin/post-new.php?post_type=page' );
 	await expect.poll( () => page.evaluate( () => Boolean( window.wp?.blocks ) ) ).toBe( true );
