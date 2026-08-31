@@ -43,6 +43,7 @@ Use the applicable items before every handoff. Record anything not tested and wh
 
 - [ ] Relevant PHP, JS and CSS gates pass.
 - [ ] Relevant unit, integration and end-to-end tests pass.
+- [ ] Clean install and every supported historical upgrade/lifecycle path pass.
 - [ ] Public versions match and the translation catalogue is current.
 - [ ] The release archive passes content, checksum, PHP, autoloader and reproducibility verification.
 - [ ] The packaged plugin passes the supported WordPress smoke matrix.

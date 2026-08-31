@@ -28,6 +28,15 @@ A separate Playwright suite exercises browser-only layout, responsive, keyboard 
 
 The calendar contract is protected by seven deterministic journeys: first-load/reload/resized seven-column geometry and controls, the configured mobile list view, readable normal/hover/pressed/focus/selected/disabled button states including forced-colors, a delayed REST feed, a failed feed with retained fallback, two independent calendar instances and recovery after an initially hidden host becomes visible. The disposable Playground runtime and database are removed before and after every suite to prevent state leakage between runs.
 
+The historical upgrade matrix downloads every public canonical package from
+0.2.3 onward, verifies its pinned SHA-256 value and upgrades representative
+content in a disposable WordPress 6.9/PHP 8.3 site. It proves canonical data and
+saved builder content remain intact, current derived storage becomes complete,
+scheduled work is unique, a missing occurrence table self-repairs, deactivation
+and reactivation retain data, default uninstall removes only executable jobs and
+explicit destructive uninstall respects its allowlist. The exact scope and
+manual pre-canonical handoff are normative in `UPGRADE-CONTRACT.md`.
+
 ### Manual exploratory QA
 
 Manual checks focus on UX, theme compatibility, responsive layouts, localization, accessibility and failure recovery. They complement rather than replace automated regression coverage.

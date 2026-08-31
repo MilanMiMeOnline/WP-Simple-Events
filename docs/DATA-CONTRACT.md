@@ -194,9 +194,17 @@ creation does not claim the schema version, so normal boot can retry safely.
 Deactivation flushes rewrite rules but does not delete events, metadata, terms,
 capabilities, options or the projection table.
 
+Deactivation and uninstall both clear the plugin-owned migration,
+inactive-generation cleanup and projection-renewal schedules plus the disposable
+renewal cursor. Scheduled callbacks are executable plugin state rather than
+retained user data and must not survive removal of the code that implements them.
+
 Uninstall also preserves all data by default. Destructive cleanup runs only when the per-site `wpse_delete_data_on_uninstall` option is strictly `true`, `1` or `'1'`. That path permanently deletes `wpse_event` posts (including their metadata, revisions, comments and term relationships through WordPress core), all terms in the two event taxonomies, the occurrence projection table, the explicitly allowlisted plugin-owned options and the capabilities granted to administrator/editor. Attachments are deliberately retained because featured media can be shared. Posts and terms are processed in batches of 100; direct SQL is confined to dropping the plugin-owned derived table. Options are removed last and remain if content or table cleanup cannot complete. In multisite, every site is visited in batches and its own opt-in is evaluated independently.
 
 Network-wide multisite activation is explicitly blocked in this version; individual sites can activate the plugin separately. This prevents a partial capability installation that would appear successful across a network.
+
+The complete supported historical paths and preservation invariants are defined
+in [UPGRADE-CONTRACT.md](UPGRADE-CONTRACT.md).
 
 ## Maintenance
 

@@ -73,6 +73,8 @@ final class Uninstaller {
 	 * Keep the destructive boundary immediately before cleanup.
 	 */
 	private function clean_current_site_if_enabled(): void {
+		ScheduledMaintenance::clear();
+
 		if ( ! $this->settings->delete_data() ) {
 			return;
 		}

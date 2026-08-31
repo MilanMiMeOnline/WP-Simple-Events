@@ -15,6 +15,7 @@ use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceTable;
+use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceProjectionState;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -54,14 +55,16 @@ final class InstallerTest extends TestCase {
 	 */
 	public function test_install_failure_does_not_claim_schema_or_grant_roles(): void {
 		$administrator = WordPressState::add_role( 'administrator' );
-		$table         = new FakeOccurrenceTable( install_result: false );
+		$table         = new FakeOccurrenceTable( install_result: false, exists_result: false );
+		$projection    = new FakeOccurrenceProjectionState();
 
-		$result = ( new Installer( $table ) )->install();
+		$result = ( new Installer( $table, $projection ) )->install();
 
 		self::assertFalse( $result );
 		self::assertFalse( WordPressState::has_option( Installer::VERSION_OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveRewriteManager::PENDING_OPTION ) );
 		self::assertSame( array(), $administrator->capabilities() );
+		self::assertSame( 0, $projection->reset_calls );
 	}
 
 	/**
@@ -76,6 +79,43 @@ final class InstallerTest extends TestCase {
 		self::assertTrue( $result );
 		self::assertTrue( WordPressState::option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
 		self::assertFalse( WordPressState::has_option( EventArchiveRewriteManager::PENDING_OPTION ) );
+	}
+
+	/** A missing derived table is rebuilt even when its stored schema is current. */
+	public function test_same_schema_missing_table_restarts_migration(): void {
+		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
+		WordPressState::set_option( OccurrenceIndexMigrationController::COMPLETE_OPTION, true );
+		$table            = new FakeOccurrenceTable( exists_result: false );
+		$projection_state = new FakeOccurrenceProjectionState();
+		$result           = ( new Installer( $table, $projection_state ) )->install();
+
+		self::assertTrue( $result );
+		self::assertSame( 1, $table->install_calls );
+		self::assertSame( 1, $projection_state->reset_calls );
+		self::assertFalse( WordPressState::has_option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
+		self::assertSame( 'events', WordPressState::option( EventArchiveRewriteManager::PENDING_OPTION ) );
+	}
+
+	/** The lightweight upgrade check repairs a missing current-schema table. */
+	public function test_maybe_upgrade_repairs_missing_current_schema_table(): void {
+		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
+		$table            = new FakeOccurrenceTable( exists_result: false );
+		$projection_state = new FakeOccurrenceProjectionState();
+
+		( new Installer( $table, $projection_state ) )->maybe_upgrade();
+
+		self::assertSame( 1, $table->install_calls );
+		self::assertSame( 1, $projection_state->reset_calls );
+	}
+
+	/** The lightweight upgrade check remains a no-op for a healthy schema. */
+	public function test_maybe_upgrade_skips_healthy_current_schema_table(): void {
+		WordPressState::set_option( Installer::VERSION_OPTION, Installer::SCHEMA_VERSION );
+		$table = new FakeOccurrenceTable();
+
+		( new Installer( $table ) )->maybe_upgrade();
+
+		self::assertSame( 0, $table->install_calls );
 	}
 
 	/** A schema upgrade schedules the currently configured route for one late flush. */

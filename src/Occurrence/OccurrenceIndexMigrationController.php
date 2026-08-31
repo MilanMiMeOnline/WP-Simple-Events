@@ -41,10 +41,16 @@ final class OccurrenceIndexMigrationController {
 	 * Ensure exactly one bounded worker is queued after schema installation.
 	 */
 	public function schedule(): void {
-		if ( Installer::SCHEMA_VERSION !== get_option( Installer::VERSION_OPTION )
-			|| $this->is_complete()
-			|| false !== wp_next_scheduled( self::HOOK )
-		) {
+		if ( Installer::SCHEMA_VERSION !== get_option( Installer::VERSION_OPTION ) ) {
+			return;
+		}
+
+		if ( $this->is_complete() ) {
+			wp_clear_scheduled_hook( self::HOOK );
+			return;
+		}
+
+		if ( false !== wp_next_scheduled( self::HOOK ) ) {
 			return;
 		}
 

@@ -41,3 +41,25 @@ Outcomes per event are aggregated as:
 One request inspects at most 50 event IDs ordered ascending. It includes publish, future, draft, pending and private states and excludes trash/auto-drafts. If a full batch is returned, the settings page presents a Continue button with a fresh nonce and cumulative bounded counters. It never starts an automatic redirect loop.
 
 Offset pagination can shift when another administrator inserts or deletes events during a multi-batch run. Repair is idempotent, so rerunning from the beginning safely covers any missed record. A later WP-CLI command can reuse the same repairer for very large catalogues without changing this data contract.
+
+## Automatic occurrence-storage repair
+
+The occurrence table is derived storage, not canonical event data. Activation
+and normal upgrade checks therefore verify both the stored schema version and
+the physical table. If the option claims the current schema but the table is
+missing, the installer recreates it through the same reviewed schema path.
+
+A successful recreation clears only per-event projection-generation markers and
+marks the occurrence index dirty so bounded migration can repopulate it from
+canonical event and recurrence metadata. Failure leaves the schema unclaimed and
+does not clear those markers. Canonical posts, terms, settings, recurrence data
+and saved builder content are never rewritten by this repair.
+
+## Scheduled-maintenance lifecycle
+
+Migration, stale-generation cleanup and coverage-renewal hooks are executable
+plugin state. Deactivation and uninstall clear every plugin-owned scheduled hook
+and the disposable renewal cursor. Reactivation may schedule the current bounded
+jobs again, without duplicates. This cleanup always happens on uninstall even
+when the administrator keeps persistent event data, because deleted plugin code
+cannot service orphaned callbacks.

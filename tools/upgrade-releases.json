@@ -1,0 +1,57 @@
+{
+  "core": {
+    "version": "6.9",
+    "url": "https://wordpress.org/wordpress-6.9.zip",
+    "sha256": "3e95777a3acb3b05d5cdbd31b16fc1e9b71122ebe3c1f18c6f53dee3eab0d111"
+  },
+  "releases": [
+    {
+      "version": "0.2.3",
+      "tag": "v0.2.3",
+      "schemaVersion": "1.0.0",
+      "sha256": "9a24dc4d21a498ddc72ca8980ec0249c99bd1ecd7a516e46b0065cc3d50c49ac"
+    },
+    {
+      "version": "0.2.4",
+      "tag": "v0.2.4",
+      "schemaVersion": "1.0.0",
+      "sha256": "5e3a30a97710d9d5b62416d760fd0717761dd76e5a5d76f3b19d4b9f65f55df4"
+    },
+    {
+      "version": "0.2.5",
+      "tag": "v0.2.5",
+      "schemaVersion": "1.0.0",
+      "sha256": "8505605679b81b8527760ec4f16f2d7abb44f6796b39ebb9b5aaef176da1c85c"
+    },
+    {
+      "version": "0.3.0",
+      "tag": "v0.3.0",
+      "schemaVersion": "1.0.0",
+      "sha256": "7c338dd7a207d2d257fab85205198348ee877092b0011ee29d786070b0be03f7"
+    },
+    {
+      "version": "0.4.0",
+      "tag": "v0.4.0",
+      "schemaVersion": "2.1.0",
+      "sha256": "5be06d352fa5c3a818999565738390593376c5cd2074e0c485948872eceb4ea3"
+    },
+    {
+      "version": "0.5.0",
+      "tag": "v0.5.0",
+      "schemaVersion": "2.1.0",
+      "sha256": "4b489c0c499cc86f4ba3ba21f821930be2a37a72d7415124820b042d3c69ecd0"
+    },
+    {
+      "version": "0.6.0",
+      "tag": "v0.6.0",
+      "schemaVersion": "2.1.0",
+      "sha256": "0b9660f2f017ced171183dffc99f9262b071c15b2454cce68be8d9eada4cb032"
+    },
+    {
+      "version": "0.7.0",
+      "tag": "v0.7.0",
+      "schemaVersion": "2.1.0",
+      "sha256": "91f5d1c441fe175a4fcb89540e44f881b000269e8be9077dd38eb0dafd7b48de"
+    }
+  ]
+}

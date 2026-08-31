@@ -28,11 +28,13 @@
     "lint:js": "eslint assets/src/js tools tests/E2E playwright.config.mjs --max-warnings=0",
     "lint:js:fix": "eslint assets/src/js tools tests/E2E playwright.config.mjs --fix",
     "pretest:e2e": "npm run build:release",
+    "pretest:upgrade": "npm run build:release",
     "qa": "npm run build && npm run test:tools && npm run lint:js && npm run lint:css && npm run audit",
     "test:e2e": "playwright test --config=playwright.config.mjs",
     "test:e2e:install": "playwright install chromium",
     "test:release": "node tools/test-release.mjs",
     "test:tools": "node --test tools/*.test.mjs",
+    "test:upgrade": "node tools/upgrade-playground.mjs",
     "test:smoke": "node tools/smoke-playground.mjs",
     "verify:release": "node tools/verify-release.mjs"
   },

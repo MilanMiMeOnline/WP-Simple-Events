@@ -6,6 +6,11 @@ Deactivating MiMe Simple Events and Calendar never deletes anything. Deleting th
 
 The checkbox is off by default and is saved through WordPress' administrator-only Settings API. Its warning names the irreversible data classes. Any missing, malformed or unchecked value means **retain data**.
 
+Uninstall always clears plugin-owned scheduled migration and maintenance hooks
+plus their disposable continuation cursor. Those callbacks cannot run after the
+plugin code is removed and are not retained user content. This cleanup is
+idempotent and applies whether persistent data is retained or deleted.
+
 ## Explicit cleanup scope
 
 After opt-in, WordPress plugin deletion removes:

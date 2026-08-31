@@ -12,6 +12,7 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Lifecycle\Deactivator;
+use MiMe\WPSimpleEvents\Lifecycle\ScheduledMaintenance;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceGenerationCleanupController;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalController;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass( Deactivator::class )]
+#[CoversClass( ScheduledMaintenance::class )]
 /**
  * Verifies that stale event routes are removed without touching persistent data.
  */

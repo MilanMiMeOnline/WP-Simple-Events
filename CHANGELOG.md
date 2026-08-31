@@ -2,6 +2,21 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- Recreate a missing derived occurrence table even when the stored schema option
+  already reports the current version, then rebuild it from canonical event data.
+- Clear plugin-owned scheduled maintenance on deactivation and every uninstall,
+  and remove a stale migration worker once migration is complete.
+
+### Testing
+
+- Qualify clean activation, all public upgrades from 0.2.3 through 0.7.0,
+  missing-table repair, deactivation/reactivation and both uninstall modes from
+  checksum-pinned packages in a disposable real WordPress matrix.
+
 ## [0.7.0] - 2026-08-29
 
 ### Added

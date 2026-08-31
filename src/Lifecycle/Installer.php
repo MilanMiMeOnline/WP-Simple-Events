@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Access\RoleManager;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceTable;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceTableLifecycle;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionStateLifecycle;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionStateResetter;
 use MiMe\WPSimpleEvents\Routing\EventArchiveRewriteManager;
 use MiMe\WPSimpleEvents\Routing\EventArchiveSettings;
 
@@ -26,20 +28,27 @@ final class Installer {
 	/**
 	 * Create the installer with an isolated occurrence-table lifecycle boundary.
 	 *
-	 * @param OccurrenceTableLifecycle $occurrences Derived occurrence table.
+	 * @param OccurrenceTableLifecycle           $occurrences      Derived occurrence table.
+	 * @param OccurrenceProjectionStateLifecycle $projection_state Disposable event projection state.
 	 */
 	public function __construct(
-		private readonly OccurrenceTableLifecycle $occurrences = new OccurrenceTable()
+		private readonly OccurrenceTableLifecycle $occurrences = new OccurrenceTable(),
+		private readonly OccurrenceProjectionStateLifecycle $projection_state = new OccurrenceProjectionStateResetter()
 	) {}
 
 	/**
 	 * Run all current installation tasks idempotently.
 	 */
 	public function install(): bool {
-		$schema_changed = self::SCHEMA_VERSION !== get_option( self::VERSION_OPTION );
+		$table_existed  = $this->occurrences->exists();
+		$schema_changed = self::SCHEMA_VERSION !== get_option( self::VERSION_OPTION ) || ! $table_existed;
 
 		if ( ! $this->occurrences->install() ) {
 			return false;
+		}
+
+		if ( ! $table_existed ) {
+			$this->projection_state->reset();
 		}
 
 		( new RoleManager() )->grant();
@@ -58,10 +67,10 @@ final class Installer {
 	}
 
 	/**
-	 * Run installation tasks only when the stored schema version differs.
+	 * Run installation tasks when the schema version or derived table differs.
 	 */
 	public function maybe_upgrade(): void {
-		if ( self::SCHEMA_VERSION === get_option( self::VERSION_OPTION ) ) {
+		if ( self::SCHEMA_VERSION === get_option( self::VERSION_OPTION ) && $this->occurrences->exists() ) {
 			return;
 		}
 

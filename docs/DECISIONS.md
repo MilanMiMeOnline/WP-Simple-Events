@@ -1879,3 +1879,35 @@ markup are not public extension APIs. Security and correctness fixes may reject
 values that were already invalid under the normative contracts. The complete
 inventory, deprecation policy and change procedure live in
 `PUBLIC-COMPATIBILITY-CONTRACT.md` and are guarded against source drift.
+
+## ADR-094: Release upgrades are qualified from immutable public packages
+
+**Status:** Accepted
+
+The 0.9 release-candidate matrix treats GitHub 0.2.3 and every later tagged
+release as an automatic in-place upgrade source because those packages share the
+canonical `mime-simple-events-calendar` directory and bootstrap identity. The
+WordPress.org automatic-update history starts at 0.2.4. Releases 0.2.1 and 0.2.2
+used the pre-approval `simple-events-by-mime` package identity and therefore keep
+their documented manual handoff: deactivate and remove the old plugin while
+retaining data, then install the current canonical package. They are not safe to
+activate alongside the canonical package because both register the same storage
+and WordPress identifiers.
+
+Qualification downloads each historical GitHub release ZIP, verifies its pinned
+published SHA-256 value and upgrades representative event, taxonomy, settings,
+builder, recurrence, filter and color data inside an isolated WordPress site.
+The current release package must create or retain the occurrence schema,
+complete its bounded index migration, preserve canonical content and saved
+layouts and schedule exactly its current maintenance hooks. Equivalent schema
+releases remain separate cases so packaging or boot regressions cannot hide
+behind a data-shape assumption. Downgrades and arbitrary development snapshots
+are not supported upgrade paths.
+
+Scheduled hooks are executable plugin state, not retained user data. Deactivation
+and uninstall both clear every plugin-owned migration, generation-cleanup and
+projection-renewal hook plus the disposable renewal cursor. Uninstall performs
+that cleanup on every site even when the administrator retains events, terms,
+settings, capabilities and the derived occurrence table. This prevents orphaned
+callbacks when deletion is invoked outside the ordinary deactivate-then-delete
+screen flow without weakening the default data-retention promise.

@@ -13,13 +13,18 @@ use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Lifecycle\Uninstaller;
 use MiMe\WPSimpleEvents\Lifecycle\UninstallSettings;
 use MiMe\WPSimpleEvents\Lifecycle\SiteDataCleaner;
+use MiMe\WPSimpleEvents\Lifecycle\ScheduledMaintenance;
 use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceTable;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceGenerationCleanupController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionRenewalController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use WP_Post;
 
 #[CoversClass( Uninstaller::class )]
+#[CoversClass( ScheduledMaintenance::class )]
 /**
  * Verifies the fail-safe opt-in boundary before cleanup starts.
  */
@@ -35,6 +40,11 @@ final class UninstallerTest extends TestCase {
 	 * Default uninstall preserves event data and plugin options.
 	 */
 	public function test_preserves_everything_without_explicit_opt_in(): void {
+		WordPressState::schedule_hook( OccurrenceIndexMigrationController::HOOK, time() + 30 );
+		WordPressState::schedule_hook( OccurrenceGenerationCleanupController::HOOK, time() + 30 );
+		WordPressState::schedule_hook( OccurrenceProjectionRenewalController::HOOK, time() + 30 );
+		WordPressState::set_option( OccurrenceProjectionRenewalController::OFFSET_OPTION, 3 );
+		WordPressState::set_option( 'wpse_archive_slug', 'retained-events' );
 		WordPressState::add_post(
 			new WP_Post(
 				array(
@@ -48,6 +58,11 @@ final class UninstallerTest extends TestCase {
 
 		self::assertInstanceOf( WP_Post::class, WordPressState::post( 30 ) );
 		self::assertSame( array(), WordPressState::deleted_post_ids() );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceGenerationCleanupController::HOOK ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceProjectionRenewalController::HOOK ) );
+		self::assertFalse( WordPressState::has_option( OccurrenceProjectionRenewalController::OFFSET_OPTION ) );
+		self::assertSame( 'retained-events', WordPressState::option( 'wpse_archive_slug' ) );
 	}
 
 	/**

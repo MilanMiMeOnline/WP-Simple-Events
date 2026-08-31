@@ -18,14 +18,22 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
 3. Regenerate translations with `npm run i18n:pot` and verify them with `npm run i18n:check`.
 4. Run `composer validate --strict`, `composer qa` and `npm run qa`.
 5. Run `npm run test:release`. This builds and verifies the candidate twice and fails when the two SHA-256 values differ.
-6. Run the packaged smoke journey on both supported WordPress versions:
+6. Run `npm run test:upgrade`. This rebuilds the candidate and qualifies clean
+   activation, every checksummed public release from 0.2.3 onward, derived-table
+   repair, deactivation/reactivation and both uninstall-retention modes against
+   the pinned WordPress 6.9 baseline.
+7. Run the packaged smoke journey on both supported WordPress versions:
 
    ```sh
    WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    WPSE_SMOKE_CORE='WordPress/WordPress#7.1' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    ```
 
-7. Require the GitHub Actions `Release archive and Plugin Check` job to pass. It runs the official WordPress Plugin Check action in strict mode against `.release/mime-simple-events-calendar` and uploads the verified zip and checksum as one CI artifact.
+8. Require both GitHub Actions `Release archive and Plugin Check` and
+   `Historical install and lifecycle matrix` jobs to pass. Plugin Check runs in
+   strict mode against `.release/mime-simple-events-calendar`; the matrix uses
+   the immutable package and core checksums in `tools/upgrade-releases.json`.
+   The release job uploads the verified zip and checksum as one CI artifact.
 
 ## Outputs
 
@@ -37,7 +45,10 @@ Both output directories are generated and ignored by Git. Do not edit their cont
 
 ## Release acceptance
 
-Do not publish a candidate unless all local gates, both WordPress smoke targets and the official CI Plugin Check job are green. Record dependency findings, compatibility exceptions and any intentionally deferred issue in the QA report before distribution.
+Do not publish a candidate unless all local gates, every historical upgrade,
+both WordPress smoke targets and the official CI Plugin Check job are green.
+Record dependency findings, compatibility exceptions and any intentionally
+deferred issue in the QA report before distribution.
 
 ## Public release notes
 

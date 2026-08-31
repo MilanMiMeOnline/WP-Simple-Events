@@ -1125,6 +1125,19 @@ gates and real WordPress 7.1/PHP 8.2 host inspection pass with official Elemento
 3.35.9 and 4.2.2 packages. Evidence and residual ownership are recorded in
 [QA-REPORT-0.9.0-RC1.md](QA-REPORT-0.9.0-RC1.md).
 
+**RC2 complete — 31 August 2026.** Immutable SHA-256 manifests and a disposable
+WordPress 6.9/PHP 8.3 matrix now qualify clean activation and every canonical
+public package from 0.2.3 through 0.7.0. Canonical event, taxonomy, setting and
+saved builder data survive each upgrade; current occurrence storage, migration,
+capabilities, rewrite state and unique scheduled jobs converge correctly. The
+same matrix proves missing-table repair, deactivation/reactivation, default
+retained uninstall and explicit destructive uninstall. It exposed and closed
+two lifecycle gaps: missing derived storage could be skipped when the schema
+option was current, and completed migrations could retain a stale worker. The
+contract, evidence and remaining boundaries are recorded in
+[UPGRADE-CONTRACT.md](UPGRADE-CONTRACT.md) and
+[QA-REPORT-0.9.0-RC2.md](QA-REPORT-0.9.0-RC2.md).
+
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
 only permitted changes before 1.0 are blocker fixes, translations and release

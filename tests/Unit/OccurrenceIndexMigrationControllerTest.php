@@ -54,6 +54,18 @@ final class OccurrenceIndexMigrationControllerTest extends TestCase {
 	}
 
 	/**
+	 * Completion self-heals a stale worker left by an older release or request.
+	 */
+	public function test_completed_migration_clears_a_stale_scheduled_worker(): void {
+		WordPressState::schedule_hook( OccurrenceIndexMigrationController::HOOK, time() + 30 );
+		WordPressState::set_option( OccurrenceIndexMigrationController::COMPLETE_OPTION, true );
+
+		( new OccurrenceIndexMigrationController() )->schedule();
+
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
+	}
+
+	/**
 	 * An empty batch completes migration without another worker.
 	 */
 	public function test_empty_worker_marks_migration_complete(): void {
