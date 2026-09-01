@@ -1161,8 +1161,11 @@ fixture was corrected to keep showing past events. FullCalendar controls now wra
 within the component and pagination links expose at least a 24-by-24 CSS-pixel
 target without changing saved content or ordinary desktop presentation. The
 focused accessibility suite passes 5/5 and the full packaged browser matrix
-passes 35/35. Its dependency, scope, manual boundaries and residual risks are
-recorded in [QA-REPORT-0.9.0-RC4.md](QA-REPORT-0.9.0-RC4.md).
+passes 35/35. Hosted run `33520990500` is 11/11 green on the reviewed commit,
+including strict Plugin Check, all PHP versions, both WordPress smokes, browser
+regressions and historical upgrades. Its dependency, scope, manual boundaries
+and residual risks are recorded in
+[QA-REPORT-0.9.0-RC4.md](QA-REPORT-0.9.0-RC4.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the

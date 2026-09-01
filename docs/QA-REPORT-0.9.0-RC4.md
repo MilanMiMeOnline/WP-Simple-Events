@@ -6,8 +6,8 @@
 fields, recurrence controls, no-JavaScript output and the supported editor output
 boundary.
 
-**Status:** complete locally; hosted Plugin Check and compatibility evidence must
-remain green on the reviewed commit.
+**Status:** complete. Local qualification and the complete hosted compatibility,
+browser and strict Plugin Check matrix pass on the reviewed commit.
 
 ## Outcome
 
@@ -93,6 +93,21 @@ their content exist only in the destroyed test environment.
 The staging archive still reports public version 0.7.0 because the feature-frozen
 0.9.0 version bump belongs to RC8. It is not published from this checkpoint.
 
+## Hosted acceptance evidence
+
+[GitHub Actions run 33520990500](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33520990500)
+completed successfully on reviewed commit `dedba243afe3e726d0578fb9fcfb5b09451b85fa`.
+All eleven hosted jobs passed:
+
+- translation catalogue;
+- complete 35-journey browser matrix;
+- WordPress 6.9 / PHP 8.2 packaged smoke;
+- WordPress 7.1 / PHP 8.2 packaged smoke;
+- historical upgrade matrix;
+- JavaScript and CSS quality gates;
+- PHP quality gates on PHP 8.2, 8.3, 8.4 and 8.5;
+- reproducible release archive and strict official WordPress Plugin Check.
+
 ## Residual non-blocking risks
 
 - Automated WCAG rules cannot prove complete conformance. A human VoiceOver or
@@ -100,8 +115,6 @@ The staging archive still reports public version 0.7.0 because the feature-froze
   review remain appropriate during RC7 exploratory qualification.
 - Host-editor shells and site themes can introduce their own accessibility
   defects outside plugin-owned markup and styling.
-- Official strict Plugin Check and the hosted PHP/browser/WordPress matrix must
-  pass again on the exact reviewed commit before RC4 handoff is final.
 - FullCalendar 6.1.21 remains the frozen 1.0 integration; ADR-096 places a
   backwards-compatible FullCalendar 7 investigation after 1.0.
 
