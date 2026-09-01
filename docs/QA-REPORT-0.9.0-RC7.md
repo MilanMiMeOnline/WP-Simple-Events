@@ -118,7 +118,7 @@ qualified host tests.
 | WordPress 7.1 / PHP 8.2-compatible packaged smoke | Pass |
 | Historical upgrade matrix | Pass, all eight supported paths |
 | Release verification and reproducibility | Pass, two byte-identical builds |
-| Candidate archive SHA-256 | `1d1fde3b1ad2a982fbc9803f8c7445a7fe05a66edd5deac4657db66900fe7174` |
+| Candidate archive SHA-256 | `2441186e06701bd3e357f13e3bc6f6252607fe9b426945e8715eedd7a216ccdf` |
 
 The staging archive still reports public version 0.7.0 because the feature-frozen
 0.9.0 version bump and publication belong to RC8. RC7 does not publish this

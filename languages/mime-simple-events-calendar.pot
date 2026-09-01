@@ -269,7 +269,7 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:297
 #: src/Divi/DiviEditorDataProvider.php:73
 #: src/Frontend/EventFieldRenderer.php:130
-#: src/Frontend/EventRenderer.php:161
+#: src/Frontend/EventRenderer.php:183
 #: src/Shortcode/CalendarShortcode.php:230
 msgid "Cancelled"
 msgstr ""
@@ -278,7 +278,7 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:298
 #: src/Divi/DiviEditorDataProvider.php:74
 #: src/Frontend/EventFieldRenderer.php:131
-#: src/Frontend/EventRenderer.php:162
+#: src/Frontend/EventRenderer.php:184
 #: src/Shortcode/CalendarShortcode.php:231
 #: assets/src/js/recurrence-editor.js:1687
 msgid "Postponed"
@@ -1253,7 +1253,7 @@ msgstr ""
 #: src/Divi/DiviEditorDataProvider.php:68
 #: src/Elementor/EventVenueWidget.php:50
 #: src/Frontend/EventFieldRenderer.php:153
-#: src/Frontend/EventRenderer.php:120
+#: src/Frontend/EventRenderer.php:128
 #: assets/src/js/event-fields-editor.js:108
 msgid "Location:"
 msgstr ""
@@ -2922,7 +2922,7 @@ msgstr ""
 msgid "Choose any that apply. Leave all unchecked to include every available option."
 msgstr ""
 
-#: src/Frontend/EventListRenderer.php:106
+#: src/Frontend/EventListRenderer.php:107
 #: src/Shortcode/CalendarShortcode.php:219
 msgid "No events match your selection."
 msgstr ""
