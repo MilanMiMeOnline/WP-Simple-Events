@@ -6,8 +6,9 @@
 feeds, Elementor/Divi event-option providers, recurrence expansion and the
 production release package.
 
-**Status:** local qualification complete. Hosted compatibility, upgrade and
-strict Plugin Check evidence is pending the reviewed commit.
+**Status:** complete. Local qualification and the complete hosted performance,
+compatibility, browser, upgrade and strict Plugin Check matrix pass on the
+reviewed commit.
 
 ## Outcome
 
@@ -116,8 +117,19 @@ The staging archive still reports public version 0.7.0 because the feature-froze
 
 ## Hosted acceptance evidence
 
-Pending the reviewed commit and complete GitHub Actions run. This section will be
-updated with the immutable run and commit identifiers before final handoff.
+[GitHub Actions run 33531969901](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33531969901)
+completed successfully on reviewed commit
+`11b62ee76789fe1631abfd6425b7efb176d6666b`. All twelve hosted jobs passed:
+
+- bounded performance budgets on WordPress 7.1 / PHP 8.2;
+- translation catalogue;
+- complete 35-journey browser matrix;
+- WordPress 6.9 / PHP 8.2 packaged smoke;
+- WordPress 7.1 / PHP 8.2 packaged smoke;
+- historical upgrade and lifecycle matrix;
+- JavaScript and CSS quality gates;
+- PHP quality gates on PHP 8.2, 8.3, 8.4 and 8.5; and
+- reproducible release archive plus strict official WordPress Plugin Check.
 
 ## Residual non-blocking risks
 
