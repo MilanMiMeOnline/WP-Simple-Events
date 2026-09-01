@@ -4,6 +4,19 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+### Performance
+
+- Add a disposable 500-series, 5,000-recurring-occurrence qualification suite
+  with hard query, result, payload and execution-time budgets for occurrence
+  windows, filtered lists, calendar feeds, builder selectors and recurrence
+  expansion.
+- Prime canonical event posts, metadata and taxonomy relationships once for each
+  bounded occurrence collection, reducing a 50-card list from 262 to 18 queries
+  in the reference environment without adding persistent caches or changing
+  public output.
+- Run the performance contract as an isolated WordPress 7.1/PHP 8.2 release gate
+  in CI; test fixtures are excluded from installable packages.
+
 ### Accessibility
 
 - Add automated WCAG A/AA checks for shared visitor components, native event

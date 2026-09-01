@@ -71,6 +71,31 @@ final class EventContextResolver {
 	}
 
 	/**
+	 * Prime canonical posts, metadata and taxonomy relationships for one bounded page.
+	 *
+	 * Public eligibility is still decided by resolve_public(); cache preparation
+	 * never substitutes for the repository's publication and password checks.
+	 *
+	 * @param int[] $event_ids Canonical event IDs from an authorized bounded page.
+	 */
+	public function prime_public( array $event_ids ): void {
+		$event_ids = array_values(
+			array_unique(
+				array_filter(
+					$event_ids,
+					static fn ( int $event_id ): bool => $event_id > 0
+				)
+			)
+		);
+
+		if ( array() === $event_ids ) {
+			return;
+		}
+
+		_prime_post_caches( $event_ids, true, true );
+	}
+
+	/**
 	 * Load and normalize one event only once for this resolver/request.
 	 *
 	 * @param int $event_id Event post ID.

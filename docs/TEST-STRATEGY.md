@@ -54,6 +54,24 @@ and reactivation retain data, default uninstall removes only executable jobs and
 explicit destructive uninstall respects its allowlist. The exact scope and
 manual pre-canonical handoff are normative in `UPGRADE-CONTRACT.md`.
 
+### Performance regressions
+
+The performance suite builds the exact release staging package and installs it
+with a test-only fixture plugin in a fresh WordPress 7.1/PHP 8.2 Playground. Its
+500 public series, 5,000 recurring occurrence rows, 20 categories and 40 tags
+exercise maximum-size occurrence, list, calendar and builder pages plus the
+largest supported recurrence generation horizon. The fixture validates its own
+publication, generation, coverage and public-query state before timing begins.
+
+Hard gates cover query counts, result bounds and serialized payload size; median
+PHP time over five requests is a deliberately broad WebAssembly-runtime backstop.
+The occurrence repository must remain exactly two queries. Shared collection
+presentation primes canonical post, metadata and taxonomy caches once per bounded
+page so list, archive and calendar output cannot regress to query-per-item growth.
+The normative dataset, budgets and interpretation rules are in
+`PERFORMANCE-BUDGETS.md`. The fixture and all generated content are excluded from
+the release archive and destroyed after every run.
+
 ### Manual exploratory QA
 
 Manual checks focus on UX, theme compatibility, responsive layouts, localization, accessibility and failure recovery. They complement rather than replace automated regression coverage.
@@ -73,4 +91,4 @@ Manual checks focus on UX, theme compatibility, responsive layouts, localization
 
 ## Release evidence
 
-A release candidate needs green CI, dependency audit, strict Plugin Check against the staging package, clean install/activation/deactivation tests, current translations, a reproducible verified archive, upgrade testing when applicable, supported-version matrix results and a completed QA checklist. Known limitations must be explicit.
+A release candidate needs green CI, dependency audit, strict Plugin Check against the staging package, clean install/activation/deactivation tests, current translations, a reproducible verified archive, upgrade testing when applicable, supported-version matrix results, bounded performance budgets and a completed QA checklist. Known limitations must be explicit.

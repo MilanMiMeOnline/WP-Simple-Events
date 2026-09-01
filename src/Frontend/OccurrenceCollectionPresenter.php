@@ -39,6 +39,12 @@ final readonly class OccurrenceCollectionPresenter {
 	 * @param OccurrencePage $page Exact authorized occurrence result page.
 	 */
 	public function present( OccurrencePage $page ): ?OccurrenceCollectionPage {
+		$this->events->prime_public(
+			array_map(
+				static fn ( OccurrenceReadModel $occurrence ): int => $occurrence->event_id,
+				$page->occurrences
+			)
+		);
 		$items = array();
 
 		foreach ( $page->occurrences as $occurrence ) {

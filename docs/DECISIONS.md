@@ -1973,3 +1973,27 @@ zoom, language, theme and supported-host inspection. Shared frontend renderers
 are audited once at their production output boundary; Elementor, Gutenberg and
 Divi remain responsible for their own editor shell while plugin-owned controls
 and previews retain focused host regressions.
+
+## ADR-098: Performance qualification uses bounded deterministic budgets
+
+**Status:** Accepted
+
+The 0.9 release candidate qualifies public read performance against an isolated
+500-series, 5,000-occurrence fixture with deterministic taxonomy assignments.
+The fixture plugin and its direct derived-row population are test infrastructure
+only and are excluded from every release package. Production storage and write
+contracts remain unchanged.
+
+Hard gates protect query counts, result ceilings and serialized output size.
+Median request execution time is also gated, but with deliberately broad ceilings
+because shared CI hardware is variable and WordPress hosting is not controlled by
+the plugin. The occurrence repository retains an exact two-query contract; shared
+rendering paths receive higher fixed ceilings that still reject query-per-result
+growth. Five measured requests follow one warm-up request so opcode and bootstrap
+noise do not dominate the result.
+
+No persistent public cache, transient or new index is introduced without an
+observed failing budget and a separate invalidation, privacy and upgrade review.
+Increasing a budget requires before/after evidence and a new decision; it may not
+be used as a convenience response to a failing gate. The normative scenarios and
+ceilings live in `PERFORMANCE-BUDGETS.md`.

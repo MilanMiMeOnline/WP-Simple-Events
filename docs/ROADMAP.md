@@ -1167,6 +1167,20 @@ regressions and historical upgrades. Its dependency, scope, manual boundaries
 and residual risks are recorded in
 [QA-REPORT-0.9.0-RC4.md](QA-REPORT-0.9.0-RC4.md).
 
+**RC5 complete — 1 September 2026.** A disposable 500-series,
+5,000-recurring-occurrence WordPress 7.1/PHP 8.2 fixture now enforces hard query,
+cardinality, payload and median Playground-time budgets across raw occurrence
+windows, filtered list/archive output, calendar REST feeds, shared builder
+selectors and the maximum recurrence horizon. The first representative run found
+a real occurrence-presentation N+1 path: a 50-card list used 262 queries. One
+bounded cache-prime now prepares canonical posts, metadata and taxonomy
+relationships before presentation; the qualified result uses 18 queries while a
+100-item calendar feed uses 17 and the raw repository retains its exact two-query
+contract. The fixture self-validates publication, active generation, coverage and
+public taxonomy filtering before measurement and never ships. Normative budgets
+and evidence are recorded in [PERFORMANCE-BUDGETS.md](PERFORMANCE-BUDGETS.md) and
+[QA-REPORT-0.9.0-RC5.md](QA-REPORT-0.9.0-RC5.md).
+
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
 only permitted changes before 1.0 are blocker fixes, translations and release

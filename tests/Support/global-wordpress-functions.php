@@ -1417,6 +1417,25 @@ if ( ! function_exists( 'update_object_term_cache' ) ) {
 	}
 }
 
+if ( ! function_exists( '_prime_post_caches' ) ) {
+	/**
+	 * Record deterministic post, metadata and taxonomy cache priming.
+	 *
+	 * @param int[] $ids               Post IDs.
+	 * @param bool  $update_term_cache Whether taxonomy relationships are primed.
+	 * @param bool  $update_meta_cache Whether post metadata is primed.
+	 */
+	function _prime_post_caches( array $ids, bool $update_term_cache = true, bool $update_meta_cache = true ): void { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WordPress test double.
+		if ( $update_meta_cache ) {
+			update_meta_cache( 'post', $ids );
+		}
+
+		if ( $update_term_cache ) {
+			update_object_term_cache( $ids, 'wpse_event' );
+		}
+	}
+}
+
 if ( ! function_exists( 'get_term_meta' ) ) {
 	/**
 	 * Read a deterministic term metadata value.

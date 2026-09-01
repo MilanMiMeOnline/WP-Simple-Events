@@ -31,6 +31,7 @@ use WP_Post;
 #[CoversClass( OccurrenceCollectionPresenter::class )]
 #[CoversClass( OccurrenceCollectionPage::class )]
 #[CoversClass( OccurrenceCollectionItem::class )]
+#[CoversClass( EventContextResolver::class )]
 /** Proves occurrence identity, cardinality and inherited fields survive presentation. */
 final class OccurrenceCollectionPresenterTest extends TestCase {
 	private const RECURRING_KEY = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
@@ -82,6 +83,24 @@ final class OccurrenceCollectionPresenterTest extends TestCase {
 			$page->items[1]->presentation->permalink
 		);
 		self::assertSame( array( $recurring ), $provider->requests );
+		self::assertSame(
+			array(
+				array(
+					'type' => 'post',
+					'ids'  => array( 41, 42 ),
+				),
+			),
+			WordPressState::meta_cache_calls()
+		);
+		self::assertSame(
+			array(
+				array(
+					'ids'       => array( 41, 42 ),
+					'post_type' => EventPostType::POST_TYPE,
+				),
+			),
+			WordPressState::object_term_cache_calls()
+		);
 
 		$output = ( new EventListRenderer() )->render_occurrences(
 			$page,

@@ -41,6 +41,17 @@ const releaseNotesTemplate = await readFile(
 	new URL( '../docs/RELEASE-NOTES-TEMPLATE.md', import.meta.url ),
 	'utf8',
 );
+const packageManifest = JSON.parse(
+	await readFile( new URL( '../package.json', import.meta.url ), 'utf8' ),
+);
+const performanceBudgets = await readFile(
+	new URL( '../docs/PERFORMANCE-BUDGETS.md', import.meta.url ),
+	'utf8',
+);
+const performanceRunner = await readFile(
+	new URL( './performance-playground.mjs', import.meta.url ),
+	'utf8',
+);
 const wordpressOrgAssets = new URL( '../.wordpress-org/', import.meta.url );
 
 test( 'keeps non-PHP dependency trees optional for PHP-only CI jobs', () => {
@@ -101,7 +112,27 @@ test( 'uses maintained Node 24 GitHub Actions without floating references', () =
 	);
 	assert.equal(
 		[ ...qualityWorkflow.matchAll( /node-version:\s*24/g ) ].length,
-		6,
+		7,
+	);
+} );
+
+test( 'keeps bounded performance budgets executable and hosted', () => {
+	assert.equal(
+		packageManifest.scripts[ 'test:performance' ],
+		'node tools/performance-playground.mjs',
+	);
+	assert.match( qualityWorkflow, /^  performance:$/m );
+	assert.match( qualityWorkflow, /npm run test:performance/ );
+	assert.match(
+		qualityWorkflow,
+		/WPSE_PERFORMANCE_CORE: WordPress\/WordPress#7\.1/,
+	);
+	assert.match( performanceBudgets, /500 published, password-free event series/ );
+	assert.match( performanceBudgets, /5,000 recurring occurrence rows/ );
+	assert.match( performanceRunner, /maximumQueries: 2/ );
+	assert.equal(
+		[ ...performanceRunner.matchAll( /maximumQueries: 24/g ) ].length,
+		2,
 	);
 } );
 

@@ -23,9 +23,15 @@ export default [
     },
   },
   {
-    files: [ 'tools/**/*.mjs', 'tests/E2E/**/*.mjs', 'playwright.config.mjs' ],
+    files: [
+      'tools/**/*.mjs',
+      'tests/E2E/**/*.mjs',
+      'tests/Performance/**/*.mjs',
+      'playwright.config.mjs',
+    ],
     languageOptions: {
       globals: {
+        AbortSignal: 'readonly',
         fetch: 'readonly',
         process: 'readonly',
       },

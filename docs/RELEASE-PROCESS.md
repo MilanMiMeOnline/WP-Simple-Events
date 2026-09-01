@@ -22,15 +22,19 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
    activation, every checksummed public release from 0.2.3 onward, derived-table
    repair, deactivation/reactivation and both uninstall-retention modes against
    the pinned WordPress 6.9 baseline.
-7. Run the packaged smoke journey on both supported WordPress versions:
+7. Run `npm run test:performance` to qualify the bounded 500-series,
+   5,000-occurrence release dataset against the normative query, payload,
+   cardinality and Playground-time budgets.
+8. Run the packaged smoke journey on both supported WordPress versions:
 
    ```sh
    WPSE_SMOKE_CORE='WordPress/WordPress#6.9' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    WPSE_SMOKE_CORE='WordPress/WordPress#7.1' WPSE_SMOKE_PHP='8.2' WPSE_SMOKE_PLUGIN_PATH='.release/mime-simple-events-calendar' npm run test:smoke
    ```
 
-8. Require both GitHub Actions `Release archive and Plugin Check` and
-   `Historical install and lifecycle matrix` jobs to pass. Plugin Check runs in
+9. Require the GitHub Actions `Bounded performance budgets`, `Release archive
+   and Plugin Check` and `Historical install and lifecycle matrix` jobs to pass.
+   Plugin Check runs in
    strict mode against `.release/mime-simple-events-calendar`; the matrix uses
    the immutable package and core checksums in `tools/upgrade-releases.json`.
    The release job uploads the verified zip and checksum as one CI artifact.
@@ -45,8 +49,9 @@ Both output directories are generated and ignored by Git. Do not edit their cont
 
 ## Release acceptance
 
-Do not publish a candidate unless all local gates, every historical upgrade,
-both WordPress smoke targets and the official CI Plugin Check job are green.
+Do not publish a candidate unless all local gates, bounded performance budgets,
+every historical upgrade, both WordPress smoke targets and the official CI
+Plugin Check job are green.
 Record dependency findings, compatibility exceptions and any intentionally
 deferred issue in the QA report before distribution.
 
