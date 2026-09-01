@@ -6,8 +6,7 @@
 preview, public calendar export, stored input/output, privacy, dependencies,
 repository security, build supply chain and official Plugin Check readiness.
 
-**Status:** locally qualified; completion requires the hosted strict Plugin Check
-and complete GitHub matrix on the exact pushed commit.
+**Status:** complete; local qualification and the complete hosted matrix pass.
 
 ## Outcome
 
@@ -119,12 +118,21 @@ status, cancellation, following split and recurrence disable.
 The generated installable package remains version 0.7.0 because RC3 changes
 development/release contracts and tests, not the public runtime package.
 
-## Hosted acceptance still required
+## Hosted acceptance evidence
 
-Push the reviewed commit and require every GitHub job to pass, especially the
-official pinned strict WordPress Plugin Check action against
-`.release/mime-simple-events-calendar`. RC3 is complete only when that exact
-commit is green; a previous release's Plugin Check does not qualify this tree.
+[GitHub Actions run 33472987700](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33472987700)
+completed successfully on reviewed commit
+`a9374bde1344ce2577c79a7cc666c232f6d77c90`:
+
+- official pinned strict WordPress Plugin Check and release artifact: pass;
+- PHP 8.2, 8.3, 8.4 and 8.5: pass;
+- JavaScript/CSS/security contracts and translation catalogue: pass;
+- WordPress 6.9/PHP 8.2 and WordPress 7.1/PHP 8.2 packaged smokes: pass;
+- packaged 30-browser regression matrix: pass;
+- checksum-pinned historical install/upgrade/lifecycle matrix: pass.
+
+All eleven hosted jobs are green. The documentation-only completion commit must
+retain those same gates before handoff.
 
 ## Residual non-blocking risks
 

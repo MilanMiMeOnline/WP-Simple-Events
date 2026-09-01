@@ -1138,16 +1138,17 @@ contract, evidence and remaining boundaries are recorded in
 [UPGRADE-CONTRACT.md](UPGRADE-CONTRACT.md) and
 [QA-REPORT-0.9.0-RC2.md](QA-REPORT-0.9.0-RC2.md).
 
-**RC3 local candidate qualified — 1 September 2026.** The complete frozen REST,
+**RC3 complete — 1 September 2026.** The complete frozen REST,
 recurrence, occurrence-storage, Divi-preview, export, privacy, dependency and
 supply-chain surface now has a current threat review and explicit permission
 matrix. Executable tests freeze REST callbacks, direct database ownership,
 prohibited runtime capabilities, browser privacy and external URL boundaries.
 Official Actions use immutable Node 24 generations and Dependabot security
 updates are enabled without auto-merge. All local PHP, frontend, package,
-WordPress 6.9/7.1 and 30-browser gates pass. RC3 becomes complete when the exact
-pushed commit passes hosted strict Plugin Check and the complete GitHub matrix;
-evidence is in [QA-REPORT-0.9.0-RC3.md](QA-REPORT-0.9.0-RC3.md).
+WordPress 6.9/7.1 and 30-browser gates pass. Hosted run `33472987700` is 11/11
+green on the reviewed commit, including strict Plugin Check, all PHP versions,
+both WordPress smokes, browser regressions and historical upgrades. Evidence is
+in [QA-REPORT-0.9.0-RC3.md](QA-REPORT-0.9.0-RC3.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
