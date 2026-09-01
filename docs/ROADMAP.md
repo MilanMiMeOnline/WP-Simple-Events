@@ -1196,6 +1196,19 @@ budgets, WordPress 6.9 and 7.1 smoke tests, PHP 8.2 through 8.5 and official
 Plugin Check. Evidence is recorded in
 [QA-REPORT-0.9.0-RC6.md](QA-REPORT-0.9.0-RC6.md).
 
+**RC7 complete — 1 September 2026.** Disposable local editor and destructive
+automation plus read-only `taranartos.be` validation found three bounded defects:
+duplicate card heading IDs across independent event collections, mobile
+FullCalendar list overflow at 320 CSS pixels and use of the deprecated
+`wp.editPost` document-panel compatibility export. Collection-scoped IDs,
+component-bounded list wrapping and the current `wp.editor`/`wp-editor` contract
+now have focused regressions. Gutenberg recurrence, Elementor presentation
+controls and Divi restoration were inspected without saving local content;
+production received no mutation. The full PHP/frontend/browser gates, WordPress
+6.9 and 7.1 packaged smokes, historical upgrade matrix and reproducible package
+checks pass. Evidence and residual host/translation boundaries are recorded in
+[QA-REPORT-0.9.0-RC7.md](QA-REPORT-0.9.0-RC7.md).
+
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
 only permitted changes before 1.0 are blocker fixes, translations and release

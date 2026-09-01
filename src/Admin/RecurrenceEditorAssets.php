@@ -43,7 +43,7 @@ final class RecurrenceEditorAssets {
 		wp_register_script(
 			self::SCRIPT_HANDLE,
 			plugin_dir_url( WPSE_PLUGIN_FILE ) . 'assets/dist/js/recurrence-editor.min.js',
-			array( 'wp-api-fetch', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-element', 'wp-i18n', 'wp-plugins' ),
+			array( 'wp-api-fetch', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-editor', 'wp-element', 'wp-i18n', 'wp-plugins' ),
 			WPSE_VERSION,
 			true
 		);

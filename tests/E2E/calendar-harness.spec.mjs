@@ -569,8 +569,8 @@ test( 'labels timed multi-day segments clearly in list view', async ( { page } )
 test( 'uses the configured mobile list view on its first render', async ( {
 	page,
 } ) => {
-	await page.setViewportSize( { width: 480, height: 900 } );
-	await gotoFixturePage( page, 'wpse-e2e-calendar' );
+	await page.setViewportSize( { width: 320, height: 900 } );
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
 
 	const calendar = page.locator( '[data-wpse-calendar]' );
 	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
@@ -578,9 +578,23 @@ test( 'uses the configured mobile list view on its first render', async ( {
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
 		'No events match your selection.',
 	);
+	await canvas.getByRole( 'button', { name: 'Next' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'3 events loaded.',
+	);
 	await expect( canvas.locator( '.fc-listMonth-view' ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+
+	const geometry = await page.evaluate( () => ( {
+		calendarClient: document.querySelector( '[data-wpse-calendar]' )?.clientWidth || 0,
+		calendarScroll: document.querySelector( '[data-wpse-calendar]' )?.scrollWidth || 0,
+		documentClient: document.documentElement.clientWidth,
+		documentScroll: document.documentElement.scrollWidth,
+	} ) );
+
+	expect( geometry.calendarScroll ).toBeLessThanOrEqual( geometry.calendarClient );
+	expect( geometry.documentScroll ).toBeLessThanOrEqual( geometry.documentClient );
 } );
 
 test( 'applies a safe initial date and optional toolbar controls', async ( {

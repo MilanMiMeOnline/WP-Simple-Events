@@ -767,6 +767,25 @@
 
 @media (max-width: 599px) {
 
+	.wpse-calendar .fc .fc-list-table {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	.wpse-calendar .fc .fc-list-event-time {
+		width: 42%;
+		overflow-wrap: anywhere;
+		white-space: normal;
+	}
+
+	.wpse-calendar .fc .fc-list-event-graphic {
+		width: 1.5rem;
+	}
+
+	.wpse-calendar .fc .fc-list-event-title {
+		overflow-wrap: anywhere;
+	}
+
 	.wpse-calendar .fc .fc-header-toolbar {
 		align-items: stretch;
 		gap: var(--wpse-calendar-toolbar-gap);

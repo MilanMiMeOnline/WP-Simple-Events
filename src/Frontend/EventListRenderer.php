@@ -44,7 +44,7 @@ final readonly class EventListRenderer {
 		$cards = array();
 
 		foreach ( $posts as $post ) {
-			$card = $this->events->card( $post, $options, $colors[ $post->ID ] ?? null );
+			$card = $this->events->card( $post, $options, $colors[ $post->ID ] ?? null, $results_id );
 
 			if ( '' !== $card ) {
 				$cards[] = $card;
@@ -79,7 +79,8 @@ final readonly class EventListRenderer {
 				$item->presentation,
 				$options,
 				$item->occurrence->public_key,
-				$colors[ $item->occurrence->event_id ] ?? null
+				$colors[ $item->occurrence->event_id ] ?? null,
+				$results_id
 			);
 
 			if ( '' !== $card ) {

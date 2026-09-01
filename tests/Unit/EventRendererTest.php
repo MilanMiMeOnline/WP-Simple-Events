@@ -11,16 +11,19 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
-use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
-use MiMe\WPSimpleEvents\Frontend\EventRenderer;
 use MiMe\WPSimpleEvents\Domain\EventColorPresentation;
 use MiMe\WPSimpleEvents\Domain\EventColorSource;
+use MiMe\WPSimpleEvents\Domain\EventListView;
+use MiMe\WPSimpleEvents\Frontend\EventCardOptions;
+use MiMe\WPSimpleEvents\Frontend\EventListRenderer;
+use MiMe\WPSimpleEvents\Frontend\EventRenderer;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use WP_Post;
 
 #[CoversClass( EventCardOptions::class )]
+#[CoversClass( EventListRenderer::class )]
 #[CoversClass( EventRenderer::class )]
 /** Protects optional card content, heading semantics and external links. */
 final class EventRendererTest extends TestCase {
@@ -83,6 +86,33 @@ final class EventRendererTest extends TestCase {
 
 		self::assertStringContainsString( '<h4 class="wpse-event-card-title"', $output );
 		self::assertStringContainsString( 'aria-labelledby="wpse-event-702-title"', $output );
+	}
+
+	/** The same event remains uniquely labelled across independent collections. */
+	public function test_collection_scope_prevents_duplicate_card_title_ids(): void {
+		$event = new WP_Post(
+			array(
+				'ID'          => 704,
+				'post_type'   => EventPostType::POST_TYPE,
+				'post_status' => 'publish',
+				'post_title'  => 'Repeated event',
+			)
+		);
+		WordPressState::add_post( $event, 'https://example.test/events/repeated/' );
+		WordPressState::update_post_meta( 704, EventMeta::START_UTC, 1_784_544_000 );
+		WordPressState::update_post_meta( 704, EventMeta::END_UTC, 1_784_547_600 );
+		WordPressState::update_post_meta( 704, EventMeta::ALL_DAY, false );
+		WordPressState::update_post_meta( 704, EventMeta::TIMEZONE, 'Europe/Brussels' );
+
+		$renderer = new EventListRenderer();
+		$options  = new EventCardOptions( false, false, false, true, true, 30, 'h3' );
+		$first    = $renderer->render( array( $event ), EventListView::LIST, 1, $options, 'wpse-events-1-results' );
+		$second   = $renderer->render( array( $event ), EventListView::LIST, 1, $options, 'wpse-events-2-results' );
+
+		self::assertStringContainsString( 'id="wpse-event-704-wpse-events-1-results-title"', $first );
+		self::assertStringContainsString( 'aria-labelledby="wpse-event-704-wpse-events-1-results-title"', $first );
+		self::assertStringContainsString( 'id="wpse-event-704-wpse-events-2-results-title"', $second );
+		self::assertStringContainsString( 'aria-labelledby="wpse-event-704-wpse-events-2-results-title"', $second );
 	}
 
 	/** No-JavaScript calendar cards expose only a normalized accent variable. */

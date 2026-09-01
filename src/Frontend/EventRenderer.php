@@ -31,9 +31,15 @@ final readonly class EventRenderer {
 	 * @param WP_Post                     $event   Public event post.
 	 * @param EventCardOptions            $options Optional section choices.
 	 * @param EventColorPresentation|null $color Optional resolved calendar color.
+	 * @param string                      $scope Optional collection scope for unique DOM IDs.
 	 */
-	public function card( WP_Post $event, EventCardOptions $options, ?EventColorPresentation $color = null ): string {
-		return $this->card_presentation( $this->presentations->create( $event ), $options, '', $color );
+	public function card(
+		WP_Post $event,
+		EventCardOptions $options,
+		?EventColorPresentation $color = null,
+		string $scope = ''
+	): string {
+		return $this->card_presentation( $this->presentations->create( $event ), $options, '', $color, $scope );
 	}
 
 	/**
@@ -43,12 +49,14 @@ final readonly class EventRenderer {
 	 * @param EventCardOptions            $options      Optional section choices.
 	 * @param string                      $identity     Optional occurrence identity for unique DOM IDs.
 	 * @param EventColorPresentation|null $color        Optional resolved calendar color.
+	 * @param string                      $scope        Optional collection scope for unique DOM IDs.
 	 */
 	public function card_presentation(
 		EventPresentation $presentation,
 		EventCardOptions $options,
 		string $identity = '',
-		?EventColorPresentation $color = null
+		?EventColorPresentation $color = null,
+		string $scope = ''
 	): string {
 		if ( null === $presentation->date ) {
 			return '';
@@ -64,7 +72,7 @@ final readonly class EventRenderer {
 		$address      = $presentation->address;
 		$location     = '' !== $venue ? $venue : $address;
 		$location_url = $presentation->location_url;
-		$title_id     = $this->title_id( $event->ID, $identity );
+		$title_id     = $this->title_id( $event->ID, $identity, $scope );
 		$classes      = array( 'wpse-event-card' );
 		$style        = '';
 		$excerpt      = $options->show_excerpt
@@ -142,13 +150,27 @@ final readonly class EventRenderer {
 	 *
 	 * @param int    $event_id Canonical event post ID.
 	 * @param string $identity Optional occurrence identity.
+	 * @param string $scope Optional collection scope.
 	 */
-	private function title_id( int $event_id, string $identity ): string {
-		$identity = strtolower( $identity );
-		$identity = preg_replace( '/[^a-z0-9_-]/', '', $identity );
-		$identity = is_string( $identity ) ? substr( $identity, 0, 64 ) : '';
+	private function title_id( int $event_id, string $identity, string $scope ): string {
+		$identity = $this->id_segment( $identity );
+		$scope    = $this->id_segment( $scope );
+		$suffix   = '' !== $scope ? '-' . $scope : '';
+		$suffix  .= '' !== $identity ? '-' . $identity : '';
 
-		return 'wpse-event-' . $event_id . ( '' !== $identity ? '-' . $identity : '' ) . '-title';
+		return 'wpse-event-' . $event_id . $suffix . '-title';
+	}
+
+	/**
+	 * Normalize one bounded DOM ID segment without trusting renderer input.
+	 *
+	 * @param string $value Untrusted adapter-provided segment.
+	 */
+	private function id_segment( string $value ): string {
+		$value = strtolower( $value );
+		$value = preg_replace( '/[^a-z0-9_-]/', '', $value );
+
+		return is_string( $value ) ? substr( $value, 0, 64 ) : '';
 	}
 
 	/**

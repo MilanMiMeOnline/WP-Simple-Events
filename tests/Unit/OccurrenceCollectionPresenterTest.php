@@ -112,7 +112,10 @@ final class OccurrenceCollectionPresenterTest extends TestCase {
 
 		self::assertStringContainsString( 'Occurrence title', $output );
 		self::assertStringContainsString( 'Occurrence venue', $output );
-		self::assertStringContainsString( 'id="wpse-event-42-' . self::RECURRING_KEY . '-title"', $output );
+		self::assertStringContainsString(
+			'id="wpse-event-42-occurrence-results-' . self::RECURRING_KEY . '-title"',
+			$output
+		);
 		self::assertStringContainsString( 'https://example.com/events/series/occurrence/' . self::RECURRING_KEY . '/', $output );
 	}
 

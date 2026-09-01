@@ -40,7 +40,7 @@ const {
 	TextControl,
 } = wp.components;
 const { useSelect } = wp.data;
-const { PluginDocumentSettingPanel } = wp.editPost;
+const { PluginDocumentSettingPanel } = wp.editor;
 const { createElement: el, Fragment, useEffect, useMemo, useState } = wp.element;
 const { __, _n, sprintf } = wp.i18n;
 const { registerPlugin } = wp.plugins;
