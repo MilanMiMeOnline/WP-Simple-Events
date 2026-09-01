@@ -1191,7 +1191,10 @@ relative guide links were replaced with explicit online links so the allowlisted
 release package never points into excluded engineering documentation. Executable
 documentation contracts protect the complete guide route and prevent the
 internal manual-occurrence concept from being advertised as an editor feature.
-Evidence is recorded in [QA-REPORT-0.9.0-RC6.md](QA-REPORT-0.9.0-RC6.md).
+The hosted matrix passed all 12 jobs, including browser regressions, performance
+budgets, WordPress 6.9 and 7.1 smoke tests, PHP 8.2 through 8.5 and official
+Plugin Check. Evidence is recorded in
+[QA-REPORT-0.9.0-RC6.md](QA-REPORT-0.9.0-RC6.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the

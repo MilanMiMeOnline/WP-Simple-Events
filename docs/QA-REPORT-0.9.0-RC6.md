@@ -6,8 +6,8 @@
 documentation navigation, install/upgrade advice and development dependency
 security.
 
-**Status:** locally complete. Hosted compatibility, browser, upgrade and strict
-Plugin Check evidence is added after the reviewed commit passes GitHub Actions.
+**Status:** complete. Local qualification and the full hosted compatibility,
+browser, upgrade, performance and strict Plugin Check matrix passed.
 
 ## Outcome
 
@@ -95,6 +95,21 @@ internal `docs/` tree.
 
 The package continues to report public version 0.7.0 because the 0.9.0 version
 bump and publication belong to RC8. RC6 does not publish this checkpoint.
+
+## Hosted qualification evidence
+
+GitHub Actions run
+[`33546674008`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33546674008)
+qualified reviewed commit `7c6a821712e830a42c86dfc944efffb344bc5900`.
+All 12 jobs completed successfully:
+
+- PHP 8.2, 8.3, 8.4 and 8.5 quality matrices;
+- WordPress 6.9 and WordPress 7.1 smoke tests on PHP 8.2;
+- JavaScript, CSS and translation checks;
+- browser regressions;
+- historical install and lifecycle upgrades;
+- bounded performance budgets; and
+- reproducible release archive plus official WordPress Plugin Check.
 
 ## Residual non-blocking risks
 
