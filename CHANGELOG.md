@@ -4,6 +4,24 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+### Documentation
+
+- Add a task-based user guide covering installation, first-event publishing,
+  recurrence scopes, display and filters, event colors, Gutenberg, Elementor,
+  Divi 5, troubleshooting, privacy, data ownership and supported updates.
+- Rewrite the repository and WordPress.org readmes around new-user outcomes,
+  accurate UI language and direct online guide links that remain valid from an
+  installed release package.
+- Remove the misleading public suggestion that editors can add arbitrary manual
+  occurrences; separately changed generated occurrences remain supported through
+  the documented occurrence-edit scopes.
+
+### Dependencies
+
+- Update the development-only Browserslist toolchain to patched releases after a
+  newly published high-severity advisory; production plugin packages remain
+  unchanged by these development dependencies.
+
 ### Performance
 
 - Add a disposable 500-series, 5,000-recurring-occurrence qualification suite

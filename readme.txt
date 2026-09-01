@@ -12,7 +12,9 @@ Create focused one-off and recurring events with calendars, blocks and optional 
 
 == Description ==
 
-MiMe Simple Events and Calendar adds a native Events section to WordPress. It is designed for websites that need clear one-off and recurring event publishing without ticketing, interactive maps or the overhead of a large event suite.
+MiMe Simple Events and Calendar adds a native Events section to WordPress. It is designed for websites that need clear one-off and recurring event publishing without ticketing, interactive maps, visitor tracking or the overhead of a large event suite.
+
+Create the event once, then show it through the native archive, a list or grid, a responsive calendar, Gutenberg, Elementor, Divi 5 or a shortcode. The plugin follows the website's WordPress timezone and formatting settings and inherits theme typography and colors by default.
 
 = Event publishing =
 
@@ -30,6 +32,7 @@ MiMe Simple Events and Calendar adds a native Events section to WordPress. It is
 * Review the exact impact before applying changes to the complete series or this and following occurrences.
 * Edit, move, postpone, cancel or restore only one occurrence without duplicating the complete event.
 * Convert a repeating series back to one deliberately selected event through a separate confirmation step.
+* Keep open-ended schedules lightweight through a bounded rolling public window that renews automatically.
 
 = Display options =
 
@@ -69,19 +72,28 @@ Deactivation never deletes event data. Plugin deletion also preserves events and
 
 The complete source, build instructions and security policy are available at https://github.com/MilanMiMeOnline/WP-Simple-Events.
 
+New users can follow the task-based guide at https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/USER-GUIDE.md.
+
 == Installation ==
 
-1. In WordPress, go to Plugins > Add New > Upload Plugin.
-2. Select the official MiMe Simple Events and Calendar zip file and choose Install Now.
-3. Activate the plugin.
-4. Go to Events > Add New and create the first event. A valid start is required before publication.
-5. Add `[wpse_calendar]` or `[wpse_events]` to a page, or insert the matching Gutenberg, Elementor or Divi component.
+1. Install the plugin from Plugins > Add New, or upload an official release zip through Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Check the website timezone, date format and time format under Settings > General.
+4. Go to Events > Add New, enter a valid start and publish the first event.
+5. Add the Event Calendar or Event List / Grid block to a page. You can instead use `[wpse_calendar]`, `[wpse_events]`, Elementor or Divi 5.
+6. Preview the event and events page as a logged-out visitor, including on a narrow screen.
+
+The native archive is available at `/events/` by default. The complete first-event guide is at https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/GETTING-STARTED.md.
 
 == Frequently Asked Questions ==
 
 = How do recurring-event edits work? =
 
-Choose the intended scope before changing a repeating schedule: Only this occurrence, This and following, or Complete series. Broad changes show an impact preview before they can be applied. Individual occurrence changes remain sparse and reversible, so using the series value again does not create copied content.
+Save the event with valid dates first. Choose the intended scope before changing it: Edit one occurrence, This and following, or Complete series. Broad changes show an impact preview before they can be applied. Individual occurrence changes remain sparse and reversible, so choosing Use series value restores inheritance instead of copying content.
+
+= Where should I start if I am new to the plugin? =
+
+Use the Getting started guide to check timezone settings, publish the first event and create an events page: https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/GETTING-STARTED.md. The user guide then links recurrence, display, builder, troubleshooting, privacy and update tasks.
 
 = Does it include maps, geocoding or ticket sales? =
 
@@ -110,6 +122,14 @@ New events capture the timezone configured under WordPress Settings > General. E
 = Can I color event categories or individual events? =
 
 Yes. An event category can have one optional color. An event can use its own color, an explicitly chosen assigned category, an unambiguous assigned category automatically, or the component's existing fallback. If several assigned categories have different colors, the plugin never chooses one by incidental term order. Text, times, statuses and category names remain visible so color is not the only source of meaning.
+
+= How do I remove or reset visitor filters? =
+
+Visitors can remove an active category or tag choice individually, use Clear all, or use Restore defaults when the component has configured initial choices. Each list or calendar keeps its own shareable filter state and still works as a normal form without JavaScript.
+
+= Why is the header or footer missing on an event page? =
+
+The native plugin fallback retains the active theme header and footer. Check whether an Elementor or Divi Theme Builder condition or a theme event-template override deliberately replaces it. The builder guide includes a focused checklist: https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/BUILDERS-AND-TEMPLATES.md.
 
 = What happens to data when the plugin is removed? =
 
@@ -170,7 +190,7 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 = 0.4.0 =
 * Add bounded recurring events for daily, weekly, monthly, yearly and selected-date schedules.
 * Add explicit Complete series, Only this occurrence and This and following edit scopes with review-before-apply confirmations.
-* Add manual occurrences, reversible cancellations and sparse per-occurrence date, status, title, image, venue and action overrides.
+* Add reversible cancellations and sparse per-occurrence date, status, title, image, venue and action overrides.
 * Make lists, calendars, feeds, archives, Gutenberg blocks, Elementor widgets, REST, canonical URLs and Event JSON-LD occurrence-aware.
 * Add fail-closed occurrence indexing, health checks, bounded repair and renewal, Core sitemap discovery and conservative no-store leaf caching.
 * Preserve one-off event behaviour, established public component identifiers and theme/Elementor template ownership.

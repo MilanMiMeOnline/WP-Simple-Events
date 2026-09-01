@@ -1181,6 +1181,18 @@ public taxonomy filtering before measurement and never ships. Normative budgets
 and evidence are recorded in [PERFORMANCE-BUDGETS.md](PERFORMANCE-BUDGETS.md) and
 [QA-REPORT-0.9.0-RC5.md](QA-REPORT-0.9.0-RC5.md).
 
+**RC6 complete — 1 September 2026.** The public README and WordPress.org readme
+now lead with real new-user outcomes. A task-based guide covers installation,
+the first event, recurrence and its three edit scopes, lists/calendars,
+filters/colors, shortcodes, Gutenberg, Elementor, Divi 5, troubleshooting,
+privacy, ownership, uninstall and every supported upgrade path. UI labels,
+limits, defaults and failure guidance were checked against the implementation;
+relative guide links were replaced with explicit online links so the allowlisted
+release package never points into excluded engineering documentation. Executable
+documentation contracts protect the complete guide route and prevent the
+internal manual-occurrence concept from being advertised as an editor feature.
+Evidence is recorded in [QA-REPORT-0.9.0-RC6.md](QA-REPORT-0.9.0-RC6.md).
+
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
 only permitted changes before 1.0 are blocker fixes, translations and release

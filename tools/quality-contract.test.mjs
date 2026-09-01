@@ -14,6 +14,38 @@ const publicReadme = await readFile(
 	new URL( '../readme.txt', import.meta.url ),
 	'utf8',
 );
+const repositoryReadme = await readFile(
+	new URL( '../README.md', import.meta.url ),
+	'utf8',
+);
+const userGuide = await readFile(
+	new URL( '../docs/USER-GUIDE.md', import.meta.url ),
+	'utf8',
+);
+const gettingStartedGuide = await readFile(
+	new URL( '../docs/GETTING-STARTED.md', import.meta.url ),
+	'utf8',
+);
+const recurrenceGuide = await readFile(
+	new URL( '../docs/RECURRING-EVENTS.md', import.meta.url ),
+	'utf8',
+);
+const displayGuide = await readFile(
+	new URL( '../docs/DISPLAYING-EVENTS.md', import.meta.url ),
+	'utf8',
+);
+const builderGuide = await readFile(
+	new URL( '../docs/BUILDERS-AND-TEMPLATES.md', import.meta.url ),
+	'utf8',
+);
+const troubleshootingGuide = await readFile(
+	new URL( '../docs/TROUBLESHOOTING.md', import.meta.url ),
+	'utf8',
+);
+const privacyAndUpdatesGuide = await readFile(
+	new URL( '../docs/PRIVACY-DATA-AND-UPDATES.md', import.meta.url ),
+	'utf8',
+);
 const pluginBootstrap = await readFile(
 	new URL( '../mime-simple-events-calendar.php', import.meta.url ),
 	'utf8',
@@ -197,6 +229,49 @@ test( 'keeps six screenshot captions synchronized with the image set', () => {
 		),
 		[ 1, 2, 3, 4, 5, 6 ],
 	);
+} );
+
+test( 'keeps a complete task-based new-user documentation path', () => {
+	const guideLinks = [
+		'GETTING-STARTED.md',
+		'DISPLAYING-EVENTS.md',
+		'RECURRING-EVENTS.md',
+		'BUILDERS-AND-TEMPLATES.md',
+		'TROUBLESHOOTING.md',
+		'PRIVACY-DATA-AND-UPDATES.md',
+	];
+
+	for ( const guide of guideLinks ) {
+		assert.match( userGuide, new RegExp( `\\(${ guide }\\)` ) );
+		assert.match(
+			repositoryReadme,
+			new RegExp(
+				`https://github\\.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/${ guide }`,
+			),
+		);
+	}
+
+	assert.match( gettingStartedGuide, /Settings > General/ );
+	assert.match( gettingStartedGuide, /valid start is required/i );
+	assert.match( recurrenceGuide, /Save the draft first/ );
+	assert.match( recurrenceGuide, /Complete series/ );
+	assert.match( recurrenceGuide, /Edit one occurrence/ );
+	assert.match( recurrenceGuide, /This and following/ );
+	assert.match( recurrenceGuide, /Stop repeating/ );
+	assert.match( displayGuide, /Clear all/ );
+	assert.match( displayGuide, /Restore\s+defaults/ );
+	assert.match( displayGuide, /Add to Calendar/ );
+	assert.match( builderGuide, /Elementor\s+Free/ );
+	assert.match( builderGuide, /Divi 5\.11\.1/ );
+	assert.match( troubleshootingGuide, /Occurrence index/ );
+	assert.match( privacyAndUpdatesGuide, /0\.2\.3/ );
+	assert.match( privacyAndUpdatesGuide, /simple-events-by-mime/ );
+} );
+
+test( 'does not advertise internal manual occurrences as an editor feature', () => {
+	assert.doesNotMatch( repositoryReadme, /manual occurrences/i );
+	assert.doesNotMatch( publicReadme, /manual occurrences/i );
+	assert.doesNotMatch( userGuide, /manual occurrences/i );
 } );
 
 test( 'keeps public GitHub release notes consistent and user-facing', () => {

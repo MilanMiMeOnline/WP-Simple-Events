@@ -2,98 +2,158 @@
 
 ![MiMe Simple Events and Calendar](.wordpress-org/banner-1544x500.png)
 
-MiMe Simple Events and Calendar is a focused, native event plugin for WordPress. It provides one-off and recurring event publishing, lists, grids, an accessible calendar, Gutenberg blocks and optional Elementor widgets without requiring a large event-management suite.
+MiMe Simple Events and Calendar is a focused WordPress event plugin for one-off
+and recurring events. It adds the familiar **Events** publishing area, a
+responsive calendar, lists and grids, visitor filters, event colors, Gutenberg
+blocks and optional Elementor and Divi 5 components—without ticketing, maps,
+tracking or a large event-management suite.
 
-The plugin is free software licensed under GPL-2.0-or-later. Its public WordPress.org identity is `mime-simple-events-calendar`; established internal `wpse_*` storage and content identifiers remain stable.
+[Get started](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/GETTING-STARTED.md) ·
+[Read the user guide](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/USER-GUIDE.md) ·
+[Report an issue](https://github.com/MilanMiMeOnline/WP-Simple-Events/issues)
 
-## What it includes
+## Highlights
 
-- A dedicated Events area using the familiar WordPress editor.
-- Timed, all-day, same-day and multi-day events with captured timezones.
-- Bounded daily, weekly, monthly, yearly and selected-date recurrence.
-- Explicit complete-series, only-this and this-and-following edit scopes with impact review.
-- Manual occurrences, reversible cancellations and sparse occurrence overrides.
-- Event-specific categories, tags and scheduled, postponed or cancelled states.
-- Venue, address, location link and customizable external action link.
-- Native single and archive templates for classic and block themes.
-- A responsive list/grid and month/list calendar with bounded filters and presentation controls.
-- A no-JavaScript upcoming-event fallback.
-- Three complete Gutenberg components, twelve dynamic event-field blocks, an Add to Calendar block and a single-event pattern.
-- Optional Elementor 3.35+ composite and atomic widgets.
-- Optional native Divi 5 modules.
-- One-way ICS download with optional Google and Outlook compose actions.
-- Safe Event JSON-LD for eligible individual events.
-- Default-safe data retention and explicit administrator maintenance tools.
+- Publish timed, all-day, same-day and multi-day events in the normal WordPress
+  editor.
+- Add venue, address, location link, event status, external action, categories,
+  tags and optional event/category colors.
+- Create bounded daily, weekly, monthly, yearly and selected-date recurrence.
+- Safely edit one occurrence, this-and-following or the complete series after an
+  impact preview.
+- Show events through the native archive, list/grid, month/list calendar,
+  shortcodes or editor components.
+- Offer semantic category/tag filters with removable choices, clear/restore
+  actions, shareable URLs and a no-JavaScript fallback.
+- Build with Gutenberg, optional Elementor 3.35+ or optional Divi 5.11.1+ using
+  complete components or individual event fields.
+- Place or omit Add to Calendar independently; local ICS is the safe default,
+  with optional Google and Outlook compose actions.
+- Preserve the active theme shell through native classic, hybrid and block-theme
+  fallbacks.
+- Keep visitor privacy simple: no cookies, telemetry, remote assets or background
+  provider requests.
 
-Interactive maps, geocoding, ticketing and external calendar synchronization remain deliberate non-goals. Recurrence intentionally excludes multiple simultaneous generated rules and hourly or minutely patterns.
+Interactive maps, geocoding, ticket sales and external calendar synchronization
+are deliberate non-goals.
 
 ## Requirements
 
 - WordPress 6.9 or newer
-- PHP 8.2 or newer (PHP 8.3 or newer recommended)
-- Elementor 3.35 or newer only when using the optional Elementor integration
+- PHP 8.2 or newer
+- Elementor 3.35 or newer only for the optional Elementor integration
+- Divi 5.11.1 or newer only for the optional Divi integration
 
-WooCommerce and Elementor are optional and never core dependencies.
+Elementor, Divi and WooCommerce are optional and never core dependencies.
 
-## Quick start
+## Five-minute setup
 
-1. Install and activate an official release package.
-2. Open **Events > Add New**.
-3. Add normal WordPress content and complete the Event details panel. A valid start is required before publication.
-4. Publish the event.
-5. Add one of these shortcodes to a page, or use the matching Gutenberg or Elementor component:
+1. Install and activate an official release.
+2. Check timezone, date format and time format under **Settings > General**.
+3. Open **Events > Add New**, enter a valid start and publish the event.
+4. Add the **Event Calendar** or **Event List / Grid** block to a page.
+5. Preview that page as a logged-out visitor and check its mobile layout.
+
+The native event archive is available at `/events/` by default. New events
+capture the WordPress site timezone; public dates and times follow WordPress'
+format settings.
+
+For the complete first-event workflow, see
+[Getting started](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/GETTING-STARTED.md).
+
+## Recurring events without guesswork
+
+Save the event dates first, choose a recurrence rule, and review the generated
+dates before applying it. Later edits always use an explicit scope:
+
+- **Edit one occurrence** for one cancellation, move or venue change;
+- **This and following** for a schedule transition from a chosen occurrence;
+- **Complete series** for intentionally shared changes.
+
+Individual occurrence values remain sparse and reversible: choosing **Use series
+value** restores inheritance. Open-ended recurrence uses a bounded rolling public
+window that renews automatically.
+
+Read
+[Recurring events](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/RECURRING-EVENTS.md)
+before the first broad production change.
+
+## Display and editor options
+
+Gutenberg, Elementor and Divi expose the same three complete components:
+
+- Event List / Grid;
+- Event Calendar;
+- Event Details.
+
+They also expose individual event title, image, date/time, status, venue, address,
+location link, content, excerpt, external action, category, tag and Add to
+Calendar components. Ordinary Elementor Free pages can select a published event;
+Elementor Pro is only relevant for Elementor's own Theme Builder.
+
+Shortcodes remain available:
 
 ```text
-[wpse_calendar]
 [wpse_events]
+[wpse_calendar]
 [wpse_event_details]
 [wpse_add_to_calendar]
 ```
 
-`[wpse_calendar]` defaults to a desktop month view, a mobile list view and visible category/tag filters. `[wpse_events]` defaults to an upcoming three-column grid with pagination. Both shortcodes accept only documented, bounded attributes; invalid values fall back safely.
+See
+[Displaying events](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/DISPLAYING-EVENTS.md)
+for practical filters, colors and shortcode examples, and
+[Builders and templates](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/BUILDERS-AND-TEMPLATES.md)
+for current-event contexts and theme ownership.
 
-## Editors and page builders
+## Privacy, security and data ownership
 
-Gutenberg provides complete Event List / Grid, Event Calendar and Event Details blocks plus twelve server-rendered event fields and one Add to Calendar block. Static pages can select one published event; dynamic templates can use the current event context.
+The runtime plugin creates no visitor cookies, collects no analytics or telemetry,
+loads no remote scripts, fonts, images or pixels, and sends no information to
+MiMe. Event data remains in the site's WordPress database. The local recurrence
+index is bounded, rebuildable and contains no event body, password or visitor
+data.
 
-Elementor 3.35+ provides the same fields plus configurable Event List / Grid,
-Event Calendar, Event Details and Add to Calendar widgets. Divi 5.11.1+ exposes
-the equivalent native module palette. The widgets work on ordinary Elementor
-Free pages. Elementor Pro is only relevant when a site owner chooses to build
-dynamic templates with Elementor Theme Builder.
+Published event information can appear in public HTML, Event JSON-LD, WordPress
+REST responses, the bounded calendar feed and visitor-requested calendar
+snapshots. Draft, private and password-protected event details are excluded from
+public plugin collections.
 
-## Privacy and security
+Deactivation never deletes data. Plugin deletion preserves data by default; an
+administrator must deliberately enable destructive cleanup. Read
+[Privacy, data and updates](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/PRIVACY-DATA-AND-UPDATES.md)
+before uninstalling or upgrading an early private build.
 
-The runtime plugin:
+## Documentation
 
-- creates no visitor cookies;
-- collects no analytics or telemetry;
-- loads no remote scripts, fonts, images or tracking pixels;
-- sends no information to MiMe or another external service;
-- stores canonical event content in WordPress posts and metadata;
-- uses one rebuildable local occurrence index for bounded chronological reads;
-- keeps calendar requests on the same WordPress installation.
+- [User guide](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/USER-GUIDE.md)
+- [Getting started](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/GETTING-STARTED.md)
+- [Displaying events](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/DISPLAYING-EVENTS.md)
+- [Recurring events](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/RECURRING-EVENTS.md)
+- [Builders and templates](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/BUILDERS-AND-TEMPLATES.md)
+- [Troubleshooting](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/TROUBLESHOOTING.md)
+- [Privacy, data and updates](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/PRIVACY-DATA-AND-UPDATES.md)
+- [Developer and release documentation](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/README.md)
 
-The local ICS action stays on the website. Google and Outlook calendar actions
-are disabled until a template author enables them; following one deliberately
-sends the public event snapshot to that provider in an isolated new tab.
+## Contributing and releases
 
-Event content entered by editors is stored as native WordPress content and metadata. Published event details can be exposed through front-end HTML, Event JSON-LD, core REST and the bounded calendar feed. Drafts, private events and protected event details are excluded from public plugin queries. The core REST response also removes registered event metadata while a post password is required.
+Read [AGENTS.md](AGENTS.md) before changing the project and use
+[CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing and review commands. The
+functional source of truth is the
+[product specification](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/PRODUCT-SPECIFICATION.md).
 
-External location and event links open in an isolated new tab with `noopener noreferrer`. Deactivation never deletes data, and uninstall cleanup is disabled by default. See [SECURITY.md](SECURITY.md), [the public-query contract](docs/PUBLIC-QUERY-CONTRACT.md) and [the uninstall contract](docs/UNINSTALL-CONTRACT.md) for the reviewed boundaries.
-
-## Development
-
-Read [AGENTS.md](AGENTS.md) before changing the project and use [CONTRIBUTING.md](CONTRIBUTING.md) for setup, testing and review commands. The functional source of truth is [docs/PRODUCT-SPECIFICATION.md](docs/PRODUCT-SPECIFICATION.md); the documentation index links the supporting architectural, security, QA and release contracts.
-
-Release archives are built from an explicit production allowlist, contain local production assets and a minimal optimized autoloader, and are verified for contents, PHP syntax, checksum integrity and byte-for-byte reproducibility. The full process is in [docs/RELEASE-PROCESS.md](docs/RELEASE-PROCESS.md).
-
-The [documentation index](docs/README.md) links the WordPress.org handoff and visual-asset requirements.
+Release archives use an explicit production allowlist, a minimal optimized
+autoloader and reproducible checksum verification. See the
+[release process](https://github.com/MilanMiMeOnline/WP-Simple-Events/blob/main/docs/RELEASE-PROCESS.md).
 
 ## Support and security reports
 
-Use [GitHub Issues](https://github.com/MilanMiMeOnline/WP-Simple-Events/issues) for ordinary defects and reproducible feature requests. Never place exploit details, credentials, nonces or personal data in a public issue; use the process in [SECURITY.md](SECURITY.md).
+Use [GitHub Issues](https://github.com/MilanMiMeOnline/WP-Simple-Events/issues)
+for ordinary defects and reproducible feature requests. Never publish exploit
+details, credentials, nonces or personal data; use [SECURITY.md](SECURITY.md) for
+private vulnerability reporting.
 
 ## Licence
 
-[GPL-2.0-or-later](LICENSE). Bundled third-party notices are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
+[GPL-2.0-or-later](LICENSE). Bundled third-party notices are in
+[THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
