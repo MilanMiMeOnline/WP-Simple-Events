@@ -727,7 +727,7 @@ test( 'registers, serializes and previews the primary event components in Gutenb
 			};
 		} );
 		const serialized = window.wp.blocks.serialize( [
-			window.wp.blocks.createBlock( 'wpse/event-list', { limit: 2, view: 'list' } ),
+			window.wp.blocks.createBlock( 'wpse/event-list', { limit: 2, period: 'all', view: 'list' } ),
 			window.wp.blocks.createBlock( 'wpse/event-calendar', { initialView: 'list', filters: false } ),
 			window.wp.blocks.createBlock( 'wpse/event-details', { eventId } ),
 		] );
@@ -735,7 +735,7 @@ test( 'registers, serializes and previews the primary event components in Gutenb
 			window.wp.apiFetch( {
 				path: '/wp/v2/block-renderer/wpse/event-list?context=edit',
 				method: 'POST',
-				data: { attributes: { limit: 2, view: 'list', filters: false } },
+				data: { attributes: { limit: 2, period: 'all', view: 'list', filters: false } },
 			} ),
 			window.wp.apiFetch( {
 				path: '/wp/v2/block-renderer/wpse/event-calendar?context=edit',

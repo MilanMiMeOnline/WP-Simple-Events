@@ -32,6 +32,17 @@ The Playground smoke journey covers activation, creating, editing, publishing, f
 
 A separate Playwright suite exercises browser-only layout, responsive, keyboard and interaction behaviour against a disposable Playground site. It uses the exact pinned `@playwright/test` development dependency and a separately installed Chromium build. Assertions target stable component semantics and geometry rather than theme-wide screenshots. Playwright and its browser binaries are never shipped in the plugin archive.
 
+The accessibility browser layer uses exact development-only `axe-core` rules for
+WCAG 2.0, 2.1 and 2.2 A/AA regressions inside plugin-owned component roots. It
+also exercises keyboard-only filter disclosure and focus restoration, visible
+focus, 320 CSS-pixel reflow with WCAG text-spacing overrides, forced-colors and
+reduced-motion presentation. Native event fields are audited in WordPress' classic
+metabox host and the recurrence panel in Gutenberg; public renderers cover the
+shared shortcode, Gutenberg, Elementor and Divi output. Automated results never
+replace the manual screen-reader, zoom, language, theme and host-editor checks in
+the release checklist. `axe-core`, its source and browser tooling are excluded
+from production packages.
+
 The calendar contract is protected by seven deterministic journeys: first-load/reload/resized seven-column geometry and controls, the configured mobile list view, readable normal/hover/pressed/focus/selected/disabled button states including forced-colors, a delayed REST feed, a failed feed with retained fallback, two independent calendar instances and recovery after an initially hidden host becomes visible. The disposable Playground runtime and database are removed before and after every suite to prevent state leakage between runs.
 
 The historical upgrade matrix downloads every public canonical package from

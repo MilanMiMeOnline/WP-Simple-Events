@@ -1,7 +1,7 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 30 August 2026
+**Last reviewed:** 1 September 2026
 **Current public release:** 0.7.0
 **Active phase:** Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
 
@@ -1150,6 +1150,20 @@ green on the reviewed commit, including strict Plugin Check, all PHP versions,
 both WordPress smokes, browser regressions and historical upgrades. Evidence is
 in [QA-REPORT-0.9.0-RC3.md](QA-REPORT-0.9.0-RC3.md).
 
+**RC4 complete — 1 September 2026.** The shared visitor output, compact filter
+interaction, native event fields and recurrence editor now have a dedicated
+automated WCAG A/AA regression layer plus explicit keyboard, focus restoration,
+320 CSS-pixel reflow, enlarged text-spacing, forced-colors and reduced-motion
+journeys. The audit found and fixed one real narrow-screen defect: the calendar
+toolbar could exceed its component when browser text spacing was enlarged.
+It also found undersized event-list pagination targets after the deterministic
+fixture was corrected to keep showing past events. FullCalendar controls now wrap
+within the component and pagination links expose at least a 24-by-24 CSS-pixel
+target without changing saved content or ordinary desktop presentation. The
+focused accessibility suite passes 5/5 and the full packaged browser matrix
+passes 35/35. Its dependency, scope, manual boundaries and residual risks are
+recorded in [QA-REPORT-0.9.0-RC4.md](QA-REPORT-0.9.0-RC4.md).
+
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
 only permitted changes before 1.0 are blocker fixes, translations and release
@@ -1180,6 +1194,16 @@ documentation.
 - No high/critical security or dependency issue, P1/P2 defect, undocumented public
   contract or stale translation string remains.
 - GitHub and WordPress.org publish the same reproducible qualified artifact.
+
+## Post-1.0 maintenance sequence
+
+1. **1.1 — Stabilization:** resolve evidence-backed defects and deliver small,
+   backwards-compatible refinements from real 1.0 installations without changing
+   the calendar framework major.
+2. **Provisional 1.2 — FullCalendar 7 migration:** qualify the upstream major on a
+   dedicated branch against the frozen saved-content, CSS, accessibility, editor
+   and browser contracts. Ship it as 1.2 only when the migration is fully
+   backwards compatible; otherwise reserve it for the next plugin major.
 
 ## Pre-1.0 competitive gap audit
 

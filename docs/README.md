@@ -56,6 +56,8 @@ cycle's completed public compatibility freeze, while the
 upgrade and lifecycle qualification. The
 [0.9.0 RC3 report](QA-REPORT-0.9.0-RC3.md) records the current security/privacy,
 permission and supply-chain re-audit. The
+[0.9.0 RC4 report](QA-REPORT-0.9.0-RC4.md) records the WCAG-oriented visitor and
+editor accessibility qualification. The
 [0.6.0 filter and color release report](QA-REPORT-0.6.0.md),
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the

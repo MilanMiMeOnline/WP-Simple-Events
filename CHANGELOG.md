@@ -4,6 +4,16 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+### Accessibility
+
+- Add automated WCAG A/AA checks for shared visitor components, native event
+  fields and recurrence controls, alongside keyboard, focus, reflow,
+  text-spacing, forced-colors and reduced-motion browser journeys.
+- Keep narrow calendar toolbars inside their component when controls wrap or
+  visitors enlarge text spacing at a 320 CSS-pixel viewport.
+- Give event-list pagination links a minimum 24-by-24 CSS-pixel target without
+  overriding theme typography or colors.
+
 ### Security and privacy
 
 - Re-audit the frozen 1.x REST, recurrence, occurrence, Divi preview, public export,
@@ -27,6 +37,8 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ### Testing
 
+- Add exact development-only `axe-core` tooling without changing or enlarging
+  the production plugin package.
 - Qualify clean activation, all public upgrades from 0.2.3 through 0.7.0,
   missing-table repair, deactivation/reactivation and both uninstall modes from
   checksum-pinned packages in a disposable real WordPress matrix.

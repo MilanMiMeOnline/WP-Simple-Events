@@ -1938,3 +1938,38 @@ pinned to immutable reviewed commits and move to their maintained Node 24
 generations. Dependabot security updates may open reviewable remediation pull
 requests but never merge automatically. Composer/npm audits, reproducible builds,
 the complete source link and strict official Plugin Check remain release gates.
+
+## ADR-096: FullCalendar 7 follows the stable 1.0 release
+
+**Status:** Accepted
+
+The feature-frozen 0.9/1.0 qualification retains the locally bundled and exact
+FullCalendar 6.1.21 modules. A framework-major migration is not a release blocker
+and must not be mixed into the accessibility, performance or publication release
+candidates after the 1.x public surface has been frozen.
+
+Version 1.1 is reserved for backwards-compatible fixes and small refinements
+informed by real 1.0 installations. FullCalendar 7 is a provisional 1.2 work
+package with a dedicated compatibility branch, bundle/licence review and complete
+calendar, editor, accessibility and styling regression matrix. It may ship as
+1.2 only when saved content, documented CSS targets and supported public behaviour
+remain backwards compatible. If the upstream DOM, CSS or runtime migration makes
+that impossible, the change moves to the next plugin major instead of weakening
+the 1.x compatibility promise.
+
+## ADR-097: Accessibility automation is scoped evidence, not conformance
+
+**Status:** Accepted
+
+The release-candidate browser suite uses exact development-only `axe-core`
+4.12.1 under MPL-2.0 to detect WCAG A/AA regressions inside plugin-owned visitor
+and editor controls. It is never loaded by WordPress at runtime and is excluded
+from the release allowlist, so removing it later affects test tooling only.
+
+Automation cannot establish full WCAG conformance. RC4 therefore retains
+separate deterministic keyboard, focus restoration, reflow, enlarged text
+spacing, forced-colors and reduced-motion journeys, plus manual screen-reader,
+zoom, language, theme and supported-host inspection. Shared frontend renderers
+are audited once at their production output boundary; Elementor, Gutenberg and
+Divi remain responsible for their own editor shell while plugin-owned controls
+and previews retain focused host regressions.

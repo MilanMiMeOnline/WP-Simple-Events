@@ -97,6 +97,12 @@ function wpse_e2e_seed_calendar_page(): void {
 		return;
 	}
 
+	update_term_meta(
+		$category_only,
+		MiMe\WPSimpleEvents\Content\EventCategoryMeta::COLOR,
+		'#246b8e'
+	);
+
 	wpse_e2e_insert_event(
 		'wpse-e2e-same-day',
 		'E2E Same-day event',
@@ -290,7 +296,7 @@ function wpse_e2e_seed_atomic_page(): void {
 		wpse_e2e_insert_page(
 			'wpse-e2e-composite-blocks',
 			'Composite Event Blocks Harness',
-			'<!-- wp:wpse/event-list {"view":"list","limit":2,"filters":false} /-->'
+			'<!-- wp:wpse/event-list {"view":"list","limit":2,"period":"all","filters":false} /-->'
 			. '<!-- wp:wpse/event-calendar {"initialView":"list","filters":false} /-->'
 			. '<!-- wp:wpse/event-details {"eventId":' . $event->ID . '} /-->'
 		);
@@ -516,9 +522,30 @@ function wpse_e2e_seed_from_ajax(): void {
 	exit;
 }
 
+/**
+ * Expose the native event metabox in the classic editor for accessibility tests.
+ *
+ * The query flag is confined to this disposable fixture plugin and never ships
+ * with the production package. Recurrence remains covered in Gutenberg.
+ *
+ * @param bool   $use_block_editor Whether WordPress would use the block editor.
+ * @param string $post_type        Current post type.
+ */
+function wpse_e2e_maybe_use_classic_event_editor( bool $use_block_editor, string $post_type ): bool {
+	if ( 'wpse_event' !== $post_type ) {
+		return $use_block_editor;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only test routing in a fixture that is excluded from release builds.
+	$classic_editor = isset( $_GET['wpse_e2e_classic_editor'] ) ? sanitize_text_field( wp_unslash( $_GET['wpse_e2e_classic_editor'] ) ) : '';
+
+	return '1' === $classic_editor ? false : $use_block_editor;
+}
+
 register_activation_hook( __FILE__, 'wpse_e2e_seed_calendar_page' );
 add_action( 'init', 'wpse_e2e_register_shortcodes', 5 );
 add_action( 'wp_ajax_wpse_e2e_seed', 'wpse_e2e_seed_from_ajax' );
 add_action( 'wp_ajax_nopriv_wpse_e2e_seed', 'wpse_e2e_seed_from_ajax' );
 add_action( 'wp_enqueue_scripts', 'wpse_e2e_enqueue_elementor_calendar_fixture' );
 add_action( 'wp_footer', 'wpse_e2e_add_elementor_calendar_fixture_script', 1 );
+add_filter( 'use_block_editor_for_post_type', 'wpse_e2e_maybe_use_classic_event_editor', 10, 2 );

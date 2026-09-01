@@ -540,6 +540,16 @@
 	list-style: none;
 }
 
+.wpse-events-pagination ul.page-numbers > li > a.page-numbers,
+.wpse-events-pagination ul.page-numbers > li > span.page-numbers {
+	display: inline-flex;
+	box-sizing: border-box;
+	min-width: 24px;
+	min-height: 24px;
+	align-items: center;
+	justify-content: center;
+}
+
 @container wpse-events (max-width: 599px) {
 
 	.wpse-events.wpse-events .wpse-events-view-grid.wpse-events-columns-2,
@@ -765,6 +775,20 @@
 
 	.wpse-calendar .fc .fc-toolbar-chunk {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: center;
+		gap: var(--wpse-calendar-toolbar-gap);
+		min-width: 0;
+		max-width: 100%;
+	}
+
+	.wpse-calendar .fc .fc-button-group {
+		flex-wrap: wrap;
+	}
+
+	.wpse-calendar .fc .fc-toolbar-title {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+		white-space: normal;
 	}
 }
