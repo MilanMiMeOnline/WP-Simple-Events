@@ -1,136 +1,244 @@
 # Security and privacy audit
 
-**Audit date:** 2026-07-21
-**Reviewed baseline:** MiMe Simple Events and Calendar 0.2.2 release candidate
+**Audit date:** 1 September 2026
+
+**Reviewed baseline:** MiMe Simple Events and Calendar 0.9.0 RC3
+
 **Repository:** `MilanMiMeOnline/WP-Simple-Events`
 
 ## Executive result
 
-The plugin has a strong privacy-minimizing architecture: it has no hosted service, telemetry, analytics, advertisements, remote runtime assets, visitor storage, direct database access or custom tables. Privileged actions use explicit capabilities and nonces, public queries are bounded, production packaging is allowlisted, and event data remains under the WordPress site's control.
+The complete frozen 1.x surface was re-audited after recurrence, occurrence
+pages, Divi 5, modern filters/colors and Add to Calendar expanded the original
+0.2 architecture. No unresolved high- or critical-severity vulnerability, privacy
+violation or release blocker was found.
 
-The audit found one release-blocking confidentiality defect. WordPress core included registered event metadata in the standard REST response for a published password-protected event even while its content remained locked. The plugin now removes the complete REST `meta` member while WordPress still requires that event password. Authorized editors retain the data in edit context. A real WordPress regression first reproduced the disclosure and now proves both boundaries.
+The re-audit corrected three hardening gaps:
 
-No known unresolved code vulnerability remains after that fix and the completed review. The next release is still conditional on all quality gates and official Plugin Check passing against the final versioned package. GitHub Private Vulnerability Reporting is enabled and linked directly from the public security policy.
+1. the old audit incorrectly claimed that the current plugin had no custom table,
+   direct database access, recurrence or calendar export;
+2. CI still used official action generations whose JavaScript runtime had moved
+   into GitHub's Node 20 deprecation path;
+3. Dependabot security updates were disabled even though human-reviewed automated
+   remediation proposals fit the repository policy.
+
+The documentation now describes the rebuildable occurrence index and its five
+reviewed database adapters. Executable tests freeze REST permissions, direct
+database ownership, prohibited runtime capabilities, browser privacy and remote
+URL boundaries. GitHub Actions use immutable reviewed Node 24 generations, and
+Dependabot may propose—but never automatically merge—security updates.
+
+## Threat model and trust zones
+
+### Untrusted inputs
+
+- anonymous query strings, shortcode attributes and REST/calendar-feed input;
+- editor post/meta/taxonomy values and builder attributes;
+- recurrence aggregates, occurrence identities and broad-edit confirmations;
+- stored values that may predate the current validation rules;
+- theme/plugin callbacks and host cache behaviour;
+- lockfile packages, GitHub Actions and downloaded historical release archives.
+
+### Protected assets
+
+- draft, private and password-protected event metadata/content;
+- editor-only recurrence aggregates, overrides and maintenance state;
+- site capabilities, settings and destructive cleanup preference;
+- integrity of exact occurrence identities and public calendar snapshots;
+- build/release integrity and the absence of developer credentials or personal
+  workstation data.
+
+### Security objectives
+
+- public collections expose only published, password-free eligible events;
+- exact occurrence/export requests never fall back to a related public object;
+- mutations require the exact mapped capability and browser-request integrity;
+- every input is shape-validated and bounded before sanitization/persistence;
+- output is escaped late for HTML, attribute, URL, JSON or calendar contexts;
+- derived storage cannot become an authority over canonical WordPress content;
+- the runtime adds no telemetry, visitor tracking, remote code or secret logging.
+
+The normative route/action review is in
+[SECURITY-PERMISSION-MATRIX.md](SECURITY-PERMISSION-MATRIX.md).
 
 ## Privacy data map
 
-### Data stored by the plugin
+### Canonical site-local data
 
-- Native WordPress event posts and revisions, including editor-authored title, content, excerpt and featured-image reference.
-- Registered event metadata: local dates/times, captured timezone, derived UTC indexes, all-day flag, venue, address, location URL, external event URL/label and event status.
-- Event-specific category and tag terms and relationships.
-- Plugin options for archive display/routing, timezone visibility, JSON-LD, schema version, maintenance/rewrite state and uninstall preference.
-- Event capabilities granted to administrator and editor roles.
+- WordPress event posts/revisions: title, content, excerpt, author and featured
+  image reference;
+- typed event metadata: schedule, captured timezone, venue, address, external
+  HTTP(S) links/labels, public status and optional color intent;
+- event category/tag terms, relationships and optional category color;
+- protected recurrence aggregate, sparse occurrence overrides/cancellations and
+  maintenance state;
+- plugin options for archive/display/timezone/schema/uninstall behaviour;
+- event capabilities assigned to administrator/editor roles.
 
-The plugin does not create a custom table, user profile field, visitor profile, analytics record or application log.
+The custom occurrence table is a disposable bounded index. It contains stable
+identity, parent event, generation, chronological values and status required for
+ordered queries. It does not copy event bodies, passwords, taxonomy records,
+visitor data or remote-service identifiers and can be rebuilt from canonical
+metadata.
 
-### Public disclosure boundaries
+### Public disclosure
 
-Published, password-free events may be exposed through:
+An editor who publishes a password-free event intentionally makes its event data
+available through front-end pages/components, Event JSON-LD, applicable sitemaps,
+WordPress core REST, the bounded calendar feed and—in an exact eligible
+context—the local ICS snapshot. Addresses, descriptions and external URLs may
+contain personal information, so the public readme tells editors not to publish
+private information as event content.
 
-- front-end event pages, archives, shortcodes, Gutenberg blocks and Elementor widgets;
-- Event JSON-LD on eligible individual event pages;
-- WordPress core REST for the public event post type and registered public editor metadata;
-- the bounded `wpse/v1/events` calendar feed.
-
-Drafts and private events require normal WordPress authorization. Password-protected events are excluded from plugin collections, calendar feeds, explicit public block/widget selection and JSON-LD. Composite single-event output shows WordPress' password form. The new core REST response filter also removes event metadata while the password is required.
-
-Site editors remain responsible for deciding what they publish. Addresses, external URLs and free-form content can contain personal information even though the plugin does not require it.
+Draft/private events remain under WordPress capabilities. Plugin collections,
+JSON-LD, public explicit builder selection, occurrence REST and ICS exclude
+password-protected events. The core event REST response removes the full `meta`
+member while WordPress still requires the event password; authorized edit context
+retains it.
 
 ### Network and browser behaviour
 
-- No request is sent to MiMe or another vendor service.
-- No CDN, remote font, tracking pixel, iframe or remotely executed code is loaded.
-- Calendar JavaScript requests the same site's WordPress REST endpoint with bounded dates, pagination and category/tag slugs.
-- The plugin creates no cookie and writes nothing to local storage or session storage.
-- External location/event destinations are contacted only after a visitor selects a link. Those links use an isolated new tab with `noopener noreferrer`.
+- No request is sent to MiMe, an analytics service or a hosted plugin backend.
+- No remote JavaScript, stylesheet, font, image, iframe or executable code loads.
+- Authored browser code creates no cookie and uses no local/session storage or
+  beacon telemetry.
+- Calendar requests use the same WordPress REST origin.
+- Google and Outlook are optional author-selected links. The plugin does not
+  contact them. A visitor's deliberate click sends the public snapshot to that
+  provider in an isolated tab without a referrer.
+- Schema.org is a vocabulary URL in local JSON-LD, not a network request.
 
-### Retention and deletion
+### Retention and WordPress privacy tools
 
-Deactivation deletes nothing. Uninstall retains events, terms, settings and capabilities by default. Complete cleanup requires a saved, administrator-only opt-in with an irreversible-action warning. Cleanup uses bounded WordPress APIs and retains uploaded media because attachments may be shared. Options are deleted last so interrupted cleanup does not falsely report completion.
+Deactivation deletes no content. Uninstall always removes executable scheduled
+jobs but preserves content/settings/derived rows by default. Permanent cleanup
+requires a saved administrator opt-in and deletes only allowlisted plugin data;
+shared media remains.
 
-No custom personal-data exporter or eraser is registered. The plugin does not collect visitor submissions or create a plugin-specific identity record; editorial events remain native WordPress content governed by the site's normal content and author controls. The public readme now provides copy-ready facts for a site owner's privacy notice.
+The plugin does not accept visitor submissions or create a visitor/user-linked
+identity record, so a custom personal-data exporter or eraser would have no
+plugin-specific record to return. Editorial events remain ordinary WordPress
+content with native author/content controls. The public readme provides the facts
+a site owner needs for a privacy notice.
 
-## Security review coverage
+## Authorization and integrity review
 
-### Authorization and request integrity
+- Every custom REST route declares `permission_callback`.
+- Only the bounded public calendar feed and exact public occurrence resolver use
+  `__return_true`; their repositories repeat published/password-free eligibility.
+- Eight recurrence editor routes require exact event `edit_post`. Mutation
+  services recheck authority, validate optimistic revisions and require a
+  server-signed confirmation for broad changes.
+- Divi preview requires exact builder-document `edit_post`; module and attribute
+  payloads are allowlisted/bounded and rendered server-side.
+- Settings/maintenance require `manage_options` and WordPress/action nonces.
+- Duplication requires source edit, event creation, term-assignment capability
+  and an event-specific nonce.
+- Native/Core REST saves use WordPress nonce/capability enforcement and typed
+  registered metadata.
 
-- Event edit, publish, delete, duplicate and taxonomy capabilities are explicit.
-- Duplication requires source edit, event creation and event-term assignment rights plus an event-specific nonce.
-- Maintenance requires `manage_options` and action-specific nonces.
-- Settings use the WordPress Settings API and are not exposed through REST.
-- Native and REST event saves share the same validation and persistence boundaries.
-- Read-only public filter query strings are allowlisted, bounded and instance-scoped.
+## Input, output, SQL and cache review
 
-### Input validation and output safety
+- Enumerations, dates, timezones, identities, taxonomy values, colors, labels,
+  limits and provider choices use allowlists and explicit bounds.
+- External URLs accept HTTP(S) only. Markup, attributes, URLs, JSON-LD and ICS
+  receive context-specific escaping/encoding.
+- JSON-LD prevents HTML script termination. ICS text is RFC 5545 escaped, folded
+  at UTF-8-safe 75-octet boundaries and emitted with no-store/no-cache/nosniff.
+- No authored runtime `eval`, shell execution, unsafe unserialization, dynamic
+  remote include, visitor cookie/storage, unauthenticated AJAX mutation, remote
+  request API or secret/request-payload logging exists.
+- Direct database access is confined to the five occurrence adapters listed in
+  the permission matrix. Identifiers are trusted/validated, values are prepared,
+  collections are bounded and public reads join back to public parent posts.
+- Public occurrence leaf responses are conservative no-store resources. Ordinary
+  bounded public collections remain compatible with normal host/CDN caching;
+  canonical writes and index generations prevent stale rows becoming authority.
 
-- Enumerations use allowlists; date/time and timezone values are parsed strictly, including DST boundaries.
-- External URLs accept only HTTP or HTTPS and are escaped at output.
-- Text lengths and calendar windows/pages are bounded.
-- Stored values are treated as untrusted again in the shared presentation layer.
-- Output uses context-specific escaping; allowed rich content passes through WordPress formatting/KSES.
-- JSON-LD escapes HTML-significant characters to prevent script termination.
-- No `eval`, dynamic remote include, unsafe deserialization, shell execution or arbitrary metadata field is present in runtime code.
+## Supply chain and repository review
 
-### Data access and queries
+- Composer production runtime contains only the generated project autoloader.
+- FullCalendar 6.1.21 and Preact are bundled locally under MIT terms with notices.
+- `composer audit --locked` reports no advisory or abandoned dependency.
+- `npm audit --audit-level=low` reports zero vulnerabilities; development tools
+  are never included in the release package.
+- CI repository permission is read-only. Every remote Action is pinned to one
+  immutable commit and official Node-based actions run maintained Node 24
+  generations.
+- Release construction is allowlist-based, rejects links/unexpected paths/types,
+  generates an authoritative production autoloader, verifies every PHP file and
+  produces byte-for-byte reproducible archives plus bound SHA-256 checksums.
+- Public source/build instructions and third-party notices satisfy source
+  availability for bundled/minified code.
+- GitHub secret scanning, push protection, vulnerability alerts, Private
+  Vulnerability Reporting and Dependabot security updates are enabled. Automated
+  security changes still require normal human review and green gates.
 
-- No raw SQL or direct `$wpdb` access is present.
-- Public event queries force the event post type, `publish`, `has_password => false`, deterministic ordering and hard page/result bounds.
-- The calendar route validates a maximum 400-day window, up to 20 category/tag slugs, a maximum page of 1000 and a maximum 100 items per page.
-- Derived UTC indexes are hidden from core REST and cannot be client-authored.
-- The new `rest_prepare_wpse_event` boundary prevents registered metadata disclosure for locked events.
+## Findings and dispositions
 
-### Supply chain and packaging
+### DOC-SEC-01 — Historical audit contradicted the current architecture
 
-- PHP production code has no third-party runtime package beyond the generated Composer autoloader.
-- FullCalendar 6.1.21 modules and their Preact dependency are bundled locally under MIT terms; notices ship in the release.
-- Node and Composer dependencies are lockfile-controlled development/build dependencies.
-- The release builder copies an explicit allowlist, rejects symlinks, hidden/development paths and unexpected file types, and removes the development lockfile after generating a class-authoritative production autoloader.
-- Release verification checks archive paths, checksum filename binding, PHP syntax, autoloading and byte-for-byte reproducibility.
+**Severity:** Documentation/compliance risk
 
-### Repository privacy
+**Status:** Resolved in RC3
 
-- Tracked files and Git history contain no detected high-confidence token, private key, local Mac path or personal email address.
-- Commit identity is `MiMe` with GitHub's `121235792+MilanMiMeOnline@users.noreply.github.com` address.
-- The GitHub repository is public, secret scanning is enabled and push protection is enabled.
-- CI has read-only repository permission and every third-party GitHub Action is pinned to a reviewed immutable commit.
-- GitHub currently reports Dependabot security updates as disabled. Private Vulnerability Reporting is enabled.
+The 0.2.2 audit said there was no recurrence, custom table, direct database access
+or ICS surface. It was replaced with this complete current review, permission
+matrix and executable inventory tests.
 
-## Findings
+### CI-SEC-01 — Official Actions used the deprecated Node 20 runtime generation
 
-### SEC-01 — Protected event metadata exposed by core REST
+**Severity:** Low supply-chain maintenance risk
 
-**Status:** Fixed in the 0.2.2 candidate; release blocker until that version is published.
-**Impact:** An anonymous caller could read registered schedule/location/status metadata from a published password-protected event through WordPress core REST.
-**Resolution:** Remove `meta` at `rest_prepare_wpse_event` while `post_password_required()` remains true, except for an authorized edit-context request.
-**Evidence:** The new smoke assertion failed against the old behaviour and passes after the fix; authorized edit access is asserted separately.
+**Status:** Resolved in RC3
 
-### OPS-01 — Private vulnerability intake channel
+Checkout, setup-node, cache and artifact upload moved to reviewed immutable
+commits for their maintained Node 24 generations. CI itself now runs Node 24.
 
-**Status:** Resolved on 2026-07-22.
-**Impact:** A researcher has no clean private reporting route and may use a public issue.
-**Resolution:** GitHub Private Vulnerability Reporting is enabled and `SECURITY.md` links directly to the private advisory form. No personal email address is published.
+### OPS-SEC-01 — Automated security remediation proposals were disabled
 
-### OPS-02 — Dependabot security updates disabled
+**Severity:** Low operational detection/response risk
 
-**Status:** Recommended, not a code vulnerability.
-**Impact:** Existing audit gates catch known advisories during development/release, but automated patch proposals and earlier repository notification are unavailable.
-**Resolution:** Enable Dependabot security updates while retaining human review and the current Composer/npm audit gates.
+**Status:** Resolved on 1 September 2026
 
-### DEP-01 — FullCalendar 6 line requires periodic reassessment
+Dependabot security updates are enabled. They open proposals only; no auto-merge
+or expanded workflow permission was granted.
 
-**Status:** Accepted maintenance risk.
-**Impact:** No known vulnerability was identified in the locked dependency audit, but the modular 6.1 line must remain maintained and reviewed.
-**Resolution:** Reassess before 1.0 and on every dependency review; keep the no-JavaScript fallback and local build so replacement does not affect stored data.
+### DEP-SEC-01 — Bundled calendar library requires ongoing reassessment
+
+**Severity:** Accepted maintenance risk
+
+**Status:** Open, non-blocking
+
+The locked dependency audit is clean. FullCalendar remains local, version-pinned,
+licensed and replaceable without changing stored event data. Recheck advisories
+and maintenance status before 1.0 and every dependency update.
+
+### HOST-SEC-01 — Reverse proxies can override application cache headers
+
+**Severity:** Accepted deployment risk
+
+**Status:** Open, non-blocking
+
+The plugin emits conservative headers for exact occurrence and ICS privacy
+boundaries, but cannot guarantee that a misconfigured host/CDN honors them.
+Deployment-specific cache exclusions remain a hosting responsibility; tests prove
+the application headers and fail-closed object eligibility.
 
 ## Release acceptance
 
-Before publishing 0.2.2:
+RC3 is acceptable only after the final tree passes strict Composer validation,
+PHP QA, JavaScript/CSS/tool QA, supported WordPress/PHP smoke tests, browser
+regressions, reproducible release verification, dependency audits and official
+strict Plugin Check. The resulting CI commit and exact package—not an earlier
+working tree—remain the release evidence.
 
-1. Require the official strict Plugin Check CI result on the release commit.
-2. Confirm account two-factor authentication and recovery details.
-3. Submit the verified 0.2.2 package through the `mimeonline` account.
+## Review references
 
-Version synchronization, translation verification, local quality gates,
-reproducible packaging, packaged WordPress 6.9/7.0.1 smoke tests, WordPress 7.0.1
-browser regressions and visual-asset review have been completed for the candidate.
+- [WordPress plugin security APIs](https://developer.wordpress.org/apis/security/)
+- [WordPress escaping guidance](https://developer.wordpress.org/apis/security/escaping/)
+- [REST endpoint permissions](https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/)
+- [WordPress nonces](https://developer.wordpress.org/apis/security/nonces/)
+- [Plugin privacy guidance](https://developer.wordpress.org/plugins/privacy/)
+- [Detailed Plugin Directory guidelines](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/)
+- [Common Plugin Directory review issues](https://developer.wordpress.org/plugins/wordpress-org/common-issues/)

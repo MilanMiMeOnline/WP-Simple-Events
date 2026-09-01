@@ -1911,3 +1911,30 @@ that cleanup on every site even when the administrator retains events, terms,
 settings, capabilities and the derived occurrence table. This prevents orphaned
 callbacks when deletion is invoked outside the ordinary deactivate-then-delete
 screen flow without weakening the default data-retention promise.
+
+## ADR-095: RC3 turns security and privacy boundaries into executable contracts
+
+**Status:** Accepted
+
+The frozen 0.9 surface receives one current threat review and permission matrix
+rather than extending the 0.2-era audit by assumption. Every custom REST route
+must declare an explicit permission callback. Only the bounded calendar feed and
+exact public-occurrence resolver may be anonymously readable; both must reapply
+published, password-free event eligibility. Editor routes use the exact mapped
+event or document capability, while browser mutations also retain their existing
+WordPress nonce or REST nonce boundary.
+
+Direct database access is not globally absent after recurrence. It is confined
+to the five reviewed occurrence-table schema, projection, cleanup and read
+adapters. They operate on a rebuildable derived index through validated table
+identifiers, prepared typed values, bounded queries and parent-post visibility
+predicates. A repository contract test fails if `$wpdb` appears in another
+runtime file, if a REST route loses its permission callback, or if authored
+runtime code gains visitor storage, telemetry, remote requests, unsafe execution
+or deserialization primitives.
+
+CI itself is part of the supply-chain boundary. Official GitHub Actions remain
+pinned to immutable reviewed commits and move to their maintained Node 24
+generations. Dependabot security updates may open reviewable remediation pull
+requests but never merge automatically. Composer/npm audits, reproducible builds,
+the complete source link and strict official Plugin Check remain release gates.

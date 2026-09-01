@@ -348,10 +348,43 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 } ) => {
 	test.setTimeout( 180_000 );
 	await login( page );
-	await page.goto( '/wp-admin/edit.php?post_type=wpse_event' );
-	const firstEvent = page.locator( 'a.row-title' ).first();
-	const editUrl = await firstEvent.getAttribute( 'href' );
-	const eventTitle = ( await firstEvent.textContent() )?.trim();
+	const fixture = await page.evaluate( async () => {
+		const start = new Date();
+
+		start.setUTCDate( start.getUTCDate() + 30 );
+		const date = start.toISOString().slice( 0, 10 );
+		const windowStart = new Date( `${ date }T12:00:00Z` );
+		const windowEnd = new Date( `${ date }T12:00:00Z` );
+
+		windowStart.setUTCHours( 0, 0, 0, 0 );
+		windowEnd.setUTCHours( 0, 0, 0, 0 );
+		windowStart.setUTCDate( windowStart.getUTCDate() - 1 );
+		windowEnd.setUTCDate( windowEnd.getUTCDate() + 10 );
+		const event = await window.wp.apiFetch( {
+			path: '/wp/v2/wpse_event',
+			method: 'POST',
+			data: {
+				title: 'E2E recurrence editor event',
+				status: 'publish',
+				meta: {
+					_wpse_start_local: `${ date }T12:00`,
+					_wpse_end_local: `${ date }T13:00`,
+					_wpse_all_day: false,
+					_wpse_timezone: 'Europe/Brussels',
+					_wpse_event_status: 'scheduled',
+				},
+			},
+		} );
+
+		return {
+			id: event.id,
+			title: event.title.rendered,
+			windowStart: windowStart.toISOString().replace( '.000Z', '+00:00' ),
+			windowEnd: windowEnd.toISOString().replace( '.000Z', '+00:00' ),
+		};
+	} );
+	const editUrl = `/wp-admin/post.php?post=${ fixture.id }&action=edit`;
+	const eventTitle = fixture.title;
 
 	expect( editUrl ).toBeTruthy();
 	expect( eventTitle ).toBeTruthy();
@@ -430,13 +463,20 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await panel.getByRole( 'button', { name: 'Apply to complete series' } ).click();
 	await expect( panel ).toContainText( 'The recurring schedule was updated.' );
 	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'daily' );
+	const feedQuery = new URLSearchParams( {
+		start: fixture.windowStart,
+		end: fixture.windowEnd,
+		per_page: '100',
+		page: '1',
+	} );
 	const feedResponse = await page.request.get(
-		'/wp-json/wpse/v1/events?start=2026-08-01T00%3A00%3A00%2B00%3A00&end=2026-10-01T00%3A00%3A00%2B00%3A00&per_page=100&page=1',
+		`/wp-json/wpse/v1/events?${ feedQuery.toString() }`,
 	);
 	const feedItems = await feedResponse.json();
-	const seriesFeedItems = feedItems.filter( ( item ) => item.title === eventTitle );
 
 	expect( feedResponse.status() ).toBe( 200 );
+	expect( Array.isArray( feedItems ) ).toBe( true );
+	const seriesFeedItems = feedItems.filter( ( item ) => item.title === eventTitle );
 	expect( seriesFeedItems ).toHaveLength( 3 );
 	expect( new Set( seriesFeedItems.map( ( item ) => item.url ) ).size ).toBe( 3 );
 
@@ -497,19 +537,23 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await panel.getByRole( 'button', { name: 'Edit selected occurrence' } ).click();
 	await expect( panel.getByRole( 'group', { name: 'Selected occurrence' } ) ).toBeVisible();
 	await expect( panel ).toContainText( 'Times use the series timezone:' );
-	await panel.getByLabel( 'Occurrence title' ).fill( 'E2E occurrence title' );
-	await panel.getByLabel( 'Occurrence note' ).fill( 'E2E occurrence note' );
-	await panel.getByLabel( 'Venue', { exact: true } ).fill( 'E2E side hall' );
-	await panel.getByLabel( 'Address', { exact: true } ).fill( 'E2E side entrance' );
-	await panel.getByLabel( 'Location URL', { exact: true } ).fill(
-		'https://example.com/e2e-location',
-	);
-	await panel.getByLabel( 'External event URL', { exact: true } ).fill(
-		'https://example.com/e2e-occurrence',
-	);
-	await panel.getByLabel( 'External event action label', { exact: true } ).fill(
-		'E2E tickets',
-	);
+	const occurrenceValues = new Map( [
+		[ 'Occurrence title', 'E2E occurrence title' ],
+		[ 'Occurrence note', 'E2E occurrence note' ],
+		[ 'Venue', 'E2E side hall' ],
+		[ 'Address', 'E2E side entrance' ],
+		[ 'Location URL', 'https://example.com/e2e-location' ],
+		[ 'External event URL', 'https://example.com/e2e-occurrence' ],
+		[ 'External event action label', 'E2E tickets' ],
+	] );
+
+	for ( const [ label, value ] of occurrenceValues ) {
+		const field = panel.getByLabel( label, { exact: true } );
+
+		await field.fill( '' );
+		await field.pressSequentially( value, { delay: 5 } );
+		await expect( field ).toHaveValue( value );
+	}
 	await panel.getByRole( 'button', { name: 'Preview this occurrence' } ).click();
 	await expect( panel ).toContainText( '1 individual change is affected.' );
 	await panel.getByRole( 'button', { name: 'Apply to this occurrence' } ).click();
@@ -654,6 +698,12 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await expect(
 		page.locator( '[data-wpse-recurrence-schedule-notice]' ),
 	).toHaveAttribute( 'hidden', '' );
+	await page.evaluate( async ( eventId ) => {
+		await window.wp.apiFetch( {
+			path: `/wp/v2/wpse_event/${ eventId }?force=true`,
+			method: 'DELETE',
+		} );
+	}, fixture.id );
 } );
 
 test( 'registers, serializes and previews the primary event components in Gutenberg', async ( {

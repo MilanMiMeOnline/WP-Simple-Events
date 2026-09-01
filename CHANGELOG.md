@@ -4,6 +4,20 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+### Security and privacy
+
+- Re-audit the frozen 1.x REST, recurrence, occurrence, Divi preview, public export,
+  storage, privacy and permission surfaces through one current threat model and
+  explicit permission matrix.
+- Add executable contracts that reject missing REST permission callbacks, new
+  direct database owners, unsafe runtime capabilities, visitor storage/tracking
+  and undocumented remote URL boundaries.
+- Update official GitHub Actions to reviewed immutable Node 24 generations and
+  enable human-reviewed Dependabot security-update proposals without auto-merge.
+- Document the local rebuildable occurrence index and its five reviewed prepared,
+  bounded database adapters instead of retaining the obsolete no-table/no-SQL
+  claim from the 0.2 audit.
+
 ### Fixed
 
 - Recreate a missing derived occurrence table even when the stored schema option
@@ -16,6 +30,9 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 - Qualify clean activation, all public upgrades from 0.2.3 through 0.7.0,
   missing-table repair, deactivation/reactivation and both uninstall modes from
   checksum-pinned packages in a disposable real WordPress matrix.
+- Repeat dependency audits, secret/privacy capability scans, public/private REST
+  and ICS boundary checks and official strict Plugin Check against the frozen
+  release-candidate surface.
 
 ## [0.7.0] - 2026-08-29
 

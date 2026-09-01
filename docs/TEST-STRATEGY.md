@@ -12,6 +12,12 @@ PHP syntax and style, PHPStan, JavaScript/style linting, strict package validati
 
 The release contract additionally rejects unexpected archive roots, paths, file types, hidden/development files and missing runtime assets. The verifier checks the SHA-256 record, symbolic links, every shipped PHP file and the production Composer autoloader. Two consecutive builds must be byte-for-byte identical.
 
+The security contract inventories every custom REST permission callback, confines
+direct database access to the reviewed occurrence adapters, rejects unsafe PHP
+execution/deserialization/network primitives and rejects visitor storage or
+tracking in authored browser code. It also verifies that the only runtime remote
+URL builders are the explicit calendar-provider actions and schema vocabulary.
+
 ### Unit tests
 
 Fast tests cover logic that does not require a running WordPress installation: date ranges, display status, validation, query criteria, formatter behaviour and migrations. Boundary-value and data-provider tests are preferred.

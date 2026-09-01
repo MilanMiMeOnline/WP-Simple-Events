@@ -17,18 +17,21 @@ This document tracks remaining product and release hardening against `PRODUCT-SP
 - GitHub secret scanning and push protection enabled on the public repository.
 - GitHub Private Vulnerability Reporting enabled with a direct private disclosure route in `SECURITY.md`.
 - GitHub Actions restricted to read-only repository contents and pinned to immutable reviewed commits.
+- Official Node-based GitHub Actions updated to their maintained Node 24 generations.
+- Dependabot security updates enabled for reviewable remediation proposals without automatic merging.
 - Public core REST protection for registered metadata belonging to password-protected events, with anonymous and authorized-editor regression coverage.
+- Complete 0.9 threat model and permission matrix covering recurrence, occurrence storage/REST, Divi previews and calendar export.
+- Executable security contracts that inventory REST permission callbacks, direct database adapters, prohibited runtime capabilities, browser privacy and remote URL boundaries.
 
 ## Release-readiness actions
 
-1. Run every release gate against the versioned 0.2.2 candidate before publishing or submitting it.
-2. Require the strict official Plugin Check CI job to pass on that exact release commit.
-3. Submit the plugin to WordPress.org and address any manual-review feedback without weakening validation, permissions or tests.
-4. Copy the reviewed `.wordpress-org/` files to the WordPress.org SVN `assets/` directory after approval.
+1. Complete the remaining 0.9 accessibility, performance, new-user documentation and exploratory work packages.
+2. Run every release gate against the exact frozen 0.9.0 candidate.
+3. Require strict official Plugin Check and the complete hosted compatibility matrix to pass on that commit.
+4. Publish identical verified GitHub and WordPress.org packages and preserve their checksums as evidence.
 
 ## Recommended repository hardening
 
-- Enable Dependabot security updates. Dependency audits already block release locally and in CI, so this adds earlier notification and automated patch proposals rather than replacing review.
 - Keep GitHub account two-factor authentication and recovery methods current; prefer a passkey or hardware-backed second factor. This is an account setting and is not verifiable from the repository.
 - Keep branch protection and required release checks under review once contribution volume grows.
 
@@ -41,6 +44,5 @@ This document tracks remaining product and release hardening against `PRODUCT-SP
 
 ## Deferred without blocking version 1
 
-- A single-event `.ics` download remains optional.
 - Elementor Pro dynamic tags remain optional; the existing widgets work on Elementor Free pages and in host-provided current-event templates.
-- Recurrence, interactive maps, geocoding, ticketing and external calendar synchronization remain explicit non-goals.
+- Interactive maps, geocoding, ticketing, attendee management and two-way external calendar synchronization remain explicit non-goals.

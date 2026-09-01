@@ -81,6 +81,30 @@ test( 'pins every remote GitHub Action to an immutable commit', () => {
 	}
 } );
 
+test( 'uses maintained Node 24 GitHub Actions without floating references', () => {
+	assert.doesNotMatch( qualityWorkflow, /node-version:\s*20/ );
+	assert.match(
+		qualityWorkflow,
+		/actions\/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6\.0\.2/,
+	);
+	assert.match(
+		qualityWorkflow,
+		/actions\/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6\.5\.0/,
+	);
+	assert.match(
+		qualityWorkflow,
+		/actions\/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5\.0\.5/,
+	);
+	assert.match(
+		qualityWorkflow,
+		/actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7\.0\.1/,
+	);
+	assert.equal(
+		[ ...qualityWorkflow.matchAll( /node-version:\s*24/g ) ].length,
+		6,
+	);
+} );
+
 test( 'keeps external WordPress QA inputs deterministic and available', () => {
 	assert.match(
 		qualityWorkflow,

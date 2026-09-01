@@ -34,6 +34,7 @@ for MiMe Simple Events and Calendar.
 ## Security, privacy and quality
 
 - [Security and privacy audit](SECURITY-PRIVACY-AUDIT.md)
+- [Security permission matrix](SECURITY-PERMISSION-MATRIX.md)
 - [Security reporting policy](../SECURITY.md)
 - [Test strategy](TEST-STRATEGY.md)
 - [Manual QA checklist](QA-CHECKLIST.md)
@@ -50,7 +51,11 @@ The current public release evidence is the
 editor, provider and interoperability checkpoint is in
 [QA-REPORT-0.7.0-WP3-4.md](QA-REPORT-0.7.0-WP3-4.md). The
 [0.9.0 RC1 report](QA-REPORT-0.9.0-RC1.md) records the active release-candidate
-cycle's completed public compatibility freeze. The
+cycle's completed public compatibility freeze, while the
+[0.9.0 RC2 report](QA-REPORT-0.9.0-RC2.md) records clean-install, historical
+upgrade and lifecycle qualification. The
+[0.9.0 RC3 report](QA-REPORT-0.9.0-RC3.md) records the current security/privacy,
+permission and supply-chain re-audit. The
 [0.6.0 filter and color release report](QA-REPORT-0.6.0.md),
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the

@@ -476,8 +476,12 @@ WordPress REST responses and the bounded calendar feed. Documentation must make
 that disclosure boundary clear.
 
 Every external value is untrusted. URLs are restricted to HTTP(S), input is
-sanitized, and output is escaped for its exact context. Raw SQL, dynamic includes,
-unsafe deserialization, `eval`, shell execution and remote code are prohibited.
+sanitized, and output is escaped for its exact context. Direct database access is
+prohibited outside the documented occurrence-table lifecycle, projection,
+generation-cleanup and read adapters. Those adapters may use only typed internal
+query objects, validated table identifiers, prepared values, bounded result sets
+and the established public-event eligibility boundary. Dynamic includes, unsafe
+deserialization, `eval`, shell execution and remote code are prohibited.
 
 See [SECURITY-PRIVACY-AUDIT.md](SECURITY-PRIVACY-AUDIT.md) and
 [SECURITY.md](../SECURITY.md).

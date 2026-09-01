@@ -11,12 +11,16 @@ Use the applicable items before every handoff. Record anything not tested and wh
 
 ## Security and privacy
 
+- [ ] Every custom REST route has an explicit reviewed permission callback.
+- [ ] Public routes are listed in the current security permission matrix and fail closed for protected content.
 - [ ] Capabilities are checked server-side.
 - [ ] State-changing browser requests use and verify a nonce.
 - [ ] Input is validated, normalized and sanitized at the boundary.
 - [ ] Output is escaped for its exact context.
 - [ ] Public queries expose only intended event statuses and fields.
 - [ ] Queries are bounded; no secret or personal data is logged.
+- [ ] Direct database access remains confined to the reviewed occurrence adapters.
+- [ ] Authored runtime code adds no telemetry, remote request, visitor cookie or browser storage.
 - [ ] Dependency audit has no unreviewed high/critical finding.
 
 ## Event correctness
