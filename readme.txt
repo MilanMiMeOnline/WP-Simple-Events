@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.7.0
+Stable tag: 0.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,15 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 0.9.0 =
+* Freeze the documented public shortcodes, blocks, REST routes, metadata, occurrence identities and builder component contracts for the future 1.x line.
+* Make recurring-event collections substantially more efficient by priming event, metadata and taxonomy data once per bounded result set.
+* Strengthen clean-install, historical-upgrade, derived-data repair, deactivation and both uninstall-retention paths.
+* Improve keyboard, focus, text-spacing, forced-colors and 320-pixel reflow behaviour across visitor filters, calendars, pagination and recurrence controls.
+* Keep repeated event collections accessible with unique heading references and prevent mobile calendar-list tables from causing horizontal page overflow.
+* Add a complete task-based guide for first events, recurrence scopes, filters and colors, Gutenberg, Elementor, Divi 5, privacy, ownership and troubleshooting.
+* Re-audit permissions, REST and calendar exports, dependencies, privacy boundaries and release packaging without adding telemetry, cookies or remote runtime services.
 
 = 0.7.0 =
 * Add an optional local ICS download for one public one-off event or one exact recurring occurrence.

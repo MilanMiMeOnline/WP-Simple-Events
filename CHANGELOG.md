@@ -4,6 +4,8 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-02
+
 ### Documentation
 
 - Add a task-based user guide covering installation, first-event publishing,
@@ -15,6 +17,18 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 - Remove the misleading public suggestion that editors can add arbitrary manual
   occurrences; separately changed generated occurrences remain supported through
   the documented occurrence-edit scopes.
+
+### Changed
+
+- Freeze the documented shortcodes, Gutenberg block names and saved attributes,
+  REST routes, event and taxonomy metadata, occurrence identities, CSS targets,
+  Elementor widget identifiers and Divi 5 module attributes as the supported 1.x
+  compatibility surface.
+- Prime canonical event posts, metadata and taxonomy relationships once for each
+  bounded occurrence collection, reducing repeated database reads without adding
+  persistent caches or changing chronological results.
+- Use the current WordPress editor package export for the recurrence document
+  panel while preserving its saved settings and supported WordPress behaviour.
 
 ### Dependencies
 
@@ -65,6 +79,10 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
   already reports the current version, then rebuild it from canonical event data.
 - Clear plugin-owned scheduled maintenance on deactivation and every uninstall,
   and remove a stale migration worker once migration is complete.
+- Keep event-card heading IDs unique when the same event appears in multiple
+  independent list or grid components on one page.
+- Prevent FullCalendar's mobile list table from widening a 320 CSS-pixel
+  component when time text and long event titles compete for intrinsic width.
 
 ### Testing
 
