@@ -82,6 +82,9 @@ documentation, public readme rewrite and documentation-contract review. The
 [0.9.0 RC7 report](QA-REPORT-0.9.0-RC7.md) records destructive local and
 non-destructive production exploratory qualification plus the final bounded UX
 regressions before publication. The
+[0.9.0 RC8 report](QA-REPORT-0.9.0-RC8.md) records the exact versioned package,
+complete local and hosted release matrix, official Plugin Check and final
+publication authorization. The
 [0.6.0 filter and color release report](QA-REPORT-0.6.0.md),
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the

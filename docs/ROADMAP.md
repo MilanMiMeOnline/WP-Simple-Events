@@ -1,7 +1,7 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 1 September 2026
+**Last reviewed:** 2 September 2026
 **Current public release:** 0.7.0
 **Active phase:** Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
 
@@ -1208,6 +1208,19 @@ production received no mutation. The full PHP/frontend/browser gates, WordPress
 6.9 and 7.1 packaged smokes, historical upgrade matrix and reproducible package
 checks pass. Evidence and residual host/translation boundaries are recorded in
 [QA-REPORT-0.9.0-RC7.md](QA-REPORT-0.9.0-RC7.md).
+
+**RC8 qualification complete — 2 September 2026; publication pending.** The
+public plugin header, runtime constant, WordPress.org stable tag, npm metadata,
+translation catalogue and changelogs now identify 0.9.0. The 380-path package is
+byte-for-byte reproducible with SHA-256
+`43296b58f357cc19a56eae4b48b5910e72bdac397bd6af21f30399ce48825095`.
+All local gates and hosted run `33568347988` pass, including PHP 8.2–8.5,
+WordPress 6.9 and 7.1, 35 browser journeys, the historical upgrade/lifecycle
+matrix, bounded performance budgets and strict official Plugin Check. The hosted
+zip is byte-identical to the local candidate. Publication URLs and the
+WordPress.org SVN revision remain to be recorded after this exact candidate is
+tagged and distributed. Evidence is in
+[QA-REPORT-0.9.0-RC8.md](QA-REPORT-0.9.0-RC8.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public
 contract is documented; supported matrices and release artifacts are green; the
