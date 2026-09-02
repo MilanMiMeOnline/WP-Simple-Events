@@ -2,8 +2,8 @@
 
 **Status:** active planning contract
 **Last reviewed:** 2 September 2026
-**Current public release:** 0.7.0
-**Active phase:** Phase 7 — 0.9.0 feature freeze and 1.0 release candidate
+**Current public release:** 0.9.0
+**Active phase:** Phase 7 — blocker-only 0.9 observation window
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -1209,7 +1209,7 @@ production received no mutation. The full PHP/frontend/browser gates, WordPress
 checks pass. Evidence and residual host/translation boundaries are recorded in
 [QA-REPORT-0.9.0-RC7.md](QA-REPORT-0.9.0-RC7.md).
 
-**RC8 qualification complete — 2 September 2026; publication pending.** The
+**RC8 qualification and publication complete — 2 September 2026.** The
 public plugin header, runtime constant, WordPress.org stable tag, npm metadata,
 translation catalogue and changelogs now identify 0.9.0. The 380-path package is
 byte-for-byte reproducible with SHA-256
@@ -1217,9 +1217,11 @@ byte-for-byte reproducible with SHA-256
 All local gates and hosted run `33568347988` pass, including PHP 8.2–8.5,
 WordPress 6.9 and 7.1, 35 browser journeys, the historical upgrade/lifecycle
 matrix, bounded performance budgets and strict official Plugin Check. The hosted
-zip is byte-identical to the local candidate. Publication URLs and the
-WordPress.org SVN revision remain to be recorded after this exact candidate is
-tagged and distributed. Evidence is in
+zip is byte-identical to the local candidate. GitHub release `v0.9.0` and
+WordPress.org SVN revision `3676962` publish that exact production tree. The
+versioned and current WordPress.org downloads each unpack to the same qualified
+380-file tree, and the public API reports 0.9.0. The blocker-only observation
+window is now open. Evidence is in
 [QA-REPORT-0.9.0-RC8.md](QA-REPORT-0.9.0-RC8.md).
 
 **Exit criteria:** no P1/P2 product or documentation defect remains; every public

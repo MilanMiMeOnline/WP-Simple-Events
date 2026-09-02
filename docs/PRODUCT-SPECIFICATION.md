@@ -2,8 +2,8 @@
 
 **Status:** normative product and technical contract
 **Last reviewed:** 2 September 2026
-**Current release candidate:** 0.9.0 feature freeze and 1.x compatibility baseline
-**Current public release:** 0.7.0 with bounded one-way Add to Calendar portability and optional Elementor/Divi 5 integrations
+**Current stability phase:** 0.9 observation window and 1.x compatibility baseline
+**Current public release:** 0.9.0 feature-frozen release candidate for the stable 1.x contract
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -574,10 +574,10 @@ The version 1 product contract is satisfied when:
 ## 21. Post-version-1 roadmap boundary
 
 Future work is prioritized in [ROADMAP.md](ROADMAP.md). Bounded one-way Add to
-Calendar components are released in 0.7.0. The active development cycle is the
-feature-frozen 0.9.0 release candidate: it freezes the public 1.x surface under
+Calendar components are released in 0.7.0. Version 0.9.0 is publicly released and
+in a blocker-only observation window: it freezes the public 1.x surface under
 [PUBLIC-COMPATIBILITY-CONTRACT.md](PUBLIC-COMPATIBILITY-CONTRACT.md) and adds no
-new product capability.
+new product capability before 1.0.
 
 Recurrence already follows the accepted occurrence model, migration design and
 explicit series/occurrence editing contract in ADR-044. Divi 5 compatibility

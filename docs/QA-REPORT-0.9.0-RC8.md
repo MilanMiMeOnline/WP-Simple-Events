@@ -1,6 +1,6 @@
 # QA report — 0.9.0 RC8 final qualification
 
-**Status:** qualified and authorized for publication; publication evidence pending
+**Status:** published and independently verified
 
 **Reviewed:** 2 September 2026
 
@@ -8,6 +8,9 @@
 
 **Candidate commit:**
 `1fb28f5863d8c0099ceda4c54c9766829126dd65`
+
+**Final qualification commit and Git tag:**
+`27527f9c7fa41529a41e8c1b1fce0983f88c698b` / `v0.9.0`
 
 **Release SHA-256:**
 `43296b58f357cc19a56eae4b48b5910e72bdac397bd6af21f30399ce48825095`
@@ -23,10 +26,10 @@ release notes, then proves the exact package locally and independently in hosted
 CI.
 
 No P1 or P2 product, security, privacy, accessibility, compatibility,
-documentation or release blocker remains. The exact candidate is authorized for
-GitHub and WordPress.org publication. Publication URLs, the SVN revision and the
-independently repackaged WordPress.org download remain deliberately pending until
-that external state exists.
+documentation or release blocker remains. The exact candidate was published on
+GitHub and WordPress.org without changing its production contents. The public
+WordPress.org API, immutable SVN tag and both generated download endpoints were
+then checked independently.
 
 ## Candidate identity and package
 
@@ -102,6 +105,37 @@ The hosted release artifact has SHA-256
 `43296b58f357cc19a56eae4b48b5910e72bdac397bd6af21f30399ce48825095`.
 `cmp` confirmed it is byte-for-byte identical to the locally qualified zip.
 
+Final qualification commit
+[`27527f9`](https://github.com/MilanMiMeOnline/WP-Simple-Events/commit/27527f9c7fa41529a41e8c1b1fce0983f88c698b)
+also passed all 12 hosted jobs in GitHub Actions run
+[`33569008326`](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/33569008326).
+
+## Publication evidence
+
+- GitHub tag and release:
+  [`v0.9.0`](https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v0.9.0).
+  Its attached production zip retains the qualified SHA-256
+  `43296b58f357cc19a56eae4b48b5910e72bdac397bd6af21f30399ce48825095`.
+- WordPress.org committed the synchronized 380-file `trunk` and immutable
+  [`tags/0.9.0`](https://plugins.svn.wordpress.org/mime-simple-events-calendar/tags/0.9.0/)
+  in SVN revision `3676962`. Before commit, both trees compared recursively
+  without differences against `.release/mime-simple-events-calendar`; no asset
+  path was changed.
+- The official WordPress.org API reports version 0.9.0 and the expected stable
+  download. The public plugin page is
+  [`wordpress.org/plugins/mime-simple-events-calendar`](https://wordpress.org/plugins/mime-simple-events-calendar/).
+- The versioned WordPress.org download
+  [`mime-simple-events-calendar.0.9.0.zip`](https://downloads.wordpress.org/plugin/mime-simple-events-calendar.0.9.0.zip)
+  has SHA-256
+  `88b14bb13e6cc502e06f95d89a8dcabdc2e18e1b4cf9d61451b092081a1bf87b`.
+  WordPress.org creates its own zip container, so that archive hash is expected
+  to differ from the reproducible GitHub artifact. After extraction it contains
+  exactly 380 files, reports 0.9.0 at every version boundary and compares
+  recursively without one difference against the qualified staging tree.
+- The unversioned current download was checked separately. Its zip container was
+  generated independently, but its extracted 380-file tree is identical to both
+  the versioned download and the qualified staging tree.
+
 ## Senior developer review
 
 - RC8 changes release identity and public documentation only; it does not change
@@ -150,8 +184,7 @@ The hosted release artifact has SHA-256
 
 The exact 0.9.0 candidate with SHA-256
 `43296b58f357cc19a56eae4b48b5910e72bdac397bd6af21f30399ce48825095`
-is approved for tagging and publication. The production contents must not change
-between this decision, the GitHub release and WordPress.org trunk/tag. After
-publication, the public WordPress.org package must be downloaded, extracted and
-compared recursively with `.release/mime-simple-events-calendar` before RC8 is
-marked complete.
+was tagged and published without changing its production contents. GitHub and
+WordPress.org distribution, public metadata, SVN revision and the independently
+repackaged WordPress.org download are all verified above. RC8 is complete and
+the blocker-only 0.9 observation window is open.

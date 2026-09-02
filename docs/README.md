@@ -64,11 +64,9 @@ plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
 The current public release evidence is the
-[0.7.0 qualification and publication report](QA-REPORT-0.7.0.md); its detailed
-editor, provider and interoperability checkpoint is in
-[QA-REPORT-0.7.0-WP3-4.md](QA-REPORT-0.7.0-WP3-4.md). The
-[0.9.0 RC1 report](QA-REPORT-0.9.0-RC1.md) records the active release-candidate
-cycle's completed public compatibility freeze, while the
+[0.9.0 RC8 qualification and publication report](QA-REPORT-0.9.0-RC8.md). The
+[0.9.0 RC1 report](QA-REPORT-0.9.0-RC1.md) records the completed public
+compatibility freeze, while the
 [0.9.0 RC2 report](QA-REPORT-0.9.0-RC2.md) records clean-install, historical
 upgrade and lifecycle qualification. The
 [0.9.0 RC3 report](QA-REPORT-0.9.0-RC3.md) records the current security/privacy,
@@ -81,10 +79,10 @@ performance budgets and collection-query optimization. The
 documentation, public readme rewrite and documentation-contract review. The
 [0.9.0 RC7 report](QA-REPORT-0.9.0-RC7.md) records destructive local and
 non-destructive production exploratory qualification plus the final bounded UX
-regressions before publication. The
-[0.9.0 RC8 report](QA-REPORT-0.9.0-RC8.md) records the exact versioned package,
-complete local and hosted release matrix, official Plugin Check and final
-publication authorization. The
+regressions before publication. The historical
+[0.7.0 qualification and publication report](QA-REPORT-0.7.0.md) and detailed
+[editor, provider and interoperability checkpoint](QA-REPORT-0.7.0-WP3-4.md)
+remain the release evidence for Add to Calendar. The
 [0.6.0 filter and color release report](QA-REPORT-0.6.0.md),
 [0.5.0 Divi qualification report](QA-REPORT-0.5.0-DIVI-COMPOSITES.md) and
 [0.4.0 recurrence foundation report](QA-REPORT-0.4.0-FOUNDATION.md) remain the
