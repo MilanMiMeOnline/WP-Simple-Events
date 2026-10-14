@@ -1997,3 +1997,139 @@ observed failing budget and a separate invalidation, privacy and upgrade review.
 Increasing a budget requires before/after evidence and a new decision; it may not
 be used as a convenience response to a failing gate. The normative scenarios and
 ceilings live in `PERFORMANCE-BUDGETS.md`.
+
+## ADR-099: Development tooling uses maintained Node and patched Git imports
+
+**Status:** Accepted
+
+The October 2026 maintenance review moves local tooling to Node 24 LTS, matching
+CI, and refreshes compatible dependencies. Production PHP requirements and
+FullCalendar pins stay unchanged. The existing archive and brace-expansion
+overrides move to patched 0.6.1 and 5.0.12 respectively.
+
+The transitive Express query-string parser is pinned to patched qs 6.16.0 until
+the parent dependency range selects it. The older WordPress stylistic lint
+preset still selects selector-parser 6, so only that preset's parser is moved
+to 7.1.6. Version 7 keeps the parser API and makes mutation during iteration
+safe; the existing full CSS lint run verifies compatibility with our rules.
+Remove these narrow overrides when upstream ranges select fixed releases.
+
+`@wordpress/env` 11.11.0 still requests vulnerable simple-git 3 and imports its
+default CommonJS function. A scoped override selects simple-git 4.0.2, including
+argv-parser 2.0.1. The v4 release removes that default export. A small postinstall
+patch changes only the two wp-env imports to the supported named export. Both
+the upstream version and complete original file checksums are verified before
+writing; unknown code fails installation instead of silently applying a patch.
+No unsafe-operation option is enabled and no advisory is ignored. This patch
+and its override must be removed when wp-env adopts the fixed API upstream.
+
+The WordPress environment stays at 11.11.0 and its Playground CLI is retained
+at the pre-maintenance 3.1.44 version with a scoped override. Newer environment
+and CLI combinations produced authentication redirects, PHP request timeouts
+and an inactive main plugin beside the browser fixtures on this Mac.
+This is a compatibility hold, not an audit exclusion: its transitive security
+updates, including proxy-addr 2.0.8 and qs 6.16.0, remain installed. Reassess the
+pin with the full smoke and browser suites before adopting a newer CLI. No
+timeout, assertion, security rule or release gate is relaxed for these updates.
+
+The regression journey clones, fetches and checks out a disposable local Git
+fixture through wp-env's actual source downloader. It fails with the unpatched
+import and passes after patching. Normal lint, build, release, WordPress smoke
+and browser checks remain required. All changed tools and the postinstall patch
+are excluded from the production archive.
+
+Upstream references: [simple-git v4 migration and fixes](https://github.com/steveukx/git-js/releases),
+[selector-parser v7 migration](https://github.com/postcss/postcss-selector-parser/releases/tag/v7.0.0).
+
+The remaining unpatched braces and sprintf-js advisories are not accepted risks
+or audit exclusions. The high-severity braces finding continues to block release
+until a supported fix or reviewed replacement is available; installation of
+other security fixes must not be misreported as a clean full dependency audit.
+
+Validation on 2026-10-13: clean `npm ci` and the complete dependency tree pass.
+Composer validation and QA pass (777 tests), as do build, JS/CSS lint and all
+82 tooling tests. All 35 browser journeys pass. The final clean installation
+passes WordPress 7.1 and 6.9 smoke journeys on PHP 8.2, including the packaged
+plugin on 6.9. Release verification and two byte-identical builds pass; every
+archive entry still has the same content as the published 0.9.0 package.
+The npm audit gate remains red: zero critical, twelve high and four moderate
+dependency entries, all tracing to the two unpatched advisories above. The
+full CI PHP matrix, Plugin Check and manual builder QA are not rerun for this
+local tooling-only maintenance; this does not authorize a release.
+
+### Follow-up: remove sprintf-js through the wp-env YAML dependency
+
+Use a scoped `@wordpress/env` override for `js-yaml` 4.3.2. The installed
+wp-env 11.11.0 uses this library only for `yaml.dump` in its Docker configuration
+writer; it does not use the removed v3 safe-method aliases, JavaScript-specific
+types or internal module paths. Version 4 uses argparse 2 and removes the
+sprintf-js dependency rather than suppressing its advisory. Remove the override
+once the upstream range selects a supported v4 release.
+
+The compatibility risk is changed YAML serialization. A regression test calls
+the real Docker configuration writer and reads its output back, checking service
+ports, interpolated values, volume paths with spaces and generated Dockerfiles.
+No Docker daemon or running environment is needed for this check. The high
+braces advisory remains unresolved and the dependency audit must still report it.
+
+Migration reference: [js-yaml v3 to v4](https://github.com/nodeca/js-yaml/blob/4.1.0/migrate_v3_to_v4.md).
+
+Validation on 2026-10-14: clean installation and the complete dependency tree
+pass, with sprintf-js absent. Composer validation and QA pass (777 tests).
+Build, JS/CSS lint and all 83 tooling tests pass, including the Docker writer
+test before and after the YAML migration. The npm audit still fails on twelve
+high dependency entries, all from braces; critical and moderate counts are zero.
+No security gate or lint rule was changed. Docker containers were not started;
+the test exercises configuration generation only.
+
+## ADR-100: Replace development-only braces with a reviewed depth-guard fork
+
+**Status:** Accepted
+
+The latest upstream braces 3.0.3 remains affected by GHSA-vfj7-8cjw-p6xm.
+Even the current Stylelint release still depends on it through micromatch;
+upgrading or removing lint rules is not a remedy. Replace only micromatch's
+braces dependency with the exact npm alias
+`npm:@dieub/braces-depth-guard@3.0.3-pn.3`. This preserves the existing matching
+API while bounding brace/parenthesis parsing and recursive AST processing to
+100 levels. Excessively nested input is deliberately rejected with an explicit
+depth error rather than exhausting the JavaScript stack.
+
+This is a recent third-party derivative, not an official upstream fix. The MIT
+license and original attribution are retained. Its runtime, license and manifest
+were compared byte-for-byte with tag `3.0.3-pn.3`, commit
+`305a2e4bfe324bb53c336c1b03387ee1251c926f`. The published tarball has no install
+scripts and retains the existing fill-range dependency. The reviewed runtime
+diff adds bounded parsing/traversal, consistent option limits and parent-cycle
+checks; it does not add network, filesystem or process operations. The package's
+README still calls this version unpublished, but the npm artifact and matching
+Git tag exist; the artifact, not that stale publication statement, was reviewed.
+
+The fork has only a short maintenance history. Pinning the exact artifact and
+its lockfile integrity prevents automatic adoption of future changes. Review
+its maintenance and advisories during dependency checks. Remove the alias when
+upstream ships a reviewed equivalent fix or micromatch removes the dependency;
+rerun the regression suite and full quality gates before doing so. The removal
+cost is one scoped override plus its lockfile resolution. Nothing is added to
+the production plugin or its release archive.
+
+The replacement must pass the published fork's compatibility suite, local
+regressions that fail against original braces, and the real fast-glob file
+selection path. Cover normal nested sets, ranges and escaping, excessive brace
+and parenthesis nesting, direct deep/cyclic ASTs, and attempted depth-limit
+bypasses. A clean audit alone is not proof of remediation: no advisory or gate
+is ignored, and the depth regression must fail if the vulnerable implementation
+returns. Expansion cardinality, very wide ASTs and arbitrary object getters are
+outside this specific advisory fix; untrusted patterns remain unsupported as
+application input. This dependency is used only by development tooling.
+
+Sources: [upstream advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm),
+[reviewed fork source](https://github.com/dieub/braces-depth-guard/tree/305a2e4bfe324bb53c336c1b03387ee1251c926f).
+
+Validation on 2026-10-14: the fork's 799 tests pass. The local suite has eight
+depth regressions that fail with original braces 3.0.3 and pass with the
+replacement; ordinary matching and file selection pass with both. Clean
+`npm ci`, `npm ls --all`, `composer validate --strict`, `composer qa` (777 tests)
+and `npm run qa` (93 tooling tests, build, JS/CSS lint and audit) all pass. The
+full npm audit reports zero vulnerabilities. `npm audit signatures` verifies
+all 943 registry signatures and 249 available provenance attestations.
