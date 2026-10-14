@@ -1,6 +1,6 @@
 # QA report — 1.0.0 user rehearsal and release qualification
 
-**Status:** candidate qualified locally and in CI; publication pending
+**Status:** released and verified on GitHub and WordPress.org
 
 **Reviewed:** 14 October 2026
 
@@ -127,12 +127,35 @@ Payloads and result counts are unchanged: 55,907 bytes for the list and 41,901
 bytes for the feed. No direct SQL or persistent cache was introduced. These
 local Playground measurements are regression evidence, not hosting guarantees.
 
-## Publication boundary
+## Publication evidence
 
-The current public version remains 0.9.0 until the exact 1.0.0 package passes
-every required gate and publication is verified. FullCalendar 7 and AI/MCP
-integration remain later roadmap work. Test content is confined to disposable
-local sites and must be removed with those environments after qualification.
+- Final qualification commit `cc761130f5af486577612c0a19fb3c0e6a972361` passed
+  all 12 jobs in [run 38574312551](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/38574312551).
+  Its downloaded CI archive is byte-identical to the local qualified archive.
+- [PR 24](https://github.com/MilanMiMeOnline/WP-Simple-Events/pull/24) was merged
+  as `40cd30b60f2baea9850a34ba8f688f02f12eaee2`. Its complete source tree was
+  compared with the qualified PR head before creating the annotated tag.
+- [GitHub v1.0.0](https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v1.0.0)
+  is a public stable release marked Latest. The published ZIP was downloaded
+  again and retains the qualified SHA-256
+  `0ace0f30cca7e2bd3108980fc4f54f6a7bfdaffb8d899e4d95ab44c9f20c0cb3`.
+  The rendered release notes were inspected and contain no template placeholders.
+- WordPress.org SVN revision `3746513` publishes matching `trunk` and
+  [tags/1.0.0](https://plugins.svn.wordpress.org/mime-simple-events-calendar/tags/1.0.0/).
+  The [public plugin page](https://wordpress.org/plugins/mime-simple-events-calendar/)
+  and official plugin-information API report 1.0.0 and link to its versioned
+  download; the API records the update at 13:51 GMT on 14 October 2026.
+- Both the versioned and current WordPress.org downloads were independently
+  fetched. Their ZIP SHA-256 is
+  `01d9b189b3c8983e1b221e48bc7135dbffcf24df3a3bb07ed679c1156ae6a471`.
+  WordPress.org repackages ZIP containers; both extracted 380-file trees compare
+  exactly with the qualified staging tree. The initial propagation interval
+  briefly returned 0.9.0 metadata and a 404 for the new archive before processing.
+- The manual test site and browser tabs were removed; automated smoke, browser,
+  performance and lifecycle sites clean up their fixtures. The Elementor matrix
+  used disposable in-memory sites. No production website received test content.
+
+FullCalendar 7 and AI/MCP integration remain later roadmap work.
 
 ## Residual boundaries
 

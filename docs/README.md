@@ -65,11 +65,10 @@ evidence. They are not user documentation and are excluded from the installable
 plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
-The [1.0.0 qualification report](QA-REPORT-1.0.0.md) tracks the current release
-preparation and beginner-user rehearsal.
-
 The current public release evidence is the
-[0.9.0 RC8 qualification and publication report](QA-REPORT-0.9.0-RC8.md). The
+[1.0.0 qualification and publication report](QA-REPORT-1.0.0.md), including the
+beginner-user rehearsal and verification of both public distribution channels.
+The [0.9.0 RC8 report](QA-REPORT-0.9.0-RC8.md) records the previous release. The
 [0.9.0 RC1 report](QA-REPORT-0.9.0-RC1.md) records the completed public
 compatibility freeze, while the
 [0.9.0 RC2 report](QA-REPORT-0.9.0-RC2.md) records clean-install, historical

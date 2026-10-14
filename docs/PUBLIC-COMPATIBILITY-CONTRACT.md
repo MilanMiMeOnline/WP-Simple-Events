@@ -1,8 +1,8 @@
 # Public compatibility contract for 1.x
 
-**Status:** frozen for the 0.9.0 release-candidate cycle\
+**Status:** stable for the released 1.x line\
 **Contract version:** 1\
-**Last reviewed:** 30 August 2026
+**Last reviewed:** 14 October 2026
 
 This document defines which MiMe Simple Events and Calendar identities and
 behaviours are public compatibility promises for the 1.x line. It complements

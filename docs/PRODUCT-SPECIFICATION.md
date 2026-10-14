@@ -1,9 +1,9 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 2 September 2026
-**Current stability phase:** 0.9 observation window and 1.x compatibility baseline
-**Current public release:** 0.9.0 feature-frozen release candidate for the stable 1.x contract
+**Last reviewed:** 14 October 2026
+**Current stability phase:** stable 1.x compatibility baseline
+**Current public release:** 1.0.0, qualified and published on GitHub and WordPress.org
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -574,10 +574,11 @@ The version 1 product contract is satisfied when:
 ## 21. Post-version-1 roadmap boundary
 
 Future work is prioritized in [ROADMAP.md](ROADMAP.md). Bounded one-way Add to
-Calendar components are released in 0.7.0. Version 0.9.0 is publicly released and
-in a blocker-only observation window: it freezes the public 1.x surface under
-[PUBLIC-COMPATIBILITY-CONTRACT.md](PUBLIC-COMPATIBILITY-CONTRACT.md) and adds no
-new product capability before 1.0.
+Calendar components were released in 0.7.0. Version 1.0.0 is publicly released
+with the stable public 1.x surface frozen during the 0.9 observation window under
+[PUBLIC-COMPATIBILITY-CONTRACT.md](PUBLIC-COMPATIBILITY-CONTRACT.md).
+The [1.0 qualification report](QA-REPORT-1.0.0.md) records the beginner-user
+rehearsal, corrective changes and verified publication.
 
 Recurrence already follows the accepted occurrence model, migration design and
 explicit series/occurrence editing contract in ADR-044. Divi 5 compatibility

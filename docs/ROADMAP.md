@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 14 October 2026 (1.0 qualification started)
-**Current public release:** 0.9.0
-**Active phase:** Phase 8 — 1.0.0 qualification; not yet published
+**Last reviewed:** 14 October 2026 (1.0 published and verified)
+**Current public release:** 1.0.0
+**Active phase:** Post-1.0 maintenance, followed by FullCalendar 7 qualification
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -1231,10 +1231,12 @@ documentation.
 
 ## Phase 8 — 1.0.0 stable release
 
-**In progress, 14 October 2026:** the beginner-user rehearsal found an unnecessary
-cron wait on empty migrations and editor guidance improvements. See the
-[1.0.0 qualification report](QA-REPORT-1.0.0.md) for fixes, evidence and remaining
-release gates. The public version remains 0.9.0 until publication is verified.
+**Complete, 14 October 2026:** the beginner-user rehearsal led to fixes for empty
+migration waiting, stale date choices during saves and clearer editor guidance.
+The exact package passed the full local and hosted qualification, was merged in
+PR 24 and published on GitHub and WordPress.org. Both public downloads match the
+qualified production files. See the
+[1.0.0 qualification and publication report](QA-REPORT-1.0.0.md).
 
 1. Resolve every 0.9 blocker with a regression and rerun the complete release
    matrix from the exact tag candidate.
