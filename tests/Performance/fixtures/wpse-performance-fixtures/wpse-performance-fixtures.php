@@ -18,11 +18,17 @@ use MiMe\WPSimpleEvents\Domain\EventDateRange;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceIndexMigrationController;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceReadRepository;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceTable;
+use MiMe\WPSimpleEvents\Occurrence\WordPressOccurrenceCoverageProbe;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceCoverageMetaQuery;
+use MiMe\WPSimpleEvents\Occurrence\OccurrenceProjectionWindowPolicy;
 use MiMe\WPSimpleEvents\Query\EventWindowCriteria;
 use MiMe\WPSimpleEvents\Query\PublicEventOptions;
 use MiMe\WPSimpleEvents\Recurrence\DeterministicRecurrenceEngine;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceGenerationWindow;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceRule;
+use MiMe\WPSimpleEvents\Recurrence\RecurrenceAggregate;
+use MiMe\WPSimpleEvents\Recurrence\RecurrenceAggregateJsonCodec;
+use MiMe\WPSimpleEvents\Recurrence\ScheduleSegment;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -454,6 +460,11 @@ function wpse_performance_measure( string $scenario ): array {
 	$queries = $wpdb->num_queries;
 	$start   = hrtime( true );
 	$result  = match ( $scenario ) {
+		'coverage_probe'             => array(
+			'count' => (int) ( new WordPressOccurrenceCoverageProbe() )->has_public_gap(),
+			'total' => 0,
+			'bytes' => 0,
+		),
 		'occurrence_window_filtered' => wpse_performance_occurrence_window(),
 		'event_list'                 => wpse_performance_event_list(),
 		'calendar_feed'              => wpse_performance_calendar_feed(),
@@ -582,11 +593,148 @@ function wpse_performance_seed_ajax(): void {
 	wp_send_json( wpse_performance_seed_batch(), 200 );
 }
 
+/**
+ * Verify coverage predicates against real WordPress metadata before benchmarking.
+ *
+ * The temporary fixture is deleted even if a case fails. This code never ships.
+ *
+ * @return array<string, array{expected: bool, combined: bool, split: bool}>
+ * @throws RuntimeException If the isolated fixture cannot be created.
+ */
+function wpse_performance_coverage_contract(): array {
+	wp_set_current_user( 1 );
+	$event_id = wpse_performance_insert_event( 1500, wpse_performance_terms() );
+
+	if ( $event_id <= 0 ) {
+		throw new RuntimeException( 'Could not create coverage contract fixture.' );
+	}
+
+	$root       = EventDateRange::from_local(
+		get_post_meta( $event_id, EventMeta::START_LOCAL, true ),
+		get_post_meta( $event_id, EventMeta::END_LOCAL, true ),
+		false,
+		'UTC'
+	);
+	$definition = ( new RecurrenceAggregateJsonCodec() )->encode(
+		RecurrenceAggregate::create(
+			get_post_meta( $event_id, EventMeta::SERIES_UID, true ),
+			'UTC',
+			array( new ScheduleSegment( 0, $root->start_local(), $root, RecurrenceRule::daily() ) )
+		)
+	);
+	$today      = wp_date( 'Y-m-d' );
+	$through    = ( new OccurrenceProjectionWindowPolicy() )->minimum_through( $today );
+	$base       = array(
+		EventMeta::START_LOCAL         => $root->start_local(),
+		EventMeta::RECURRENCE          => $definition,
+		EventMeta::ACTIVE_GENERATION   => 1,
+		EventMeta::INDEX_DIRTY         => null,
+		EventMeta::COVERAGE_FROM       => $today,
+		EventMeta::COVERAGE_THROUGH    => $through,
+		EventMeta::COVERAGE_GENERATION => 1,
+	);
+	$cases      = array(
+		'healthy_recurring'        => array( false, array() ),
+		'missing_active'           => array( true, array( EventMeta::ACTIVE_GENERATION => null ) ),
+		'dirty'                    => array( true, array( EventMeta::INDEX_DIRTY => '1' ) ),
+		'missing_from'             => array( true, array( EventMeta::COVERAGE_FROM => null ) ),
+		'future_from'              => array( true, array( EventMeta::COVERAGE_FROM => '2099-01-01' ) ),
+		'missing_through'          => array( true, array( EventMeta::COVERAGE_THROUGH => null ) ),
+		'expired_through'          => array( true, array( EventMeta::COVERAGE_THROUGH => '2000-01-01' ) ),
+		'missing_generation'       => array( true, array( EventMeta::COVERAGE_GENERATION => null ) ),
+		'zero_generation'          => array( true, array( EventMeta::COVERAGE_GENERATION => 0 ) ),
+		'negative_generation'      => array( true, array( EventMeta::COVERAGE_GENERATION => -1 ) ),
+		'one_off_without_coverage' => array(
+			false,
+			array(
+				EventMeta::RECURRENCE          => null,
+				EventMeta::COVERAGE_FROM       => null,
+				EventMeta::COVERAGE_THROUGH    => null,
+				EventMeta::COVERAGE_GENERATION => null,
+			),
+		),
+		'one_off_missing_active'   => array(
+			true,
+			array(
+				EventMeta::RECURRENCE        => null,
+				EventMeta::ACTIVE_GENERATION => null,
+			),
+		),
+		'empty_recurrence'         => array(
+			false,
+			array(
+				EventMeta::RECURRENCE          => '',
+				EventMeta::COVERAGE_GENERATION => null,
+			),
+		),
+		'empty_start'              => array(
+			false,
+			array(
+				EventMeta::START_LOCAL => '',
+				EventMeta::INDEX_DIRTY => '1',
+			),
+		),
+		'draft_gap'                => array( false, array( EventMeta::ACTIVE_GENERATION => null ), 'draft' ),
+		'private_gap'              => array( false, array( EventMeta::ACTIVE_GENERATION => null ), 'private' ),
+		'protected_gap'            => array( false, array( EventMeta::ACTIVE_GENERATION => null ), 'publish', 'fixture-password' ),
+	);
+	$results    = array();
+
+	try {
+		foreach ( $cases as $name => $case ) {
+			// Restore canonical metadata before changing visibility through WordPress.
+			delete_post_meta( $event_id, EventMeta::RECURRENCE );
+			update_post_meta( $event_id, EventMeta::START_LOCAL, $root->start_local() );
+			wp_update_post(
+				array(
+					'ID'            => $event_id,
+					'post_status'   => $case[2] ?? 'publish',
+					'post_password' => $case[3] ?? '',
+				)
+			);
+
+			$fixture_post = get_post( $event_id );
+			if ( ! $fixture_post instanceof WP_Post || ( $case[2] ?? 'publish' ) !== $fixture_post->post_status || ( $case[3] ?? '' ) !== $fixture_post->post_password ) {
+				throw new RuntimeException( 'Coverage fixture visibility did not match its case.' );
+			}
+
+			foreach ( array_replace( $base, $case[1] ) as $key => $value ) {
+				if ( null === $value ) {
+					delete_post_meta( $event_id, $key );
+				} else {
+					update_post_meta( $event_id, $key, $value );
+				}
+			}
+
+			$combined         = get_posts(
+				array(
+					'post_type'      => 'wpse_event',
+					'post_status'    => 'publish',
+					'has_password'   => false,
+					'post__in'       => array( $event_id ),
+					'fields'         => 'ids',
+					'posts_per_page' => 1,
+					'meta_query'     => ( new OccurrenceCoverageMetaQuery() )->public_gaps( $today ),
+				)
+			);
+			$results[ $name ] = array(
+				'expected' => $case[0],
+				'combined' => array() !== $combined,
+				'split'    => ( new WordPressOccurrenceCoverageProbe() )->has_public_gap(),
+			);
+		}
+	} finally {
+		wp_delete_post( $event_id, true );
+	}
+
+	return $results;
+}
+
 /** Handle one test-only measured scenario. */
 function wpse_performance_measure_ajax(): void {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only, isolated fixture endpoint excluded from release packages.
 	$scenario = isset( $_GET['scenario'] ) ? sanitize_key( wp_unslash( $_GET['scenario'] ) ) : '';
-	wp_send_json( wpse_performance_measure( $scenario ), 200 );
+	wp_send_json( 'coverage_contract' === $scenario ? wpse_performance_coverage_contract() : wpse_performance_measure( $scenario ), 200 );
 }
 
 add_action( 'wp_ajax_nopriv_wpse_performance_seed', 'wpse_performance_seed_ajax' );

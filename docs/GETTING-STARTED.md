@@ -28,13 +28,17 @@ WooCommerce or another event plugin.
 
 1. Open **Events > Add New**.
 2. Add the title, normal WordPress content, excerpt and featured image you need.
-3. In **Event details**, enter a start date. Enter a start time for a timed event,
-   or enable **All-day event**.
+3. In **Event details**, enter a start date. If you cannot see these fields in
+   the block editor, open **Meta Boxes** below the content. Enter a start time
+   for a timed event, or enable **All-day event**.
 4. Optionally add an end, venue, address, location link, event status and external
    action link. The external action label can be changed per event.
 5. Assign event categories and tags if they help visitors browse or filter.
 6. Save a draft and preview it. Publish only when the date and public content are
    correct.
+
+The WordPress **Publish** date determines when the page goes online; it does
+not set the event date.
 
 A valid start is required for publication. Drafts may remain incomplete. An end
 must not be before the start. Location and external links accept only HTTP or

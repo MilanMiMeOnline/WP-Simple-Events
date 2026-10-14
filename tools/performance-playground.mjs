@@ -7,6 +7,13 @@ import {
 
 const repetitions = 5;
 const budgets = {
+	coverage_probe: {
+		count: 0,
+		minimumTotal: 0,
+		maximumQueries: 6,
+		maximumBytes: 0,
+		medianDurationMs: 750,
+	},
 	occurrence_window_filtered: {
 		count: 100,
 		minimumTotal: 5000,
@@ -122,6 +129,13 @@ let started = false;
 try {
 	await startPerformanceEnvironment();
 	started = true;
+	const coverageCases = await measurePerformanceScenario( 'coverage_contract' );
+	assert.equal( Object.keys( coverageCases ).length, 17 );
+	for ( const [ name, result ] of Object.entries( coverageCases ) ) {
+		assert.equal( result.combined, result.expected, `${ name }: reference coverage predicate` );
+		assert.equal( result.split, result.expected, `${ name }: optimized coverage predicate` );
+	}
+	process.stdout.write( 'Coverage predicate contract passed (17 real-WordPress cases).\n' );
 	const results = [];
 
 	for ( const [ scenario, budget ] of Object.entries( budgets ) ) {

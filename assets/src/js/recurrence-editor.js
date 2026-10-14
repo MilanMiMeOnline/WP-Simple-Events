@@ -5,6 +5,7 @@ import {
 	boundedOccurrenceWindow,
 	followingMutationFromForm,
 	followingOccurrenceChoices,
+	formatOccurrenceLocal,
 	initialOccurrenceWindowStart,
 	isIsoDate,
 	monthlyPatternFromDefinition,
@@ -40,6 +41,7 @@ const {
 	TextControl,
 } = wp.components;
 const { useSelect } = wp.data;
+const { dateI18n, getSettings: getDateSettings } = wp.date;
 const { PluginDocumentSettingPanel } = wp.editor;
 const { createElement: el, Fragment, useEffect, useMemo, useState } = wp.element;
 const { __, _n, sprintf } = wp.i18n;
@@ -380,6 +382,9 @@ const impactLabel = ( impact ) =>
 		),
 	].join( ', ' );
 
+const localDateLabel = ( value ) =>
+	formatOccurrenceLocal( value, getDateSettings().formats, dateI18n );
+
 const impactItemLabel = ( item ) => {
 	const changeLabels = {
 		added: __( 'added', 'mime-simple-events-calendar' ),
@@ -403,8 +408,8 @@ const impactItemLabel = ( item ) => {
 		return sprintf(
 			/* translators: 1: previous local start, 2: new local start, 3: change summary. */
 			__( '%1$s → %2$s: %3$s', 'mime-simple-events-calendar' ),
-			before,
-			after,
+			localDateLabel( before ),
+			localDateLabel( after ),
 			changes,
 		);
 	}
@@ -412,7 +417,7 @@ const impactItemLabel = ( item ) => {
 	return sprintf(
 		/* translators: 1: effective local start, 2: change summary. */
 		__( '%1$s: %2$s', 'mime-simple-events-calendar' ),
-		after || before || item.recurrence_id,
+		localDateLabel( after || before || item.recurrence_id ),
 		changes,
 	);
 };
@@ -642,6 +647,8 @@ const RecurrencePanel = () => {
 			value: 'specific_dates',
 		},
 	];
+	// Reload one-off dates after saving, without resetting an edited recurrence rule.
+	const waitingForScheduleSave = ! context?.recurring && editor.saving;
 	const selectableOccurrences = thisAndFollowing
 		? followingOccurrenceChoices( occurrences, context?.aggregate )
 		: occurrences;
@@ -650,13 +657,16 @@ const RecurrencePanel = () => {
 		if (
 			editor.type !== wpseRecurrenceEditor.eventPostType ||
 			! Number.isInteger( editor.id ) ||
-			editor.id < 1
+			editor.id < 1 ||
+			waitingForScheduleSave
 		) {
 			return;
 		}
 
 		let active = true;
 		setLoading( true );
+		setContext( null );
+		setPreview( null );
 		setError( '' );
 
 		apiFetch( {
@@ -668,7 +678,15 @@ const RecurrencePanel = () => {
 				}
 
 				setContext( value );
-				setConfiguration( recurrenceConfiguration( value ) );
+				setConfiguration( ( current ) => {
+					if ( value.recurring || ! current || current.frequency === 'once' ) {
+						return recurrenceConfiguration( value );
+					}
+					// A weekly rule must always include its newly saved first weekday.
+					return current.frequency === 'weekly'
+						? { ...current, weekdays: [ ...new Set( [ ...current.weekdays, recurrenceAnchorParts( value.aggregate ).weekday ] ) ] }
+						: current;
+				} );
 				setOccurrenceWindowStart(
 					initialOccurrenceWindowStart(
 						value.aggregate,
@@ -691,7 +709,7 @@ const RecurrencePanel = () => {
 				if ( active ) {
 					setError(
 						__(
-							'Save valid event dates before configuring recurrence.',
+							'First enter the dates under Event details, then save the event. In the block editor, open Meta Boxes below the content to find these fields.',
 							'mime-simple-events-calendar',
 						),
 					);
@@ -702,7 +720,7 @@ const RecurrencePanel = () => {
 		return () => {
 			active = false;
 		};
-	}, [ editor.id, editor.type ] );
+	}, [ editor.id, editor.type, waitingForScheduleSave ] );
 
 	useEffect( () => {
 		if ( ! context ) {
@@ -1359,6 +1377,7 @@ const RecurrencePanel = () => {
 			title: __( 'Repeating event', 'mime-simple-events-calendar' ),
 			className: 'wpse-recurrence-editor',
 		},
+		! context?.recurring && el( 'p', null, __( 'Set the event date and location under Event details. If those fields are hidden, open Meta Boxes below the content. The WordPress Publish date controls when the page goes online, not when the event takes place.', 'mime-simple-events-calendar' ) ),
 		loading && el( PanelRow, null, el( Spinner ) ),
 		error &&
 			el(
@@ -2328,7 +2347,7 @@ const RecurrencePanel = () => {
 									null,
 									sprintf(
 										/* translators: %d: number of changed occurrence identities. */
-										__( 'Review %d affected dates', 'mime-simple-events-calendar' ),
+										_n( 'Review %d affected date', 'Review %d affected dates', preview.impact.items.length, 'mime-simple-events-calendar' ),
 										preview.impact.items.length,
 									),
 								),

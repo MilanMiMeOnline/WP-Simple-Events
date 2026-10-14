@@ -35,6 +35,50 @@ final readonly class OccurrenceCoverageMetaQuery {
 	}
 
 	/**
+	 * Split public existence checks to avoid a multiplicative metadata join tree.
+	 *
+	 * The combined predicate remains authoritative for candidate-page consumers.
+	 * These five disjuncts retain exactly its start and recurrence restrictions.
+	 *
+	 * @param string $today Canonical WordPress-local current date.
+	 * @return list<array<string|int, mixed>>
+	 */
+	public function public_gap_checks( string $today ): array {
+		$combined  = $this->public_gaps( $today );
+		$start     = $combined[0];
+		$gaps      = $combined[1];
+		$recurring = $gaps[2];
+		$checks    = array(
+			array(
+				'relation' => 'AND',
+				$start,
+				$gaps[0],
+			),
+			array(
+				'relation' => 'AND',
+				$start,
+				$gaps[1],
+			),
+		);
+
+		// Missing/invalid pairs refer to one metadata key each, keeping joins small.
+		foreach ( array( 0, 2, 4 ) as $offset ) {
+			$checks[] = array(
+				'relation' => 'AND',
+				$start,
+				$recurring[0],
+				array(
+					'relation' => 'OR',
+					$recurring[1][ $offset ],
+					$recurring[1][ $offset + 1 ],
+				),
+			);
+		}
+
+		return $checks;
+	}
+
+	/**
 	 * Return recurring projections due for buffered background renewal.
 	 *
 	 * @param string $today Canonical WordPress-local current date.

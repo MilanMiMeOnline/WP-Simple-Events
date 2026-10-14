@@ -32,37 +32,7 @@ final readonly class OccurrenceIndexBatchProcessor {
 	 * Process one fixed page of events with no active generation or prior failure.
 	 */
 	public function process(): OccurrenceIndexBatchResult {
-		$ids = get_posts(
-			array(
-				'post_type'              => EventPostType::POST_TYPE,
-				'post_status'            => array( 'publish', 'future', 'draft', 'pending', 'private' ),
-				'fields'                 => 'ids',
-				'posts_per_page'         => self::BATCH_SIZE,
-				'paged'                  => 1,
-				'orderby'                => 'ID',
-				'order'                  => 'ASC',
-				'no_found_rows'          => true,
-				'suppress_filters'       => false,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded one-time migration over plugin-owned indexed metadata.
-					'relation' => 'AND',
-					array(
-						'key'     => EventMeta::START_LOCAL,
-						'value'   => '',
-						'compare' => '!=',
-					),
-					array(
-						'key'     => EventMeta::ACTIVE_GENERATION,
-						'compare' => 'NOT EXISTS',
-					),
-					array(
-						'key'     => EventMeta::INDEX_DIRTY,
-						'compare' => 'NOT EXISTS',
-					),
-				),
-			)
-		);
+		$ids = $this->pending_ids( self::BATCH_SIZE );
 
 		$indexed = 0;
 		$invalid = 0;
@@ -93,6 +63,51 @@ final readonly class OccurrenceIndexBatchProcessor {
 			$invalid,
 			$failed,
 			count( $ids ) === self::BATCH_SIZE
+		);
+	}
+
+	/** Check for pending work without projecting events during a visitor request. */
+	public function has_pending(): bool {
+		return array() !== $this->pending_ids( 1 );
+	}
+
+	/**
+	 * Select the same candidates for the readiness shortcut and migration worker.
+	 *
+	 * @param int $limit Maximum number of IDs to inspect.
+	 * @return array<int, int>
+	 */
+	private function pending_ids( int $limit ): array {
+		return get_posts(
+			array(
+				'post_type'              => EventPostType::POST_TYPE,
+				'post_status'            => array( 'publish', 'future', 'draft', 'pending', 'private' ),
+				'fields'                 => 'ids',
+				'posts_per_page'         => $limit,
+				'paged'                  => 1,
+				'orderby'                => 'ID',
+				'order'                  => 'ASC',
+				'no_found_rows'          => true,
+				'suppress_filters'       => false,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded one-time migration over plugin-owned indexed metadata.
+					'relation' => 'AND',
+					array(
+						'key'     => EventMeta::START_LOCAL,
+						'value'   => '',
+						'compare' => '!=',
+					),
+					array(
+						'key'     => EventMeta::ACTIVE_GENERATION,
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => EventMeta::INDEX_DIRTY,
+						'compare' => 'NOT EXISTS',
+					),
+				),
+			)
 		);
 	}
 }

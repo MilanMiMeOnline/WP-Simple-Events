@@ -665,3 +665,31 @@ export const monthlyRuleFields = ( pattern, anchor ) => {
 		weekday: anchor.weekday,
 	};
 };
+
+/**
+ * Format a canonical wall time without converting it to the browser timezone.
+ *
+ * UTC is a formatting carrier only; the stored event timezone stays unchanged.
+ *
+ * @param {string}   value     Canonical local date or date-time.
+ * @param {Object}   formats   WordPress date and time display formats.
+ * @param {Function} formatter WordPress dateI18n function.
+ * @return {string} Localized human-readable date, or the original invalid value.
+ */
+export const formatOccurrenceLocal = ( value, formats, formatter ) => {
+	if ( typeof value !== 'string' || ! isIsoDate( value.slice( 0, 10 ) ) ) {
+		return value;
+	}
+
+	const allDay = value.length === 10;
+
+	if ( ! allDay && ! /^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test( value ) ) {
+		return value;
+	}
+
+	return formatter(
+		allDay ? formats.date : `${ formats.date } ${ formats.time }`,
+		`${ value }${ allDay ? 'T00:00:00' : '' }Z`,
+		'UTC',
+	);
+};

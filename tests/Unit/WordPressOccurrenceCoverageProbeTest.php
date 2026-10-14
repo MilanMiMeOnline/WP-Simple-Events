@@ -52,8 +52,7 @@ final class WordPressOccurrenceCoverageProbeTest extends TestCase {
 		self::assertSame( 1, $arguments['posts_per_page'] );
 		self::assertTrue( $arguments['no_found_rows'] );
 		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_query'][0]['key'] );
-		self::assertSame( 'OR', $arguments['meta_query'][1]['relation'] );
-		self::assertSame( EventMeta::ACTIVE_GENERATION, $arguments['meta_query'][1][0]['key'] );
-		self::assertSame( EventMeta::INDEX_DIRTY, $arguments['meta_query'][1][1]['key'] );
+		self::assertSame( EventMeta::ACTIVE_GENERATION, $arguments['meta_query'][1]['key'] );
+		self::assertSame( 'NOT EXISTS', $arguments['meta_query'][1]['compare'] );
 	}
 }

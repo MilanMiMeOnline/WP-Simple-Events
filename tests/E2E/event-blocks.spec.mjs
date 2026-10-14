@@ -445,6 +445,8 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await expect( ordinarySchedule ).not.toHaveAttribute( 'hidden', '' );
 	await expect( scheduleNotice ).toHaveAttribute( 'hidden', '' );
 	await expect( panel ).toContainText( 'Editing scope: complete series' );
+	await expect( panel ).toContainText( 'open Meta Boxes below the content' );
+	await expect( panel ).toContainText( 'when the page goes online' );
 	await expect( panel.getByLabel( 'Ends', { exact: true } ) ).toHaveCount( 0 );
 	await expect( panel.getByLabel( 'Number of events', { exact: true } ) ).toHaveCount( 0 );
 	await panel.getByLabel( 'Repeats', { exact: true } ).selectOption( 'daily' );
@@ -460,6 +462,10 @@ test( 'previews and applies a complete-series recurrence in Gutenberg', async ( 
 	await panel.getByRole( 'button', { name: 'Preview recurrence' } ).click();
 	await expect( panel ).toContainText( 'Review impact' );
 	await expect( panel ).toContainText( '2 added' );
+	await panel.getByText( 'Review 2 affected dates', { exact: true } ).click();
+	const impactDates = panel.locator( 'details' ).filter( { hasText: 'Review 2 affected dates' } );
+	await expect( impactDates ).toContainText( '12:00 pm' );
+	await expect( impactDates ).not.toContainText( /\d{4}-\d{2}-\d{2}T/ );
 	await panel.getByRole( 'button', { name: 'Apply to complete series' } ).click();
 	await expect( panel ).toContainText( 'The recurring schedule was updated.' );
 	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'daily' );
@@ -809,4 +815,66 @@ test( 'registers, serializes and previews the primary event components in Gutenb
 	await expect( page.getByLabel( 'Event source', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Show title', { exact: true } ) ).toBeVisible();
 	await expect( page.getByLabel( 'Title heading level', { exact: true } ) ).toBeVisible();
+} );
+
+test( 'loads recurrence after first saving dates without resetting an edited rule', async ( { page } ) => {
+	test.setTimeout( 90_000 );
+	await login( page );
+	const eventId = await page.evaluate( async () => {
+		const event = await window.wp.apiFetch( {
+			path: '/wp/v2/wpse_event',
+			method: 'POST',
+			data: { title: 'E2E first event dates', status: 'draft' },
+		} );
+		return event.id;
+	} );
+	await page.goto( `/wp-admin/post.php?post=${ eventId }&action=edit` );
+	await expect.poll( () => page.evaluate( () => Boolean(
+		window.wp?.plugins?.getPlugin( 'wpse-recurrence-editor' ),
+	) ) ).toBe( true );
+	await page.evaluate( () => window.wp.data.dispatch( 'core/preferences' ).set(
+		'core/edit-post', 'welcomeGuide', false,
+	) );
+
+	const toggle = page.getByRole( 'button', { name: 'Repeating event', exact: true } );
+	if ( await toggle.getAttribute( 'aria-expanded' ) === 'false' ) {
+		await toggle.click();
+	}
+	const panel = page.locator( '.wpse-recurrence-editor' );
+	await expect( panel ).toContainText( 'First enter the dates under Event details' );
+	const metaBoxes = page.getByRole( 'button', { name: 'Meta Boxes', exact: true } );
+	if ( await metaBoxes.isVisible() && await metaBoxes.getAttribute( 'aria-expanded' ) === 'false' ) {
+		await metaBoxes.press( 'Enter' );
+	}
+	await page.getByLabel( 'All-day event', { exact: true } ).check();
+	const date = new Date( Date.now() + ( 30 * 24 * 60 * 60 * 1000 ) ).toISOString().slice( 0, 10 );
+	await page.getByLabel( 'Start date', { exact: true } ).fill( date );
+	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
+	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeVisible();
+	await expect( panel ).not.toContainText( 'First enter the dates under Event details' );
+
+	const shifted = new Date( `${ date }T12:00:00Z` );
+	shifted.setUTCDate( shifted.getUTCDate() + 1 );
+	const shiftedDate = shifted.toISOString().slice( 0, 10 );
+	await page.getByLabel( 'Start date', { exact: true } ).fill( shiftedDate );
+	await page.getByLabel( 'End date', { exact: true } ).fill( shiftedDate );
+	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
+	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeVisible();
+	await panel.getByLabel( 'Repeats', { exact: true } ).selectOption( 'weekly' );
+	await panel.getByLabel( 'Ends', { exact: true } ).selectOption( 'count' );
+	await panel.getByLabel( 'Number of events', { exact: true } ).fill( '2' );
+	await page.getByLabel( 'Venue', { exact: true } ).fill( 'Saved without losing the recurrence proposal' );
+	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
+	await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/editor' ).isSavingPost() ) ).toBe( false );
+	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'weekly' );
+	await panel.getByRole( 'button', { name: 'Preview recurrence', exact: true } ).click();
+	await panel.getByText( 'Review 1 affected date', { exact: true } ).click();
+	shifted.setUTCDate( shifted.getUTCDate() + 7 );
+	const expectedDate = await page.evaluate( ( value ) => window.wp.date.dateI18n(
+		window.wp.date.getSettings().formats.date, value, 'UTC',
+	), shifted.toISOString() );
+	await expect( panel.locator( '.wpse-recurrence-impact' ) ).toContainText( expectedDate );
+	await page.evaluate( ( id ) => window.wp.apiFetch( {
+		path: `/wp/v2/wpse_event/${ id }?force=true`, method: 'DELETE',
+	} ), eventId );
 } );

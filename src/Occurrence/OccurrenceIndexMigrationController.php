@@ -50,6 +50,12 @@ final class OccurrenceIndexMigrationController {
 			return;
 		}
 
+		if ( ! $this->processor->has_pending() ) {
+			update_option( self::COMPLETE_OPTION, true, false );
+			wp_clear_scheduled_hook( self::HOOK );
+			return;
+		}
+
 		if ( false !== wp_next_scheduled( self::HOOK ) ) {
 			return;
 		}

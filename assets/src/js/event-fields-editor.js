@@ -540,7 +540,7 @@ const compositeDefinitions = [
 	{
 		name: 'wpse/event-calendar',
 		title: __( 'Event Calendar', 'mime-simple-events-calendar' ),
-		description: __( 'Display the interactive public event calendar with a server-rendered fallback.', 'mime-simple-events-calendar' ),
+		description: __( 'Show events in a calendar that visitors can browse by month or as a list.', 'mime-simple-events-calendar' ),
 		icon: 'calendar-alt',
 		attributes: {
 			initialView: { type: 'string', default: 'month', enum: [ 'month', 'list' ] },
@@ -686,7 +686,7 @@ const calendarControls = ( attributes, setAttributes ) => [
 	el( TextControl, {
 		key: 'initialDate',
 		label: __( 'Initial date', 'mime-simple-events-calendar' ),
-		help: __( 'Optional. Use YYYY-MM-DD to open the calendar on a specific date.', 'mime-simple-events-calendar' ),
+		help: __( 'Leave empty to open the current month. To open on another date, use YYYY-MM-DD.', 'mime-simple-events-calendar' ),
 		type: 'date',
 		value: attributes.initialDate,
 		onChange: ( initialDate ) => setAttributes( { initialDate } ),
