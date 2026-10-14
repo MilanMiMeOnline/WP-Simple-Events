@@ -842,6 +842,15 @@ test( 'loads recurrence after first saving dates without resetting an edited rul
 	}
 	const panel = page.locator( '.wpse-recurrence-editor' );
 	await expect( panel ).toContainText( 'First enter the dates under Event details' );
+	const saveDates = async () => {
+		const contextResponse = page.waitForResponse( ( response ) =>
+			response.request().method() === 'GET' &&
+			response.url().includes( `/wpse/v1/events/${ eventId }/recurrence` ),
+		);
+		await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
+		expect( ( await contextResponse ).ok() ).toBe( true );
+		await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeVisible();
+	};
 	const metaBoxes = page.getByRole( 'button', { name: 'Meta Boxes', exact: true } );
 	if ( await metaBoxes.isVisible() && await metaBoxes.getAttribute( 'aria-expanded' ) === 'false' ) {
 		await metaBoxes.press( 'Enter' );
@@ -849,8 +858,7 @@ test( 'loads recurrence after first saving dates without resetting an edited rul
 	await page.getByLabel( 'All-day event', { exact: true } ).check();
 	const date = new Date( Date.now() + ( 30 * 24 * 60 * 60 * 1000 ) ).toISOString().slice( 0, 10 );
 	await page.getByLabel( 'Start date', { exact: true } ).fill( date );
-	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
-	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeVisible();
+	await saveDates();
 	await expect( panel ).not.toContainText( 'First enter the dates under Event details' );
 
 	const shifted = new Date( `${ date }T12:00:00Z` );
@@ -858,14 +866,30 @@ test( 'loads recurrence after first saving dates without resetting an edited rul
 	const shiftedDate = shifted.toISOString().slice( 0, 10 );
 	await page.getByLabel( 'Start date', { exact: true } ).fill( shiftedDate );
 	await page.getByLabel( 'End date', { exact: true } ).fill( shiftedDate );
-	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
-	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeVisible();
+	const heldSave = Promise.withResolvers();
+	const releaseSave = Promise.withResolvers();
+	const saveUrl = ( url ) => url.pathname.endsWith( `/wp/v2/wpse_event/${ eventId }` );
+	await page.route( saveUrl, async ( route ) => {
+		if ( route.request().method() === 'POST' ) {
+			heldSave.resolve();
+			await releaseSave.promise;
+		}
+		await route.continue();
+	} );
+	const savingDates = saveDates();
+	await heldSave.promise;
+	try {
+		await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toBeHidden();
+	} finally {
+		releaseSave.resolve();
+	}
+	await savingDates;
+	await page.unroute( saveUrl );
 	await panel.getByLabel( 'Repeats', { exact: true } ).selectOption( 'weekly' );
 	await panel.getByLabel( 'Ends', { exact: true } ).selectOption( 'count' );
 	await panel.getByLabel( 'Number of events', { exact: true } ).fill( '2' );
 	await page.getByLabel( 'Venue', { exact: true } ).fill( 'Saved without losing the recurrence proposal' );
-	await page.getByRole( 'button', { name: /^(Save|Save draft)$/ } ).click();
-	await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/editor' ).isSavingPost() ) ).toBe( false );
+	await saveDates();
 	await expect( panel.getByLabel( 'Repeats', { exact: true } ) ).toHaveValue( 'weekly' );
 	await panel.getByRole( 'button', { name: 'Preview recurrence', exact: true } ).click();
 	await panel.getByText( 'Review 1 affected date', { exact: true } ).click();

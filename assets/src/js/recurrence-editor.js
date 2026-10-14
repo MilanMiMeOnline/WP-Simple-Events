@@ -657,8 +657,7 @@ const RecurrencePanel = () => {
 		if (
 			editor.type !== wpseRecurrenceEditor.eventPostType ||
 			! Number.isInteger( editor.id ) ||
-			editor.id < 1 ||
-			waitingForScheduleSave
+			editor.id < 1
 		) {
 			return;
 		}
@@ -668,6 +667,11 @@ const RecurrencePanel = () => {
 		setContext( null );
 		setPreview( null );
 		setError( '' );
+
+		// Do not offer a stale anchor while WordPress is still saving event dates.
+		if ( waitingForScheduleSave ) {
+			return;
+		}
 
 		apiFetch( {
 			path: `/wpse/v1/events/${ editor.id }/recurrence`,

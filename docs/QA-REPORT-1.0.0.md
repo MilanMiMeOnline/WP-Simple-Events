@@ -29,6 +29,7 @@ that boundary separately.
 | Add a category and cancel the all-day event | Both persisted and were immediately visible on the event page. |
 | Revisit calendar after the migration fix | Settings reported Healthy; all three weekly dates and the cancelled all-day event appeared. |
 | Preview a fourth weekly event after the formatting fix | Displayed December 11, 2026 7:00 pm, retaining the original wall time. The preview was not applied. |
+| Save first dates in a blank draft, then save a venue with a weekly rule selected | Controls appeared without reloading; the pending weekly choice survived the venue save. |
 
 The in-app browser did not render Gutenberg's editor canvas; the same editor
 worked in Chrome. This was isolated as a test-browser limitation, not treated
@@ -49,6 +50,9 @@ unnecessary dependency on cron even when migration had no work left.
 - One-off event saves reload the recurrence context so the first valid date save
   unlocks the controls and later date changes supply the current anchor. Pending
   recurrence choices are retained; previous impact previews are invalidated.
+  Controls are hidden while saving and reloading so a new rule cannot be based
+  on the previous date. The regression holds a save request open to verify this
+  boundary, then checks the next weekly date after shifting the start date.
   Existing recurring-series edit forms are not reset by ordinary post saves.
 - Recurrence impact dates use WordPress's localized date/time formats. A UTC
   formatting carrier preserves canonical wall-clock values rather than shifting
@@ -116,3 +120,15 @@ The current public version remains 0.9.0 until the exact 1.0.0 package passes
 every required gate and publication is verified. FullCalendar 7 and AI/MCP
 integration remain later roadmap work. Test content is confined to disposable
 local sites and must be removed with those environments after qualification.
+
+## Qualification corrections
+
+The first hosted smoke runs rejected the new clean-install assertion because
+the rendered status wraps `Healthy` in a strong element. The assertion now
+checks that actual markup and the same complete health explanation; it still
+fails for Building, Unavailable and Repair needed states. Runtime readiness was
+not relaxed. The first hosted browser run also exposed a save race: selecting
+a rule before the updated anchor loaded could include the previous weekday.
+Clearing the old context during saving removes that interaction window.
+The browser regression now waits for the actual context response instead of
+assuming a save has completed when an old control remains visible.
