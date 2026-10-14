@@ -4,7 +4,7 @@
 
 **Applies from:** 0.9.0 RC5
 
-**Last reviewed:** 1 September 2026
+**Last reviewed:** 14 October 2026
 
 This contract protects the bounded public read paths of MiMe Simple Events and
 Calendar against accidental query, payload and execution-time regressions. It is
@@ -32,12 +32,18 @@ site.
 
 ## Acceptance budgets
 
+Before measurement, 17 real-WordPress cases verify the combined and split coverage
+predicates against expected results, including missing/expired coverage and
+draft, private or protected parents. The temporary extra event is removed before
+measurements.
+
 Each scenario runs five times in fresh HTTP requests after one warm-up request.
 The median PHP execution time is compared with a deliberately generous hard
 ceiling; query count, result count and payload size are deterministic hard gates.
 
 | Scenario | Surface represented | Result budget | Query budget | Payload budget | Median PHP ceiling |
 |---|---|---:|---:|---:|---:|
+| Public coverage probe | readiness of the complete public event index | zero gaps on the healthy dataset | 6 | n/a | 750 ms |
 | Filtered occurrence window | occurrence repository and taxonomy predicates | exactly 100 rows from 5,000 matches | 2 | n/a | 750 ms |
 | Event list with visitor filters | shortcodes, blocks, builders and archive collection rendering | 50 rendered cards | 24 | 1 MiB HTML | 7,500 ms |
 | Calendar REST feed | interactive calendars in every editor host | 100 JSON items | 24 | 256 KiB JSON | 7,500 ms |

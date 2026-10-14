@@ -2133,3 +2133,63 @@ replacement; ordinary matching and file selection pass with both. Clean
 and `npm run qa` (93 tooling tests, build, JS/CSS lint and audit) all pass. The
 full npm audit reports zero vulnerabilities. `npm audit signatures` verifies
 all 943 registry signatures and 249 available provenance attestations.
+
+## ADR-101: Qualify FullCalendar 7 before implementing AI event management
+
+**Status:** Accepted sequencing; AI implementation design remains proposed
+
+**Date:** 14 October 2026
+
+FullCalendar 7 takes priority over a future AI/MCP event-management extension.
+ADR-096 still governs the feature-frozen 1.0 release, stabilization and the
+backwards-compatibility gate for the calendar migration. This decision does not
+renumber those releases or authorize a framework migration inside 1.0.
+
+The [AI and MCP integration analysis](AI-MCP-INTEGRATION-ANALYSIS.md) defines the
+functional options, current code boundaries, authentication constraints, safety
+requirements and implementation gates. Research and planning may proceed now;
+implementation follows FullCalendar qualification. No AI feature is part of the
+current supported product, and no AI provider, MCP runtime or new public route
+is added by this decision. A separate implementation decision must settle the
+pilot transport, supported versions, persistence guarantees and enabled actions.
+
+## ADR-102: Remove unnecessary migration waiting and clarify first-event setup
+
+**Status:** Accepted
+
+**Date:** 14 October 2026
+
+The beginner-user rehearsal for 1.0 found that a fresh installation queues an
+empty occurrence migration and keeps public recurrence unavailable until cron
+runs. The scheduler may finish immediately when the existing bounded migration
+candidate query finds no work. It must not process events during visitor requests
+or bypass schema, table or public coverage checks. Existing candidates still use
+the bounded background worker; failed projections remain guarded by readiness.
+
+The same rehearsal justifies small editor guidance and wording improvements,
+including readable recurrence-preview dates without converting their local wall
+time. These are usability fixes within the frozen feature set, not an editor
+redesign or additional integration. Release requires the existing quality gates.
+
+## ADR-103: Bound the public coverage probe's query complexity
+
+**Status:** Accepted
+
+**Date:** 14 October 2026
+
+The 1.0 profiling run measured the public coverage probe at 3,503–3,519 ms
+within a 3,594 ms calendar-feed median on the 500-series reference dataset.
+The combined WordPress metadata OR tree creates many joined aliases even when
+there is no gap. It accounts for the previously failing hosted performance gate.
+
+Split the public existence check into five bounded WordPress queries: missing
+active generation, dirty state, invalid/missing coverage start, invalid/missing
+coverage end, and invalid/missing coverage generation. Each retains the canonical
+start restriction; coverage-window conditions remain recurring-only. Publication
+and password restrictions apply to every query. Stop at the first match.
+Background renewal keeps the combined predicate because it needs one ordered
+candidate page. No direct SQL, persistent cache or privacy exception is added.
+
+Keep all existing performance budgets and add an isolated coverage-probe gate.
+Verify predicate equivalence against real WordPress metadata, including private,
+draft, protected, one-off, dirty and malformed-coverage cases.

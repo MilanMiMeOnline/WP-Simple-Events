@@ -25,7 +25,7 @@ final class WordPressOccurrenceCoverageProbe implements OccurrenceCoverageProbe 
 	) {}
 
 	/**
-	 * Perform one bounded, cacheable WordPress metadata query.
+	 * Perform bounded, cacheable WordPress checks and stop at the first gap.
 	 */
 	public function has_public_gap(): bool {
 		$today = wp_date( 'Y-m-d' );
@@ -35,29 +35,35 @@ final class WordPressOccurrenceCoverageProbe implements OccurrenceCoverageProbe 
 		}
 
 		try {
-			$meta_query = $this->queries->public_gaps( $today );
+			$checks = $this->queries->public_gap_checks( $today );
 		} catch ( \InvalidArgumentException ) {
 			return true;
 		}
 
-		$ids = get_posts(
-			array(
-				'post_type'              => EventPostType::POST_TYPE,
-				'post_status'            => 'publish',
-				'has_password'           => false,
-				'fields'                 => 'ids',
-				'posts_per_page'         => 1,
-				'paged'                  => 1,
-				'orderby'                => 'ID',
-				'order'                  => 'ASC',
-				'no_found_rows'          => true,
-				'suppress_filters'       => false,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				'meta_query'             => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded readiness gate over plugin-owned single-value metadata; never loads more than one ID.
-			)
-		);
+		foreach ( $checks as $meta_query ) {
+			$ids = get_posts(
+				array(
+					'post_type'              => EventPostType::POST_TYPE,
+					'post_status'            => 'publish',
+					'has_password'           => false,
+					'fields'                 => 'ids',
+					'posts_per_page'         => 1,
+					'paged'                  => 1,
+					'orderby'                => 'ID',
+					'order'                  => 'ASC',
+					'no_found_rows'          => true,
+					'suppress_filters'       => false,
+					'update_post_meta_cache' => false,
+					'update_post_term_cache' => false,
+					'meta_query'             => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded readiness gate over plugin-owned single-value metadata; never loads more than one ID.
+				)
+			);
 
-		return array() !== $ids;
+			if ( array() !== $ids ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

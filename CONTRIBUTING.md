@@ -71,7 +71,13 @@ npm run test:release
 
 The Gutenberg browser journey authenticates the disposable administrator, inspects all sixteen atomic and primary-component registrations, serializes dynamic blocks and requests their authenticated ServerSideRender previews. Public companion pages verify the complete explicit-source palette, the three primary components, the Add to Calendar action, a JavaScript-free fallback and the absence of editor JavaScript from visitor requests.
 
-For an Elementor matrix run, activate MiMe Simple Events and Calendar plus the target official Elementor package in an isolated WordPress site and execute `wp eval-file wp-content/plugins/mime-simple-events-calendar/tests/Compatibility/elementor-inspector.php`. The inspector verifies all widget names, categories, dependencies, field controls, optimized DOM and strict explicit-source rendering. Run it against the documented minimum 3.x and current tested 4.x packages before release; it is development tooling and is not included in the release archive.
+For an Elementor matrix run, activate MiMe Simple Events and Calendar plus the target official Elementor package in an isolated WordPress site. Run the inspector as that site's administrator (replace `1` with its user ID):
+
+```sh
+wp --user=1 eval 'require "wp-content/plugins/mime-simple-events-calendar/tests/Compatibility/elementor-inspector.php";'
+```
+
+Using a normal PHP include preserves the inspector's strict-types declaration on PHP 8.2; `wp eval-file` may inject statements ahead of it. The inspector verifies all widget names, categories, dependencies, individual field controls (including expanded border and typography groups), optimized DOM and strict explicit-source rendering. Run it against the documented minimum 3.x and current tested 4.x packages before release; it is development tooling and is not included in the release archive. With a packaged plugin, mount the repository's `tests/Compatibility` directory separately and adjust the include path.
 
 ## Change workflow
 

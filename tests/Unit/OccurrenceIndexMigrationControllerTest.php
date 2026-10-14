@@ -34,12 +34,41 @@ final class OccurrenceIndexMigrationControllerTest extends TestCase {
 	 * Repeated ordinary requests queue at most one worker.
 	 */
 	public function test_schedule_is_idempotent(): void {
+		WordPressState::add_post(
+			new WP_Post(
+				array(
+					'ID'          => 42,
+					'post_type'   => EventPostType::POST_TYPE,
+					'post_status' => 'draft',
+				)
+			)
+		);
 		$controller = new OccurrenceIndexMigrationController();
 
 		$controller->schedule();
 		$controller->schedule();
 
 		self::assertSame( 1, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
+		self::assertFalse( WordPressState::has_option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
+	}
+
+	/** A fresh installation needs no background worker before showing occurrences. */
+	public function test_empty_installation_completes_without_waiting_for_cron(): void {
+		( new OccurrenceIndexMigrationController() )->schedule();
+
+		self::assertTrue( WordPressState::option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
+		self::assertSame( 1, WordPressState::last_get_posts_arguments()['posts_per_page'] );
+	}
+
+	/** Saving the last pending event can finish migration even if cron is unavailable. */
+	public function test_no_remaining_candidates_clears_a_queued_worker(): void {
+		WordPressState::schedule_hook( OccurrenceIndexMigrationController::HOOK, time() + 30 );
+
+		( new OccurrenceIndexMigrationController() )->schedule();
+
+		self::assertTrue( WordPressState::option( OccurrenceIndexMigrationController::COMPLETE_OPTION ) );
+		self::assertSame( 0, WordPressState::scheduled_count( OccurrenceIndexMigrationController::HOOK ) );
 	}
 
 	/**

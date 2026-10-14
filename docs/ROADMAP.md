@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 2 September 2026
+**Last reviewed:** 14 October 2026 (1.0 qualification started)
 **Current public release:** 0.9.0
-**Active phase:** Phase 7 — blocker-only 0.9 observation window
+**Active phase:** Phase 8 — 1.0.0 qualification; not yet published
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -1231,6 +1231,11 @@ documentation.
 
 ## Phase 8 — 1.0.0 stable release
 
+**In progress, 14 October 2026:** the beginner-user rehearsal found an unnecessary
+cron wait on empty migrations and editor guidance improvements. See the
+[1.0.0 qualification report](QA-REPORT-1.0.0.md) for fixes, evidence and remaining
+release gates. The public version remains 0.9.0 until publication is verified.
+
 1. Resolve every 0.9 blocker with a regression and rerun the complete release
    matrix from the exact tag candidate.
 2. Verify the GitHub source tag, generated ZIP, WordPress.org trunk/tag and plugin
@@ -1264,6 +1269,12 @@ documentation.
    dedicated branch against the frozen saved-content, CSS, accessibility, editor
    and browser contracts. Ship it as 1.2 only when the migration is fully
    backwards compatible; otherwise reserve it for the next plugin major.
+3. **AI/MCP event management, after FullCalendar qualification:** follow the
+   [functional and technical analysis](AI-MCP-INTEGRATION-ANALYSIS.md). Start
+   with an optional, authenticated pilot for bounded event reads and one-off
+   drafts. Publication, changes to live events and recurrence require separate
+   gates. No release number is assigned yet. ADR-101 records the priority of
+   FullCalendar 7 over this extension; security and blocker fixes remain urgent.
 
 ## Pre-1.0 competitive gap audit
 

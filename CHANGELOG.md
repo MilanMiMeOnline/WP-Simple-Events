@@ -4,6 +4,41 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-14
+
+### Fixed
+
+- Finish an empty occurrence migration immediately, including clearing a stale
+  queued worker, so a fresh site does not depend on cron before displaying
+  recurring events. Preserve bounded migration for existing candidates and
+  fail-closed public coverage checks.
+- Load recurrence controls after the first date save without requiring an editor
+  reload or resetting a pending recurrence proposal on later ordinary saves.
+- Format recurrence-impact dates with the site's date/time settings while
+  preserving the event's local wall time and omitting hours for all-day events.
+
+### Performance
+
+- Split the public occurrence coverage check into five bounded WordPress queries
+  with unchanged eligibility predicates, avoiding the costly combined metadata
+  join. Add an isolated timing gate and real-database equivalence cases without
+  increasing the existing list or calendar budgets.
+
+### Changed
+
+- Explain how to find event dates under Meta Boxes / Event details and distinguish
+  event dates from the WordPress publication date.
+- Simplify native field and calendar-block help, including the default current
+  month when no initial date is selected.
+- Promote the frozen 1.x compatibility contract to the stable release line
+  without adding new event features or changing existing public identifiers.
+
+### Maintenance
+
+- Qualify the current patched development toolchain and its documented temporary
+  braces depth-guard fork; these packages are excluded from the plugin ZIP.
+- Add 0.9.0 to the checksummed historical upgrade matrix.
+
 ## [0.9.0] - 2026-09-02
 
 ### Documentation

@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.9.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,15 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 1.0.0 =
+* Establish the stable 1.x compatibility contract for existing events, pages, blocks, shortcodes and optional builder integrations.
+* Make newly installed calendars ready immediately when no existing events need background indexing.
+* Load recurrence controls after saving dates and keep pending recurrence choices when saving other event details.
+* Make list and calendar checks lighter on larger event collections.
+* Explain where to find event dates and how they differ from the WordPress publication date.
+* Show readable dates and times in recurrence change previews without shifting the event time.
+* Simplify event and calendar help, including the current-month default.
 
 = 0.9.0 =
 * Freeze the documented public shortcodes, blocks, REST routes, metadata, occurrence identities and builder component contracts for the future 1.x line.

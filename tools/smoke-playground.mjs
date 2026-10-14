@@ -908,6 +908,10 @@ try {
 	const settingsBody = await settingsResponse.text();
 	requireCondition( settingsResponse.ok, 'The event settings page is unavailable.' );
 	requireCondition(
+		settingsBody.includes( '<strong>Healthy</strong> — Public events have a complete derived occurrence index.' ),
+		'A clean installation must be ready without waiting for an empty cron migration.',
+	);
+	requireCondition(
 		settingsBody.includes( 'name="wpse_structured_data_enabled"' ),
 		'The structured-data setting is unavailable.',
 	);

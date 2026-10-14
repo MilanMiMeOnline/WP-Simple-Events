@@ -84,7 +84,7 @@ final class EventMetaBox {
 					?>
 					hidden<?php endif; ?>
 			>
-				<?php esc_html_e( 'A start is required before an event can be published. Drafts may remain incomplete.', 'mime-simple-events-calendar' ); ?>
+				<?php esc_html_e( 'Enter when the event takes place. A start date is required to publish; drafts can be saved before all details are ready.', 'mime-simple-events-calendar' ); ?>
 			</p>
 
 			<div
@@ -147,7 +147,7 @@ final class EventMetaBox {
 					?>
 				</p>
 				<p class="description wpse-event-fields-time-format">
-					<?php esc_html_e( 'Time controls may look different across browsers. Events are saved with the same canonical 24-hour value; public output follows the WordPress time format.', 'mime-simple-events-calendar' ); ?>
+					<?php esc_html_e( 'For an all-day event, you can leave the end date empty if it lasts one day. Times on your website follow your WordPress display settings.', 'mime-simple-events-calendar' ); ?>
 				</p>
 			</div>
 
@@ -168,10 +168,10 @@ final class EventMetaBox {
 
 			<?php $this->render_textarea( 'address', 'address', __( 'Address', 'mime-simple-events-calendar' ), $input->address, 500 ); ?>
 
-			<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'mime-simple-events-calendar' ), 'url', $input->location_url, null, 2048, __( 'Optional route or location page using HTTP(S).', 'mime-simple-events-calendar' ) ); ?>
+			<?php $this->render_input( 'location-url', 'location_url', __( 'Location URL', 'mime-simple-events-calendar' ), 'url', $input->location_url, null, 2048, __( 'Optional link to directions or a location page. Paste the complete web address.', 'mime-simple-events-calendar' ) ); ?>
 
 			<div class="wpse-event-fields-grid">
-				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'mime-simple-events-calendar' ), 'url', $input->event_url, null, 2048, __( 'Optional information or registration page using HTTP(S).', 'mime-simple-events-calendar' ) ); ?>
+				<?php $this->render_input( 'event-url', 'event_url', __( 'External event URL', 'mime-simple-events-calendar' ), 'url', $input->event_url, null, 2048, __( 'Optional link to more information or registration. Paste the complete web address.', 'mime-simple-events-calendar' ) ); ?>
 				<?php $this->render_input( 'event-url-label', 'event_url_label', __( 'External event link label', 'mime-simple-events-calendar' ), 'text', $input->event_url_label, null, EventMetaSanitizer::EVENT_URL_LABEL_MAX_LENGTH, __( 'Optional link text. The default is “More event information”.', 'mime-simple-events-calendar' ) ); ?>
 			</div>
 

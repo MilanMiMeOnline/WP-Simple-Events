@@ -6,6 +6,7 @@ import {
 	boundedOccurrenceWindow,
 	followingMutationFromForm,
 	followingOccurrenceChoices,
+	formatOccurrenceLocal,
 	initialOccurrenceWindowStart,
 	isIsoDate,
 	monthlyPatternFromDefinition,
@@ -626,4 +627,27 @@ test( 'encodes ordinary ordinal and calendar-day monthly choices exactly', () =>
 		monthly_mode: 'day_of_month',
 		month_day: 15,
 	} );
+} );
+
+test( 'formats preview wall times without browser-timezone shifts or all-day hours', () => {
+	const formats = { date: 'd/m/Y', time: 'H:i' };
+	const calls = [];
+	const formatter = ( format, value, timezone ) => {
+		calls.push( { format, value, timezone } );
+		return new Intl.DateTimeFormat( 'en-GB', {
+			dateStyle: 'short',
+			...( format.includes( 'H:i' ) ? { timeStyle: 'short' } : {} ),
+			timeZone: timezone,
+		} ).format( new Date( value ) );
+	};
+
+	assert.equal( formatOccurrenceLocal( '2026-10-25T00:30:00', formats, formatter ), '25/10/2026, 00:30' );
+	assert.equal( formatOccurrenceLocal( '2026-11-21', formats, formatter ), '21/11/2026' );
+	assert.deepEqual( calls, [
+		{ format: 'd/m/Y H:i', value: '2026-10-25T00:30:00Z', timezone: 'UTC' },
+		{ format: 'd/m/Y', value: '2026-11-21T00:00:00Z', timezone: 'UTC' },
+	] );
+	assert.equal( formatOccurrenceLocal( '2026-02-30', formats, formatter ), '2026-02-30' );
+	assert.equal( formatOccurrenceLocal( '2026-10-25T25:00:00', formats, formatter ), '2026-10-25T25:00:00' );
+	assert.equal( calls.length, 2 );
 } );

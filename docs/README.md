@@ -25,6 +25,8 @@ and release contracts for MiMe Simple Events and Calendar.
   technical scope.
 - [Product roadmap](ROADMAP.md) — prioritized future work and the next
   implementation plan.
+- [AI and MCP integration analysis](AI-MCP-INTEGRATION-ANALYSIS.md) — proposed
+  optional event-management integration after FullCalendar 7 qualification.
 - [Public 1.x compatibility contract](PUBLIC-COMPATIBILITY-CONTRACT.md) — stable
   identities, extension boundaries and deprecation policy.
 - [Development standards](DEVELOPMENT-STANDARDS.md) — implementation conventions.
@@ -62,6 +64,9 @@ and release contracts for MiMe Simple Events and Calendar.
 evidence. They are not user documentation and are excluded from the installable
 plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
+
+The [1.0.0 qualification report](QA-REPORT-1.0.0.md) tracks the current release
+preparation and beginner-user rehearsal.
 
 The current public release evidence is the
 [0.9.0 RC8 qualification and publication report](QA-REPORT-0.9.0-RC8.md). The
