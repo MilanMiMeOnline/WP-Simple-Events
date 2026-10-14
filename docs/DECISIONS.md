@@ -2081,3 +2081,55 @@ test before and after the YAML migration. The npm audit still fails on twelve
 high dependency entries, all from braces; critical and moderate counts are zero.
 No security gate or lint rule was changed. Docker containers were not started;
 the test exercises configuration generation only.
+
+## ADR-100: Replace development-only braces with a reviewed depth-guard fork
+
+**Status:** Accepted
+
+The latest upstream braces 3.0.3 remains affected by GHSA-vfj7-8cjw-p6xm.
+Even the current Stylelint release still depends on it through micromatch;
+upgrading or removing lint rules is not a remedy. Replace only micromatch's
+braces dependency with the exact npm alias
+`npm:@dieub/braces-depth-guard@3.0.3-pn.3`. This preserves the existing matching
+API while bounding brace/parenthesis parsing and recursive AST processing to
+100 levels. Excessively nested input is deliberately rejected with an explicit
+depth error rather than exhausting the JavaScript stack.
+
+This is a recent third-party derivative, not an official upstream fix. The MIT
+license and original attribution are retained. Its runtime, license and manifest
+were compared byte-for-byte with tag `3.0.3-pn.3`, commit
+`305a2e4bfe324bb53c336c1b03387ee1251c926f`. The published tarball has no install
+scripts and retains the existing fill-range dependency. The reviewed runtime
+diff adds bounded parsing/traversal, consistent option limits and parent-cycle
+checks; it does not add network, filesystem or process operations. The package's
+README still calls this version unpublished, but the npm artifact and matching
+Git tag exist; the artifact, not that stale publication statement, was reviewed.
+
+The fork has only a short maintenance history. Pinning the exact artifact and
+its lockfile integrity prevents automatic adoption of future changes. Review
+its maintenance and advisories during dependency checks. Remove the alias when
+upstream ships a reviewed equivalent fix or micromatch removes the dependency;
+rerun the regression suite and full quality gates before doing so. The removal
+cost is one scoped override plus its lockfile resolution. Nothing is added to
+the production plugin or its release archive.
+
+The replacement must pass the published fork's compatibility suite, local
+regressions that fail against original braces, and the real fast-glob file
+selection path. Cover normal nested sets, ranges and escaping, excessive brace
+and parenthesis nesting, direct deep/cyclic ASTs, and attempted depth-limit
+bypasses. A clean audit alone is not proof of remediation: no advisory or gate
+is ignored, and the depth regression must fail if the vulnerable implementation
+returns. Expansion cardinality, very wide ASTs and arbitrary object getters are
+outside this specific advisory fix; untrusted patterns remain unsupported as
+application input. This dependency is used only by development tooling.
+
+Sources: [upstream advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm),
+[reviewed fork source](https://github.com/dieub/braces-depth-guard/tree/305a2e4bfe324bb53c336c1b03387ee1251c926f).
+
+Validation on 2026-10-14: the fork's 799 tests pass. The local suite has eight
+depth regressions that fail with original braces 3.0.3 and pass with the
+replacement; ordinary matching and file selection pass with both. Clean
+`npm ci`, `npm ls --all`, `composer validate --strict`, `composer qa` (777 tests)
+and `npm run qa` (93 tooling tests, build, JS/CSS lint and audit) all pass. The
+full npm audit reports zero vulnerabilities. `npm audit signatures` verifies
+all 943 registry signatures and 249 available provenance attestations.

@@ -70,6 +70,9 @@
       "js-yaml": "4.3.2"
     },
     "qs": "6.16.0",
+    "micromatch": {
+      "braces": "npm:@dieub/braces-depth-guard@3.0.3-pn.3"
+    },
     "@stylistic/stylelint-plugin": {
       "postcss-selector-parser": "7.1.6"
     }
