@@ -6,7 +6,7 @@ The project is developed in small, reviewable increments. The complete product c
 
 - PHP 8.2 or newer
 - Composer 2
-- Node.js 20 or newer and npm 10 or newer
+- Node.js 24 LTS and npm 11 or newer (`.nvmrc` selects the tested Node release)
 - `zip`, `zipinfo` and `unzip` for verified release packages
 - WP-CLI 2.12.0 when regenerating the translation catalogue
 - Docker only for the optional Docker-backed `wp-env` environment; the automated compatibility smoke journey uses WordPress Playground
@@ -17,6 +17,12 @@ The project is developed in small, reviewable increments. The complete product c
 composer install
 npm ci
 ```
+
+The install step applies a version- and checksum-checked compatibility patch to
+the development-only `@wordpress/env` Git imports. This allows the patched
+`simple-git` 4 API while upstream still requests version 3; security guards stay
+enabled. Do not use `--ignore-scripts` for the final installation. See ADR-099 in
+`docs/DECISIONS.md`; an upstream version change requires reviewing this patch.
 
 Start a quick WordPress environment without Docker:
 

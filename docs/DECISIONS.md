@@ -1997,3 +1997,62 @@ observed failing budget and a separate invalidation, privacy and upgrade review.
 Increasing a budget requires before/after evidence and a new decision; it may not
 be used as a convenience response to a failing gate. The normative scenarios and
 ceilings live in `PERFORMANCE-BUDGETS.md`.
+
+## ADR-099: Development tooling uses maintained Node and patched Git imports
+
+**Status:** Accepted
+
+The October 2026 maintenance review moves local tooling to Node 24 LTS, matching
+CI, and refreshes compatible dependencies. Production PHP requirements and
+FullCalendar pins stay unchanged. The existing archive and brace-expansion
+overrides move to patched 0.6.1 and 5.0.12 respectively.
+
+The transitive Express query-string parser is pinned to patched qs 6.16.0 until
+the parent dependency range selects it. The older WordPress stylistic lint
+preset still selects selector-parser 6, so only that preset's parser is moved
+to 7.1.6. Version 7 keeps the parser API and makes mutation during iteration
+safe; the existing full CSS lint run verifies compatibility with our rules.
+Remove these narrow overrides when upstream ranges select fixed releases.
+
+`@wordpress/env` 11.11.0 still requests vulnerable simple-git 3 and imports its
+default CommonJS function. A scoped override selects simple-git 4.0.2, including
+argv-parser 2.0.1. The v4 release removes that default export. A small postinstall
+patch changes only the two wp-env imports to the supported named export. Both
+the upstream version and complete original file checksums are verified before
+writing; unknown code fails installation instead of silently applying a patch.
+No unsafe-operation option is enabled and no advisory is ignored. This patch
+and its override must be removed when wp-env adopts the fixed API upstream.
+
+The WordPress environment stays at 11.11.0 and its Playground CLI is retained
+at the pre-maintenance 3.1.44 version with a scoped override. Newer environment
+and CLI combinations produced authentication redirects, PHP request timeouts
+and an inactive main plugin beside the browser fixtures on this Mac.
+This is a compatibility hold, not an audit exclusion: its transitive security
+updates, including proxy-addr 2.0.8 and qs 6.16.0, remain installed. Reassess the
+pin with the full smoke and browser suites before adopting a newer CLI. No
+timeout, assertion, security rule or release gate is relaxed for these updates.
+
+The regression journey clones, fetches and checks out a disposable local Git
+fixture through wp-env's actual source downloader. It fails with the unpatched
+import and passes after patching. Normal lint, build, release, WordPress smoke
+and browser checks remain required. All changed tools and the postinstall patch
+are excluded from the production archive.
+
+Upstream references: [simple-git v4 migration and fixes](https://github.com/steveukx/git-js/releases),
+[selector-parser v7 migration](https://github.com/postcss/postcss-selector-parser/releases/tag/v7.0.0).
+
+The remaining unpatched braces and sprintf-js advisories are not accepted risks
+or audit exclusions. The high-severity braces finding continues to block release
+until a supported fix or reviewed replacement is available; installation of
+other security fixes must not be misreported as a clean full dependency audit.
+
+Validation on 2026-10-13: clean `npm ci` and the complete dependency tree pass.
+Composer validation and QA pass (777 tests), as do build, JS/CSS lint and all
+82 tooling tests. All 35 browser journeys pass. The final clean installation
+passes WordPress 7.1 and 6.9 smoke journeys on PHP 8.2, including the packaged
+plugin on 6.9. Release verification and two byte-identical builds pass; every
+archive entry still has the same content as the published 0.9.0 package.
+The npm audit gate remains red: zero critical, twelve high and four moderate
+dependency entries, all tracing to the two unpatched advisories above. The
+full CI PHP matrix, Plugin Check and manual builder QA are not rerun for this
+local tooling-only maintenance; this does not authorize a release.

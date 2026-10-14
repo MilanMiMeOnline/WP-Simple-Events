@@ -4,8 +4,8 @@
   "private": true,
   "description": "Development tooling for MiMe Simple Events and Calendar.",
   "engines": {
-    "node": ">=20",
-    "npm": ">=10"
+    "node": ">=24 <25",
+    "npm": ">=11"
   },
   "scripts": {
     "audit": "npm audit --audit-level=high",
@@ -38,7 +38,8 @@
     "test:tools": "node --test tools/*.test.mjs",
     "test:upgrade": "node tools/upgrade-playground.mjs",
     "test:smoke": "node tools/smoke-playground.mjs",
-    "verify:release": "node tools/verify-release.mjs"
+    "verify:release": "node tools/verify-release.mjs",
+    "postinstall": "node tools/patch-wp-env.mjs"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -61,7 +62,15 @@
     "@wordpress/theme": {
       "esbuild": "0.28.1"
     },
-    "adm-zip": "0.6.0",
-    "brace-expansion": "5.0.9"
+    "adm-zip": "0.6.1",
+    "brace-expansion": "5.0.12",
+    "@wordpress/env": {
+      "simple-git": "4.0.2",
+      "@wp-playground/cli": "3.1.44"
+    },
+    "qs": "6.16.0",
+    "@stylistic/stylelint-plugin": {
+      "postcss-selector-parser": "7.1.6"
+    }
   }
 }
