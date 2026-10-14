@@ -2056,3 +2056,28 @@ The npm audit gate remains red: zero critical, twelve high and four moderate
 dependency entries, all tracing to the two unpatched advisories above. The
 full CI PHP matrix, Plugin Check and manual builder QA are not rerun for this
 local tooling-only maintenance; this does not authorize a release.
+
+### Follow-up: remove sprintf-js through the wp-env YAML dependency
+
+Use a scoped `@wordpress/env` override for `js-yaml` 4.3.2. The installed
+wp-env 11.11.0 uses this library only for `yaml.dump` in its Docker configuration
+writer; it does not use the removed v3 safe-method aliases, JavaScript-specific
+types or internal module paths. Version 4 uses argparse 2 and removes the
+sprintf-js dependency rather than suppressing its advisory. Remove the override
+once the upstream range selects a supported v4 release.
+
+The compatibility risk is changed YAML serialization. A regression test calls
+the real Docker configuration writer and reads its output back, checking service
+ports, interpolated values, volume paths with spaces and generated Dockerfiles.
+No Docker daemon or running environment is needed for this check. The high
+braces advisory remains unresolved and the dependency audit must still report it.
+
+Migration reference: [js-yaml v3 to v4](https://github.com/nodeca/js-yaml/blob/4.1.0/migrate_v3_to_v4.md).
+
+Validation on 2026-10-14: clean installation and the complete dependency tree
+pass, with sprintf-js absent. Composer validation and QA pass (777 tests).
+Build, JS/CSS lint and all 83 tooling tests pass, including the Docker writer
+test before and after the YAML migration. The npm audit still fails on twelve
+high dependency entries, all from braces; critical and moderate counts are zero.
+No security gate or lint rule was changed. Docker containers were not started;
+the test exercises configuration generation only.
