@@ -1,6 +1,6 @@
 # QA report — 1.0.0 user rehearsal and release qualification
 
-**Status:** qualification in progress; not released
+**Status:** candidate qualified locally and in CI; publication pending
 
 **Reviewed:** 14 October 2026
 
@@ -65,8 +65,10 @@ no new route, permission, dependency or persistent cache. Formatting changes
 affect labels only, not recurrence identifiers or submitted mutations.
 
 Senior QA review: the manual journeys exposed the missing repeated dates before
-the change and verified them after it. The release still needs all exact-package
-and hosted gates below; passing unit tests alone does not qualify publication.
+the change and verified them after it. The exact package now passes the browser,
+WordPress, upgrade/lifecycle, performance and hosted gates below. The save-race
+test holds a real request open and confirms the stale form is unavailable; it
+then verifies the new anchor and preservation of pending choices.
 
 ## Qualification evidence
 
@@ -78,16 +80,27 @@ and hosted gates below; passing unit tests alone does not qualify publication.
 | Composer advisory audit | Pass, zero advisories |
 | Production JS builds, tooling tests, JS/CSS lint | Pass, 94 tooling tests |
 | npm advisory audit | Pass, zero vulnerabilities |
-| Browser matrix | Initial 35/35 pass; final 36-test candidate run pending |
-| Fresh-install and supported WordPress smoke matrix | Pending |
-| Historical upgrades and lifecycle | Pending |
-| Exact release package and reproducibility | Pending |
-| Hosted CI and official Plugin Check | Pending |
+| Browser matrix | Pass, all 36 packaged browser tests locally and in CI |
+| Fresh-install and supported WordPress smoke matrix | Pass locally and in CI: WordPress 6.9 / 7.1, PHP 8.2 |
+| Historical upgrades and lifecycle | Pass locally and in CI: all nine sources, repair, reactivation and both uninstall modes |
+| Exact release package and reproducibility | Pass, two byte-identical builds; local and CI archives match |
+| Hosted CI and official Plugin Check | All 12 jobs pass, including strict Plugin Check |
+| Real-host Elementor matrix | Pass: 3.35.9 and 4.2.3, WordPress 7.1.3 / PHP 8.2.31 |
+
+GitHub Actions run
+[38570445909](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/38570445909)
+passed on candidate `9438b7ed4313769e8179a3d79d8735970086b816`. It includes PHP
+8.2–8.5, WordPress 6.9 and 7.1 on PHP 8.2, all nine historical upgrades,
+36 browser journeys, the bounded performance dataset, translation checks and
+strict official Plugin Check. The downloaded CI release archive compares
+byte-for-byte equal to the locally tested package, SHA-256
+`0ace0f30cca7e2bd3108980fc4f54f6a7bfdaffb8d899e4d95ab44c9f20c0cb3`.
+Both prepared SVN trees contain the exact same 380 production files.
 
 Before changes, local performance passed the existing budgets: the 50-card list
 used 18 queries with a 3,695.513 ms median and the 100-item feed used 17 queries
 with a 3,593.804 ms median. The prior main-branch CI list result exceeded its
-7,500 ms limit, so hosted performance remains a release gate. No budget was
+7,500 ms limit; the optimized candidate passes that hosted gate. No budget was
 increased and no failed check was suppressed.
 
 ### Profile-guided performance correction
@@ -121,6 +134,18 @@ every required gate and publication is verified. FullCalendar 7 and AI/MCP
 integration remain later roadmap work. Test content is confined to disposable
 local sites and must be removed with those environments after qualification.
 
+## Residual boundaries
+
+- The manual rehearsal used native WordPress and Twenty Twenty-Five; the smoke
+  matrix separately exercises classic, hybrid and block-theme ownership.
+- Elementor's actual host matrix was rerun. Divi's saved schemas and adapter
+  contracts pass the automated suites; its previous licensed Divi 5.11.1 visual
+  qualification is retained rather than claimed as a new manual builder session.
+- A Dutch language pack is not bundled. The new text is translatable and the
+  catalogue passes verification, but English remains the fallback.
+- FullCalendar 7 and AI/MCP remain deferred. No new event-management capability,
+  external runtime service, permission or public identifier is introduced.
+
 ## Qualification corrections
 
 The first hosted smoke runs rejected the new clean-install assertion because
@@ -132,3 +157,18 @@ a rule before the updated anchor loaded could include the previous weekday.
 Clearing the old context during saving removes that interaction window.
 The browser regression now waits for the actual context response instead of
 assuming a save has completed when an old control remains visible.
+
+The real-host Elementor inspector initially requested group names as field IDs.
+Elementor expands them into saved controls such as
+`calendar_action_border_border`; the inspector now checks six actual border and
+typography fields instead of two nonexistent group fields. PHP 8.2 also requires
+loading this strict-types file through a normal include rather than WP-CLI's
+`eval-file` rewriting. Both official Elementor packages then passed with an
+explicit administrator and runtime versions recorded from inside WordPress.
+No production widget code or frozen saved schema changed.
+
+Local test infrastructure had transient connection failures and one Playground
+startup timeout. Clean reruns passed both complete smoke targets without
+increasing timeouts, skipping assertions or changing production code. The
+manual site and retained 6.9 diagnostic site were stopped and removed; test
+screenshots are stored separately.
