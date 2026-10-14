@@ -209,7 +209,7 @@ msgid "Title"
 msgstr ""
 
 #: src/Admin/EventListTable.php:56
-#: assets/src/js/recurrence-editor.js:2031
+#: assets/src/js/recurrence-editor.js:2044
 msgid "Repeats"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgid "All day"
 msgstr ""
 
 #: src/Admin/EventListTable.php:60
-#: assets/src/js/recurrence-editor.js:1727
+#: assets/src/js/recurrence-editor.js:1740
 msgid "Location"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr ""
 #: src/Admin/EventListTable.php:63
 #: src/Admin/EventMetaBox.php:302
 #: src/Content/EventMeta.php:167
-#: assets/src/js/recurrence-editor.js:1688
+#: assets/src/js/recurrence-editor.js:1701
 msgid "Event status"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr ""
 
 #: src/Admin/EventListTable.php:111
 #: src/Admin/EventMetaBox.php:296
-#: assets/src/js/recurrence-editor.js:1692
+#: assets/src/js/recurrence-editor.js:1705
 msgid "Scheduled"
 msgstr ""
 
@@ -280,7 +280,7 @@ msgstr ""
 #: src/Frontend/EventFieldRenderer.php:131
 #: src/Frontend/EventRenderer.php:184
 #: src/Shortcode/CalendarShortcode.php:231
-#: assets/src/js/recurrence-editor.js:1693
+#: assets/src/js/recurrence-editor.js:1706
 msgid "Postponed"
 msgstr ""
 
@@ -349,32 +349,32 @@ msgstr ""
 
 #: src/Admin/EventMetaBox.php:125
 #: src/Content/EventMeta.php:106
-#: assets/src/js/recurrence-editor.js:1615
-#: assets/src/js/recurrence-editor.js:1846
+#: assets/src/js/recurrence-editor.js:1628
+#: assets/src/js/recurrence-editor.js:1859
 msgid "All-day event"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:130
-#: assets/src/js/recurrence-editor.js:1628
-#: assets/src/js/recurrence-editor.js:1855
+#: assets/src/js/recurrence-editor.js:1641
+#: assets/src/js/recurrence-editor.js:1868
 msgid "Start date"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:132
-#: assets/src/js/recurrence-editor.js:1637
-#: assets/src/js/recurrence-editor.js:1863
+#: assets/src/js/recurrence-editor.js:1650
+#: assets/src/js/recurrence-editor.js:1876
 msgid "Start time"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:134
-#: assets/src/js/recurrence-editor.js:1645
-#: assets/src/js/recurrence-editor.js:1870
+#: assets/src/js/recurrence-editor.js:1658
+#: assets/src/js/recurrence-editor.js:1883
 msgid "End date"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:136
-#: assets/src/js/recurrence-editor.js:1654
-#: assets/src/js/recurrence-editor.js:1878
+#: assets/src/js/recurrence-editor.js:1667
+#: assets/src/js/recurrence-editor.js:1891
 msgid "End time"
 msgstr ""
 
@@ -391,19 +391,19 @@ msgstr ""
 #: src/Admin/EventMetaBox.php:165
 #: src/Content/EventMeta.php:122
 #: src/Elementor/EventVenueWidget.php:46
-#: assets/src/js/recurrence-editor.js:1730
+#: assets/src/js/recurrence-editor.js:1743
 msgid "Venue"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:169
 #: src/Content/EventMeta.php:130
-#: assets/src/js/recurrence-editor.js:1745
+#: assets/src/js/recurrence-editor.js:1758
 msgid "Address"
 msgstr ""
 
 #: src/Admin/EventMetaBox.php:171
 #: src/Content/EventMeta.php:138
-#: assets/src/js/recurrence-editor.js:1761
+#: assets/src/js/recurrence-editor.js:1774
 msgid "Location URL"
 msgstr ""
 
@@ -413,7 +413,7 @@ msgstr ""
 
 #: src/Admin/EventMetaBox.php:174
 #: src/Content/EventMeta.php:146
-#: assets/src/js/recurrence-editor.js:1785
+#: assets/src/js/recurrence-editor.js:1798
 msgid "External event URL"
 msgstr ""
 
@@ -1377,7 +1377,7 @@ msgid "Choose which events are included."
 msgstr ""
 
 #: src/Divi/DiviEditorTranslations.php:36
-#: assets/src/js/recurrence-editor.js:1562
+#: assets/src/js/recurrence-editor.js:1575
 msgid "Content"
 msgstr ""
 
@@ -2629,7 +2629,7 @@ msgid "Field label typography"
 msgstr ""
 
 #: src/Elementor/EventExternalActionWidget.php:47
-#: assets/src/js/recurrence-editor.js:1782
+#: assets/src/js/recurrence-editor.js:1795
 msgid "External action"
 msgstr ""
 
@@ -3519,467 +3519,467 @@ msgstr ""
 msgid "Selected dates"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:698
+#: assets/src/js/recurrence-editor.js:711
 msgid "First enter the dates under Event details, then save the event. In the block editor, open Meta Boxes below the content to find these fields."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:790
+#: assets/src/js/recurrence-editor.js:803
 msgid "The occurrences could not be loaded. Reload the event and try again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:859
+#: assets/src/js/recurrence-editor.js:872
 msgid "Choose an occurrence to edit."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:896
+#: assets/src/js/recurrence-editor.js:909
 msgid "This occurrence could not be loaded. Search again and retry."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:937
+#: assets/src/js/recurrence-editor.js:950
 msgid "Choose valid start and end dates."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:938
+#: assets/src/js/recurrence-editor.js:951
 msgid "Choose valid start and end times."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:939
+#: assets/src/js/recurrence-editor.js:952
 msgid "The occurrence must end after it starts."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:940
+#: assets/src/js/recurrence-editor.js:953
 msgid "The edited occurrence must remain inside the loaded search period. Choose a closer date or search a different period first."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:944
+#: assets/src/js/recurrence-editor.js:957
 msgid "Choose a valid event status."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:945
+#: assets/src/js/recurrence-editor.js:958
 msgid "Enter a plain-text occurrence title within the allowed length."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:946
+#: assets/src/js/recurrence-editor.js:959
 msgid "Enter a non-empty plain-text occurrence note within the allowed length."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:947
+#: assets/src/js/recurrence-editor.js:960
 msgid "Choose a valid featured image."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:948
+#: assets/src/js/recurrence-editor.js:961
 msgid "Enter a plain-text venue within the allowed length."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:949
+#: assets/src/js/recurrence-editor.js:962
 msgid "Enter a plain-text address within the allowed length."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:950
+#: assets/src/js/recurrence-editor.js:963
 msgid "Enter an HTTP(S) location URL or leave it empty to hide the series link."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:951
+#: assets/src/js/recurrence-editor.js:964
 msgid "Enter an HTTP(S) external event URL or leave it empty to hide the series action."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:952
+#: assets/src/js/recurrence-editor.js:965
 msgid "Enter a plain-text external action label within the allowed length."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:955
+#: assets/src/js/recurrence-editor.js:968
 msgid "Review this occurrence and try again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:961
+#: assets/src/js/recurrence-editor.js:974
 msgid "Load an occurrence before editing it."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:978
+#: assets/src/js/recurrence-editor.js:991
 msgid "Save the event’s ordinary details before previewing this occurrence change."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:997
+#: assets/src/js/recurrence-editor.js:1010
 msgid "Make a change before creating the preview."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1011
+#: assets/src/js/recurrence-editor.js:1024
 msgid "The occurrence preview could not be created. Search again and retry."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1024
+#: assets/src/js/recurrence-editor.js:1037
 msgid "Load a generated occurrence before changing this and following events."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1052
+#: assets/src/js/recurrence-editor.js:1065
 msgid "Save the event’s ordinary details before previewing this schedule change."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1088
+#: assets/src/js/recurrence-editor.js:1101
 msgid "The future schedule preview could not be created. Search again and retry."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1115
+#: assets/src/js/recurrence-editor.js:1128
 msgid "Choose the occurrence that should remain."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1125
+#: assets/src/js/recurrence-editor.js:1138
 msgid "Save the event’s ordinary details before previewing recurrence changes."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1151
+#: assets/src/js/recurrence-editor.js:1164
 msgid "The recurrence preview could not be created. Reload the event and try again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1165
+#: assets/src/js/recurrence-editor.js:1178
 msgid "The event changed after preview. Save and preview the recurrence again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1216
+#: assets/src/js/recurrence-editor.js:1229
 msgid "This and following occurrences now use the new schedule."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1243
+#: assets/src/js/recurrence-editor.js:1256
 msgid "This occurrence was updated."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1249
+#: assets/src/js/recurrence-editor.js:1262
 msgid "This occurrence was updated. Reload it before making another change."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1257
+#: assets/src/js/recurrence-editor.js:1270
 msgid "The recurring schedule was updated."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1264
+#: assets/src/js/recurrence-editor.js:1277
 msgid "The recurrence change was not saved. Reload the event and review it again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1274
+#: assets/src/js/recurrence-editor.js:1287
 msgid "Preview recurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1277
+#: assets/src/js/recurrence-editor.js:1290
 msgid "Preview this occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1279
+#: assets/src/js/recurrence-editor.js:1292
 msgid "Preview this and following"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1283
+#: assets/src/js/recurrence-editor.js:1296
 msgid "Refresh preview"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1286
+#: assets/src/js/recurrence-editor.js:1299
 msgid "Refresh occurrence preview"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1288
+#: assets/src/js/recurrence-editor.js:1301
 msgid "Refresh future schedule preview"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1291
+#: assets/src/js/recurrence-editor.js:1304
 msgid "Preview stopping recurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1294
+#: assets/src/js/recurrence-editor.js:1307
 msgid "Apply to complete series"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1297
+#: assets/src/js/recurrence-editor.js:1310
 msgid "Keep selected event only"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1299
+#: assets/src/js/recurrence-editor.js:1312
 msgid "Apply to this occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1301
+#: assets/src/js/recurrence-editor.js:1314
 msgid "Apply to this and following"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1304
+#: assets/src/js/recurrence-editor.js:1317
 msgid "Editing scope: complete series. You will review every affected date before applying."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1310
+#: assets/src/js/recurrence-editor.js:1323
 msgid "Editing scope: only this occurrence. Other dates in the series stay unchanged."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1315
+#: assets/src/js/recurrence-editor.js:1328
 msgid "Editing scope: this and following occurrences. Earlier dates stay unchanged."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1321
+#: assets/src/js/recurrence-editor.js:1334
 msgid "Edit selected occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1328
+#: assets/src/js/recurrence-editor.js:1341
 msgid "Reload schedule boundary"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1329
+#: assets/src/js/recurrence-editor.js:1342
 msgid "Reload selected occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1331
+#: assets/src/js/recurrence-editor.js:1344
 msgid "Configure new schedule"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1364
+#: assets/src/js/recurrence-editor.js:1377
 msgid "Repeating event"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1367
+#: assets/src/js/recurrence-editor.js:1380
 msgid "Set the event date and location under Event details. If those fields are hidden, open Meta Boxes below the content. The WordPress Publish date controls when the page goes online, not when the event takes place."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1404
+#: assets/src/js/recurrence-editor.js:1417
 msgid "Edit one occurrence…"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1413
+#: assets/src/js/recurrence-editor.js:1426
 msgid "Change this and following…"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1427
+#: assets/src/js/recurrence-editor.js:1440
 msgid "Back to complete series"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1430
-#: assets/src/js/recurrence-editor.js:2066
+#: assets/src/js/recurrence-editor.js:1443
+#: assets/src/js/recurrence-editor.js:2079
 msgid "Find occurrences from"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1434
-#: assets/src/js/recurrence-editor.js:2070
+#: assets/src/js/recurrence-editor.js:1447
+#: assets/src/js/recurrence-editor.js:2083
 msgid "Searches one bounded 18-month period. Choose another date to find an older or later event."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1455
-#: assets/src/js/recurrence-editor.js:2096
+#: assets/src/js/recurrence-editor.js:1468
+#: assets/src/js/recurrence-editor.js:2109
 msgid "Search this period"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1463
-#: assets/src/js/recurrence-editor.js:2104
+#: assets/src/js/recurrence-editor.js:1476
+#: assets/src/js/recurrence-editor.js:2117
 msgid "No occurrences were found near today, so the first period of this series is shown."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1474
-#: assets/src/js/recurrence-editor.js:2115
+#: assets/src/js/recurrence-editor.js:1487
+#: assets/src/js/recurrence-editor.js:2128
 msgid "No occurrences were found in this period. Choose another start date and search again."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1487
+#: assets/src/js/recurrence-editor.js:1500
 msgid "This period has no generated occurrence after the first event. Search a later period or edit the complete series."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1499
+#: assets/src/js/recurrence-editor.js:1512
 msgid "Start the new schedule at"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1500
+#: assets/src/js/recurrence-editor.js:1513
 msgid "Occurrence to edit"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1516
-#: assets/src/js/recurrence-editor.js:2133
+#: assets/src/js/recurrence-editor.js:1529
+#: assets/src/js/recurrence-editor.js:2146
 msgid "Search by the local event date and time."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1542
+#: assets/src/js/recurrence-editor.js:1555
 msgid "Selected occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1554
+#: assets/src/js/recurrence-editor.js:1567
 msgid "This occurrence has individual changes. Each inherited field can be restored to the current series value."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1565
+#: assets/src/js/recurrence-editor.js:1578
 msgid "Occurrence title"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1579
+#: assets/src/js/recurrence-editor.js:1592
 msgid "Occurrence note"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1612
+#: assets/src/js/recurrence-editor.js:1625
 msgid "Schedule and status"
 msgstr ""
 
 #. translators: %s: captured event timezone.
-#: assets/src/js/recurrence-editor.js:1667
-#: assets/src/js/recurrence-editor.js:1890
+#: assets/src/js/recurrence-editor.js:1680
+#: assets/src/js/recurrence-editor.js:1903
 #, js-format
 msgid "Times use the series timezone: %s."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1685
+#: assets/src/js/recurrence-editor.js:1698
 msgid "Use series date and time"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1695
+#: assets/src/js/recurrence-editor.js:1708
 msgid "Cancelled (legacy status)"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1713
+#: assets/src/js/recurrence-editor.js:1726
 msgid "Use series status"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1716
+#: assets/src/js/recurrence-editor.js:1729
 msgid "Cancel this occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1720
+#: assets/src/js/recurrence-editor.js:1733
 msgid "This occurrence stays linked to the series and can be restored later."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1721
+#: assets/src/js/recurrence-editor.js:1734
 msgid "Only this occurrence will be cancelled; the rest of the series continues."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1801
+#: assets/src/js/recurrence-editor.js:1814
 msgid "External event action label"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1830
+#: assets/src/js/recurrence-editor.js:1843
 msgid "New schedule from this occurrence"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1835
+#: assets/src/js/recurrence-editor.js:1848
 msgid "Every later scheduled change will be replaced. Earlier occurrences stay unchanged. Individual changes are preserved and may become standalone occurrences."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1895
+#: assets/src/js/recurrence-editor.js:1908
 msgid "Repeats from here"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1903
-#: assets/src/js/recurrence-editor.js:2140
+#: assets/src/js/recurrence-editor.js:1916
+#: assets/src/js/recurrence-editor.js:2153
 msgid "Repeat every"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1918
-#: assets/src/js/recurrence-editor.js:2156
+#: assets/src/js/recurrence-editor.js:1931
+#: assets/src/js/recurrence-editor.js:2169
 msgid "On these days"
-msgstr ""
-
-#: assets/src/js/recurrence-editor.js:1940
-#: assets/src/js/recurrence-editor.js:2180
-msgid "Monthly pattern"
-msgstr ""
-
-#. translators: %d: event day of month.
-#: assets/src/js/recurrence-editor.js:1947
-#: assets/src/js/recurrence-editor.js:2187
-#, js-format
-msgid "Day %d of the month"
 msgstr ""
 
 #: assets/src/js/recurrence-editor.js:1953
 #: assets/src/js/recurrence-editor.js:2193
+msgid "Monthly pattern"
+msgstr ""
+
+#. translators: %d: event day of month.
+#: assets/src/js/recurrence-editor.js:1960
+#: assets/src/js/recurrence-editor.js:2200
+#, js-format
+msgid "Day %d of the month"
+msgstr ""
+
+#: assets/src/js/recurrence-editor.js:1966
+#: assets/src/js/recurrence-editor.js:2206
 msgid "Same weekday position in the month"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1959
-#: assets/src/js/recurrence-editor.js:2200
+#: assets/src/js/recurrence-editor.js:1972
+#: assets/src/js/recurrence-editor.js:2213
 msgid "Last same weekday of the month"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1965
+#: assets/src/js/recurrence-editor.js:1978
 msgid "Months without this calendar day are skipped; dates are never shifted silently."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1969
+#: assets/src/js/recurrence-editor.js:1982
 msgid "Event dates from here"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1972
+#: assets/src/js/recurrence-editor.js:1985
 msgid "Enter one YYYY-MM-DD date per line. Include the new schedule’s first date."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1977
-#: assets/src/js/recurrence-editor.js:2227
+#: assets/src/js/recurrence-editor.js:1990
+#: assets/src/js/recurrence-editor.js:2240
 msgid "Ends"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1981
-#: assets/src/js/recurrence-editor.js:2231
+#: assets/src/js/recurrence-editor.js:1994
+#: assets/src/js/recurrence-editor.js:2244
 msgid "Never"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1982
-#: assets/src/js/recurrence-editor.js:2233
+#: assets/src/js/recurrence-editor.js:1995
+#: assets/src/js/recurrence-editor.js:2246
 msgid "On a date"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1983
-#: assets/src/js/recurrence-editor.js:2237
+#: assets/src/js/recurrence-editor.js:1996
+#: assets/src/js/recurrence-editor.js:2250
 msgid "After a number of events"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:1993
-#: assets/src/js/recurrence-editor.js:2251
+#: assets/src/js/recurrence-editor.js:2006
+#: assets/src/js/recurrence-editor.js:2264
 msgid "Last event date"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2002
-#: assets/src/js/recurrence-editor.js:2261
+#: assets/src/js/recurrence-editor.js:2015
+#: assets/src/js/recurrence-editor.js:2274
 msgid "Number of events"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2013
+#: assets/src/js/recurrence-editor.js:2026
 msgid "New schedule:"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2024
+#: assets/src/js/recurrence-editor.js:2037
 msgid "This series contains individual changes or a future schedule segment. Simple complete-series editing is locked, but you can still edit one occurrence, change this and following, or stop recurrence and keep one occurrence."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2049
+#: assets/src/js/recurrence-editor.js:2062
 msgid "Stop repeating…"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2060
+#: assets/src/js/recurrence-editor.js:2073
 msgid "Choose the one occurrence that should become the normal event. Every other occurrence in the complete series will be removed."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2123
+#: assets/src/js/recurrence-editor.js:2136
 msgid "Keep as the single event"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2207
+#: assets/src/js/recurrence-editor.js:2220
 msgid "Months without the selected calendar day are skipped; dates are never shifted silently."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2215
+#: assets/src/js/recurrence-editor.js:2228
 msgid "Event dates"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2218
+#: assets/src/js/recurrence-editor.js:2231
 msgid "Enter one YYYY-MM-DD date per line. Keep the original start date in the list."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2273
+#: assets/src/js/recurrence-editor.js:2286
 msgid "Summary:"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2287
+#: assets/src/js/recurrence-editor.js:2300
 msgid "Review impact"
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2298
+#: assets/src/js/recurrence-editor.js:2311
 msgid "All other occurrences outside this preview window will also be removed."
 msgstr ""
 
-#: assets/src/js/recurrence-editor.js:2308
+#: assets/src/js/recurrence-editor.js:2321
 msgid "The ordinary event keeps the series title, content, image, location and external action. Individual occurrence fields are removed with recurrence."
 msgstr ""
 
 #. translators: %d: individual occurrence exceptions affected by the proposal.
-#: assets/src/js/recurrence-editor.js:2319
+#: assets/src/js/recurrence-editor.js:2332
 #, js-format
 msgid "%d individual change is affected."
 msgid_plural "%d individual changes are affected."
@@ -3987,7 +3987,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of changed occurrence identities.
-#: assets/src/js/recurrence-editor.js:2337
+#: assets/src/js/recurrence-editor.js:2350
 #, js-format
 msgid "Review %d affected date"
 msgid_plural "Review %d affected dates"
