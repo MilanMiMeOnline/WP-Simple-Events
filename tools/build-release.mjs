@@ -45,6 +45,7 @@ const releaseEntries = [
 	'assets/src/css',
 	'assets/src/js/admin-event.js',
 	'assets/dist/js',
+	'assets/dist/css',
 ];
 
 function run( command, argumentsList, options = {} ) {

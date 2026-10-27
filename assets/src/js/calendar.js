@@ -1,6 +1,8 @@
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import listPlugin from '@fullcalendar/list';
+import { Calendar } from 'fullcalendar';
+import dayGridPlugin from 'fullcalendar/daygrid';
+import listPlugin from 'fullcalendar/list';
+import classicTheme from 'fullcalendar/themes/classic';
+import { calendarEventInput, calendarSegmentTime, calendarTimeFormatter } from './calendar-utils.js';
 
 const calendarInstances = new WeakMap();
 let elementorHookRegistered = false;
@@ -222,16 +224,14 @@ const sameSelection = ( first, second ) => JSON.stringify( [ ...first ].sort() )
 	JSON.stringify( [ ...second ].sort() );
 
 /**
- * Repair FullCalendar after a hidden or resized integration container becomes
- * measurable and follow configured views when a responsive builder canvas
- * crosses the mobile breakpoint.
+ * Follow configured views across the mobile breakpoint. FullCalendar 7 observes
+ * container resizing itself, including hidden builder previews becoming visible.
  *
- * @param {HTMLElement} canvas      Calendar canvas.
- * @param {Calendar}    calendar    FullCalendar instance.
- * @param {string}      desktopView Configured desktop view.
- * @param {string}      mobileView  Configured mobile view.
+ * @param {Calendar} calendar    FullCalendar instance.
+ * @param {string}   desktopView Configured desktop view.
+ * @param {string}   mobileView  Configured mobile view.
  */
-const observeCalendarSize = ( canvas, calendar, desktopView, mobileView ) => {
+const observeCalendarViewport = ( calendar, desktopView, mobileView ) => {
 	const cleanups = [];
 	const viewport = window.matchMedia( '(max-width: 599px)' );
 	const handleViewportChange = ( event ) => {
@@ -254,33 +254,6 @@ const observeCalendarSize = ( canvas, calendar, desktopView, mobileView ) => {
 		cleanups.push( () => viewport.removeListener( handleViewportChange ) );
 	}
 
-	if ( typeof window.ResizeObserver === 'function' ) {
-		let previousWidth = canvas.getBoundingClientRect().width;
-		const observer = new window.ResizeObserver( ( entries ) => {
-			if ( ! canvas.isConnected ) {
-				observer.disconnect();
-				return;
-			}
-
-			const width = entries[ 0 ]?.contentRect.width ?? 0;
-
-			if ( width <= 0 || Math.abs( width - previousWidth ) < 1 ) {
-				previousWidth = width;
-				return;
-			}
-
-			previousWidth = width;
-			window.requestAnimationFrame( () => {
-				if ( canvas.isConnected && canvas.getBoundingClientRect().width > 0 ) {
-					calendar.updateSize();
-				}
-			} );
-		} );
-
-		observer.observe( canvas );
-		cleanups.push( () => observer.disconnect() );
-	}
-
 	return () => cleanups.forEach( ( cleanup ) => cleanup() );
 };
 
@@ -299,7 +272,6 @@ const initializeCalendar = ( root ) => {
 		existing.canvas === canvas &&
 		existing.configSource === configSource
 	) {
-		existing.calendar.updateSize();
 		return;
 	}
 
@@ -322,6 +294,16 @@ const initializeCalendar = ( root ) => {
 		return;
 	}
 
+	// V7 forces a flex display on its root. Hide a plugin-owned parent on failure
+	// so the standard hidden attribute works without overriding vendor CSS.
+	let viewport = canvas.parentElement;
+	if ( ! viewport.matches( '[data-wpse-calendar-viewport]' ) ) {
+		viewport = document.createElement( 'div' );
+		viewport.dataset.wpseCalendarViewport = '';
+		canvas.before( viewport );
+		viewport.append( canvas );
+	}
+
 	const filters = root.querySelector( '[data-wpse-calendar-filters]' );
 
 	// Browsers may restore form-control state independently when revisiting a
@@ -340,37 +322,56 @@ const initializeCalendar = ( root ) => {
 		config.showToday ? 'today' : '',
 	].filter( Boolean ).join( ' ' );
 
+	const formatTime = calendarTimeFormatter( config.locale, config.eventTimeFormat );
 	const calendar = new Calendar( canvas, {
-		plugins: [ dayGridPlugin, listPlugin ],
+		plugins: [ dayGridPlugin, listPlugin, classicTheme ],
+		// Retain the root/button targets used by existing Elementor typography CSS.
+		className: 'fc',
+		viewClass: ( info ) => `wpse-calendar-view-${ info.view.type }`,
+		dayHeaderClass: 'wpse-calendar-day-header',
+		toolbarClass: 'wpse-calendar-toolbar',
+		toolbarSectionClass: 'wpse-calendar-toolbar-section',
+		toolbarTitleClass: 'wpse-calendar-toolbar-title',
+		buttonGroupClass: 'wpse-calendar-button-group',
+		buttonClass: ( info ) => info.isSelected
+			? 'fc-button wpse-calendar-button is-selected'
+			: 'fc-button wpse-calendar-button',
+		views: {
+			dayGrid: {
+				listItemEventClass: 'wpse-calendar-timed-event',
+				listItemEventBeforeClass: 'wpse-calendar-dot',
+			},
+			list: {
+				listItemEventClass: 'wpse-calendar-list-event',
+				listItemEventInnerClass: 'wpse-calendar-list-event-inner',
+				listItemEventBeforeClass: 'wpse-calendar-dot',
+				listDayClass: 'wpse-calendar-list-day',
+			},
+		},
 		initialView,
 		initialDate: config.initialDate || undefined,
 		firstDay: config.firstDay,
 		timeZone: 'local',
 		eventTimeFormat: config.eventTimeFormat,
+		eventTitleClass: 'wpse-calendar-event-title',
+		blockEventClass: 'wpse-calendar-block-event',
 		height: 'auto',
 		headerToolbar: {
 			start: toolbarStart,
 			center: 'title',
 			end: config.showViewSwitcher ? 'dayGridMonth,listMonth' : '',
 		},
-		buttonText: {
-			prev: config.strings.previous,
-			next: config.strings.next,
-			today: config.strings.today,
-			month: config.strings.month,
-			list: config.strings.list,
-		},
-		locale: {
-			code: config.locale,
-			buttonHints: {
-				prev: config.strings.previous,
-				next: config.strings.next,
-				today: config.strings.today,
-			},
-			viewHint: config.strings.viewHint.replace( '%s', '$0' ),
-			moreLinkHint: ( count ) =>
-				formatNumber( config.strings.more, count ),
-		},
+		prevText: config.strings.previous,
+		nextText: config.strings.next,
+		todayText: config.strings.today,
+		monthText: config.strings.month,
+		listText: config.strings.list,
+		prevHint: config.strings.previous,
+		nextHint: config.strings.next,
+		todayHint: config.strings.today,
+		locale: config.locale,
+		viewHint: config.strings.viewHint.replace( '%s', '$0' ),
+		moreLinkHint: ( count ) => formatNumber( config.strings.more, count ),
 		moreLinkContent: ( argument ) =>
 			formatNumber( config.strings.more, argument.num ),
 		events: async ( range, success, failure ) => {
@@ -380,13 +381,16 @@ const initializeCalendar = ( root ) => {
 
 			try {
 				lastResult = await fetchEvents( config, root, range );
-				success( lastResult.events );
+				success( lastResult.events.map( calendarEventInput ) );
 				root.classList.add( 'is-ready' );
+				canvas.hidden = false;
+				viewport.hidden = false;
 			} catch ( error ) {
 				loadFailed = true;
 				status.textContent = config.strings.loadError;
 				root.classList.remove( 'is-ready' );
 				canvas.hidden = true;
+				viewport.hidden = true;
 				failure( error );
 			}
 		},
@@ -424,26 +428,31 @@ const initializeCalendar = ( root ) => {
 				! config.filtersEnabled ||
 				! hasActiveFilters;
 		},
-		eventClassNames: ( argument ) => {
+		eventClass: ( argument ) => {
 			const eventStatus = argument.event.extendedProps.status;
 
 			return eventStatus === 'cancelled' || eventStatus === 'postponed'
-				? [ `wpse-calendar-event-${ eventStatus }` ]
-				: [];
+				? `wpse-calendar-event-${ eventStatus }`
+				: '';
 		},
 		eventContent: ( argument ) => {
 			const eventStatus = argument.event.extendedProps.status;
 			const isListView = argument.view.type.startsWith( 'list' );
-			const wrapper = document.createElement(
-				isListView && argument.event.url ? 'a' : 'span',
-			);
+			const wrapper = document.createElement( 'span' );
 			const title = document.createElement( 'span' );
 
-			if ( wrapper.tagName === 'A' ) {
-				wrapper.href = argument.event.url;
-			}
-
+			title.className = argument.titleClass;
 			title.textContent = argument.event.title;
+			if ( isListView ) {
+				const time = document.createElement( 'span' );
+				time.className = `${ argument.timeClass } wpse-calendar-event-time`;
+				time.textContent = calendarSegmentTime(
+					argument,
+					config.strings,
+					formatTime,
+				);
+				wrapper.append( time );
+			}
 			wrapper.append( title );
 
 			if ( eventStatus === 'cancelled' || eventStatus === 'postponed' ) {
@@ -453,64 +462,23 @@ const initializeCalendar = ( root ) => {
 					eventStatus === 'cancelled'
 						? config.strings.cancelled
 						: config.strings.postponed;
-				wrapper.append( statusLabel );
+				title.append( statusLabel );
 			}
 
-			return { domNodes: [ wrapper ] };
+			return { domNodes: Array.from( wrapper.childNodes ) };
 		},
 		eventDidMount: ( argument ) => {
-			const isListView = argument.view.type.startsWith( 'list' );
-			const row = isListView
-				? argument.el.closest( '.fc-list-event' )
-				: null;
-			const color = argument.event.backgroundColor;
-			const hasResolvedColor = /^#[0-9a-f]{6}$/i.test( color );
+			const color = argument.event.color;
 
-			if ( row && hasResolvedColor ) {
-				row.classList.add( 'wpse-calendar-list-event-has-color' );
-				row.style.setProperty( '--wpse-event-color', color );
-			}
-
-			if (
-				hasResolvedColor &&
-				argument.el.classList.contains( 'fc-daygrid-dot-event' )
-			) {
-				argument.el.classList.add(
-					'wpse-calendar-daygrid-event-has-color',
-				);
-				argument.el.style.setProperty( '--wpse-event-color', color );
-			}
-
-			if (
-				! isListView ||
-				argument.event.allDay ||
-				! argument.event.start ||
-				! argument.event.end ||
-				argument.event.start.toDateString() === argument.event.end.toDateString()
-			) {
+			if ( ! /^#[0-9a-f]{6}$/i.test( color ) ) {
 				return;
 			}
 
-			const time = row?.querySelector( '.fc-list-event-time' );
-
-			if ( ! time ) {
-				return;
-			}
-
-			const displayedTime = time.textContent.trim();
-
-			if ( argument.isStart && ! argument.isEnd ) {
-				time.textContent = config.strings.startsAt.replace(
-					'%s',
-					displayedTime,
-				);
-			} else if ( ! argument.isStart && argument.isEnd ) {
-				time.textContent = config.strings.endsAt.replace(
-					'%s',
-					displayedTime,
-				);
-			} else if ( ! argument.isStart && ! argument.isEnd ) {
-				time.textContent = config.strings.continues;
+			argument.el.style.setProperty( '--wpse-event-color', color );
+			if ( argument.view.type.startsWith( 'list' ) ) {
+				argument.el.classList.add( 'wpse-calendar-list-event-has-color' );
+			} else if ( argument.el.classList.contains( 'wpse-calendar-timed-event' ) ) {
+				argument.el.classList.add( 'wpse-calendar-daygrid-event-has-color' );
 			}
 		},
 	} );
@@ -518,9 +486,9 @@ const initializeCalendar = ( root ) => {
 	// FullCalendar must be measurable during its initial render. The server-side
 	// fallback remains available until the first event request succeeds.
 	canvas.hidden = false;
+	viewport.hidden = false;
 	calendar.render();
-	const stopObservingSize = observeCalendarSize(
-		canvas,
+	const stopObservingViewport = observeCalendarViewport(
 		calendar,
 		config.initialView,
 		config.mobileView,
@@ -556,7 +524,7 @@ const initializeCalendar = ( root ) => {
 		canvas,
 		configSource,
 		destroy: () => {
-			stopObservingSize();
+			stopObservingViewport();
 			filters?.removeEventListener( 'submit', handleFilterSubmit );
 			emptyActionButton?.removeEventListener( 'click', handleReset );
 			window.removeEventListener( 'popstate', handleHistoryChange );

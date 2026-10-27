@@ -345,8 +345,10 @@ text is derived as black or white for contrast. Event color selection belongs to
 the canonical series, not an individual occurrence. Existing events retain the
 current component fallback until an editor deliberately assigns color data.
 
-The public feed uses FullCalendar's standard background, border and text color
-fields only when a valid event/category color was explicitly resolved. Component
+The public feed retains its `backgroundColor`, `borderColor` and `textColor`
+fields only when a valid event/category color was explicitly resolved. The
+FullCalendar 7 browser adapter maps these stable fields to its semantic color
+inputs without changing the public response. Component
 fallback colors remain component-owned and are not baked into feed records.
 Every occurrence inherits its canonical series color, including sparse content
 overrides and exact occurrence routes. Month view uses the resolved solid

@@ -18,6 +18,8 @@ const REQUIRED_RELEASE_PATHS = [
 	'templates/',
 	'assets/src/css/',
 	'assets/dist/js/calendar.min.js',
+	'assets/dist/css/calendar.min.css',
+	'assets/dist/css/divi-editor.min.css',
 	'assets/dist/js/event-fields-editor.min.js',
 	'assets/dist/js/recurrence-editor.min.js',
 ];
@@ -73,6 +75,7 @@ const ALLOWED_ROOT_FILES = new Set( [
 
 const ALLOWED_PATH_PREFIXES = [
 	'assets/dist/js/',
+	'assets/dist/css/',
 	'assets/src/css/',
 	'blocks/',
 	'divi/',
@@ -200,7 +203,7 @@ function hasAllowedFileType( relative ) {
 		return relative.endsWith( '.php' );
 	}
 
-	if ( relative.startsWith( 'assets/src/css/' ) ) {
+	if ( relative.startsWith( 'assets/src/css/' ) || relative.startsWith( 'assets/dist/css/' ) ) {
 		return relative.endsWith( '.css' );
 	}
 

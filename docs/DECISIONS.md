@@ -1941,7 +1941,7 @@ the complete source link and strict official Plugin Check remain release gates.
 
 ## ADR-096: FullCalendar 7 follows the stable 1.0 release
 
-**Status:** Accepted
+**Status:** Accepted; release numbering superseded by ADR-104
 
 The feature-frozen 0.9/1.0 qualification retains the locally bundled and exact
 FullCalendar 6.1.21 modules. A framework-major migration is not a release blocker
@@ -2193,3 +2193,121 @@ candidate page. No direct SQL, persistent cache or privacy exception is added.
 Keep all existing performance budgets and add an isolated coverage-probe gate.
 Verify predicate equivalence against real WordPress metadata, including private,
 draft, protected, one-off, dirty and malformed-coverage cases.
+
+## ADR-104: Target FullCalendar 7 for 1.1 with owner testing before publication
+
+**Status:** Accepted
+
+**Date:** 15 October 2026
+
+FullCalendar 7 is the planned 1.1 update, replacing the provisional 1.2 target
+in ADR-096. Evidence-backed maintenance fixes may ship separately as 1.0.x;
+a separate stabilization minor release is no longer planned. AI/MCP implementation
+still follows FullCalendar qualification under ADR-101.
+
+The compatibility, bundle/licence review and regression gates in ADR-096 remain
+mandatory. A breaking migration requires a new plugin major instead of weakening
+the stable 1.x contract. No release date is committed: allow time for the owner's
+testing. For each update, provide a tested candidate and a concrete change summary,
+then wait for the owner's explicit approval after testing before merging release
+work or publishing to GitHub or WordPress.org. Automated qualification alone does
+not authorize publication. This decision changes planning only.
+
+## ADR-105: Adapt the existing calendar to locally bundled FullCalendar 7
+
+**Status:** Accepted implementation; owner testing and publication approval pending
+
+**Date:** 15 October 2026
+
+The 1.1 candidate replaces the three FullCalendar 6.1.21 entry packages with
+exact `fullcalendar` 7.1.2 and `temporal-polyfill` 1.0.6 pins. Both are MIT-licensed,
+actively maintained upstream packages. Only the vanilla calendar, day-grid, list
+and classic theme entrypoints are bundled. The Temporal implementation is required
+by v7 and is bundled locally without installing a browser global. No premium
+package, remote asset, new view or event-management feature is introduced.
+
+The adapter translates the existing public feed's color fields to v7's semantic
+colors and retains floating local dates. The public REST response, stored events,
+block and builder settings, plugin-owned classes and documented CSS properties
+remain unchanged. Upstream DOM classes are internal under the public compatibility
+contract. Explicit local CSS replaces v6's injected styles and loads only with
+the calendar. Theme and accessibility regressions are release blockers.
+
+Removal cost is confined to the browser adapter, its bundled styles and build
+tooling; event storage, recurrence and REST queries do not depend on Temporal or
+FullCalendar. Follow the official JavaScript and CSS migration guides at
+https://fullcalendar.io/docs/upgrading-from-v6-js and
+https://fullcalendar.io/docs/upgrading-from-v6-css. Qualify navigation, filters,
+multi-instance and builder lifecycle, color/typography controls, time zones, DST,
+multi-day segments, mobile overflow, keyboard use and the no-JavaScript fallback.
+Provide a local prerelease ZIP for owner testing; do not publish or merge it.
+
+Divi's isolated app window receives a combined, locally generated stylesheet
+containing the existing component styles and the v7 calendar styles. Its asset
+hash includes that bundle. Preserve `.fc .fc-button` targets for already-generated
+Elementor typography CSS. Replace removed `updateSize()` calls with v7's native
+container observation while retaining the plugin's configured mobile-view switch.
+Format visible list times from WordPress's existing bounded time-format options;
+v7's condensed range output must not silently change those site preferences.
+
+## ADR-106: Patch the development dependencies and retain reviewed brace guards
+
+**Status:** Accepted, 26 October 2026
+
+Update the existing transitive development resolutions from body-parser 1.20.8
+to 1.20.9 and fast-uri 3.1.8 to 3.1.9 within their parents' compatible ranges.
+These address GHSA-27r3-jxmh-p828 and the four October fast-uri advisories without
+adding production dependencies, new overrides or changing the plugin's public
+behavior. Regression checks must demonstrate safe compressed-request completion
+and rejection of encoded schemes before and after the update. Both packages are
+excluded from the release archive and browser dependency graph.
+
+GHSA-vfj7-8cjw-p6xm was withdrawn on 23 October because the reported braces issue
+was not considered practically exploitable. ADR-100's historical description of
+an active advisory is therefore superseded by this status update. Upstream 3.0.3
+still does not implement the existing depth-guard contract. Keep the exact
+3.0.3-pn.3 alias and its regression tests; do not remove protections merely to
+return to a clean audit under the upstream name.
+
+The fork's GitHub repository and immutable source URL currently return HTTP 404,
+so current maintenance cannot be confirmed. Its npm artifact remains available;
+the integrity and all seven installed runtime files match the reviewed artifact.
+This is a maintenance limitation, not evidence of compromise. Recheck source
+availability during weekly monitoring. A replacement must preserve the guards
+or undergo a separate documented contract review; no unreviewed fork upgrade or
+downgrade is permitted.
+
+Local Homebrew PHP installations are patched within their existing 8.2, 8.3 and
+8.5 branches. This does not update Playground's separate WebAssembly runtime or
+any hosted WordPress site. Re-run the normal PHP/npm gates and isolated WordPress
+smoke/browser journeys. Owner testing and explicit publication approval remain
+required for the unpublished 1.1 candidate.
+
+The October maintenance smoke run exposed a pre-existing seasonal test bug:
+the relative-date 09:30 Brussels fixture always expected UTC+02:00, even after
+the autumn transition. Derive its exact date-specific offset with Node's Intl
+timezone data, independently of the PHP renderer, and assert both the complete
+visible label and exact JSON-LD timestamp. This repairs the test oracle without
+loosening an assertion or changing production timezone behavior.
+
+Sources: [body-parser advisory](https://github.com/advisories/GHSA-27r3-jxmh-p828),
+[fast-uri advisory](https://github.com/advisories/GHSA-w74x-v6f9-j3xg),
+[withdrawn braces advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm),
+[PHP security notice](https://wordpress.org/news/2026/10/critical-php-security-release/).
+
+## ADR-107: Qualify and publish the owner-tested FullCalendar 7 release as 1.1.0
+
+**Status:** Accepted, 26 October 2026
+
+The owner explicitly confirmed that FullCalendar 7 was tested and approved its
+publication as 1.1.0, including the development-only maintenance in ADR-106.
+This is the planned minor release, not a tooling-only 1.0.1 patch. Preserve the
+tested FullCalendar 7.1.2 pin and public behavior; do not add untested upstream
+updates during release preparation. Event data and settings require no migration.
+
+Qualify an isolated checkout containing the exact approved work, stable version
+metadata and regenerated translations. Add the published 1.0.0 ZIP to the existing
+checksummed historical-upgrade matrix. All existing local and CI release gates,
+including strict WordPress Plugin Check, remain mandatory. Publication approval
+does not waive a failure. Publish the same verified package to GitHub and the
+WordPress.org directory only after qualification completes.

@@ -4,6 +4,20 @@ All notable changes to MiMe Simple Events and Calendar are documented here.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-27
+
+### Changed
+
+- Patch the development-only body-parser and fast-uri dependencies and add
+  regression coverage for compressed-request completion and encoded URI schemes.
+  Retain the reviewed braces depth guards after reassessing the withdrawn
+  upstream advisory; no plugin runtime behavior changes in this maintenance.
+- Update the calendar to FullCalendar 7.1.2 and locally
+  bundled classic styles. Retain month/list views, saved component settings,
+  public feed fields, event colors, local dates and multi-day status labels.
+- Preserve the calendar button class used by existing Elementor typography
+  settings and declare the local calendar stylesheet for builder previews.
+
 ## [1.0.0] - 2026-10-14
 
 ### Fixed

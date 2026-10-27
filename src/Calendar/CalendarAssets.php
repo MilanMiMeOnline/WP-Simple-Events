@@ -16,6 +16,7 @@ use MiMe\WPSimpleEvents\Frontend\FrontendAssets;
  */
 final readonly class CalendarAssets {
 	public const SCRIPT_HANDLE = 'wpse-calendar';
+	public const STYLE_HANDLE  = 'wpse-calendar';
 
 	/**
 	 * Create the calendar asset service.
@@ -28,6 +29,12 @@ final readonly class CalendarAssets {
 	 * Register the local calendar bundle for later on-demand enqueueing.
 	 */
 	public function register(): void {
+		wp_register_style(
+			self::STYLE_HANDLE,
+			plugin_dir_url( WPSE_PLUGIN_FILE ) . 'assets/dist/css/calendar.min.css',
+			array( FrontendAssets::STYLE_HANDLE ),
+			WPSE_VERSION
+		);
 		wp_register_script(
 			self::SCRIPT_HANDLE,
 			plugin_dir_url( WPSE_PLUGIN_FILE ) . 'assets/dist/js/calendar.min.js',
@@ -49,5 +56,6 @@ final readonly class CalendarAssets {
 		}
 
 		wp_enqueue_script( self::SCRIPT_HANDLE );
+		wp_enqueue_style( self::STYLE_HANDLE );
 	}
 }

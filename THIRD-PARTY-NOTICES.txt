@@ -1,18 +1,23 @@
 Third-party notices
 ===================
 
-MiMe Simple Events and Calendar bundles compiled code from these build-time dependencies in
-`assets/dist/js/calendar.min.js`:
+MiMe Simple Events and Calendar bundles compiled code and styles from these
+build-time dependencies in `assets/dist/js/calendar.min.js`,
+`assets/dist/css/calendar.min.css` and the combined Divi editor bundles
+`assets/dist/js/divi-editor.min.js` and `assets/dist/css/divi-editor.min.css`:
 
-- `@fullcalendar/core` 6.1.21 — MIT licence
-- `@fullcalendar/daygrid` 6.1.21 — MIT licence
-- `@fullcalendar/list` 6.1.21 — MIT licence
-- `preact` (transitive dependency of FullCalendar) — MIT licence
+- `fullcalendar` 7.1.2 (vanilla, daygrid, list and classic theme) — MIT licence
+- `@full-ui/headless-calendar` 7.1.2 — MIT licence
+- `temporal-polyfill` 1.0.6 — MIT licence
+- `temporal-utils` 1.0.3 — MIT licence
+- `preact` 10.29.8 — MIT licence
 
-FullCalendar MIT licence
-------------------------
+No premium FullCalendar package is bundled. All assets are served locally.
 
-Copyright (c) 2021 Adam Shaw
+FullCalendar, Headless Calendar and Temporal MIT licence
+-------------------------------------------------------
+
+Copyright (c) 2026 Adam Shaw
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

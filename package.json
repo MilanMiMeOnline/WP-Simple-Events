@@ -1,6 +1,6 @@
 {
   "name": "mime-simple-events-calendar",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Development tooling for MiMe Simple Events and Calendar.",
   "engines": {
@@ -13,7 +13,7 @@
     "build": "npm run build:filters && npm run build:calendar && npm run build:blocks && npm run build:recurrence && npm run build:divi",
     "build:filters": "esbuild assets/src/js/event-filters.js --bundle --minify --target=es2020 --outfile=assets/dist/js/event-filters.min.js --legal-comments=external",
     "build:blocks": "esbuild assets/src/js/event-fields-editor.js --bundle --minify --target=es2020 --outfile=assets/dist/js/event-fields-editor.min.js --legal-comments=external",
-    "build:calendar": "esbuild assets/src/js/calendar.js --bundle --minify --target=es2020 --outfile=assets/dist/js/calendar.min.js --legal-comments=external",
+    "build:calendar": "esbuild assets/src/js/calendar.js --bundle --minify --target=es2020 --outfile=assets/dist/js/calendar.min.js --legal-comments=external && esbuild assets/src/css/calendar.css --bundle --minify --outfile=assets/dist/css/calendar.min.css --legal-comments=external",
     "build:divi": "node tools/build-divi.mjs",
     "build:recurrence": "esbuild assets/src/js/recurrence-editor.js --bundle --minify --target=es2020 --outfile=assets/dist/js/recurrence-editor.min.js --legal-comments=external",
     "build:release": "node tools/build-release.mjs",
@@ -43,9 +43,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
-    "@fullcalendar/core": "6.1.21",
-    "@fullcalendar/daygrid": "6.1.21",
-    "@fullcalendar/list": "6.1.21",
     "@playwright/test": "1.61.1",
     "@wordpress/env": "11.11.0",
     "@wordpress/eslint-plugin": "25.7.0",
@@ -56,7 +53,9 @@
     "prettier": "^3.0.0",
     "stylelint": "^16.8.2",
     "stylelint-scss": "^6.4.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "fullcalendar": "7.1.2",
+    "temporal-polyfill": "1.0.6"
   },
   "overrides": {
     "@wordpress/theme": {

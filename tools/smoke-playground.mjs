@@ -2628,13 +2628,22 @@ try {
 		'The public timezone setting could not be enabled through the protected settings form.',
 	);
 	const timezoneSingleBody = await fetchHealthyPage( validCreate.data.link );
+	// This fixture starts at 09:30 in Brussels, safely after either DST change.
+	// Its calendar date moves with the test run; a fixed summer offset is wrong
+	// in winter. Use Node's timezone data independently of the PHP renderer.
+	const fixtureStart = validCreate.data.meta._wpse_start_local;
+	const fixtureOffset = new Intl.DateTimeFormat( 'en', {
+		timeZone: 'Europe/Brussels',
+		timeZoneName: 'longOffset',
+	} ).formatToParts( new Date( `${ fixtureStart }Z` ) )
+		.find( ( part ) => part.type === 'timeZoneName' ).value.replace( 'GMT', '' );
 	requireCondition(
 		timezoneSingleBody.includes( 'class="wpse-event-timezone"' ) &&
-			timezoneSingleBody.includes( 'Europe/Brussels (UTC+02:00)' ),
+			timezoneSingleBody.includes( `Europe/Brussels (UTC${ fixtureOffset })` ),
 		'Enabled timed event details omitted their captured timezone or event-date offset.',
 	);
 	requireCondition(
-		/"startDate":"[^"]+\+02:00"/.test( timezoneSingleBody ),
+		timezoneSingleBody.includes( `"startDate":"${ fixtureStart }${ fixtureOffset }"` ),
 		'The visual timezone setting changed or removed the structured-data machine instant.',
 	);
 
@@ -2988,6 +2997,7 @@ try {
 	requireCondition( ! calendarBody.includes( 'Protected smoke event' ), 'The calendar fallback exposed a protected event.' );
 	requireCondition( calendarBody.includes( 'wpse-calendar-js' ), 'The local calendar bundle was not enqueued.' );
 	requireCondition( calendarBody.includes( 'assets/dist/js/calendar.min.js' ), 'The calendar did not use its local production bundle.' );
+	requireCondition( calendarBody.includes( 'assets/dist/css/calendar.min.css' ), 'The calendar did not enqueue its local v7 stylesheet.' );
 	requireCondition(
 		( calendarBody.match( /id=["']wpse-calendar-js["']/g ) ?? [] ).length === 1,
 		'Multiple calendars enqueued duplicate bundles.',

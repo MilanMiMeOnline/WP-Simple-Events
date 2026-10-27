@@ -55,6 +55,15 @@ final class EventCalendarWidget extends AbstractEventWidget {
 		return array( FrontendAssets::SCRIPT_HANDLE, CalendarAssets::SCRIPT_HANDLE );
 	}
 
+	/**
+	 * Load the calendar's local theme in editor previews as well as public pages.
+	 *
+	 * @return list<string> Required stylesheet handles.
+	 */
+	public function get_style_depends(): array {
+		return array( FrontendAssets::STYLE_HANDLE, CalendarAssets::STYLE_HANDLE );
+	}
+
 	/** Register content and style controls. */
 	protected function register_controls(): void {
 		$this->start_controls_section(
