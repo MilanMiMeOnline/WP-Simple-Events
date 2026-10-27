@@ -11,6 +11,17 @@ import {
 } from './divi-module-definitions.mjs';
 
 const projectDirectory = fileURLToPath( new URL( '..', import.meta.url ) );
+
+// Divi loads one stylesheet in its isolated app window. Include the calendar's
+// explicit v7 CSS there as well as the shared plugin component styles.
+await build( {
+	entryPoints: [ `${ projectDirectory }/assets/src/css/divi-editor.css` ],
+	bundle: true,
+	minify: true,
+	legalComments: 'external',
+	outfile: `${ projectDirectory }/assets/dist/css/divi-editor.min.css`,
+} );
+
 const metadataPath = fileURLToPath(
 	new URL( '../divi/modules/event-title/module.json', import.meta.url ),
 );

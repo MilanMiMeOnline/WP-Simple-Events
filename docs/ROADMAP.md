@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 14 October 2026 (1.0 published and verified)
+**Last reviewed:** 26 October 2026 (owner-approved 1.1 qualification)
 **Current public release:** 1.0.0
-**Active phase:** Post-1.0 maintenance, followed by FullCalendar 7 qualification
+**Active phase:** 1.1.0 approved by owner after testing; final release qualification in progress
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -1264,12 +1264,11 @@ qualified production files. See the
 
 ## Post-1.0 maintenance sequence
 
-1. **1.1 — Stabilization:** resolve evidence-backed defects and deliver small,
-   backwards-compatible refinements from real 1.0 installations without changing
-   the calendar framework major.
-2. **Provisional 1.2 — FullCalendar 7 migration:** qualify the upstream major on a
+1. **1.0.x — Maintenance as needed:** resolve evidence-backed defects from real
+   1.0 installations without changing the calendar framework major.
+2. **1.1 — FullCalendar 7 migration (local beta prepared for owner testing):** qualify the upstream major on a
    dedicated branch against the frozen saved-content, CSS, accessibility, editor
-   and browser contracts. Ship it as 1.2 only when the migration is fully
+   and browser contracts. Ship it as 1.1 only when the migration is fully
    backwards compatible; otherwise reserve it for the next plugin major.
 3. **AI/MCP event management, after FullCalendar qualification:** follow the
    [functional and technical analysis](AI-MCP-INTEGRATION-ANALYSIS.md). Start
@@ -1277,6 +1276,11 @@ qualified production files. See the
    drafts. Publication, changes to live events and recurrence require separate
    gates. No release number is assigned yet. ADR-101 records the priority of
    FullCalendar 7 over this extension; security and blocker fixes remain urgent.
+
+ADR-104 replaces the earlier provisional 1.2 calendar target. There is no fixed
+release date: each update requires a tested candidate and change summary, time
+for the owner's own testing, and explicit approval before merging release work
+or publishing to GitHub or WordPress.org.
 
 ## Pre-1.0 competitive gap audit
 

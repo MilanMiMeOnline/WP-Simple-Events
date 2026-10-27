@@ -25,6 +25,8 @@ and release contracts for MiMe Simple Events and Calendar.
   technical scope.
 - [Product roadmap](ROADMAP.md) — prioritized future work and the next
   implementation plan.
+- [1.1 local beta qualification](QA-REPORT-1.1.0-beta.1.md) — FullCalendar 7
+  compatibility evidence and the owner test checklist; not a public release.
 - [AI and MCP integration analysis](AI-MCP-INTEGRATION-ANALYSIS.md) — proposed
   optional event-management integration after FullCalendar 7 qualification.
 - [Public 1.x compatibility contract](PUBLIC-COMPATIBILITY-CONTRACT.md) — stable
@@ -115,3 +117,5 @@ is frozen in the [Add to Calendar contract](ADD-TO-CALENDAR-CONTRACT.md).
 The `.wordpress-org/` directory contains the prepared icon, banner and screenshot
 files for the future WordPress.org SVN `assets/` directory. These files are not
 part of the installable plugin zip.
+
+- [1.1.0 release qualification](QA-REPORT-1.1.0.md) — final release evidence and owner approval.

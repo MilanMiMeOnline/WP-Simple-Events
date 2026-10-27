@@ -674,18 +674,28 @@
 }
 
 .wpse-calendar .fc {
-	--fc-page-bg-color: transparent;
-	--fc-neutral-bg-color: transparent;
-	--fc-neutral-text-color: currentcolor;
-	--fc-border-color: currentcolor;
-	--fc-button-text-color: var(--wpse-calendar-on-accent);
-	--fc-button-bg-color: var(--wpse-calendar-accent);
-	--fc-button-border-color: var(--wpse-calendar-accent);
-	--fc-event-bg-color: var(--wpse-calendar-event-background);
-	--fc-event-border-color: var(--wpse-calendar-event-background);
-	--fc-event-text-color: var(--wpse-calendar-event-text);
-	--fc-today-bg-color: var(--wpse-calendar-today);
-	--fc-list-event-hover-bg-color: var(--wpse-calendar-hover);
+	--fc-classic-background: transparent;
+	--fc-classic-foreground: currentcolor;
+	--fc-classic-border: currentcolor;
+	--fc-classic-strong-border: currentcolor;
+	--fc-classic-faint-foreground: currentcolor;
+	--fc-classic-muted-foreground: currentcolor;
+	--fc-classic-faint: var(--wpse-calendar-hover);
+	--fc-classic-muted: var(--wpse-calendar-hover);
+	--fc-classic-strong: var(--wpse-calendar-hover);
+	--fc-classic-button: var(--wpse-calendar-button-background);
+	--fc-classic-button-border: var(--wpse-calendar-accent);
+	--fc-classic-button-foreground: var(--wpse-calendar-button-text);
+	--fc-classic-button-strong: var(--wpse-calendar-button-hover-background);
+	--fc-classic-button-strong-border: var(--wpse-calendar-accent);
+	--fc-classic-button-outline: var(--wpse-calendar-accent);
+	--fc-classic-primary: var(--wpse-calendar-event-background);
+	--fc-classic-primary-foreground: var(--wpse-calendar-event-text);
+	--fc-classic-event: var(--wpse-calendar-event-background);
+	--fc-classic-event-contrast: var(--wpse-calendar-event-text);
+	--fc-classic-today: var(--wpse-calendar-today);
+	--fc-classic-small-dot-width: 8px;
+	--fc-classic-large-dot-width: 10px;
 
 	font: inherit;
 }
@@ -694,37 +704,42 @@
 	color: inherit;
 }
 
-.wpse-calendar .fc .fc-button {
-	border-color: var(--wpse-calendar-accent);
+.wpse-calendar .fc .wpse-calendar-block-event {
+	background-color: var(--fc-event-color);
+	color: var(--fc-event-contrast-color);
+}
+
+.wpse-calendar .fc .wpse-calendar-button {
+	border: 1px solid var(--wpse-calendar-accent);
 	border-radius: var(--wpse-calendar-button-radius);
 	background-color: var(--wpse-calendar-button-background);
 	color: var(--wpse-calendar-button-text);
 	font: inherit;
 }
 
-.wpse-calendar .fc .fc-button-primary:focus {
+.wpse-calendar .fc .wpse-calendar-button:focus {
 	box-shadow: none;
 }
 
-.wpse-calendar .fc .fc-button-primary:disabled {
+.wpse-calendar .fc .wpse-calendar-button:disabled {
 	border-color: var(--wpse-calendar-accent);
 	background-color: var(--wpse-calendar-button-background);
 	color: var(--wpse-calendar-button-text);
 	opacity: 0.55;
 }
 
-.wpse-calendar .fc .fc-button-primary:not(:disabled):hover,
-.wpse-calendar .fc .fc-button-primary:not(:disabled):focus-visible,
-.wpse-calendar .fc .fc-button-primary:not(:disabled):active,
-.wpse-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
+.wpse-calendar .fc .wpse-calendar-button:focus-visible {
+	outline: 2px solid var(--wpse-calendar-accent);
+	outline-offset: 2px;
+}
+
+.wpse-calendar .fc .wpse-calendar-button:not(:disabled):hover,
+.wpse-calendar .fc .wpse-calendar-button:not(:disabled):focus-visible,
+.wpse-calendar .fc .wpse-calendar-button:not(:disabled):active,
+.wpse-calendar .fc .wpse-calendar-button:not(:disabled).is-selected {
 	border-color: var(--wpse-calendar-accent);
 	background-color: var(--wpse-calendar-button-hover-background);
 	color: var(--wpse-calendar-button-hover-text);
-}
-
-.wpse-calendar .fc .fc-button:focus-visible {
-	outline: 2px solid var(--wpse-calendar-accent);
-	outline-offset: 2px;
 }
 
 .wpse-calendar-filters a:focus-visible,
@@ -736,22 +751,23 @@
 	outline-offset: 2px;
 }
 
-.wpse-calendar .fc .fc-daygrid-event,
-.wpse-calendar .fc .fc-list-event-title a {
+.wpse-calendar .fc .wpse-calendar-timed-event,
+.wpse-calendar .fc .wpse-calendar-event-title {
+	overflow-wrap: anywhere;
 	white-space: normal;
 }
 
-.wpse-calendar .fc .fc-daygrid-dot-event::before {
+.wpse-calendar .fc .wpse-calendar-dot {
 	width: 0.5rem;
 	height: 0.5rem;
 	margin-inline-end: 0.35rem;
 	border-radius: 50%;
 	background-color: var(--wpse-event-color, var(--wpse-calendar-event-background));
-	content: "";
+	border: 0;
 	flex: 0 0 0.5rem;
 }
 
-.wpse-calendar .fc .wpse-calendar-list-event-has-color > td:first-child {
+.wpse-calendar .fc .wpse-calendar-list-event-has-color {
 	border-inline-start: 0.35rem solid var(--wpse-event-color);
 }
 
@@ -767,32 +783,25 @@
 
 @media (max-width: 599px) {
 
-	.wpse-calendar .fc .fc-list-table {
-		width: 100%;
-		table-layout: fixed;
+	.wpse-calendar .fc .wpse-calendar-list-event-inner {
+		min-width: 0;
+		flex-wrap: wrap;
+		overflow-wrap: anywhere;
 	}
 
-	.wpse-calendar .fc .fc-list-event-time {
-		width: 42%;
+	.wpse-calendar .fc .wpse-calendar-event-time {
+		max-width: 42%;
 		overflow-wrap: anywhere;
 		white-space: normal;
 	}
 
-	.wpse-calendar .fc .fc-list-event-graphic {
-		width: 1.5rem;
-	}
-
-	.wpse-calendar .fc .fc-list-event-title {
-		overflow-wrap: anywhere;
-	}
-
-	.wpse-calendar .fc .fc-header-toolbar {
+	.wpse-calendar .fc .wpse-calendar-toolbar {
 		align-items: stretch;
 		gap: var(--wpse-calendar-toolbar-gap);
 		flex-direction: column;
 	}
 
-	.wpse-calendar .fc .fc-toolbar-chunk {
+	.wpse-calendar .fc .wpse-calendar-toolbar-section {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
@@ -801,11 +810,11 @@
 		max-width: 100%;
 	}
 
-	.wpse-calendar .fc .fc-button-group {
+	.wpse-calendar .fc .wpse-calendar-button-group {
 		flex-wrap: wrap;
 	}
 
-	.wpse-calendar .fc .fc-toolbar-title {
+	.wpse-calendar .fc .wpse-calendar-toolbar-title {
 		max-width: 100%;
 		overflow-wrap: anywhere;
 		white-space: normal;

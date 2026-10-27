@@ -89,7 +89,7 @@ final readonly class DiviModuleRegistrar {
 					'enqueue_app_window' => true,
 				),
 				'style'   => array(
-					'src'                => plugins_url( 'assets/src/css/frontend.css', (string) constant( 'WPSE_PLUGIN_FILE' ) ),
+					'src'                => plugins_url( 'assets/dist/css/divi-editor.min.css', (string) constant( 'WPSE_PLUGIN_FILE' ) ),
 					'enqueue_top_window' => false,
 					'enqueue_app_window' => true,
 				),
@@ -109,6 +109,7 @@ final readonly class DiviModuleRegistrar {
 			(string) constant( 'WPSE_PLUGIN_DIR' ) . '/assets/dist/js/divi-editor.min.js',
 			(string) constant( 'WPSE_PLUGIN_DIR' ) . '/assets/dist/js/calendar.min.js',
 			(string) constant( 'WPSE_PLUGIN_DIR' ) . '/assets/src/css/frontend.css',
+			(string) constant( 'WPSE_PLUGIN_DIR' ) . '/assets/dist/css/divi-editor.min.css',
 		);
 
 		if ( array_filter( $asset_paths, static fn ( string $path ): bool => ! is_readable( $path ) ) ) {

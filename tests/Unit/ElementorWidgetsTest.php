@@ -70,7 +70,7 @@ final class ElementorWidgetsTest extends TestCase {
 		self::assertSame( '<div class="rendered">Event output</div>', $this->render( $widget ) );
 		self::assertIsArray( $renderer->attributes );
 		self::assertSame( 'list', $renderer->attributes['initial_view'] );
-		self::assertSame( array( FrontendAssets::STYLE_HANDLE ), $widget->get_style_depends() );
+		self::assertSame( array( FrontendAssets::STYLE_HANDLE, CalendarAssets::STYLE_HANDLE ), $widget->get_style_depends() );
 		self::assertSame(
 			array( FrontendAssets::SCRIPT_HANDLE, CalendarAssets::SCRIPT_HANDLE ),
 			$widget->get_script_depends()

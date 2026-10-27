@@ -11,7 +11,7 @@ const expectHealthyMonthGrid = async ( canvas ) => {
 	await expect
 		.poll( async () => canvas.evaluate( ( element ) => {
 			const widths = [
-				...element.querySelectorAll( '.fc-col-header-cell' ),
+				...element.querySelectorAll( '.wpse-calendar-day-header' ),
 			].map( ( column ) => column.getBoundingClientRect().width );
 
 			return element.getBoundingClientRect().width > 300 &&
@@ -23,7 +23,7 @@ const expectHealthyMonthGrid = async ( canvas ) => {
 
 	const geometry = await canvas.evaluate( ( element ) => {
 		const widths = [
-			...element.querySelectorAll( '.fc-col-header-cell' ),
+			...element.querySelectorAll( '.wpse-calendar-day-header' ),
 		].map( ( column ) => column.getBoundingClientRect().width );
 
 		return {
@@ -142,6 +142,10 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 
 	const calendar = page.locator( '[data-wpse-calendar]' );
 	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
+	await expect( page.locator( 'link#wpse-calendar-css' ) ).toHaveAttribute(
+		'href',
+		/^http:\/\/localhost:8888\/wp-content\/plugins\/mime-simple-events-calendar\/assets\/dist\/css\/calendar\.min\.css\?ver=/,
+	);
 
 	await expect( calendar ).toBeVisible();
 	await expect(
@@ -153,10 +157,10 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	await expect( canvas ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Previous' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Next' } ) ).toBeVisible();
-	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
-	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+	await expect( canvas.getByRole( 'tab', { name: 'Month' } ) ).toBeVisible();
+	await expect( canvas.getByRole( 'tab', { name: 'List' } ) ).toBeVisible();
 	const activeState = await buttonState(
-		canvas.getByRole( 'button', { name: 'Month' } ),
+		canvas.getByRole( 'tab', { name: 'Month' } ),
 	);
 
 	expect( activeState.backgroundColor ).not.toBe( activeState.color );
@@ -183,16 +187,16 @@ test( 'follows configured calendar views when a builder canvas crosses the mobil
 		'[data-wpse-calendar] [data-wpse-calendar-canvas]',
 	);
 
-	await expect( canvas.locator( '.fc-daygrid' ) ).toBeVisible();
-	await expect( canvas.locator( '.fc-list' ) ).toHaveCount( 0 );
+	await expect( canvas.locator( '.wpse-calendar-view-dayGridMonth' ) ).toBeVisible();
+	await expect( canvas.locator( '.wpse-calendar-view-listMonth' ) ).toHaveCount( 0 );
 
 	await page.setViewportSize( { width: 390, height: 844 } );
-	await expect( canvas.locator( '.fc-list' ) ).toBeVisible();
-	await expect( canvas.locator( '.fc-daygrid' ) ).toHaveCount( 0 );
+	await expect( canvas.locator( '.wpse-calendar-view-listMonth' ) ).toBeVisible();
+	await expect( canvas.locator( '.wpse-calendar-view-dayGridMonth' ) ).toHaveCount( 0 );
 
 	await page.setViewportSize( { width: 800, height: 900 } );
 	await expectHealthyMonthGrid( canvas );
-	await expect( canvas.locator( '.fc-list' ) ).toHaveCount( 0 );
+	await expect( canvas.locator( '.wpse-calendar-view-listMonth' ) ).toHaveCount( 0 );
 } );
 
 test( 'shows resolved colors as dots on compact timed month events', async ( {
@@ -202,7 +206,7 @@ test( 'shows resolved colors as dots on compact timed month events', async ( {
 		const response = await route.fetch();
 		const events = await response.json();
 		const coloredEvents = events.map( ( event ) =>
-			event.title === 'E2E Same-day event'
+			[ 'E2E Same-day event', 'E2E All-day event' ].includes( event.title )
 				? {
 					...event,
 					backgroundColor: '#336699',
@@ -225,18 +229,18 @@ test( 'shows resolved colors as dots on compact timed month events', async ( {
 		'3 events loaded.',
 	);
 
-	const timedEvent = canvas.locator( '.fc-daygrid-dot-event' ).filter( {
+	const timedEvent = canvas.locator( '.wpse-calendar-timed-event' ).filter( {
 		hasText: 'E2E Same-day event',
 	} );
 
 	await expect( timedEvent ).toHaveCount( 1 );
 	await expect.poll( () => timedEvent.evaluate( ( element ) => {
-		const marker = window.getComputedStyle( element, '::before' );
+		const marker = window.getComputedStyle( element.querySelector( '.wpse-calendar-dot' ) );
 
 		return {
 			backgroundColor: marker.backgroundColor,
 			isCircular: marker.borderRadius === '50%',
-			isPresent: marker.content !== 'none' &&
+			isPresent: marker.display !== 'none' &&
 				Number.parseFloat( marker.height ) >= 6 &&
 				Number.parseFloat( marker.width ) >= 6,
 		};
@@ -245,6 +249,30 @@ test( 'shows resolved colors as dots on compact timed month events', async ( {
 		isCircular: true,
 		isPresent: true,
 	} );
+
+	const allDay = canvas.locator( '.wpse-calendar-block-event' ).filter( {
+		hasText: 'E2E All-day event',
+	} ).first();
+	await expect( allDay ).toBeVisible();
+	expect( await buttonState( allDay ) ).toMatchObject( {
+		backgroundColor: 'rgb(51, 102, 153)',
+		color: 'rgb(255, 255, 255)',
+	} );
+
+	await canvas.getByRole( 'tab', { name: 'List' } ).click();
+	const listEvent = canvas.locator( '.wpse-calendar-list-event' ).filter( {
+		hasText: 'E2E Same-day event',
+	} );
+	await expect( listEvent ).toBeVisible();
+	expect( await listEvent.evaluate( ( element ) => ( {
+		accent: window.getComputedStyle( element ).borderInlineStartColor,
+		nestedLinks: element.querySelectorAll( 'a' ).length,
+		tag: element.tagName,
+	} ) ) ).toEqual( {
+		accent: 'rgb(51, 102, 153)', nestedLinks: 0, tag: 'A',
+	} );
+	await listEvent.focus();
+	await expect( listEvent ).toBeFocused();
 
 	await page.unrouteAll( { behavior: 'wait' } );
 } );
@@ -539,29 +567,29 @@ test( 'labels timed multi-day segments clearly in list view', async ( { page } )
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
 		'3 events loaded.',
 	);
-	await canvas.getByRole( 'button', { name: 'List' } ).click();
+	await canvas.getByRole( 'tab', { name: 'List' } ).click();
 
-	const segments = canvas.locator( '.fc-list-event' ).filter( {
+	const segments = canvas.locator( '.wpse-calendar-list-event' ).filter( {
 		hasText: 'E2E Multi-day event',
 	} );
 
 	await expect( segments ).toHaveCount( 3 );
-	await expect( segments.nth( 0 ).locator( '.fc-list-event-time' ) ).toContainText(
+	await expect( segments.nth( 0 ).locator( '.wpse-calendar-event-time' ) ).toContainText(
 		'Starts at',
 	);
-	await expect( segments.nth( 1 ).locator( '.fc-list-event-time' ) ).toHaveText(
+	await expect( segments.nth( 1 ).locator( '.wpse-calendar-event-time' ) ).toHaveText(
 		'Continues',
 	);
-	await expect( segments.nth( 2 ).locator( '.fc-list-event-time' ) ).toContainText(
+	await expect( segments.nth( 2 ).locator( '.wpse-calendar-event-time' ) ).toContainText(
 		'Ends at',
 	);
 
-	const allDaySegments = canvas.locator( '.fc-list-event' ).filter( {
+	const allDaySegments = canvas.locator( '.wpse-calendar-list-event' ).filter( {
 		hasText: 'E2E All-day event',
 	} );
 
 	await expect( allDaySegments ).toHaveCount( 3 );
-	await expect( allDaySegments.nth( 1 ).locator( '.fc-list-event-time' ) ).not.toHaveText(
+	await expect( allDaySegments.nth( 1 ).locator( '.wpse-calendar-event-time' ) ).not.toHaveText(
 		'Continues',
 	);
 } );
@@ -582,9 +610,9 @@ test( 'uses the configured mobile list view on its first render', async ( {
 	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
 		'3 events loaded.',
 	);
-	await expect( canvas.locator( '.fc-listMonth-view' ) ).toBeVisible();
-	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toBeVisible();
-	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toBeVisible();
+	await expect( canvas.locator( '.wpse-calendar-view-listMonth' ) ).toBeVisible();
+	await expect( canvas.getByRole( 'tab', { name: 'Month' } ) ).toBeVisible();
+	await expect( canvas.getByRole( 'tab', { name: 'List' } ) ).toBeVisible();
 
 	const geometry = await page.evaluate( () => ( {
 		calendarClient: document.querySelector( '[data-wpse-calendar]' )?.clientWidth || 0,
@@ -605,12 +633,12 @@ test( 'applies a safe initial date and optional toolbar controls', async ( {
 	const calendar = page.locator( '[data-wpse-calendar]' );
 	const canvas = calendar.locator( '[data-wpse-calendar-canvas]' );
 
-	await expect( canvas.locator( '.fc-toolbar-title' ) ).toContainText( 'August' );
+	await expect( canvas.locator( '.wpse-calendar-toolbar-title' ) ).toContainText( 'August' );
 	await expect( canvas.getByRole( 'button', { name: 'Previous' } ) ).toHaveCount( 0 );
 	await expect( canvas.getByRole( 'button', { name: 'Next' } ) ).toHaveCount( 0 );
 	await expect( canvas.getByRole( 'button', { name: 'Today' } ) ).toHaveCount( 0 );
-	await expect( canvas.getByRole( 'button', { name: 'Month' } ) ).toHaveCount( 0 );
-	await expect( canvas.getByRole( 'button', { name: 'List' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'tab', { name: 'Month' } ) ).toHaveCount( 0 );
+	await expect( canvas.getByRole( 'tab', { name: 'List' } ) ).toHaveCount( 0 );
 	await expect( calendar.locator( '.wpse-calendar-fallback > h2' ) ).toHaveText(
 		'Upcoming events',
 	);
@@ -683,31 +711,18 @@ for ( const timezoneId of [ 'Europe/Brussels', 'America/Los_Angeles' ] ) {
 				),
 			).toHaveCount( 1 );
 
-			await canvas.getByRole( 'button', { name: 'List' } ).click();
-			const listEvent = canvas.locator( '.fc-list-event' ).filter( {
+			await canvas.getByRole( 'tab', { name: 'List' } ).click();
+			const listEvent = canvas.locator( '.wpse-calendar-list-event' ).filter( {
 				hasText: 'E2E UTC same-day event',
 			} );
 
 			await expect( listEvent ).toHaveCount( 1 );
 			expect( await listEvent.evaluate( ( row ) => {
-				let sibling = row.previousElementSibling;
-
-				while ( sibling ) {
-					const date = sibling.getAttribute( 'data-date' ) ??
-						sibling.querySelector( '[data-date]' )?.getAttribute( 'data-date' );
-
-					if ( date ) {
-						return date;
-					}
-
-					sibling = sibling.previousElementSibling;
-				}
-
-				return null;
+				return row.closest( '.wpse-calendar-list-day' )?.querySelector( '[data-date]' )?.getAttribute( 'data-date' );
 			} ) ).toBe( '2026-08-10' );
 
-			const eventLink = listEvent.getByRole( 'link', {
-				name: 'E2E UTC same-day event',
+			const eventLink = canvas.getByRole( 'link', {
+				name: /E2E UTC same-day event/,
 			} );
 
 			await expect( eventLink ).toBeVisible();
@@ -775,17 +790,17 @@ for ( const scenario of [
 			'3 events loaded.',
 		);
 
-		const midnightEvent = canvas.locator( '.fc-list-event' ).filter( {
+		const midnightEvent = canvas.locator( '.wpse-calendar-list-event' ).filter( {
 			hasText: 'E2E positive-offset event',
 		} );
-		const noonEvent = canvas.locator( '.fc-list-event' ).filter( {
+		const noonEvent = canvas.locator( '.wpse-calendar-list-event' ).filter( {
 			hasText: 'E2E UTC same-day event',
 		} );
 
-		await expect( midnightEvent.locator( '.fc-list-event-time' ) ).toHaveText(
+		await expect( midnightEvent.locator( '.wpse-calendar-event-time' ) ).toHaveText(
 			scenario.midnight,
 		);
-		await expect( noonEvent.locator( '.fc-list-event-time' ) ).toHaveText(
+		await expect( noonEvent.locator( '.wpse-calendar-event-time' ) ).toHaveText(
 			scenario.noon,
 		);
 	} );
@@ -809,7 +824,7 @@ test( 'keeps calendar button states readable with custom accent colors', async (
 	} );
 
 	const next = canvas.getByRole( 'button', { name: 'Next' } );
-	const month = canvas.getByRole( 'button', { name: 'Month' } );
+	const month = canvas.getByRole( 'tab', { name: 'Month' } );
 	const today = canvas.getByRole( 'button', { name: 'Today' } );
 
 	await expect( next ).toBeVisible();
@@ -899,7 +914,7 @@ test( 'preserves the fallback when the event feed fails', async ( { page } ) => 
 		} );
 	} );
 
-	await gotoFixturePage( page, 'wpse-e2e-calendar' );
+	await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
 
 	const calendar = page.locator( '[data-wpse-calendar]' );
 
@@ -910,6 +925,15 @@ test( 'preserves the fallback when the event feed fails', async ( { page } ) => 
 		calendar.locator( '[data-wpse-calendar-canvas]' ),
 	).not.toBeVisible();
 	await expect( calendar.locator( '.wpse-calendar-fallback' ) ).toBeVisible();
+
+	await page.unrouteAll( { behavior: 'wait' } );
+	await calendar.getByRole( 'button', { name: 'Apply filters' } ).click();
+	await expect( calendar.locator( '[data-wpse-calendar-status]' ) ).toHaveText(
+		'No events match your selection.',
+	);
+	await expect( calendar.locator( '[data-wpse-calendar-canvas]' ) ).toBeVisible();
+	await expect( calendar.locator( '.wpse-calendar-fallback' ) ).not.toBeVisible();
+	await expectHealthyMonthGrid( calendar.locator( '[data-wpse-calendar-canvas]' ) );
 } );
 
 test( 'keeps multiple calendar instances independent and measurable', async ( {
@@ -1063,3 +1087,62 @@ test( 'initializes an Elementor calendar exactly once for every rendered root', 
 	await expectHealthyMonthGrid( rerenderedCanvas );
 	await expect.poll( () => feedRequests ).toBe( 2 );
 } );
+
+for ( const timezoneId of [ 'Europe/Brussels', 'America/Los_Angeles' ] ) {
+	test( `preserves DST wall times with the isolated Divi stylesheet in ${ timezoneId }`, async ( { browser }, testInfo ) => {
+		const context = await browser.newContext( { baseURL: 'http://localhost:8888', timezoneId } );
+		const page = await context.newPage();
+		const errors = [];
+		page.on( 'pageerror', ( error ) => errors.push( error.message ) );
+		let event = null;
+
+		try {
+			await page.route( isEventFeed, ( route ) => route.fulfill( {
+				json: event ? [ event ] : [],
+				headers: { 'X-WP-TotalPages': '1' },
+			} ) );
+			await gotoFixturePage( page, 'wpse-e2e-calendar' );
+			await page.addStyleTag( {
+				url: '/wp-content/plugins/mime-simple-events-calendar/assets/dist/css/divi-editor.min.css',
+			} );
+			await page.locator( '#wpse-frontend-css, #wpse-calendar-css' ).evaluateAll(
+				( styles ) => styles.forEach( ( style ) => style.remove() ),
+			);
+			const calendar = page.locator( '[data-wpse-calendar]' );
+
+			for ( const [ date, start, expected ] of [
+				[ '2026-03-29', '01:30', '01:30 - 03:30' ],
+				[ '2026-10-25', '02:30', '02:30 - 03:30' ],
+			] ) {
+				event = {
+					id: date, title: 'DST calendar event',
+					start: `${ date }T${ start }:00`, end: `${ date }T03:30:00`,
+					allDay: false, url: '/events/dst-calendar-event/',
+				};
+				await calendar.evaluate( ( root, initialDate ) => {
+					const config = JSON.parse( root.dataset.wpseCalendar );
+					config.initialDate = initialDate;
+					config.initialView = 'listMonth';
+					config.eventTimeFormat = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', meridiem: false };
+					root.dataset.wpseCalendar = JSON.stringify( config );
+					window.wpseInitializeCalendars( root );
+				}, date );
+				await expect( calendar.locator( '.wpse-calendar-event-time' ) ).toHaveText( expected );
+				await expect( calendar.locator( '.wpse-calendar-list-day [data-date]' ) ).toHaveAttribute( 'data-date', date );
+				await expect( calendar.getByRole( 'link', { name: /DST calendar event/ } ) ).toHaveAttribute( 'href', '/events/dst-calendar-event/' );
+			}
+
+			await page.setViewportSize( { width: 320, height: 800 } );
+			await expect( calendar.locator( '.wpse-calendar-event-time' ) ).toHaveText( '02:30 - 03:30' );
+			expect( await calendar.evaluate( ( root ) => root.scrollWidth <= root.clientWidth ) ).toBe( true );
+			await calendar.screenshot( { path: testInfo.outputPath( 'calendar-mobile.png' ) } );
+			await page.setViewportSize( { width: 1280, height: 900 } );
+			await calendar.getByRole( 'tab', { name: 'Month' } ).click();
+			await expectHealthyMonthGrid( calendar.locator( '[data-wpse-calendar-canvas]' ) );
+			await calendar.screenshot( { path: testInfo.outputPath( 'calendar-month.png' ) } );
+			expect( errors ).toEqual( [] );
+		} finally {
+			await context.close();
+		}
+	} );
+}

@@ -60,6 +60,7 @@ function wpse_run_elementor_compat_inspection(): void {
 		wpse_compat_require( in_array( 'wpse-frontend', $widgets[ $name ]->get_style_depends(), true ), 'Missing style dependency: ' . $name );
 		wpse_compat_require( false === $widgets[ $name ]->has_widget_inner_wrapper(), 'Optimized DOM disabled: ' . $name );
 	}
+	wpse_compat_require( in_array( 'wpse-calendar', $widgets['wpse-event-calendar']->get_style_depends(), true ), 'Calendar preview is missing its local v7 stylesheet.' );
 
 	$control_contracts = array(
 		'wpse-add-to-calendar'       => array(

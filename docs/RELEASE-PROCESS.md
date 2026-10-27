@@ -55,6 +55,11 @@ Plugin Check job are green.
 Record dependency findings, compatibility exceptions and any intentionally
 deferred issue in the QA report before distribution.
 
+The owner must receive the tested candidate and change summary, complete their
+own testing, and explicitly approve publication before release work is merged or
+anything is published to GitHub or WordPress.org (ADR-104). Preparing a local beta
+ZIP is not publication approval.
+
 ## Public release notes
 
 1. Copy `docs/RELEASE-NOTES-TEMPLATE.md` and replace every placeholder with verified release information.
