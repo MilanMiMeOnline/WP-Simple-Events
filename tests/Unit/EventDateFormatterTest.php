@@ -179,18 +179,19 @@ final class EventDateFormatterTest extends TestCase {
 
 	/**
 	 * Long valid IANA identifiers remain intact for responsive wrapping in CSS.
+	 * Use a canonical identifier: legacy aliases are not present in every tzdb.
 	 */
 	public function test_timezone_label_preserves_long_iana_identifier(): void {
 		$presentation = ( new EventDateFormatter() )->format(
-			$this->timestamp( '2026-07-20 09:30:00', 'America/Argentina/ComodRivadavia' ),
-			$this->timestamp( '2026-07-20 11:00:00', 'America/Argentina/ComodRivadavia' ),
+			$this->timestamp( '2026-07-20 09:30:00', 'America/Argentina/Buenos_Aires' ),
+			$this->timestamp( '2026-07-20 11:00:00', 'America/Argentina/Buenos_Aires' ),
 			false,
-			'America/Argentina/ComodRivadavia',
+			'America/Argentina/Buenos_Aires',
 			true
 		);
 
 		self::assertSame(
-			'America/Argentina/ComodRivadavia (UTC-03:00)',
+			'America/Argentina/Buenos_Aires (UTC-03:00)',
 			$presentation?->timezone_label
 		);
 	}

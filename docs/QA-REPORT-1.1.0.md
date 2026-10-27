@@ -37,6 +37,12 @@ substitute for the final candidate checks recorded below.
 - QA review confirms negative visibility, error recovery, time-zone, mobile and
   builder lifecycle cases remain in the required suites.
 
+The first hosted PHP matrix exposed a non-portable legacy timezone alias in the
+long-label test. The fixture now uses canonical `America/Argentina/Buenos_Aires`
+from the [PHP timezone list](https://www.php.net/manual/en/timezones.america.php),
+retaining the exact full-label and offset assertion. Runtime code is unchanged.
+All ten historical upgrades and lifecycle checks pass locally.
+
 Full package, integration and hosted CI qualification is still running. Package
 checksum and publication verification will be recorded as they complete. No
 unexecuted check is counted as passed.
