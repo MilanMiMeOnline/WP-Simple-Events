@@ -1,9 +1,9 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 14 October 2026
+**Last reviewed:** 27 October 2026
 **Current stability phase:** stable 1.x compatibility baseline
-**Current public release:** 1.0.0, qualified and published on GitHub and WordPress.org
+**Current public release:** 1.1.0, qualified and published on GitHub and WordPress.org
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -579,6 +579,8 @@ Future work is prioritized in [ROADMAP.md](ROADMAP.md). Bounded one-way Add to
 Calendar components were released in 0.7.0. Version 1.0.0 is publicly released
 with the stable public 1.x surface frozen during the 0.9 observation window under
 [PUBLIC-COMPATIBILITY-CONTRACT.md](PUBLIC-COMPATIBILITY-CONTRACT.md).
+Version 1.1.0 upgrades the calendar to FullCalendar 7 while retaining that public
+surface; see the [1.1 qualification report](QA-REPORT-1.1.0.md).
 The [1.0 qualification report](QA-REPORT-1.0.0.md) records the beginner-user
 rehearsal, corrective changes and verified publication.
 

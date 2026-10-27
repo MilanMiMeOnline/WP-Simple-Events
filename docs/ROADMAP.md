@@ -1,9 +1,9 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 26 October 2026 (owner-approved 1.1 qualification)
-**Current public release:** 1.0.0
-**Active phase:** 1.1.0 approved by owner after testing; final release qualification in progress
+**Last reviewed:** 27 October 2026 (1.1 publication)
+**Current public release:** 1.1.0
+**Active phase:** 1.1 released; maintain the stable surface and scope the optional AI/MCP pilot separately
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
 reviewable work. The normative behaviour of the current plugin remains defined in
@@ -1266,10 +1266,10 @@ qualified production files. See the
 
 1. **1.0.x — Maintenance as needed:** resolve evidence-backed defects from real
    1.0 installations without changing the calendar framework major.
-2. **1.1 — FullCalendar 7 migration (local beta prepared for owner testing):** qualify the upstream major on a
-   dedicated branch against the frozen saved-content, CSS, accessibility, editor
-   and browser contracts. Ship it as 1.1 only when the migration is fully
-   backwards compatible; otherwise reserve it for the next plugin major.
+2. **1.1 — FullCalendar 7 migration (released 27 October 2026):** FullCalendar
+   7.1.2 is qualified against the frozen saved-content, CSS, accessibility, editor
+   and browser contracts. Owner acceptance and final checks are recorded in the
+   [1.1.0 qualification report](QA-REPORT-1.1.0.md).
 3. **AI/MCP event management, after FullCalendar qualification:** follow the
    [functional and technical analysis](AI-MCP-INTEGRATION-ANALYSIS.md). Start
    with an optional, authenticated pilot for bounded event reads and one-off
