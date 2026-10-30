@@ -2,7 +2,7 @@
 
 MiMe Simple Events and Calendar emits one Schema.org `Event` JSON-LD graph in `wp_head` only on the canonical singular page of a published, password-free event. Archives, taxonomies, shortcodes, Elementor previews, drafts, private events and password-protected events never receive this output.
 
-The graph can contain `name`, `startDate`, `endDate`, `eventStatus`, `url`, `image`, `description` and `location`. Empty optional properties are omitted. The plugin deliberately emits no offers or pricing. All-day values are ISO dates; timed values use the event's captured timezone and include the applicable UTC offset.
+The graph can contain `name`, `startDate`, `endDate`, `eventStatus`, `url`, `image`, `description` and `location`. Empty optional properties are omitted. An unknown timed end has no `endDate`; legacy timed ends identical to the start are also omitted because they may have been filled automatically. Single-day all-day ends remain valid dates. The plugin deliberately emits no offers or pricing. All-day values are ISO dates; timed values use the event's captured timezone and include the applicable UTC offset.
 
 Output is enabled by default. The global `wpse_structured_data_enabled` option and the `wpse_structured_data_enabled` filter control it. The filter receives the current boolean decision and event ID:
 

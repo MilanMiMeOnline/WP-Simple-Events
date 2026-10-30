@@ -91,10 +91,19 @@ final class EventQueryArguments {
 			'meta_query'             => array(
 				'relation' => 'AND',
 				array(
-					'key'     => EventMeta::END_LOCAL,
-					'value'   => $criteria->window->start_local,
-					'compare' => '>=',
-					'type'    => 'CHAR',
+					'relation' => 'OR',
+					array(
+						'key'     => EventMeta::END_LOCAL,
+						'value'   => $criteria->window->start_local,
+						'compare' => '>=',
+						'type'    => 'CHAR',
+					),
+					array(
+						'key'     => EventMeta::START_LOCAL,
+						'value'   => $criteria->window->start_local,
+						'compare' => '>=',
+						'type'    => 'CHAR',
+					),
 				),
 				array(
 					'key'     => EventMeta::START_LOCAL,

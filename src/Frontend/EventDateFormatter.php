@@ -25,17 +25,22 @@ final class EventDateFormatter {
 	 * @param bool   $all_day   Whether visible times are omitted.
 	 * @param string $timezone  Stored event timezone.
 	 * @param bool   $show_timezone Whether to include visible timezone context.
+	 * @param bool   $has_end Whether a timed end is explicitly known.
 	 */
 	public function format(
 		int $start_utc,
 		int $end_utc,
 		bool $all_day,
 		string $timezone,
-		bool $show_timezone = false
+		bool $show_timezone = false,
+		bool $has_end = true
 	): ?EventDatePresentation {
 		if ( $start_utc <= 0 || $end_utc < $start_utc ) {
 			return null;
 		}
+
+		$has_end = $all_day || $has_end;
+		$end_utc = $has_end ? $end_utc : $start_utc;
 
 		try {
 			$timezone_object = new DateTimeZone( $timezone );
@@ -80,7 +85,7 @@ final class EventDateFormatter {
 		return new EventDatePresentation(
 			$label,
 			$all_day ? $start->format( 'Y-m-d' ) : $start->format( DATE_ATOM ),
-			$all_day ? $end->format( 'Y-m-d' ) : $end->format( DATE_ATOM ),
+			$has_end ? ( $all_day ? $end->format( 'Y-m-d' ) : $end->format( DATE_ATOM ) ) : '',
 			$show_timezone && ! $all_day ? $this->timezone_label( $timezone, $start, $end ) : ''
 		);
 	}

@@ -24,7 +24,7 @@ final readonly class CalendarEventDates {
 	 * @param string $start_local Canonical local start.
 	 * @param string $end_local   Canonical local inclusive end.
 	 * @param int    $start_utc   UTC start timestamp.
-	 * @param int    $end_utc     Inclusive UTC end timestamp.
+	 * @param int    $end_utc     Inclusive UTC query boundary, not necessarily a known end.
 	 * @param bool   $all_day     Whether visible times are omitted.
 	 * @param string $timezone    Stored event timezone.
 	 * @return array{start: string, end: string, timezone: string, start_instant: string|null, end_instant: string|null}|null
@@ -47,7 +47,7 @@ final readonly class CalendarEventDates {
 			return null;
 		}
 
-		if ( $range->start_utc() !== $start_utc || $range->end_utc() !== $end_utc ) {
+		if ( $range->start_utc() !== $start_utc || $range->end_index_utc() !== $end_utc ) {
 			return null;
 		}
 
@@ -69,10 +69,10 @@ final readonly class CalendarEventDates {
 
 		return array(
 			'start'         => $range->start_local(),
-			'end'           => $range->end_local(),
+			'end'           => $range->has_end() ? $range->end_local() : '',
 			'timezone'      => $range->timezone(),
 			'start_instant' => $start->format( DATE_ATOM ),
-			'end_instant'   => $end->format( DATE_ATOM ),
+			'end_instant'   => $range->has_end() ? $end->format( DATE_ATOM ) : null,
 		);
 	}
 }

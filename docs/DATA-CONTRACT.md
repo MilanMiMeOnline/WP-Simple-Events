@@ -14,11 +14,13 @@ The publication date is never an event date.
 
 - Timed local values are stored as `Y-m-d\TH:i:s`, without an embedded offset.
 - All-day values are stored as inclusive `Y-m-d` dates.
-- A missing end is normalized to the start value.
+- A missing timed end is stored as an empty string and remains unknown in editor,
+  recurrence, calendar and SEO output (ADR-108). A missing all-day end uses the
+  start date. Existing equal-start/end metadata is not automatically rewritten.
 - A single all-day event ends at local `23:59:59` for its inclusive end date.
-- `_wpse_start_utc` and `_wpse_end_utc` are derived Unix timestamps used for chronological sorting, active/past queries and machine-instant output.
+- `_wpse_start_utc` and `_wpse_end_utc` are derived Unix timestamps used for chronological sorting and active/past queries. For unknown timed ends, the end index is the last instant of the local start date (normally 23:59:59). It must never be used as a public machine end.
 - `_wpse_end_utc` is inclusive. The public calendar validates it against canonical local data, while all-day calendar output converts the canonical inclusive local end to an exclusive date.
-- Public calendar placement and visible-window overlap use `_wpse_start_local` and `_wpse_end_local`; visitor timezone offsets never change those saved wall-time dates.
+- Public calendar placement and visible-window overlap use `_wpse_start_local` and `_wpse_end_local` (start-only events overlap the day containing their start); visitor timezone offsets never change those saved wall-time dates.
 - The stored timezone is an IANA identifier where possible. WordPress fixed offsets from `-14:00` through `+14:00` are accepted for sites configured without a named timezone.
 - A new event captures WordPress' current site timezone. An existing event retains its captured timezone when the site setting changes; the plugin does not retroactively reinterpret its local wall time.
 

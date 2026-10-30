@@ -902,3 +902,77 @@ test( 'loads recurrence after first saving dates without resetting an edited rul
 		path: `/wp/v2/wpse_event/${ id }?force=true`, method: 'DELETE',
 	} ), eventId );
 } );
+
+test( 'preserves a blank event end after an editor save without publishing a synthetic duration', async ( { page } ) => {
+	test.setTimeout( 90_000 );
+	await login( page );
+	const fixture = await page.evaluate( async () => {
+		const date = new Date( Date.now() + ( 30 * 86400000 ) ).toISOString().slice( 0, 10 );
+		const event = await window.wp.apiFetch( {
+			path: '/wp/v2/wpse_event', method: 'POST',
+			data: {
+				title: 'E2E unknown end regression', status: 'publish',
+				meta: {
+					_wpse_start_local: `${ date }T19:00`, _wpse_end_local: `${ date }T21:00`,
+					_wpse_all_day: false, _wpse_timezone: 'Europe/Brussels', _wpse_event_status: 'scheduled',
+				},
+			},
+		} );
+		const nextDay = new Date( `${ date }T12:00:00Z` );
+		nextDay.setUTCDate( nextDay.getUTCDate() + 1 );
+		return { id: event.id, link: event.link, date, end: nextDay.toISOString().slice( 0, 10 ) };
+	} );
+	await page.goto( `/wp-admin/post.php?post=${ fixture.id }&action=edit` );
+	await expect.poll( () => page.evaluate( () => Boolean( window.wp?.data?.select( 'core/editor' ) ) ) ).toBe( true );
+	const welcomeDialog = page.getByRole( 'dialog', { name: 'Welcome to the editor' } );
+	const welcomeVisible = await welcomeDialog.waitFor( { state: 'visible', timeout: 3000 } ).then( () => true, () => false );
+	if ( welcomeVisible ) {
+		await welcomeDialog.getByRole( 'button', { name: 'Close', exact: true } ).click();
+		await expect( welcomeDialog ).toBeHidden();
+	}
+	const metaBoxes = page.getByRole( 'button', { name: 'Meta Boxes', exact: true } );
+	await expect( metaBoxes ).toBeVisible();
+	if ( await metaBoxes.getAttribute( 'aria-expanded' ) === 'false' ) {
+		await metaBoxes.press( 'Enter' );
+	}
+	await page.getByLabel( 'End date', { exact: true } ).fill( '' );
+	await page.getByLabel( 'End time', { exact: true } ).fill( '' );
+	await page.getByRole( 'button', { name: /^(Save|Update)$/ } ).click();
+	await expect.poll( () => page.evaluate( async ( id ) => {
+		const event = await window.wp.apiFetch( { path: `/wp/v2/wpse_event/${ id }?context=edit` } );
+		return event.meta._wpse_end_local;
+	}, fixture.id ) ).toBe( '' );
+	await page.reload();
+	await expect( page.getByLabel( 'End date', { exact: true } ) ).toHaveValue( '' );
+	await expect( page.getByLabel( 'End time', { exact: true } ) ).toHaveValue( '' );
+
+	// A partial REST update must preserve the unknown end as well.
+	const calendarPage = await page.evaluate( async ( event ) => {
+		await window.wp.apiFetch( { path: `/wp/v2/wpse_event/${ event.id }`, method: 'POST', data: { meta: { _wpse_venue: 'Still no known end' } } } );
+		const result = await window.wp.apiFetch( {
+			path: '/wp/v2/pages', method: 'POST',
+			data: { title: 'Unknown end calendar', status: 'publish', content: `[wpse_calendar initial_date="${ event.date }"]` },
+		} );
+		return { ...result, expectedTime: window.wp.date.dateI18n( window.wp.date.getSettings().formats.time, `${ event.date }T19:00:00Z`, 'UTC' ) };
+	}, fixture );
+	const feed = await page.request.get( `/wp-json/wpse/v1/events?start=${ fixture.date }T00:00:00Z&end=${ fixture.end }T00:00:00Z` );
+	expect( feed.ok() ).toBe( true );
+	const row = ( await feed.json() ).find( ( item ) => item.title === 'E2E unknown end regression' );
+	expect( row ).toBeTruthy();
+	expect( row.end ).toBe( '' );
+	expect( row.extendedProps.startInstant ).toContain( `${ fixture.date }T19:00:00` );
+	expect( row.extendedProps ).not.toHaveProperty( 'endInstant' );
+	await page.goto( fixture.link );
+	const schema = await page.locator( 'script[type="application/ld+json"]' ).evaluateAll( ( elements ) => elements.map( ( element ) => JSON.parse( element.textContent ) ).find( ( value ) => value[ '@type' ] === 'Event' ) );
+	expect( schema.startDate ).toContain( `${ fixture.date }T19:00:00` );
+	expect( schema ).not.toHaveProperty( 'endDate' );
+	await page.goto( calendarPage.link );
+	const canvas = page.locator( '[data-wpse-calendar-canvas]' );
+	await canvas.getByRole( 'tab', { name: 'List view', exact: true } ).click();
+	const eventRow = canvas.locator( '.wpse-calendar-list-event' ).filter( { hasText: 'E2E unknown end regression' } );
+	await expect( eventRow ).toHaveCount( 1 );
+	await expect( eventRow.locator( '.wpse-calendar-event-time' ) ).toHaveText( calendarPage.expectedTime );
+	await expect( eventRow ).not.toContainText( '23:59' );
+	await expect( eventRow ).not.toContainText( '20:00' );
+	await expect( eventRow ).not.toContainText( '21:00' );
+} );

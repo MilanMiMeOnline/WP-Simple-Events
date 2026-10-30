@@ -20,6 +20,22 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( CalendarEventDates::class )]
 final class CalendarEventDatesTest extends TestCase {
+	/** Calendar consumers receive no synthetic end or duration for an unknown end. */
+	public function test_unknown_end_keeps_start_instant_and_omits_end_instant(): void {
+		$dates = ( new CalendarEventDates() )->format(
+			'2026-10-25T19:00:00',
+			'',
+			strtotime( '2026-10-25T18:00:00Z' ),
+			strtotime( '2026-10-25T22:59:59Z' ),
+			false,
+			'Europe/Brussels'
+		);
+		self::assertNotNull( $dates );
+		self::assertSame( '', $dates['end'] );
+		self::assertNull( $dates['end_instant'] );
+		self::assertSame( '2026-10-25T19:00:00+01:00', $dates['start_instant'] );
+	}
+
 	/** All-day output converts the stored inclusive end into an exclusive date. */
 	public function test_all_day_end_is_exclusive_for_fullcalendar(): void {
 		$dates = $this->format_range( '2026-07-20', '2026-07-22', true, 'Europe/Brussels' );

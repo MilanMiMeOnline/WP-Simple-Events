@@ -116,6 +116,7 @@ final class EventSchemaProviderTest extends TestCase {
 			EventMeta::END_UTC,
 			( new DateTimeImmutable( '2026-07-16T21:30:00+02:00' ) )->getTimestamp()
 		);
+		WordPressState::update_post_meta( $event_id, EventMeta::END_LOCAL, '2026-07-16T21:30:00' );
 		WordPressState::update_post_meta( $event_id, EventMeta::ALL_DAY, false );
 		WordPressState::update_post_meta( $event_id, EventMeta::TIMEZONE, 'Europe/Brussels' );
 		WordPressState::update_post_meta( $event_id, EventMeta::STATUS, 'scheduled' );

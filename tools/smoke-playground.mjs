@@ -1779,6 +1779,8 @@ try {
 		'The canonical recurrence metadata is not protected and revision-enabled in WordPress.',
 	);
 
+	requireCondition( occurrenceParity.data.unknown_end === true, 'Unknown ends did not remain upcoming through local midnight or did not match their calendar window.' );
+
 	const recurrenceDraft = await authenticatedRequest(
 		session,
 		'/wp-json/wp/v2/wpse_event',

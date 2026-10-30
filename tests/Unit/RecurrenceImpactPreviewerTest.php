@@ -36,6 +36,30 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass( RecurrenceImpactPreview::class )]
 #[CoversClass( RecurrenceImpactItem::class )]
 final class RecurrenceImpactPreviewerTest extends TestCase {
+	/** Changing unknown to explicit equal-start end changes the query boundary, not identity. */
+	public function test_unknown_to_explicit_end_is_included_in_impact(): void {
+		$target   = '2027-01-03T19:00:00';
+		$current  = $this->daily(
+			overrides: array(
+				OccurrenceOverride::from_fields(
+					$target,
+					array( OccurrenceOverride::DATE_RANGE => $this->range( $target, '' ) )
+				),
+			)
+		);
+		$proposed = $this->daily(
+			overrides: array(
+				OccurrenceOverride::from_fields(
+					$target,
+					array( OccurrenceOverride::DATE_RANGE => $this->range( $target, $target ) )
+				),
+			)
+		);
+		$preview  = $this->preview( $current, $proposed, RecurrenceEditScope::ONLY_THIS, $target );
+		self::assertSame( 1, $preview->count( RecurrenceImpactChange::MOVED ) );
+		self::assertSame( $target, $preview->items[0]->recurrence_id );
+	}
+
 	private const SERIES_UID = 'a28e5d8c-5237-4b02-97a4-3f8855a3d5ad';
 
 	/**

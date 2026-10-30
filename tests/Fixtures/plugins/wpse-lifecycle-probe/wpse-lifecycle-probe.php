@@ -123,6 +123,28 @@ function wpse_lifecycle_probe_seed( WP_REST_Request $request ): WP_REST_Response
 
 	$recurring_id = 0;
 
+	// Historical versions stored an omitted timed end as the start. An upgrade
+	// must preserve that ambiguous intent for both past and upcoming events.
+	$legacy_offsets = array(
+		'past'   => '-1 year',
+		'future' => '+1 day',
+	);
+	foreach ( $legacy_offsets as $label => $offset ) {
+		$legacy_start = $start->modify( $offset );
+		$legacy_event = wpse_lifecycle_probe_insert_event(
+			'wpse-upgrade-equal-end-' . $label,
+			'Upgrade legacy equal-end event ' . $label,
+			$legacy_start,
+			$legacy_start,
+			$category_id,
+			$tag_id
+		);
+
+		if ( is_wp_error( $legacy_event ) ) {
+			return $legacy_event;
+		}
+	}
+
 	if ( version_compare( $version, '0.4.0', '>=' ) ) {
 		$recurring_id = wpse_lifecycle_probe_insert_recurring_event(
 			$start->modify( '+1 day' ),

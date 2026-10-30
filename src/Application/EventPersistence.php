@@ -51,9 +51,9 @@ final class EventPersistence {
 			delete_post_meta( $post_id, EventMeta::END_UTC );
 		} else {
 			update_post_meta( $post_id, EventMeta::START_LOCAL, $range->start_local() );
-			update_post_meta( $post_id, EventMeta::END_LOCAL, $range->end_local() );
+			update_post_meta( $post_id, EventMeta::END_LOCAL, $range->explicit_end_local() );
 			update_post_meta( $post_id, EventMeta::START_UTC, $range->start_utc() );
-			update_post_meta( $post_id, EventMeta::END_UTC, $range->end_utc() );
+			update_post_meta( $post_id, EventMeta::END_UTC, $range->end_index_utc() );
 		}
 
 		update_post_meta( $post_id, EventMeta::ALL_DAY, $data->all_day );

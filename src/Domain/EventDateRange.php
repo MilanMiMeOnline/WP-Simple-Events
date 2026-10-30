@@ -25,7 +25,8 @@ final readonly class EventDateRange {
 	 * Create a validated date range.
 	 *
 	 * Timed values use ISO local format `Y-m-d\TH:i[:s]`. All-day values use
-	 * inclusive `Y-m-d` dates. A missing end uses the start value.
+	 * inclusive `Y-m-d` dates. Missing timed ends retain a start-value anchor for
+	 * internal arithmetic; explicit_end_local() preserves their unknown state.
 	 *
 	 * @param string      $start_local Local start value.
 	 * @param string|null $end_local   Local end value, or null.
@@ -40,6 +41,7 @@ final readonly class EventDateRange {
 		string $timezone
 	): self {
 		$timezone_object = self::create_timezone( $timezone );
+		$has_end         = $all_day || ( null !== $end_local && '' !== $end_local );
 
 		if ( $all_day ) {
 			$start_local = self::normalize_date( $start_local );
@@ -64,7 +66,8 @@ final readonly class EventDateRange {
 			$all_day,
 			$timezone_object->getName(),
 			$start->getTimestamp(),
-			$end->getTimestamp()
+			$end->getTimestamp(),
+			$has_end
 		);
 	}
 
@@ -77,6 +80,7 @@ final readonly class EventDateRange {
 	 * @param string $timezone    Canonical timezone identifier.
 	 * @param int    $start_utc   UTC start timestamp.
 	 * @param int    $end_utc     UTC end timestamp.
+	 * @param bool   $has_end     Whether an actual end is known.
 	 */
 	private function __construct(
 		private string $start_local,
@@ -84,7 +88,8 @@ final readonly class EventDateRange {
 		private bool $all_day,
 		private string $timezone,
 		private int $start_utc,
-		private int $end_utc
+		private int $end_utc,
+		private bool $has_end
 	) {}
 
 	/**
@@ -95,10 +100,32 @@ final readonly class EventDateRange {
 	}
 
 	/**
-	 * Return the canonical local end value.
+	 * Return the normalized local end anchor for internal date arithmetic.
+	 * Use explicit_end_local() for storage and public serialization.
 	 */
 	public function end_local(): string {
 		return $this->end_local;
+	}
+
+	/** Whether the range has an actual end rather than an internal anchor. */
+	public function has_end(): bool {
+		return $this->has_end;
+	}
+
+	/** Return the canonical stored end, preserving an unknown timed end. */
+	public function explicit_end_local(): string {
+		return $this->has_end ? $this->end_local : '';
+	}
+
+	/** Return the inclusive query boundary, never an invented public end time. */
+	public function end_index_utc(): int {
+		if ( $this->has_end ) {
+			return $this->end_utc;
+		}
+
+		return ( new DateTimeImmutable( '@' . $this->start_utc ) )
+			->setTimezone( new DateTimeZone( $this->timezone ) )
+			->modify( 'tomorrow' )->getTimestamp() - 1;
 	}
 
 	/**
@@ -123,7 +150,8 @@ final readonly class EventDateRange {
 	}
 
 	/**
-	 * Return the inclusive UTC end timestamp.
+	 * Return the inclusive UTC end, or the start anchor when no end is known.
+	 * Use end_index_utc() only for active/past query indexes.
 	 */
 	public function end_utc(): int {
 		return $this->end_utc;

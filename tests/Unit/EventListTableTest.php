@@ -11,6 +11,8 @@ namespace MiMe\WPSimpleEvents\Tests\Unit;
 
 use MiMe\WPSimpleEvents\Admin\EventListTable;
 use MiMe\WPSimpleEvents\Content\EventPostType;
+use MiMe\WPSimpleEvents\Content\EventMeta;
+use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
 use MiMe\WPSimpleEvents\Content\EventTaxonomies;
 use MiMe\WPSimpleEvents\Tests\Support\HookRecorder;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,6 +23,20 @@ use PHPUnit\Framework\TestCase;
  * Freezes list-table columns and post-type-specific hook registration.
  */
 final class EventListTableTest extends TestCase {
+	/** Admin end columns must not present the internal day boundary as an actual end. */
+	public function test_unknown_end_column_shows_not_set(): void {
+		WordPressState::reset();
+		WordPressState::update_post_meta( 42, EventMeta::END_LOCAL, '' );
+		WordPressState::update_post_meta( 42, EventMeta::END_UTC, strtotime( '2026-10-25T22:59:59Z' ) );
+		WordPressState::update_post_meta( 42, EventMeta::ALL_DAY, false );
+		WordPressState::update_post_meta( 42, EventMeta::TIMEZONE, 'Europe/Brussels' );
+		ob_start();
+		( new EventListTable() )->render_column( 'wpse_end', 42 );
+		$output = (string) ob_get_clean();
+		self::assertStringContainsString( 'Not set', $output );
+		self::assertStringNotContainsString( '23:59', $output );
+	}
+
 	/**
 	 * Reset hook state before each test.
 	 */

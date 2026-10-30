@@ -168,7 +168,7 @@ final readonly class RecurrenceImpactPreviewer {
 	private function range_signature( EventOccurrence $occurrence ): array {
 		return array(
 			$occurrence->date_range->start_local(),
-			$occurrence->date_range->end_local(),
+			$occurrence->date_range->explicit_end_local(),
 			$occurrence->date_range->timezone(),
 			$occurrence->date_range->all_day(),
 		);

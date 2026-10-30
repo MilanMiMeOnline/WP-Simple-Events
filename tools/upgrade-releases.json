@@ -64,6 +64,12 @@
       "tag": "v1.0.0",
       "schemaVersion": "2.1.0",
       "sha256": "0ace0f30cca7e2bd3108980fc4f54f6a7bfdaffb8d899e4d95ab44c9f20c0cb3"
+    },
+    {
+      "version": "1.1.0",
+      "tag": "v1.1.0",
+      "schemaVersion": "2.1.0",
+      "sha256": "756514672b97cbc18bcc116f1992110e72218e876f141ddce0046156f23d116b"
     }
   ]
 }

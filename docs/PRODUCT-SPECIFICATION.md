@@ -1,9 +1,10 @@
 # MiMe Simple Events and Calendar — product specification
 
 **Status:** normative product and technical contract
-**Last reviewed:** 27 October 2026
+**Last reviewed:** 30 October 2026
 **Current stability phase:** stable 1.x compatibility baseline
 **Current public release:** 1.1.0, qualified and published on GitHub and WordPress.org
+**Release candidate:** 1.1.1, unknown-end compatibility fix
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it
@@ -147,15 +148,19 @@ unrelated content.
 
 - A valid start is required before publication.
 - Drafts may remain incomplete.
-- A missing end is normalized to the start.
+- A missing timed end stays empty in canonical storage, editor controls and public
+  output. All-day events without an end date still cover their start date.
 - An end may not precede its start.
 - All-day events do not expose a time.
 - Multi-day all-day input is inclusive in the editor and converted to the
   calendar library's exclusive end where required.
 - Invalid or ambiguous input never silently becomes another date.
 
-An event is current or upcoming while its normalized end is greater than or equal
-to now. This keeps an event visible while it is in progress.
+An event is current or upcoming while its end query index is greater than or equal
+to now. For timed events with an unknown end, this index is the end of the local
+start day (normally 23:59:59), never a published end time. Known ends retain their actual
+boundary. Legacy equal-start/end metadata is not rewritten; its ambiguous timed
+end is omitted from structured data (ADR-108).
 
 ## 6. Editorial experience
 
