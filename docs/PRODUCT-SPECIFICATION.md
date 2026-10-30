@@ -3,8 +3,7 @@
 **Status:** normative product and technical contract
 **Last reviewed:** 30 October 2026
 **Current stability phase:** stable 1.x compatibility baseline
-**Current public release:** 1.1.0, qualified and published on GitHub and WordPress.org
-**Release candidate:** 1.1.1, unknown-end compatibility fix
+**Current public release:** 1.1.1, qualified and published on GitHub and WordPress.org
 **Maintainer:** MiMe
 
 This document defines what MiMe Simple Events and Calendar must do and the boundaries it

@@ -25,6 +25,7 @@ and release contracts for MiMe Simple Events and Calendar.
   technical scope.
 - [Product roadmap](ROADMAP.md) — prioritized future work and the next
   implementation plan.
+- [1.1.1 patch qualification](QA-REPORT-1.1.1.md) — unknown-end fix, upgrade safety and publication.
 - [1.1 stable qualification](QA-REPORT-1.1.0.md) — owner acceptance, final checks and publication.
 - [1.1 local beta qualification](QA-REPORT-1.1.0-beta.1.md) — FullCalendar 7
   compatibility evidence and the owner test checklist; not a public release.
@@ -69,7 +70,8 @@ plugin package. Current future work belongs in [the roadmap](ROADMAP.md), not in
 those completed backlogs.
 
 The current public release evidence is the
-[1.1.0 qualification and publication report](QA-REPORT-1.1.0.md). The
+[1.1.1 qualification and publication report](QA-REPORT-1.1.1.md). The
+[1.1.0 report](QA-REPORT-1.1.0.md) retains FullCalendar 7 qualification. The
 [1.0.0 report](QA-REPORT-1.0.0.md) retains the beginner-user rehearsal and
 verification of the original stable release.
 The [0.9.0 RC8 report](QA-REPORT-0.9.0-RC8.md) records the previous release. The

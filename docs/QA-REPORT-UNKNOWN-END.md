@@ -5,6 +5,9 @@ Baseline: `7831f7b` (published 1.1.0 follow-up). This is unpublished work;
 version metadata remains 1.1.0 and locally rebuilt archives are test artifacts,
 not the published release archive. No commit, push, merge or deployment was made.
 
+The following is historical pre-release evidence. Final versioned qualification
+and publication are recorded in [the 1.1.1 report](QA-REPORT-1.1.1.md).
+
 ## Contract and implementation review
 
 ADR-108 records the owner-approved behavior: both timed end fields blank means

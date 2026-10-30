@@ -1,8 +1,8 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 27 October 2026 (1.1 publication)
-**Current public release:** 1.1.0
+**Last reviewed:** 30 October 2026 (1.1.1 patch publication)
+**Current public release:** 1.1.1
 **Active phase:** 1.1 released; maintain the stable surface and scope the optional AI/MCP pilot separately
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
