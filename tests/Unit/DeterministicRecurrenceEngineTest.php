@@ -30,6 +30,22 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass( RecurrenceGenerationResult::class )]
 #[CoversClass( RecurrenceSlot::class )]
 final class DeterministicRecurrenceEngineTest extends TestCase {
+	/** Each generated unknown end keeps its own local day boundary across DST. */
+	public function test_daily_unknown_ends_remain_unknown_across_dst(): void {
+		$result = $this->engine->generate(
+			EventDateRange::from_local( '2026-03-28T00:00', '', false, 'Europe/Brussels' ),
+			RecurrenceRule::daily(),
+			RecurrenceGenerationWindow::between( '2026-03-28', '2026-03-29' )
+		);
+		self::assertCount( 2, $result->slots() );
+		foreach ( $result->slots() as $slot ) {
+			self::assertFalse( $slot->date_range()->has_end() );
+			self::assertSame( '', $slot->date_range()->explicit_end_local() );
+		}
+		$last = $result->slots()[1]->date_range();
+		self::assertSame( 82_799, $last->end_index_utc() - $last->start_utc() );
+	}
+
 	/**
 	 * Stateless recurrence engine under test.
 	 *

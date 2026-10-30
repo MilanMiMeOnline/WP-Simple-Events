@@ -651,3 +651,15 @@ test( 'formats preview wall times without browser-timezone shifts or all-day hou
 	assert.equal( formatOccurrenceLocal( '2026-10-25T25:00:00', formats, formatter ), '2026-10-25T25:00:00' );
 	assert.equal( calls.length, 2 );
 } );
+
+test( 'unknown occurrence ends stay empty while partial ends remain invalid', () => {
+	const form = { startDate: '2027-01-05', startTime: '19:00', endDate: '', endTime: '', allDay: false, status: 'scheduled' };
+	const context = { window: { from_date: '2027-01-01', through_date: '2027-01-31' } };
+	assert.equal( occurrenceEditFormError( form, context ), '' );
+	assert.equal( occurrenceDateRangeFromControls( form ).end_local, '' );
+	assert.equal( occurrenceEditFormError( { ...form, endDate: '2027-01-05' }, context ), 'invalid_time' );
+	assert.equal( occurrenceEditFormError( { ...form, endTime: '20:00' }, context ), 'invalid_date' );
+	assert.equal( occurrenceEditFormError( { ...form, startDate: '2027-02-01' }, context ), 'outside_window' );
+	assert.equal( occurrenceEditFormError( { ...form, allDay: true }, context ), '' );
+	assert.equal( occurrenceDateRangeFromControls( { ...form, allDay: true } ).end_local, '2027-01-05' );
+} );

@@ -222,7 +222,11 @@ final class EventListTable {
 	 */
 	private function render_date( int $post_id, string $meta_key ): void {
 		$value = get_post_meta( $post_id, $meta_key, true );
-		$date  = $this->date_formatter->format(
+		if ( EventMeta::END_UTC === $meta_key && ! $this->boolean_meta( $post_id, EventMeta::ALL_DAY ) && '' === $this->string_meta( $post_id, EventMeta::END_LOCAL ) ) {
+			$value = 0;
+		}
+
+		$date = $this->date_formatter->format(
 			is_numeric( $value ) ? (int) $value : 0,
 			$this->boolean_meta( $post_id, EventMeta::ALL_DAY ),
 			$this->string_meta( $post_id, EventMeta::TIMEZONE )

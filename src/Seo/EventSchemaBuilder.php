@@ -27,7 +27,7 @@ final class EventSchemaBuilder {
 		$end_date   = trim( $input->end_date );
 		$url        = trim( $input->url );
 
-		if ( '' === $name || '' === $start_date || '' === $end_date || '' === $url ) {
+		if ( '' === $name || '' === $start_date || '' === $url ) {
 			return null;
 		}
 
@@ -36,10 +36,14 @@ final class EventSchemaBuilder {
 			'@type'       => 'Event',
 			'name'        => $name,
 			'startDate'   => $start_date,
-			'endDate'     => $end_date,
 			'eventStatus' => $this->schema_status( $input->status ),
 			'url'         => $url,
 		);
+
+		// Legacy timed ends equal to the start may have been filled automatically.
+		if ( '' !== $end_date && ( $end_date !== $start_date || ! str_contains( $start_date, 'T' ) ) ) {
+			$schema['endDate'] = $end_date;
+		}
 
 		$description = trim( $input->description );
 		$image_url   = trim( $input->image_url );

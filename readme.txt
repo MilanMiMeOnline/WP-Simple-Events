@@ -4,7 +4,7 @@ Tags: events, calendar, event management, schedule, blocks
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -153,6 +153,17 @@ Ordinary bugs can be reported at https://github.com/MilanMiMeOnline/WP-Simple-Ev
 6. Calendar and event-list configuration inside the Elementor editor.
 
 == Changelog ==
+
+= 1.1.1 =
+* Keep an unknown event end blank after saving, including recurring events.
+* Keep events without an end time upcoming until the end of their local event day, without displaying an invented end time.
+* Omit unknown or equal-start/end timed end dates from event structured data.
+* Preserve existing event dates and settings. To remove an old automatically filled end, clear both end date and end time and save.
+
+= 1.1.0 =
+* Update the calendar to FullCalendar 7 with locally bundled styles and preserved month/list views.
+* Preserve existing calendar settings and optional Elementor/Divi integration.
+
 
 = 1.0.0 =
 * Establish the stable 1.x compatibility contract for existing events, pages, blocks, shortcodes and optional builder integrations.

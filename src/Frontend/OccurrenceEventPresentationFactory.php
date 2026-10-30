@@ -40,7 +40,8 @@ final readonly class OccurrenceEventPresentationFactory {
 			$range->end_utc(),
 			$range->all_day(),
 			$range->timezone(),
-			$this->timezone_settings->enabled()
+			$this->timezone_settings->enabled(),
+			$range->has_end()
 		);
 
 		if ( '' === $canonical_url || null === $date ) {

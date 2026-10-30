@@ -417,15 +417,16 @@ export const occurrenceEditFormFromContext = ( editContext ) => {
  * @param {Object} form Occurrence date controls.
  * @return {Object} Serialized date-range override.
  */
-export const occurrenceDateRangeFromControls = ( form ) => ( {
-	start_local: form.allDay
-		? form.startDate
-		: `${ form.startDate }T${ form.startTime }:00`,
-	end_local: form.allDay
-		? form.endDate
-		: `${ form.endDate }T${ form.endTime }:00`,
-	all_day: Boolean( form.allDay ),
-} );
+export const occurrenceDateRangeFromControls = ( form ) => {
+	const timedEnd = form.endDate || form.endTime ? `${ form.endDate }T${ form.endTime }:00` : '';
+	return {
+		start_local: form.allDay
+			? form.startDate
+			: `${ form.startDate }T${ form.startTime }:00`,
+		end_local: form.allDay ? form.endDate || form.startDate : timedEnd,
+		all_day: Boolean( form.allDay ),
+	};
+};
 
 /**
  * Validate only-this date/status controls without guessing corrections.
@@ -435,27 +436,28 @@ export const occurrenceDateRangeFromControls = ( form ) => ( {
  * @return {string} Stable empty-or-error code.
  */
 export const occurrenceEditFormError = ( form, editContext ) => {
-	if ( ! isIsoDate( form?.startDate ) || ! isIsoDate( form?.endDate ) ) {
+	const unknownEnd = form?.endDate === '' && ( form?.allDay || form?.endTime === '' );
+	if ( ! isIsoDate( form?.startDate ) || ( ! unknownEnd && ! isIsoDate( form?.endDate ) ) ) {
 		return 'invalid_date';
 	}
 
 	if (
 		! form.allDay &&
 		( ! /^([01]\d|2[0-3]):[0-5]\d$/.test( form.startTime ) ||
-			! /^([01]\d|2[0-3]):[0-5]\d$/.test( form.endTime ) )
+			( ! unknownEnd && ! /^([01]\d|2[0-3]):[0-5]\d$/.test( form.endTime ) ) )
 	) {
 		return 'invalid_time';
 	}
 
 	const range = occurrenceDateRangeFromControls( form );
 
-	if ( range.end_local < range.start_local ) {
+	if ( range.end_local && range.end_local < range.start_local ) {
 		return 'invalid_range';
 	}
 
 	if (
 		range.start_local.slice( 0, 10 ) < editContext?.window?.from_date ||
-		range.end_local.slice( 0, 10 ) > editContext?.window?.through_date
+		( range.end_local || range.start_local ).slice( 0, 10 ) > editContext?.window?.through_date
 	) {
 		return 'outside_window';
 	}

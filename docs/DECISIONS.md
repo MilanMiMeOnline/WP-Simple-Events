@@ -2311,3 +2311,25 @@ checksummed historical-upgrade matrix. All existing local and CI release gates,
 including strict WordPress Plugin Check, remain mandatory. Publication approval
 does not waive a failure. Publish the same verified package to GitHub and the
 WordPress.org directory only after qualification completes.
+
+## ADR-108: Preserve unknown timed ends without publishing a synthetic duration
+
+**Status:** Accepted, 30 October 2026
+
+A timed event with both end fields blank has an unknown end. Preserve an empty
+canonical local end through editor saves, recurrence schedules, overrides and
+occurrence projections. Keep normalized domain boundaries for existing internal
+date arithmetic, but distinguish an explicitly supplied end from that fallback.
+All-day events still have inclusive calendar dates, including a single-day event.
+
+The owner confirmed that an unknown-end event stays upcoming through the last instant of
+its local start day (normally 23:59:59). Use that boundary only in the disposable UTC query index;
+never publish it as an actual end, calendar duration or structured-data value.
+JSON-LD omits unknown ends and ambiguous legacy equal-start/end timed values.
+ICS keeps DTSTART without DTEND and the existing provider-link restrictions.
+
+Do not rewrite legacy equal-start/end metadata: the original editor intent cannot
+be recovered reliably. Clearing both end fields and saving records the new
+unknown-end semantics. No table schema change or bulk data migration is needed.
+Tests must cover DST, persistence, recurrence round trips, period/window queries,
+editor reloads and the absence of synthetic ends in public output.

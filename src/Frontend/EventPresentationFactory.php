@@ -59,7 +59,8 @@ final readonly class EventPresentationFactory {
 				$this->sanitizer->timestamp( $this->meta( $event->ID, EventMeta::END_UTC ) ),
 				$this->sanitizer->boolean( $this->meta( $event->ID, EventMeta::ALL_DAY ) ),
 				$this->sanitizer->timezone( $this->meta( $event->ID, EventMeta::TIMEZONE ) ),
-				$this->timezone_settings->enabled()
+				$this->timezone_settings->enabled(),
+				'' !== $this->meta( $event->ID, EventMeta::END_LOCAL )
 			),
 			$status,
 			$this->sanitizer->venue( $this->meta( $event->ID, EventMeta::VENUE ) ),

@@ -82,11 +82,11 @@ final readonly class OccurrenceReadQueryBuilder {
 	 */
 	public function build_window( EventWindowCriteria $criteria ): OccurrenceReadQueryPlan {
 		$conditions   = $this->base_conditions();
-		$conditions[] = 'o.end_local >= %s';
+		$conditions[] = "(o.end_local >= %s OR (o.end_local = '' AND o.start_local >= %s))";
 		$conditions[] = 'o.start_local < %s';
 		$parameters   = array_merge(
 			$this->base_parameters(),
-			array( $criteria->window->start_local, $criteria->window->end_exclusive_local )
+			array( $criteria->window->start_local, $criteria->window->start_local, $criteria->window->end_exclusive_local )
 		);
 
 		$this->add_taxonomy_filter( $conditions, $parameters, EventTaxonomies::CATEGORY, array_values( $criteria->category_slugs ) );

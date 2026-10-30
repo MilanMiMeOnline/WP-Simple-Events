@@ -83,7 +83,7 @@ final readonly class EventDateIndexRepairer {
 		}
 
 		$start_utc = $range->start_utc();
-		$end_utc   = $range->end_utc();
+		$end_utc   = $range->end_index_utc();
 		$start_ok  = $this->timestamp_matches( get_post_meta( $post_id, EventMeta::START_UTC, true ), $start_utc );
 		$end_ok    = $this->timestamp_matches( get_post_meta( $post_id, EventMeta::END_UTC, true ), $end_utc );
 

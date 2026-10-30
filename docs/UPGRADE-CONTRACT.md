@@ -23,7 +23,7 @@ The qualification matrix exercises every published package separately:
 
 - 0.2.3, 0.2.4, 0.2.5 and 0.3.0, which store schema version `1.0.0` and have no
   occurrence projection table;
-- 0.4.0, 0.5.0, 0.6.0, 0.7.0, 0.9.0 and 1.0.0, which store schema version `2.1.0` and share the
+- 0.4.0, 0.5.0, 0.6.0, 0.7.0, 0.9.0, 1.0.0 and 1.1.0, which store schema version `2.1.0` and share the
   current occurrence-table shape.
 
 No release may be skipped merely because it belongs to the same storage family.

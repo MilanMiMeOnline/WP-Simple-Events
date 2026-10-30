@@ -161,7 +161,7 @@ final readonly class RecurrenceAggregateCodec {
 	private function encode_date_range( EventDateRange $range ): array {
 		return array(
 			'start_local' => $range->start_local(),
-			'end_local'   => $range->end_local(),
+			'end_local'   => $range->explicit_end_local(),
 			'all_day'     => $range->all_day(),
 		);
 	}

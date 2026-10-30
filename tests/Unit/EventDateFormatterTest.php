@@ -21,6 +21,23 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( EventDateFormatter::class )]
 final class EventDateFormatterTest extends TestCase {
+	/** The internal day boundary never appears in the visible label or machine end. */
+	public function test_unknown_end_formats_only_the_start(): void {
+		$date = ( new EventDateFormatter() )->format(
+			strtotime( '2026-10-25T18:00:00Z' ),
+			strtotime( '2026-10-25T22:59:59Z' ),
+			false,
+			'Europe/Brussels',
+			true,
+			false
+		);
+		self::assertNotNull( $date );
+		self::assertSame( '', $date->end_iso );
+		self::assertSame( '2026-10-25T19:00:00+01:00', $date->start_iso );
+		self::assertStringNotContainsString( '23:59', $date->label );
+		self::assertStringNotContainsString( ' – ', $date->label );
+	}
+
 	/** Reset mutable WordPress options between formatting scenarios. */
 	protected function setUp(): void {
 		WordPressState::reset();

@@ -30,6 +30,28 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( RecurrenceAggregateCodec::class )]
 final class RecurrenceAggregateCodecTest extends TestCase {
+	/** Unknown ends survive stored templates, manual additions and date overrides. */
+	public function test_unknown_ends_round_trip_without_becoming_explicit(): void {
+		$shape = self::valid_shape();
+		$shape['segments'][0]['template']['end_local']  = '';
+		$shape['manuals']                               = array( self::manual_shape() );
+		$shape['manuals'][0]['date_range']['end_local'] = '';
+		$shape['overrides']                             = array(
+			array(
+				'recurrence_id' => '2027-01-11T19:00:00',
+				'fields'        => array(
+					'date_range' => array(
+						'start_local' => '2027-01-11T20:00:00',
+						'end_local'   => '',
+						'all_day'     => false,
+					),
+				),
+			),
+		);
+		$codec = new RecurrenceAggregateCodec();
+		self::assertSame( $shape, $codec->encode( $codec->decode( $shape ) ) );
+	}
+
 	private const SERIES_UID = '019c1d83-1798-4fac-a66d-ae8d67c46319';
 	private const MANUAL_ID  = 'manual:019c1d83-1798-4fac-a66d-ae8d67c46320';
 

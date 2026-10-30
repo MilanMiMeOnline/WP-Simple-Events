@@ -122,10 +122,14 @@ final class EventQueryArgumentsTest extends TestCase {
 			),
 			$arguments['orderby']
 		);
-		self::assertSame( EventMeta::END_LOCAL, $arguments['meta_query'][0]['key'] );
-		self::assertSame( '>=', $arguments['meta_query'][0]['compare'] );
-		self::assertSame( '2027-01-15', $arguments['meta_query'][0]['value'] );
-		self::assertSame( 'CHAR', $arguments['meta_query'][0]['type'] );
+		self::assertSame( 'OR', $arguments['meta_query'][0]['relation'] );
+		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_query'][0][1]['key'] );
+		self::assertSame( '>=', $arguments['meta_query'][0][1]['compare'] );
+		self::assertSame( '2027-01-15', $arguments['meta_query'][0][1]['value'] );
+		self::assertSame( EventMeta::END_LOCAL, $arguments['meta_query'][0][0]['key'] );
+		self::assertSame( '>=', $arguments['meta_query'][0][0]['compare'] );
+		self::assertSame( '2027-01-15', $arguments['meta_query'][0][0]['value'] );
+		self::assertSame( 'CHAR', $arguments['meta_query'][0][0]['type'] );
 		self::assertSame( EventMeta::START_LOCAL, $arguments['meta_query'][1]['key'] );
 		self::assertSame( '<', $arguments['meta_query'][1]['compare'] );
 		self::assertSame( '2027-02-15', $arguments['meta_query'][1]['value'] );

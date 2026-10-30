@@ -22,6 +22,15 @@ use PHPUnit\Framework\TestCase;
  * Verifies strict input handling and UTC-only mutation.
  */
 final class EventDateIndexRepairerTest extends TestCase {
+	/** Reindexing preserves unknown canonical ends and restores only the day boundary. */
+	public function test_repairs_unknown_end_without_filling_canonical_metadata(): void {
+		$this->store_range( 42, '2026-10-25T19:00:00', '', false, 'Europe/Brussels' );
+		$result = ( new EventDateIndexRepairer() )->repair( 42, 'publish' );
+		self::assertSame( EventDateIndexRepairStatus::REPAIRED, $result );
+		self::assertSame( '', WordPressState::post_meta( 42, EventMeta::END_LOCAL ) );
+		self::assertSame( strtotime( '2026-10-25T22:59:59Z' ), WordPressState::post_meta( 42, EventMeta::END_UTC ) );
+	}
+
 	/**
 	 * Reset deterministic metadata.
 	 */

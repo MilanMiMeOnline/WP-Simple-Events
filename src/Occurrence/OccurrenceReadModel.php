@@ -44,7 +44,7 @@ final readonly class OccurrenceReadModel {
 			self::scalar_string( $row['timezone'] ?? null )
 		);
 
-		if ( $date_range->start_utc() !== $start_utc || $date_range->end_utc() !== $end_utc ) {
+		if ( $date_range->start_utc() !== $start_utc || $date_range->end_index_utc() !== $end_utc ) {
 			throw new InvalidArgumentException( 'The occurrence projection timestamps do not match its canonical local range.' );
 		}
 

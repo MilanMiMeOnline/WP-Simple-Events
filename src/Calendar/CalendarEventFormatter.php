@@ -65,9 +65,12 @@ final readonly class CalendarEventFormatter {
 			'timezone'   => $dates['timezone'],
 		);
 
-		if ( null !== $dates['start_instant'] && null !== $dates['end_instant'] ) {
+		if ( null !== $dates['start_instant'] ) {
 			$extended['startInstant'] = $dates['start_instant'];
-			$extended['endInstant']   = $dates['end_instant'];
+		}
+
+		if ( null !== $dates['end_instant'] ) {
+			$extended['endInstant'] = $dates['end_instant'];
 		}
 
 		if ( '' === $title || '' === $permalink ) {
@@ -110,9 +113,9 @@ final readonly class CalendarEventFormatter {
 
 		$dates = $this->dates->format(
 			$range->start_local(),
-			$range->end_local(),
+			$range->explicit_end_local(),
 			$range->start_utc(),
-			$range->end_utc(),
+			$range->end_index_utc(),
 			$range->all_day(),
 			$range->timezone()
 		);
@@ -128,9 +131,12 @@ final readonly class CalendarEventFormatter {
 			'timezone'   => $dates['timezone'],
 		);
 
-		if ( null !== $dates['start_instant'] && null !== $dates['end_instant'] ) {
+		if ( null !== $dates['start_instant'] ) {
 			$extended['startInstant'] = $dates['start_instant'];
-			$extended['endInstant']   = $dates['end_instant'];
+		}
+
+		if ( null !== $dates['end_instant'] ) {
+			$extended['endInstant'] = $dates['end_instant'];
 		}
 
 		if ( '' !== $item->presentation->venue ) {

@@ -49,6 +49,34 @@ final class EventDateRangeTest extends TestCase {
 
 		self::assertSame( $range->start_local(), $range->end_local() );
 		self::assertSame( $range->start_utc(), $range->end_utc() );
+		self::assertFalse( $range->has_end() );
+		self::assertSame( '', $range->explicit_end_local() );
+		self::assertSame( '2026-04-10T23:59:59+00:00', gmdate( 'c', $range->end_index_utc() ) );
+	}
+
+	/** Unknown ends use the local day boundary, including short and long DST days. */
+	public function test_unknown_end_index_respects_dst_without_inventing_a_duration(): void {
+		foreach ( array(
+			'2026-03-29' => 82_799,
+			'2026-10-25' => 89_999,
+		) as $date => $seconds ) {
+			$range = EventDateRange::from_local( $date . 'T00:00', '', false, 'Europe/Brussels' );
+			self::assertSame( $seconds, $range->end_index_utc() - $range->start_utc() );
+			self::assertSame( $range->start_utc(), $range->end_utc() );
+			self::assertSame( '', $range->explicit_end_local() );
+		}
+		$explicit = EventDateRange::from_local( '2026-04-10T18:45', '2026-04-10T18:45', false, 'UTC' );
+		self::assertTrue( $explicit->has_end() );
+		self::assertSame( $explicit->end_utc(), $explicit->end_index_utc() );
+		$all_day = EventDateRange::from_local( '2026-04-10', '', true, 'UTC' );
+		self::assertTrue( $all_day->has_end() );
+		self::assertSame( '2026-04-10', $all_day->explicit_end_local() );
+	}
+
+	/** Some zones skip the final clock hour; the index must still stop on the same day. */
+	public function test_unknown_end_index_does_not_spill_into_tomorrow_when_the_final_hour_is_skipped(): void {
+		$range = EventDateRange::from_local( '2026-03-28T19:00', '', false, 'America/Nuuk' );
+		self::assertSame( strtotime( '2026-03-29T00:59:59Z' ), $range->end_index_utc() );
 	}
 
 	/**

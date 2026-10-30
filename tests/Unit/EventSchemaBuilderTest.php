@@ -21,6 +21,34 @@ use PHPUnit\Framework\TestCase;
  * Verifies the public schema contract without WordPress global state.
  */
 final class EventSchemaBuilderTest extends TestCase {
+	/** Missing and legacy zero-duration timed ends do not become SEO assertions. */
+	public function test_omits_unknown_timed_end_but_preserves_single_day_end(): void {
+		foreach ( array( '', '2026-08-01T19:00:00+02:00' ) as $end ) {
+			$schema = ( new EventSchemaBuilder() )->build(
+				new EventSchemaInput(
+					name: 'Concert',
+					start_date: '2026-08-01T19:00:00+02:00',
+					end_date: $end,
+					status: EventStatus::SCHEDULED,
+					url: 'https://example.com/event/'
+				)
+			);
+			self::assertNotNull( $schema );
+			self::assertArrayNotHasKey( 'endDate', $schema );
+			self::assertSame( '2026-08-01T19:00:00+02:00', $schema['startDate'] );
+		}
+		$schema = ( new EventSchemaBuilder() )->build(
+			new EventSchemaInput(
+				name: 'Open day',
+				start_date: '2026-08-01',
+				end_date: '2026-08-01',
+				status: EventStatus::SCHEDULED,
+				url: 'https://example.com/event/'
+			)
+		);
+		self::assertSame( '2026-08-01', $schema['endDate'] ?? null );
+	}
+
 	/**
 	 * Timed events retain their explicit UTC offset and optional public data.
 	 */

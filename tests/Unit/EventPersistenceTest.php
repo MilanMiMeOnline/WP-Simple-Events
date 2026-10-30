@@ -24,6 +24,15 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass( EventPersistence::class )]
 final class EventPersistenceTest extends TestCase {
+	/** Unknown ends remain blank in canonical metadata while queries cover the day. */
+	public function test_persists_unknown_end_without_filling_the_editor(): void {
+		$range = EventDateRange::from_local( '2026-10-25T19:00', '', false, 'Europe/Brussels' );
+		$data  = new ValidatedEventData( $range, false, 'Europe/Brussels', '', '', '', '', '', EventStatus::SCHEDULED );
+		( new EventPersistence() )->persist( 42, $data );
+		self::assertSame( '', WordPressState::post_meta( 42, EventMeta::END_LOCAL ) );
+		self::assertSame( strtotime( '2026-10-25T22:59:59Z' ), WordPressState::post_meta( 42, EventMeta::END_UTC ) );
+	}
+
 	/**
 	 * Reset metadata state before each test.
 	 */

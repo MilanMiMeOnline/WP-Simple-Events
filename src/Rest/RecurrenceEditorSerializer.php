@@ -198,7 +198,7 @@ final readonly class RecurrenceEditorSerializer {
 
 		return array(
 			'start_local' => $occurrence->date_range->start_local(),
-			'end_local'   => $occurrence->date_range->end_local(),
+			'end_local'   => $occurrence->date_range->explicit_end_local(),
 			'all_day'     => $occurrence->date_range->all_day(),
 			'timezone'    => $occurrence->date_range->timezone(),
 			'status'      => $occurrence->status->value,
@@ -236,7 +236,7 @@ final readonly class RecurrenceEditorSerializer {
 			$serialized[ $field ] = match ( true ) {
 				$value instanceof EventDateRange => array(
 					'start_local' => $value->start_local(),
-					'end_local'   => $value->end_local(),
+					'end_local'   => $value->explicit_end_local(),
 					'all_day'     => $value->all_day(),
 				),
 				$value instanceof EventStatus => $value->value,

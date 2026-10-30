@@ -147,9 +147,9 @@ final readonly class RecurrenceDisableCoordinator {
 
 		return array(
 			EventMeta::START_LOCAL => $range->start_local(),
-			EventMeta::END_LOCAL   => $range->end_local(),
+			EventMeta::END_LOCAL   => $range->explicit_end_local(),
 			EventMeta::START_UTC   => $range->start_utc(),
-			EventMeta::END_UTC     => $range->end_utc(),
+			EventMeta::END_UTC     => $range->end_index_utc(),
 			EventMeta::ALL_DAY     => $range->all_day(),
 			EventMeta::TIMEZONE    => $range->timezone(),
 			EventMeta::STATUS      => $survivor->status->value,

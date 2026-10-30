@@ -26,6 +26,17 @@ use WP_Post;
 #[CoversClass( CalendarEventFormatter::class )]
 /** Proves the calendar feed uses effective occurrence identity and fields. */
 final class CalendarEventFormatterOccurrenceTest extends TestCase {
+	/** Projected unknown ends round-trip without losing the machine start instant. */
+	public function test_unknown_occurrence_end_does_not_publish_the_day_boundary(): void {
+		$formatted = ( new CalendarEventFormatter() )->format_occurrence(
+			$this->item( EventDateRange::from_local( '2027-03-28T19:00', '', false, 'Europe/Brussels' ) )
+		);
+		self::assertNotNull( $formatted );
+		self::assertSame( '', $formatted['end'] );
+		self::assertArrayNotHasKey( 'endInstant', $formatted['extendedProps'] );
+		self::assertSame( '2027-03-28T19:00:00+02:00', $formatted['extendedProps']['startInstant'] );
+	}
+
 	private const KEY = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
 	/** Reset deterministic taxonomy state. */
@@ -87,9 +98,9 @@ final class CalendarEventFormatterOccurrenceTest extends TestCase {
 				'segment_id'    => 0,
 				'source'        => 'rule',
 				'start_local'   => $range->start_local(),
-				'end_local'     => $range->end_local(),
+				'end_local'     => $range->explicit_end_local(),
 				'start_utc'     => $range->start_utc(),
-				'end_utc'       => $range->end_utc(),
+				'end_utc'       => $range->end_index_utc(),
 				'timezone'      => $range->timezone(),
 				'all_day'       => $range->all_day() ? 1 : 0,
 				'event_status'  => 'postponed',

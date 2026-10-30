@@ -2,7 +2,14 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
-## [Unreleased]
+## [1.1.1] - 2026-10-30
+
+### Fixed
+
+- Preserve blank timed ends when saving events and recurrence schedules. Keep
+  unknown-end events upcoming through their local event day without publishing
+  that internal boundary in the calendar, exports or structured data. Omit
+  ambiguous legacy equal-start/end timed values from event JSON-LD.
 
 ## [1.1.0] - 2026-10-27
 

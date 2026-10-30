@@ -306,7 +306,7 @@ final class DeterministicRecurrenceEngine implements RecurrenceEngine {
 		try {
 			return EventDateRange::from_local(
 				$start_date . $start_suffix,
-				$end_date . $end_suffix,
+				$template->has_end() ? $end_date . $end_suffix : null,
 				$template->all_day(),
 				$template->timezone()
 			);

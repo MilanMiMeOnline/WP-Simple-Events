@@ -12,6 +12,9 @@ namespace MiMe\WPSimpleEvents\Tests\Fixtures;
 use DateTimeImmutable;
 use DateTimeZone;
 use MiMe\WPSimpleEvents\Application\RecurrenceSaveCoordinator;
+use MiMe\WPSimpleEvents\Application\EventPersistence;
+use MiMe\WPSimpleEvents\Application\ValidatedEventData;
+use MiMe\WPSimpleEvents\Occurrence\OneOffOccurrenceProjector;
 use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\CalendarWindow;
@@ -504,6 +507,7 @@ final class SmokeOccurrenceProbe {
 						&& $exact_candidate->event_id === $exact_occurrence->event_id
 						&& hash_equals( $exact_candidate->public_key, $exact_occurrence->public_key ),
 				),
+				'unknown_end'     => self::unknown_end_boundaries(),
 				'page_one'        => array(
 					'legacy_ids'             => self::post_ids( $legacy_one->posts ),
 					'occurrence_ids'         => self::occurrence_ids( $occurrence_one->occurrences ),
@@ -534,6 +538,58 @@ final class SmokeOccurrenceProbe {
 				),
 			)
 		);
+	}
+
+	/** Exercise real metadata and projection queries at both sides of local midnight. */
+	private static function unknown_end_boundaries(): bool {
+		$event_id = wp_insert_post(
+			array(
+				'post_type'   => EventPostType::POST_TYPE,
+				'post_status' => 'publish',
+				'post_title'  => 'Unknown end boundary probe',
+			)
+		);
+		if ( ! is_int( $event_id ) || $event_id <= 0 ) {
+			return false;
+		}
+		try {
+			$range = EventDateRange::from_local( '2026-10-25T19:00', '', false, 'Europe/Brussels' );
+			( new EventPersistence( new OneOffOccurrenceProjector() ) )->persist(
+				$event_id,
+				new ValidatedEventData( $range, false, 'Europe/Brussels', '', '', '', '', '', EventStatus::SCHEDULED )
+			);
+			$legacy    = new EventRepository();
+			$projected = new OccurrenceReadRepository();
+			$boundary  = ( new DateTimeImmutable( '2026-10-25T22:59:59Z' ) )->getTimestamp();
+			foreach ( array(
+				$boundary     => true,
+				$boundary + 1 => false,
+			) as $now => $upcoming ) {
+				foreach ( array( EventPeriod::UPCOMING, EventPeriod::PAST ) as $period ) {
+					$criteria = new EventQueryCriteria( $period, EventQueryCriteria::MAX_LIMIT, 1, array(), array(), $now );
+					$expected = EventPeriod::UPCOMING === $period ? $upcoming : ! $upcoming;
+					if ( in_array( $event_id, self::post_ids( $legacy->query( $criteria )->posts ), true ) !== $expected
+						|| in_array( $event_id, self::occurrence_ids( $projected->query( $criteria )->occurrences ), true ) !== $expected ) {
+						return false;
+					}
+				}
+			}
+			foreach ( array(
+				'2026-10-25' => true,
+				'2026-10-26' => false,
+			) as $date => $expected ) {
+				$end      = ( new DateTimeImmutable( $date ) )->modify( '+1 day' )->format( 'Y-m-d' );
+				$criteria = new EventWindowCriteria( new CalendarWindow( $date, $end ), 100, 1, array(), array() );
+				if ( in_array( $event_id, self::post_ids( $legacy->query_window( $criteria )->posts ), true ) !== $expected
+					|| in_array( $event_id, self::occurrence_ids( $projected->query_window( $criteria )->occurrences ), true ) !== $expected ) {
+					return false;
+				}
+			}
+			return '' === get_post_meta( $event_id, EventMeta::END_LOCAL, true )
+				&& (int) get_post_meta( $event_id, EventMeta::END_UTC, true ) === $boundary;
+		} finally {
+			wp_delete_post( $event_id, true );
+		}
 	}
 
 	/**

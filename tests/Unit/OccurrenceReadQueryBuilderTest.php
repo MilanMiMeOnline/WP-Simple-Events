@@ -103,11 +103,11 @@ final class OccurrenceReadQueryBuilderTest extends TestCase {
 			)
 		);
 
-		self::assertStringContainsString( 'o.end_local >= %s', $plan->rows->sql );
+		self::assertStringContainsString( "(o.end_local >= %s OR (o.end_local = '' AND o.start_local >= %s))", $plan->rows->sql );
 		self::assertStringContainsString( 'o.start_local < %s', $plan->rows->sql );
 		self::assertStringNotContainsString( 'o.event_status <> %s', $plan->rows->sql );
 		self::assertStringContainsString( 'ORDER BY o.start_local ASC', $plan->rows->sql );
-		self::assertSame( array( '2027-01-15', '2027-02-15', 100, 100 ), array_slice( $plan->rows->parameters, -4 ) );
+		self::assertSame( array( '2027-01-15', '2027-01-15', '2027-02-15', 100, 100 ), array_slice( $plan->rows->parameters, -5 ) );
 	}
 
 	/** Exact public identity plans remain bounded and recheck parent visibility. */
