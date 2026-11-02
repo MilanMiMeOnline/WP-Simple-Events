@@ -2333,3 +2333,34 @@ be recovered reliably. Clearing both end fields and saving records the new
 unknown-end semantics. No table schema change or bulk data migration is needed.
 Tests must cover DST, persistence, recurrence round trips, period/window queries,
 editor reloads and the absence of synthetic ends in public output.
+
+## ADR-109: Bound development file matching and preserve the supported lint stack
+
+**Status:** Accepted — 2 November 2026
+
+Patch development-only qs from 6.16.0 to 6.16.1 for GHSA-6pq8-jhm2-2vcw.
+For GHSA-3g3m-2fjr-6pw4, scope an exact glob 14.0.3 override to rimraf,
+whose glob/globSync calls use the retained named-export API. For
+GHSA-g3hv-75wg-m249, override only minimatch versions >=9 with exact 11.0.4;
+these consumers already use the named-export API. Verify cancellation actually
+stops directory reads, optimized pattern expansion respects its explicit bound,
+normal matching remains correct and rimraf removes only selected fixture paths.
+These overrides are temporary until the parent ranges accept repaired versions.
+
+Do not substitute minimatch 11 globally: legacy minimatch 3 consumers require its
+callable CommonJS export. The broad advisory range also flags 3.1.5, but its source
+does not contain the reported optimizationLevel/firstPhasePreProcess algorithm.
+Keep the audit findings visible, record this reachability assessment, and retain
+normal/pathological matching regressions for that older API. This is not an audit
+ignore or a claim that every minimatch version has been upgraded.
+
+An isolated ESLint 10.14.0 / WordPress lint preset 28.0.0 resolution revealed
+unsupported peer combinations: current import/react/jsx-a11y plugins still
+exclude ESLint 10, and the selected Vitest lint plugin requires TypeScript >=6
+while the existing TypeScript line is 5.9.3. Do not accept force/legacy-peer-deps,
+remove rules or weaken the preset to complete that migration. ESLint 9's EOL
+remains documented maintenance debt; continue the existing Dependabot PR #16
+when the full preset has a supported peer graph. No plugin runtime, production
+asset dependency, public version, host PHP or customer website changes belong to
+this tooling maintenance. Keep ADR-099's wp-env patch and ADR-100's exact guarded
+braces alias, including their regression coverage.

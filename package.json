@@ -68,12 +68,16 @@
       "@wp-playground/cli": "3.1.44",
       "js-yaml": "4.3.2"
     },
-    "qs": "6.16.0",
+    "qs": "6.16.1",
     "micromatch": {
       "braces": "npm:@dieub/braces-depth-guard@3.0.3-pn.3"
     },
     "@stylistic/stylelint-plugin": {
       "postcss-selector-parser": "7.1.6"
-    }
+    },
+    "rimraf": {
+      "glob": "14.0.3"
+    },
+    "minimatch@>=9": "11.0.4"
   }
 }
