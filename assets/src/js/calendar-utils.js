@@ -6,12 +6,8 @@
  */
 export const calendarEventInput = ( event ) => ( {
 	...event,
-	color: /^#[0-9a-f]{6}$/i.test( event.backgroundColor )
-		? event.backgroundColor
-		: undefined,
-	contrastColor: /^#[0-9a-f]{6}$/i.test( event.textColor )
-		? event.textColor
-		: undefined,
+	...( /^#[0-9a-f]{6}$/i.test( event.backgroundColor ) ? { color: event.backgroundColor } : {} ),
+	...( /^#[0-9a-f]{6}$/i.test( event.textColor ) ? { contrastColor: event.textColor } : {} ),
 } );
 
 /**

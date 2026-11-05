@@ -1,7 +1,7 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 30 October 2026 (1.1.1 patch publication)
+**Last reviewed:** 5 November 2026 (calendar fallback and event-address review)
 **Current public release:** 1.1.1
 **Active phase:** 1.1 released; maintain the stable surface and scope the optional AI/MCP pilot separately
 
@@ -25,6 +25,104 @@ Work proceeds in this order:
 Interactive maps, geocoding, ticketing and attendee management remain outside the
 roadmap. The plugin continues to favor a small, native WordPress core over a broad
 event-management suite.
+
+## Next maintenance candidate — 1.1.2 (owner approved, release qualification)
+
+Review of owner feedback on 5 November 2026 separates two bounded corrections
+from a broader address-editor enhancement. The owner approved implementing
+CAL-001 and SEO-001 while retaining one free-text address input (ADR-110).
+The owner tested `1.1.2-beta.1` and explicitly approved publication on 5 November
+2026 after a final exploratory review. 1.1.1 remains public until the final
+1.1.2 package passes all release gates and is published.
+
+**Implementation — 5 November 2026:** both corrections are included in local
+`1.1.2-beta.1`, with targeted regressions and rebuilt browser assets. The single
+address editor and existing data remain unchanged. Qualification evidence and
+remaining publication gates are recorded in
+[QA-REPORT-1.1.2-beta.1.md](QA-REPORT-1.1.2-beta.1.md). Final qualification and
+publication evidence are tracked in [QA-REPORT-1.1.2.md](QA-REPORT-1.1.2.md).
+
+### CAL-001 — Restore calendar colors when no explicit color exists (P1)
+
+Read-only inspection of [the reported calendar](https://taranartos.be/evenementen/)
+confirmed that the November 2026 Geek Village and Secrets of Emberlight block
+events receive `--fc-event-color: undefined` and
+`--fc-event-contrast-color: undefined`, with a transparent computed background.
+The reported reproduction is a timed event on 14 November at 11:00 through
+15 November at 18:00, without event/category color. December's De Duystere
+Markt is an additional owner-reported case, not separately browser-verified here.
+
+`assets/src/js/calendar-utils.js` creates own `color` and `contrastColor`
+properties even when their values are undefined. The existing regression only
+checks the values, so it cannot distinguish omission from explicit undefined.
+This violates the existing component-owned fallback contract in specification
+section 11; no new date, duration or all-day semantics are required.
+
+For the patch, emit these semantic properties only for valid normalized colors;
+otherwise omit them completely. Change source and rebuild the distributed asset,
+without editing the minified file by hand or compensating with forced CSS colors.
+Retain event/category precedence and configurable component defaults.
+
+Acceptance and regression coverage:
+
+- Assert actual property absence for missing, null, empty and invalid colors,
+  including the literal string `undefined`; preserve dates and metadata.
+- Check default, category and explicit event colors in month and list views,
+  covering one-day, timed multi-day and all-day cases, plus week boundaries.
+- Assert computed block background and text contrast, timed-event dots and list
+  accents after actual FullCalendar rendering; a DOM container or passing value
+  comparison alone does not prove visible fallback colors.
+- Preserve the two-day span in the reported case and verify builder-configured
+  component defaults, rather than imposing one global fallback color.
+
+### SEO-001 — Emit an address object without migrating existing events (P2)
+
+`src/Seo/EventSchemaBuilder.php` currently emits `Place.address` as plain text.
+[Schema.org permits Text or PostalAddress](https://schema.org/Place), so this is
+not universally invalid Schema.org. However,
+[Google's Event documentation](https://developers.google.com/search/docs/appearance/structured-data/event#structured-data-type-definitions)
+expects PostalAddress and explicitly illustrates a full one-line address in its
+`name` property. Correct that Google-specific compatibility gap in the patch.
+
+Use the existing normalized, visible address as
+`{"@type":"PostalAddress","name":"<existing full address>"}`. Preserve the
+venue separately as `Place.name`. Omit an empty address object; do not guess a
+street, postcode, locality or country, and do not put the whole address into
+`streetAddress` while pretending it has been parsed. No metadata rewrite,
+editor change, geocoding or default country is needed for this bounded correction.
+
+Test legacy single-/multiline addresses, empty/venue-only locations, special
+characters and safe JSON encoding, occurrence-specific addresses and deliberate
+empty overrides, and the protected/private-event exclusion. Confirm that the
+same resolved event or occurrence supplies the visible address and JSON-LD.
+Validate representative output against Google's documented shape and Rich Results
+Test; address correction alone does not guarantee rich-result eligibility.
+
+### SEO-002 — Optional structured address editing (deferred, no release target)
+
+The owner chose to retain the complete free-text address for now. Separate
+street/house number, postcode, municipality and country fields are an optional
+future idea only if a concrete need emerges, not a prerequisite for SEO-001. Today the
+editor, persisted metadata, REST presentation and occurrence overrides carry one
+free-text address. Adding separate fields affects these contracts as well as
+builders, calendar exports, validation and backward-compatible save behavior.
+
+Before implementation, record an ADR and update the specification for optional
+`streetAddress`, `postalCode`, `addressLocality` and `addressCountry` inputs.
+Use one shared address resolver/formatter for visible output, exports and schema;
+omit blank parts and retain the original free-text address as a fallback without
+automatic parsing or destructive migration. Normalize an explicitly selected
+country to an ISO two-letter code; never infer it from the site's language.
+
+Define precedence and clearing for structured versus legacy addresses as a
+cohesive location value, including occurrence overrides. A legacy occurrence
+address must not acquire unrelated structured fields inherited from its series.
+Preserve existing REST/client saves and test save/reload, old-event upgrades,
+partial addresses, country changes, explicit clearing and builder/export parity.
+
+The proposed patch requires the normal Composer/npm gates, focused browser and
+WordPress integration regressions, release-package verification and supported
+CI/Plugin Check matrix. Full structured editing should not delay CAL-001.
 
 ## Phase 1 — 0.3.0 builder and presentation polish (released 19 August 2026)
 

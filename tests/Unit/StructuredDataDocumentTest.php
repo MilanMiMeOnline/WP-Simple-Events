@@ -27,6 +27,13 @@ final class StructuredDataDocumentTest extends TestCase {
 				'@context'    => 'https://schema.org',
 				'@type'       => 'Event',
 				'name'        => '</script><script>alert("stored-xss")</script>',
+				'location'    => array(
+					'@type'   => 'Place',
+					'address' => array(
+						'@type' => 'PostalAddress',
+						'name'  => "Rue de l'Église 12B\n</script><script>alert(1)</script>",
+					),
+				),
 				'startDate'   => '2026-08-01',
 				'endDate'     => '2026-08-01',
 				'eventStatus' => 'https://schema.org/EventScheduled',
@@ -38,6 +45,8 @@ final class StructuredDataDocumentTest extends TestCase {
 		self::assertStringEndsWith( '</script>', $document );
 		self::assertStringNotContainsString( '</script><script>', $document );
 		self::assertStringContainsString( '\\u003C/script\\u003E', $document );
+		$decoded = json_decode( substr( $document, strlen( '<script type="application/ld+json">' ), -strlen( '</script>' ) ), true, flags: JSON_THROW_ON_ERROR );
+		self::assertSame( "Rue de l'Église 12B\n</script><script>alert(1)</script>", $decoded['location']['address']['name'] );
 	}
 
 	/**

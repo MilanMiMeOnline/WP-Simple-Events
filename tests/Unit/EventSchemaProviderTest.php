@@ -50,6 +50,14 @@ final class EventSchemaProviderTest extends TestCase {
 		self::assertSame( '2026-07-16T21:30:00+02:00', $schema['endDate'] ?? null );
 		self::assertSame( 'A visible description.', $schema['description'] ?? null );
 		self::assertSame( array( 'https://example.com/concert.jpg' ), $schema['image'] ?? null );
+		self::assertSame(
+			array(
+				'@type' => 'PostalAddress',
+				'name'  => 'Main Street 1',
+			),
+			$schema['location']['address'] ?? null
+		);
+		self::assertSame( 'Main Street 1', WordPressState::post_meta( $event->ID, EventMeta::ADDRESS ) );
 	}
 
 	/**
@@ -61,11 +69,17 @@ final class EventSchemaProviderTest extends TestCase {
 
 		$protected = $this->event( id: 32, password: 'secret' );
 		WordPressState::add_post( $protected, 'https://example.com/?p=32' );
+		$private = $this->event( id: 33, post_status: 'private' );
+		WordPressState::add_post( $private, 'https://example.com/?p=33' );
+		foreach ( array( $draft, $protected, $private ) as $event ) {
+			$this->add_valid_meta( $event->ID );
+		}
 
 		$provider = new EventSchemaProvider();
 
 		self::assertNull( $provider->provide( $draft->ID ) );
 		self::assertNull( $provider->provide( $protected->ID ) );
+		self::assertNull( $provider->provide( $private->ID ) );
 	}
 
 	/**

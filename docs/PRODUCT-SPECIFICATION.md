@@ -352,7 +352,8 @@ current component fallback until an editor deliberately assigns color data.
 The public feed retains its `backgroundColor`, `borderColor` and `textColor`
 fields only when a valid event/category color was explicitly resolved. The
 FullCalendar 7 browser adapter maps these stable fields to its semantic color
-inputs without changing the public response. Component
+inputs without changing the public response. Missing or invalid colors omit the
+semantic properties entirely; explicit undefined values must not override defaults. Component
 fallback colors remain component-owned and are not baked into feed records.
 Every occurrence inherits its canonical series color, including sparse content
 overrides and exact occurrence routes. Month view uses the resolved solid
@@ -461,6 +462,12 @@ remain theme-inheriting and expose no arbitrary style attribute.
 Eligible individual public events may output one Event JSON-LD document. It uses
 the canonical URL, localized dates with timezone offsets, location information,
 image and event status when available.
+
+A nonempty effective address is represented as `PostalAddress` with the complete
+existing free-text address in `name`; the venue remains `Place.name`. Visible
+location output and JSON-LD use the same normalized event/occurrence address.
+Empty address objects are omitted. No structured parts or country are inferred,
+and existing address metadata is not migrated or rewritten (ADR-110).
 
 JSON-LD is disabled for unpublished, protected or invalid events. Administrators
 can disable it when an SEO plugin already supplies equivalent Event data. Output

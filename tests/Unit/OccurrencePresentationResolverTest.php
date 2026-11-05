@@ -13,6 +13,8 @@ use MiMe\WPSimpleEvents\Content\EventMeta;
 use MiMe\WPSimpleEvents\Content\EventPostType;
 use MiMe\WPSimpleEvents\Domain\EventDateRange;
 use MiMe\WPSimpleEvents\Frontend\EventContextResolver;
+use MiMe\WPSimpleEvents\Frontend\EventFieldRenderer;
+use MiMe\WPSimpleEvents\Frontend\OccurrenceEventPresentationFactory;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationContext;
 use MiMe\WPSimpleEvents\Frontend\OccurrencePresentationResolver;
 use MiMe\WPSimpleEvents\Occurrence\OccurrenceIdentity;
@@ -23,6 +25,7 @@ use MiMe\WPSimpleEvents\Recurrence\OccurrenceOverride;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceAggregate;
 use MiMe\WPSimpleEvents\Recurrence\RecurrenceRule;
 use MiMe\WPSimpleEvents\Recurrence\ScheduleSegment;
+use MiMe\WPSimpleEvents\Seo\EventSchemaProvider;
 use MiMe\WPSimpleEvents\Tests\Support\FakeOccurrenceReadGateway;
 use MiMe\WPSimpleEvents\Tests\Support\FakeRecurrenceAggregateStore;
 use MiMe\WPSimpleEvents\Tests\Support\WordPressState;
@@ -92,6 +95,18 @@ final class OccurrencePresentationResolverTest extends TestCase {
 		self::assertSame( 0, $context->featured_image_id );
 		self::assertSame( 'Occurrence venue', $context->venue );
 		self::assertSame( '', $context->address );
+		$presentation = ( new OccurrenceEventPresentationFactory() )->create( $context, 'https://example.com/events/series/occurrence/' . $identity->public_key() . '/' );
+		self::assertNotNull( $presentation );
+		self::assertSame( '', ( new EventFieldRenderer() )->address( $presentation ) );
+		$schema = ( new EventSchemaProvider() )->provide_presentation( $presentation );
+		self::assertNotNull( $schema );
+		self::assertSame(
+			array(
+				'@type' => 'Place',
+				'name'  => 'Occurrence venue',
+			),
+			$schema['location']
+		);
 		self::assertSame( '', $context->location_url );
 		self::assertSame( 'https://example.com/occurrence-action', $context->event_url );
 		self::assertSame( 'Occurrence action', $context->event_url_label );

@@ -2364,3 +2364,24 @@ when the full preset has a supported peer graph. No plugin runtime, production
 asset dependency, public version, host PHP or customer website changes belong to
 this tooling maintenance. Keep ADR-099's wp-env patch and ADR-100's exact guarded
 braces alias, including their regression coverage.
+
+## ADR-110: Preserve calendar defaults and existing free-text event addresses
+
+**Status:** Accepted — 5 November 2026
+
+For the 1.1.2 patch, omit FullCalendar semantic color properties entirely when
+the stable feed has no valid color. Explicit undefined is not absence: version 7
+normalizes it into a CSS value that overrides component defaults. Preserve
+resolved event/category colors, dates and the public feed contract.
+
+Keep the single free-text address input and all existing metadata. Emit a
+nonempty effective address as a PostalAddress with the complete address in
+`name`, as illustrated by Google's Event documentation. Retain Place.name for
+the venue, omit empty address objects, and never infer structured parts or a
+country. Visible output and JSON-LD use the same resolved event/occurrence.
+There is no migration, automatic parsing or new saved field. Separate address
+inputs are deferred until a concrete need justifies their compatibility cost.
+
+Reference: https://developers.google.com/search/docs/appearance/structured-data/event#structured-data-type-definitions
+Prepare a local tested candidate for owner testing under ADR-104; this decision
+does not authorize publication.

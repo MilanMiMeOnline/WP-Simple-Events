@@ -2,6 +2,17 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [1.1.2] - 2026-11-05
+
+### Fixed
+
+- Restore component calendar colors when events have no explicit event or
+  category color. Omit absent FullCalendar color inputs instead of overriding
+  the defaults with undefined values.
+- Emit existing full event and occurrence addresses as PostalAddress objects
+  in Event JSON-LD. Preserve visible addresses, saved metadata and the existing
+  editor; omit empty addresses without guessing structured address components.
+
 ## [1.1.1] - 2026-10-30
 
 ### Fixed

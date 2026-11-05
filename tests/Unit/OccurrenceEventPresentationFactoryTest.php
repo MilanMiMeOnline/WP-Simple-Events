@@ -239,6 +239,8 @@ final class OccurrenceEventPresentationFactoryTest extends TestCase {
 		self::assertStringContainsString( 'Occurrence title', $output );
 		self::assertStringContainsString( 'Occurrence note', $output );
 		self::assertStringContainsString( '2027-01-05T19:00:00+01:00', $output );
+		self::assertStringContainsString( '"address":{"@type":"PostalAddress","name":"Occurrence address"}', $output );
+		self::assertStringNotContainsString( 'Series address', $output );
 		self::assertStringContainsString( 'Occurrence venue', $output );
 		self::assertStringContainsString( 'https://example.com/occurrence.jpg', $output );
 		self::assertStringContainsString(

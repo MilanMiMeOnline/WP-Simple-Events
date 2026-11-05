@@ -1667,7 +1667,7 @@ try {
 		'The timed Event JSON-LD omitted its local UTC offset.',
 	);
 	requireCondition(
-		singleBody.includes( '"location":{"@type":"Place","name":"Town Hall","address":"Main Square 1"}' ),
+		singleBody.includes( '"location":{"@type":"Place","name":"Town Hall","address":{"@type":"PostalAddress","name":"Main Square 1"}}' ),
 		'The Event JSON-LD omitted its visible location.',
 	);
 	requireCondition(
