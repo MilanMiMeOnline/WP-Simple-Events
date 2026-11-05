@@ -38,6 +38,8 @@ Use the verified WP-CLI installation guidance from the official WP-CLI project. 
    strict mode against `.release/mime-simple-events-calendar`; the matrix uses
    the immutable package and core checksums in `tools/upgrade-releases.json`.
    The release job uploads the verified zip and checksum as one CI artifact.
+   Both `Browser regressions` shards must also pass; their combined test set is
+   the complete browser matrix (ADR-111), with unchanged assertions and limits.
 
 ## Outputs
 

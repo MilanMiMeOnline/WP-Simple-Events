@@ -66,7 +66,10 @@ final class EventSchemaBuilder {
 			}
 
 			if ( '' !== $address ) {
-				$location['address'] = $address;
+				$location['address'] = array(
+					'@type' => 'PostalAddress',
+					'name'  => $address,
+				);
 			}
 
 			$schema['location'] = $location;

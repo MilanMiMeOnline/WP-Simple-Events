@@ -38,6 +38,7 @@ const expectedVersions = [
 	'0.9.0',
 	'1.0.0',
 	'1.1.0',
+	'1.1.1',
 ];
 
 test( 'pins the historical upgrade inputs to immutable checksums', () => {

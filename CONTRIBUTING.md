@@ -69,6 +69,12 @@ npm run test:release
 
 `composer test:integration` delegates to the real WordPress Playground smoke journey described above; it is deliberately not an empty or WordPress-stubbed PHPUnit suite. `npm run test:e2e:install` installs the pinned Chromium build once, and `npm run test:e2e` first builds the exact staging package and then runs isolated browser regressions against that package in another disposable Playground site. `WPSE_E2E_CORE` and `WPSE_E2E_PLUGIN_PATH` are optional overrides for compatibility work. `npm run test:performance` builds the release package and enforces the bounded dataset and budgets in `docs/PERFORMANCE-BUDGETS.md`; its fixture site is always destroyed. `composer qa` and `npm run qa` are the normal pre-handoff gates. `npm run test:release` additionally proves archive contents, shipped PHP syntax, the production autoloader, checksum integrity and byte-for-byte reproducibility. The official Plugin Check result is produced in CI against the same staging directory.
 
+CI runs the complete browser matrix in two native Playwright shards on separate
+machines (`npm run test:e2e -- --shard=1/2` and `--shard=2/2`; ADR-111).
+Both must pass. Each retains the same timeouts, one worker and zero retries.
+The ordinary local command still runs every test. Do not run shards concurrently
+on one computer: each disposable WordPress site uses port 8888.
+
 The Gutenberg browser journey authenticates the disposable administrator, inspects all sixteen atomic and primary-component registrations, serializes dynamic blocks and requests their authenticated ServerSideRender previews. Public companion pages verify the complete explicit-source palette, the three primary components, the Add to Calendar action, a JavaScript-free fallback and the absence of editor JavaScript from visitor requests.
 
 For an Elementor matrix run, activate MiMe Simple Events and Calendar plus the target official Elementor package in an isolated WordPress site. Run the inspector as that site's administrator (replace `1` with its user ID):

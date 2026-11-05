@@ -18,12 +18,13 @@ test( 'adapts stable feed colors without mutating dates, identity or metadata', 
 } );
 
 test( 'keeps component defaults for absent or invalid feed colors', () => {
-	for ( const value of [ undefined, '', 'red', '#fff', 'url(https://example.com)', '#123456;' ] ) {
+	for ( const value of [ undefined, null, '', 'undefined', 'red', '#fff', 'url(https://example.com)', '#123456;' ] ) {
 		const input = calendarEventInput( { backgroundColor: value, textColor: value } );
-		assert.equal( input.color, undefined );
-		assert.equal( input.contrastColor, undefined );
+		assert.equal( Object.hasOwn( input, 'color' ), false );
+		assert.equal( Object.hasOwn( input, 'contrastColor' ), false );
 	}
-	assert.equal( calendarEventInput( { start: '2026-10-25', allDay: true } ).start, '2026-10-25' );
+	const event = { start: '2026-10-25', allDay: true };
+	assert.deepEqual( calendarEventInput( event ), event );
 } );
 
 test( 'labels first, middle and last timed segments, preserving one-day and all-day labels', () => {

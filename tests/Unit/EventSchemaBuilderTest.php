@@ -80,11 +80,42 @@ final class EventSchemaBuilderTest extends TestCase {
 			array(
 				'@type'   => 'Place',
 				'name'    => 'Town Hall',
-				'address' => 'Main Street 1, Brussels',
+				'address' => array(
+					'@type' => 'PostalAddress',
+					'name'  => 'Main Street 1, Brussels',
+				),
 			),
 			$schema['location'] ?? null
 		);
 		self::assertArrayNotHasKey( 'offers', $schema );
+	}
+
+	/** Existing free-text addresses remain complete, without guessed components. */
+	public function test_preserves_full_addresses_and_omits_empty_address_objects(): void {
+		foreach ( array( 'Main Street 1, Brussels', "Rue de l'Église 12B\n1000 Bruxelles\nBelgique", '', '  ' ) as $address ) {
+			$schema   = ( new EventSchemaBuilder() )->build(
+				new EventSchemaInput(
+					name: 'Concert',
+					start_date: '2026-11-14T11:00:00+01:00',
+					end_date: '2026-11-15T18:00:00+01:00',
+					status: EventStatus::SCHEDULED,
+					url: 'https://example.com/event/',
+					venue: 'Town Hall',
+					address: $address
+				)
+			);
+			$expected = array(
+				'@type' => 'Place',
+				'name'  => 'Town Hall',
+			);
+			if ( '' !== trim( $address ) ) {
+				$expected['address'] = array(
+					'@type' => 'PostalAddress',
+					'name'  => $address,
+				);
+			}
+			self::assertSame( $expected, $schema['location'] ?? null );
+		}
 	}
 
 	/**

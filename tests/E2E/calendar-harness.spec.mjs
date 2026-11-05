@@ -199,6 +199,57 @@ test( 'follows configured calendar views when a builder canvas crosses the mobil
 	await expect( canvas.locator( '.wpse-calendar-view-listMonth' ) ).toHaveCount( 0 );
 } );
 
+for ( const [ source, color, expected ] of [
+	[ 'component default', null, 'rgb(18, 52, 86)' ],
+	[ 'category', '#336699', 'rgb(51, 102, 153)' ],
+	[ 'event', '#663399', 'rgb(102, 51, 153)' ],
+] ) {
+	test( `preserves ${ source } colors across month spans and list rows`, async ( { page } ) => {
+		const fixtures = [
+			{ id: 'patch-timed', title: 'Patch timed span', start: '2026-08-14T11:00:00', end: '2026-08-15T18:00:00', allDay: false },
+			{ id: 'patch-boundary', title: 'Patch week boundary', start: '2026-08-16T11:00:00', end: '2026-08-17T18:00:00', allDay: false },
+			{ id: 'patch-day', title: 'Patch all-day', start: '2026-08-20', end: '2026-08-21', allDay: true },
+			{ id: 'patch-single', title: 'Patch single day', start: '2026-08-24T11:00:00', end: '2026-08-24T18:00:00', allDay: false },
+		].map( ( event ) => ( {
+			...event,
+			url: `https://example.com/events/${ event.id }/`,
+			...( color ? { backgroundColor: color, borderColor: color, textColor: '#ffffff' } : {} ),
+		} ) );
+		await page.route( isEventFeed, ( route ) => route.fulfill( { json: fixtures } ) );
+		await gotoFixturePage( page, 'wpse-e2e-calendar-filters' );
+		await page.addStyleTag( { content: '.wpse-calendar { --wpse-calendar-event-background: #123456; --wpse-calendar-event-text: #ffffff; }' } );
+		const canvas = page.locator( '[data-wpse-calendar-canvas]' );
+		await canvas.getByRole( 'button', { name: 'Next' } ).click();
+		const span = canvas.locator( '.wpse-calendar-block-event' ).filter( { hasText: 'Patch timed span' } );
+		await expect( span ).toBeVisible();
+		await expect( span ).toHaveCSS( 'background-color', expected );
+		await expect( span ).toHaveCSS( 'color', 'rgb(255, 255, 255)' );
+		const dayWidth = await canvas.locator( '.wpse-calendar-day-header' ).first().evaluate( ( el ) => el.getBoundingClientRect().width );
+		const spanWidth = await span.evaluate( ( el ) => el.getBoundingClientRect().width );
+		expect( spanWidth / dayWidth ).toBeGreaterThan( 1.8 );
+		expect( spanWidth / dayWidth ).toBeLessThan( 2.1 );
+		const boundary = canvas.locator( '.wpse-calendar-block-event' ).filter( { hasText: 'Patch week boundary' } );
+		await expect( boundary ).toHaveCount( 2 );
+		for ( const segment of await boundary.all() ) {
+			await expect( segment ).toHaveCSS( 'background-color', expected );
+		}
+		await expect( canvas.locator( '.wpse-calendar-block-event' ).filter( { hasText: 'Patch all-day' } ) ).toHaveCSS( 'background-color', expected );
+		await expect( canvas.locator( '.wpse-calendar-timed-event' ).filter( { hasText: 'Patch single day' } ).locator( '.wpse-calendar-dot' ) ).toHaveCSS( 'background-color', expected );
+		await canvas.getByRole( 'tab', { name: 'List' } ).click();
+		for ( const event of fixtures ) {
+			const rows = canvas.locator( '.wpse-calendar-list-event' ).filter( { hasText: event.title } );
+			expect( await rows.count() ).toBeGreaterThan( 0 );
+			for ( const row of await rows.all() ) {
+				await expect( row ).toBeVisible();
+				expect( await row.getAttribute( 'style' ) ?? '' ).not.toContain( 'undefined' );
+				if ( color ) {
+					await expect( row ).toHaveCSS( 'border-inline-start-color', expected );
+				}
+			}
+		}
+	} );
+}
+
 test( 'shows resolved colors as dots on compact timed month events', async ( {
 	page,
 } ) => {
