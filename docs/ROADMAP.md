@@ -2,7 +2,7 @@
 
 **Status:** active planning contract
 **Last reviewed:** 5 November 2026 (calendar fallback and event-address review)
-**Current public release:** 1.1.1
+**Current public release:** 1.1.2
 **Active phase:** 1.1 released; maintain the stable surface and scope the optional AI/MCP pilot separately
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
@@ -26,19 +26,19 @@ Interactive maps, geocoding, ticketing and attendee management remain outside th
 roadmap. The plugin continues to favor a small, native WordPress core over a broad
 event-management suite.
 
-## Next maintenance candidate — 1.1.2 (owner approved, release qualification)
+## Maintenance release — 1.1.2 (released 5 November 2026)
 
 Review of owner feedback on 5 November 2026 separates two bounded corrections
 from a broader address-editor enhancement. The owner approved implementing
 CAL-001 and SEO-001 while retaining one free-text address input (ADR-110).
 The owner tested `1.1.2-beta.1` and explicitly approved publication on 5 November
-2026 after a final exploratory review. 1.1.1 remains public until the final
-1.1.2 package passes all release gates and is published.
+2026 after a final exploratory review. The final 1.1.2 package passed all local
+and hosted release gates and was published to GitHub and WordPress.org.
 
-**Implementation — 5 November 2026:** both corrections are included in local
-`1.1.2-beta.1`, with targeted regressions and rebuilt browser assets. The single
-address editor and existing data remain unchanged. Qualification evidence and
-remaining publication gates are recorded in
+**Implementation — 5 November 2026:** both corrections were first qualified in
+`1.1.2-beta.1`, with targeted regressions and rebuilt browser assets, then released
+as 1.1.2 after owner acceptance. The single address editor and existing data
+remain unchanged. Initial qualification evidence is recorded in
 [QA-REPORT-1.1.2-beta.1.md](QA-REPORT-1.1.2-beta.1.md). Final qualification and
 publication evidence are tracked in [QA-REPORT-1.1.2.md](QA-REPORT-1.1.2.md).
 
@@ -52,7 +52,7 @@ The reported reproduction is a timed event on 14 November at 11:00 through
 15 November at 18:00, without event/category color. December's De Duystere
 Markt is an additional owner-reported case, not separately browser-verified here.
 
-`assets/src/js/calendar-utils.js` creates own `color` and `contrastColor`
+In 1.1.1, `assets/src/js/calendar-utils.js` creates own `color` and `contrastColor`
 properties even when their values are undefined. The existing regression only
 checks the values, so it cannot distinguish omission from explicit undefined.
 This violates the existing component-owned fallback contract in specification
@@ -77,7 +77,7 @@ Acceptance and regression coverage:
 
 ### SEO-001 — Emit an address object without migrating existing events (P2)
 
-`src/Seo/EventSchemaBuilder.php` currently emits `Place.address` as plain text.
+In 1.1.1, `src/Seo/EventSchemaBuilder.php` emits `Place.address` as plain text.
 [Schema.org permits Text or PostalAddress](https://schema.org/Place), so this is
 not universally invalid Schema.org. However,
 [Google's Event documentation](https://developers.google.com/search/docs/appearance/structured-data/event#structured-data-type-definitions)

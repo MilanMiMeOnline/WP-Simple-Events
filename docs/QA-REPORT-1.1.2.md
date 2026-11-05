@@ -1,7 +1,7 @@
 # MiMe 1.1.2 release qualification
 
 **Date:** 5 November 2026  
-**Status:** Owner approved; final qualification in progress, not yet published.
+**Status:** Released and publicly verified on GitHub and WordPress.org.
 
 ## Authorization and scope
 
@@ -74,8 +74,12 @@ database was changed. Local screenshot/log evidence is in
   snapshotting old 0.2.3 before replacing its files; a clean, unchanged full
   rerun passed. The exact initial database error cause was not established.
 - All 42 final-package browser journeys passed locally in 4.9 minutes.
-- Hosted PHP compatibility, browser regression, strict Plugin Check and full
-  CI qualification remain publication gates.
+- [Final hosted qualification](https://github.com/MilanMiMeOnline/WP-Simple-Events/actions/runs/42059559812)
+  passed all 13 jobs on `15c7cd109fccd5216b2173220b2b70b40fd8f169`: PHP
+  8.2–8.5, JS/CSS, translations, 32 + 10 browser journeys, both WordPress
+  smoke targets, performance, all historical upgrades and strict Plugin Check.
+  Both browser shards passed without retries (2.7 and 3.9 minutes). The final
+  independent CI archive again matches the local SHA-256.
 
 Candidate: `dist/mime-simple-events-calendar-1.1.2.zip`  
 SHA-256: `66ca83a5c7c97f7f392845ff0fe1e1fdedea969ceebfdfed0af8d3fbc28bab4f`.
@@ -102,11 +106,27 @@ browser test started. These incomplete runs do not count as successful gates.
 ADR-111 splits the complete browser suite into two native file-level shards on
 independent machines. One worker, zero retries, all test assertions and timeout
 values are unchanged. Test discovery verifies that the two disjoint inventories
-cover all 42 tests exactly once. Both shards and the full hosted matrix must pass
-before publication. The installation ZIP is unaffected by this CI-only change.
+cover all 42 tests exactly once. Both shards and the full hosted matrix
+subsequently passed before publication. The installation ZIP is unaffected by
+this CI-only change.
 
 GitHub initially printed an obsolete moderate-alert banner when pushing. The
 alert API reported alert 21 as withdrawn (HTTP 410), and a separate list of open
 Dependabot alerts returned none. Composer and npm audits also returned no findings.
 
-Publication evidence will be recorded after the qualified package is released.
+## Publication
+
+- Owner-approved [PR #28](https://github.com/MilanMiMeOnline/WP-Simple-Events/pull/28)
+  merged as `0dbea3e16bc42833e949866f930f150cc32c7019`. Its source tree is
+  identical to the qualified PR head; the local main branch was fast-forwarded.
+- Tag `v1.1.2` points to that exact merge commit. The
+  [GitHub release](https://github.com/MilanMiMeOnline/WP-Simple-Events/releases/tag/v1.1.2)
+  was published at 16:00:11 UTC on 5 November 2026. Its public ZIP was downloaded
+  and is byte-identical to the qualified local and CI packages.
+- WordPress.org trunk and tag `1.1.2` were committed atomically in SVN revision
+  `3786330`. Before commit, both trees matched all 384 qualified files byte for
+  byte. The public plugin API initially still reported 1.1.1 while distribution
+  propagated. It subsequently reported 1.1.2, and the public WordPress.org ZIP
+  was downloaded: all 384 paths and file contents match the qualified package.
+  WordPress.org repackages ZIP metadata; its download SHA-256 is
+  `eb234c0243222b8e6639e058fbfcaf534430fdba000474aaa116f79021aaa60b`.
