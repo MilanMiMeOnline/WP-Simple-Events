@@ -2385,3 +2385,23 @@ inputs are deferred until a concrete need justifies their compatibility cost.
 Reference: https://developers.google.com/search/docs/appearance/structured-data/event#structured-data-type-definitions
 Prepare a local tested candidate for owner testing under ADR-104; this decision
 does not authorize publication.
+
+## ADR-111: Run the complete browser matrix in two isolated CI shards
+
+**Status:** Accepted — 5 November 2026
+
+The 1.1.2 matrix contains 42 browser journeys. Two GitHub runs reached the
+unchanged six-minute aggregate limit after 41 and 40 successful tests, while
+the complete local matrix passed in 4.9 minutes. No individual assertion failed.
+An intervening attempt was cancelled during slow Ubuntu font downloads before
+the tests started.
+
+Use Playwright's native file-level sharding across two independent GitHub
+machines. Each machine retains one worker, no retries, all existing per-test
+timeouts and the six-minute process limit. Both shards must pass; together
+they must contain every discovered test exactly once. Keep the unsharded local
+command and all test assertions unchanged. Independent disposable WordPress
+sites prevent concurrent mutation of shared editor fixtures. This adds CI setup
+cost but does not change the installable plugin or its acceptance coverage.
+
+Reference: https://playwright.dev/docs/test-sharding

@@ -54,8 +54,12 @@ jobs:
       - run: npm run qa
 
   browser:
-    name: Browser regressions
+    name: Browser regressions (${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -70,7 +74,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --shard=${{ matrix.shard }}/2
 
   performance:
     name: Bounded performance budgets
