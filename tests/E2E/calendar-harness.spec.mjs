@@ -157,6 +157,10 @@ test( 'loads the progressively enhanced public calendar', async ( { page } ) => 
 	await expect( canvas ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Previous' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'button', { name: 'Next' } ) ).toBeVisible();
+	// Navigation performs an action; it must not be announced as a toggle.
+	for ( const name of [ 'Previous', 'Next', 'Today' ] ) {
+		await expect( canvas.getByRole( 'button', { name } ) ).not.toHaveAttribute( 'aria-pressed' );
+	}
 	await expect( canvas.getByRole( 'tab', { name: 'Month' } ) ).toBeVisible();
 	await expect( canvas.getByRole( 'tab', { name: 'List' } ) ).toBeVisible();
 	const activeState = await buttonState(

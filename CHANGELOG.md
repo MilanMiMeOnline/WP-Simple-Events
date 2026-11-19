@@ -2,6 +2,19 @@
 
 All notable changes to MiMe Simple Events and Calendar are documented here.
 
+## [1.1.3] - 2026-11-19
+
+### Changed
+
+- Update locally bundled FullCalendar to 7.1.5 and Temporal polyfill to 1.0.8
+  for rendering, accessible navigation and timezone fixes. Preserve stored
+  events, settings, public feed and month/list views.
+- Fix development Git checkout/path traversal and circular-ref vulnerabilities
+  with isomorphic-git 1.38.6. Guard Playground's independently bundled tree
+  parser in both module formats; fail closed on unknown upstream source.
+- Update development fast-xml-parser to 5.12.1 and add regressions for malformed
+  XML, unsafe Git trees, symlinked checkout paths and circular references.
+
 ## [1.1.2] - 2026-11-05
 
 ### Fixed

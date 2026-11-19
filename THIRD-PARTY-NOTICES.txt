@@ -6,10 +6,10 @@ build-time dependencies in `assets/dist/js/calendar.min.js`,
 `assets/dist/css/calendar.min.css` and the combined Divi editor bundles
 `assets/dist/js/divi-editor.min.js` and `assets/dist/css/divi-editor.min.css`:
 
-- `fullcalendar` 7.1.2 (vanilla, daygrid, list and classic theme) — MIT licence
-- `@full-ui/headless-calendar` 7.1.2 — MIT licence
-- `temporal-polyfill` 1.0.6 — MIT licence
-- `temporal-utils` 1.0.3 — MIT licence
+- `fullcalendar` 7.1.5 (vanilla, daygrid, list and classic theme) — MIT licence
+- `@full-ui/headless-calendar` 7.1.5 — MIT licence
+- `temporal-polyfill` 1.0.8 — MIT licence
+- `temporal-utils` 1.0.4 — MIT licence
 - `preact` 10.29.8 — MIT licence
 
 No premium FullCalendar package is bundled. All assets are served locally.

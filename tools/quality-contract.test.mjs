@@ -157,7 +157,7 @@ test( 'keeps bounded performance budgets executable and hosted', () => {
 	assert.match( qualityWorkflow, /npm run test:performance/ );
 	assert.match(
 		qualityWorkflow,
-		/WPSE_PERFORMANCE_CORE: WordPress\/WordPress#7\.1/,
+		/WPSE_PERFORMANCE_CORE: WordPress\/WordPress#7\.1\.5$/m,
 	);
 	assert.match( performanceBudgets, /500 published, password-free event series/ );
 	assert.match( performanceBudgets, /5,000 recurring occurrence rows/ );
@@ -174,9 +174,9 @@ test( 'keeps external WordPress QA inputs deterministic and available', () => {
 		/wordpress\/plugin-check-action@[a-f0-9]{40}[\s\S]*?wp-version: trunk/,
 	);
 	assert.match( qualityWorkflow, /^\s+- wordpress: '6\.9'$/m );
-	assert.match( qualityWorkflow, /^\s+- wordpress: '7\.1'$/m );
+	assert.match( qualityWorkflow, /^\s+- wordpress: '7\.1\.5'$/m );
 	assert.match( publicReadme, /^Tested up to: 7\.1$/m );
-	assert.match( wpEnvConfig, /"core": "WordPress\/WordPress#7\.1"/ );
+	assert.match( wpEnvConfig, /"core": "WordPress\/WordPress#7\.1\.5"/ );
 	assert.match(
 		qualityWorkflow,
 		/https:\/\/github\.com\/wp-cli\/wp-cli\/releases\/download\/v2\.12\.0\/wp-cli-2\.12\.0\.phar/,

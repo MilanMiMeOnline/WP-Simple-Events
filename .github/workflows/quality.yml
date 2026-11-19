@@ -95,7 +95,7 @@ jobs:
       - run: npm ci
       - run: npm run test:performance
         env:
-          WPSE_PERFORMANCE_CORE: WordPress/WordPress#7.1
+          WPSE_PERFORMANCE_CORE: WordPress/WordPress#7.1.5
 
   i18n:
     name: Translation catalogue
@@ -166,8 +166,8 @@ jobs:
           - wordpress: '6.9'
             core: WordPress/WordPress#6.9
             php: '8.2'
-          - wordpress: '7.1'
-            core: WordPress/WordPress#7.1
+          - wordpress: '7.1.5'
+            core: WordPress/WordPress#7.1.5
             php: '8.2'
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

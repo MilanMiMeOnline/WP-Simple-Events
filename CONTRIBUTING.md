@@ -24,6 +24,11 @@ the development-only `@wordpress/env` Git imports. This allows the patched
 enabled. Do not use `--ignore-scripts` for the final installation. See ADR-099 in
 `docs/DECISIONS.md`; an upstream version change requires reviewing this patch.
 
+The install step also checks and patches both Playground 3.1.44 tree parsers
+with the reserved-path protection from isomorphic-git 1.38.6 (ADR-112). Its
+embedded parser is independent of the scoped npm override. Unknown versions
+or source checksums fail closed; review the patch before upgrading Playground.
+
 Development file matching uses an exact, reviewed braces depth-guard fork until
 the upstream dependency has an equivalent fix. Keep its security regression
 tests and review its source and maintenance before changing the pin (ADR-100).
