@@ -1,8 +1,8 @@
 # Product roadmap
 
 **Status:** active planning contract
-**Last reviewed:** 19 November 2026 (dependency maintenance candidate)
-**Current public release:** 1.1.2
+**Last reviewed:** 19 November 2026 (1.1.3 publication)
+**Current public release:** 1.1.3
 **Active phase:** 1.1 released; maintain the stable surface and scope the optional AI/MCP pilot separately
 
 This roadmap translates real-world feedback and exploratory testing into ordered,
@@ -26,16 +26,15 @@ Interactive maps, geocoding, ticketing and attendee management remain outside th
 roadmap. The plugin continues to favor a small, native WordPress core over a broad
 event-management suite.
 
-## Maintenance candidate — 1.1.3-beta.1 (unpublished)
+## Maintenance release — 1.1.3 (released 19 November 2026)
 
-Prepare the owner-requested security maintenance and compatible calendar patch
-under ADR-112. Fix development Git/XML dependencies, including Playground's
-separately bundled tree parser; retain existing braces guards. Update locally
-bundled FullCalendar to 7.1.5 and Temporal to 1.0.8. Qualify installation, calendar
-accessibility, colors, dates, protected content and historical upgrades including
-1.1.2. Stored data and public interfaces remain unchanged. Owner testing and
-explicit publication approval are still required under ADR-104. Qualification
-is recorded in [the candidate QA report](QA-REPORT-1.1.3-beta.1.md).
+The owner-approved maintenance release updates bundled FullCalendar to 7.1.5
+and Temporal to 1.0.8, fixes development Git/XML dependencies and guards
+Playground's separately bundled tree parser. Existing braces guards, stored
+data and public interfaces remain unchanged. All local and hosted release
+gates passed before GitHub and WordPress.org publication; both public downloads
+were verified against the qualified package. See [the final QA report](QA-REPORT-1.1.3.md)
+and ADR-112/113 for scope, authorization and evidence.
 
 ## Maintenance release — 1.1.2 (released 5 November 2026)
 
