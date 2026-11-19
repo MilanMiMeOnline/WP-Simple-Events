@@ -76,6 +76,12 @@
       "tag": "v1.1.1",
       "schemaVersion": "2.1.0",
       "sha256": "2016b44584de2fea309183f163e5c289b9b71ccf3741800e777233a362d3267c"
+    },
+    {
+      "version": "1.1.2",
+      "tag": "v1.1.2",
+      "schemaVersion": "2.1.0",
+      "sha256": "66ca83a5c7c97f7f392845ff0fe1e1fdedea969ceebfdfed0af8d3fbc28bab4f"
     }
   ]
 }

@@ -2405,3 +2405,73 @@ sites prevent concurrent mutation of shared editor fixtures. This adds CI setup
 cost but does not change the installable plugin or its acceptance coverage.
 
 Reference: https://playwright.dev/docs/test-sharding
+
+
+## ADR-112: Qualify November dependency maintenance without publication
+
+**Status:** Accepted for local implementation — 19 November 2026
+
+The owner requested necessary updates and verification after dependency monitoring.
+Scope this candidate to the reported development security fixes and compatible
+calendar patches. Resolve Playground storage's isomorphic-git dependency to the
+first patched 1.38.6 release for GHSA-9qw7-j9xw-fv9c, GHSA-cw2g-2vwq-88w6 and
+GHSA-96wc-2m84-2cj7. The current upstream storage package still pins 1.37.6;
+review its embedded internals separately, preserve ADR-099 and ADR-100, and do
+not treat a clean lockfile audit as proof that embedded code is fixed. Remove
+the scoped override once upstream supplies a reviewed compatible fixed version.
+Use the existing Dependabot PR #29's fast-xml-parser 5.12.0 fix rather than
+creating a duplicate proposal. Both packages remain development-only.
+
+Update the existing MIT calendar dependencies to fullcalendar 7.1.5 and
+temporal-polyfill 1.0.8. Preserve the public API, stored data, default and explicit
+colors, timezone contract, bundled-only assets and supported month/list views.
+Upstream changes affect layout, accessibility and date handling, so qualify
+these with the existing full browser suite and targeted regressions. Refresh
+the existing calendar proposal #17 when GitHub delivery is authorized.
+
+This work prepares an unpublished candidate for owner testing under ADR-104.
+It does not authorize a merge, push, release or customer-site updates. Local PHP
+security patches may be installed when officially available, within the existing
+supported branch; never substitute prerelease PHP or assume hosted sites match.
+
+Review found that Playground 3.1.44's own GitTree parser accepts reserved path
+components independently of its isomorphic-git dependency. Apply the upstream
+1.38.6 reserved-name policy to that parser in ESM and CJS with version and exact
+source checksums, atomically validating both inputs before any write. Unknown
+source must fail installation. Regression tests exercise both real parsers and
+normal filenames, plus checksum refusal and idempotence. The bundled isomorphic
+Git entrypoints used here are indexPack and readObject with format: content in
+an in-memory filesystem; checkout and symbolic-ref resolution are not bundled
+entrypoints. The upstream npm override protects the separately installed API.
+Retain all MIT attribution; remove the parser patch after reviewing an upstream
+fix with equivalent behavior. No package code is copied into the plugin ZIP.
+
+The XML lock update resolves 5.12.1, the current compatible patch after PR #29's
+5.12.0. Refresh that existing proposal on delivery. The local package is explicitly
+1.1.3-beta.1 to distinguish it from the public, unchanged 1.1.2 release.
+
+Use the official WordPress 7.1.5 security release for the default local site
+and current-line CI smoke/performance target. Keep the isolated 6.9 minimum
+and checksummed historical-upgrade baseline to prove backward compatibility.
+This changes future development/test environments only, not customer websites.
+Source: https://wordpress.org/news/2026/11/wordpress-7-1-5-release/
+
+Security sources: [checkout symlink guard](https://github.com/advisories/GHSA-9qw7-j9xw-fv9c),
+[reserved Git tree names](https://github.com/advisories/GHSA-cw2g-2vwq-88w6),
+[circular refs](https://github.com/advisories/GHSA-96wc-2m84-2cj7),
+[XML stop-node parsing](https://github.com/advisories/GHSA-474x-hrwr-fgx4).
+
+
+## ADR-113: Publish the owner-approved maintenance candidate as 1.1.3
+
+**Status:** Approved for final qualification and publication — 19 November 2026
+
+After delivery of the qualified 1.1.3-beta.1 candidate and change summary, the
+owner explicitly instructed “laten we live gaan”. This authorizes GitHub and
+WordPress.org publication under ADR-104 without another approval round. Promote
+the exact candidate to 1.1.3; change only release metadata and qualification
+documentation. Require the full hosted Quality workflow, strict Plugin Check,
+package verification and public artifact verification before reporting success.
+The combined release incorporates and supersedes the narrower existing XML
+update proposal #29 and obsolete pre-v7 calendar proposal #17; do not open
+duplicate dependency-only proposals. No additional runtime update is included.
